@@ -3,12 +3,29 @@
   <MonoDevelop.Ide.Workbench ActiveDocument="Marcello.Test\TestMarcello.cs">
     <Files>
       <File FileName="c:\Users\markm_000\Documents\GitHub\Marcello\Marcello\Marcello.cs" Line="1" Column="1" />
-      <File FileName="c:\Users\markm_000\Documents\GitHub\Marcello\Marcello\Collections\CollectionT.cs" Line="1" Column="1" />
+      <File FileName="c:\Users\markm_000\Documents\GitHub\Marcello\Marcello\Collections\CollectionT.cs" Line="19" Column="19" />
       <File FileName="Marcello\Storage\IStorageEngine.cs" Line="1" Column="1" />
       <File FileName="Marcello\Records\Record.cs" Line="1" Column="1" />
       <File FileName="Marcello\Records\CollectionMetaDataRecord.cs" Line="1" Column="1" />
-      <File FileName="Marcello.Test\TestMarcello.cs" Line="1" Column="7" />
+      <File FileName="Marcello.Test\TestMarcello.cs" Line="27" Column="12" />
+      <File FileName="Marcello.Test\Classes\Article.cs" Line="16" Column="4" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="Marcello" expanded="True">
+            <Node name="Collections" expanded="True" />
+          </Node>
+          <Node name="Marcello.Test" expanded="True" selected="True">
+            <Node name="References" expanded="True" />
+            <Node name="Classes" expanded="True" />
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.NUnit.TestPad">
+        <State expanded="True" selected="True" />
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

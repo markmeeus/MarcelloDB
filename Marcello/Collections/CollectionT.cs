@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Marcello
 {
@@ -12,6 +13,13 @@ namespace Marcello
 		{
 			StorageEngine = storageEngine;
 			Serializer = serializer;
+		}
+
+
+		public IEnumerable<T> All{
+			get{
+				return null;
+			}
 		}
 
 		public void Persist(T obj){

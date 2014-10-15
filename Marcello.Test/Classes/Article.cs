@@ -9,6 +9,11 @@ namespace Marcello.Test
 		}
 
 		public string Name{ get; set;}
+
+
+		public static Article ToiletPaper{
+			get{ return new Article (){ Name = "Toilet Paper" }; }
+		}
 	}
 }
 
