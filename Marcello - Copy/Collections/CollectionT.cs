@@ -31,8 +31,7 @@ namespace Marcello
 
 		void AppendObject(object obj){
 			var bytes = Serializer.Serialize(obj);
-			var record = new Record ();
-			StorageEngine.Append(record.AsBytes());
+			StorageEngine.Append(obj);
 		}
 	}
 }
