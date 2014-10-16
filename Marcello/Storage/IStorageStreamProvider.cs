@@ -2,9 +2,9 @@
 
 namespace Marcello
 {
-	public interface IStorageStreamProvider
-	{
-		IStorageStream GetStream(string streamName);
-	}
+    public interface IStorageStreamProvider
+    {
+        IStorageStream GetStream(string streamName);
+    }
 }
 

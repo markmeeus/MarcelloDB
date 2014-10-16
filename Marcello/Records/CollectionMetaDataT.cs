@@ -2,23 +2,24 @@
 
 namespace Marcello
 {
-	internal class CollectionMetaData<T>
-	{
-		Marcello Session { get; set; }
+    internal class CollectionMetaData<T>
+    {
+        Marcello Session { get; set; }
 
-		internal CollectionMetaData (Marcello session)
-		{
-			Session = session;
-		}
+        internal CollectionMetaData (Marcello session)
+        {
+            Session = session;
+        }
+       
+        internal CollectionMetaDataRecord GetRecord()
+        {
 
-		internal Record GetRecord()
-		{
-		}
+        }
 
-		internal void Update(Record record)
-		{
+        internal void Update(CollectionMetaDataRecord record)
+        {
 
-		}
-	}
+        }
+    }
 }
 

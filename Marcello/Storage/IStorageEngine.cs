@@ -2,13 +2,13 @@
 
 namespace Marcello
 {
-	internal interface IStorageEngine
-	{
-		byte[] Read(long address, long length);
+    internal interface IStorageEngine
+    {
+        byte[] Read(long address, long length);
 
-		long Append(byte[] bytes);
+        long Append(byte[] bytes);
 
-		void Write(long address, byte[] bytes);
-	}
+        void Write(long address, byte[] bytes);
+    }
 }
 

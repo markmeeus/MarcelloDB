@@ -6,38 +6,37 @@ namespace Marcello
 {
 	internal class CollectionEnumerator<T> : IEnumerable<T>
 	{
-		RecordManager RecordManager  { get; set; }
-		IObjectSerializer<T> ObjectSerializer { get; set; }
+        RecordManager RecordManager  { get; set; }
+        IObjectSerializer<T> ObjectSerializer { get; set; }
+    
+        public CollectionEnumerator(RecordManager recordManager)
+        {   
+            RecordManager = recordManager;
+        }
 
-		public CollectionEnumerator(RecordManager recordManager)
-		{
-			RecordManager = recordManager;
-		}
+        #region IEnumerable implementation
 
-		#region IEnumerable implementation
+        public IEnumerator<T> GetEnumerator ()
+        {
+            var recordManager = new RecordManager (RecordManager);
+            var record = recordManager.GetFirstRecord ();
 
-		public IEnumerator<T> GetEnumerator ()
-		{
-			var recordManager = new RecordManager (RecordManager);
-			var record = recordManager.GetFirstRecord ();
+            while (record != null) {
+                var obj = ObjectSerializer.Deserialize(record.data);
+                yield return obj;
+                record = recordManager.GetNextRecord (record);
+            }
+        }
+        #endregion
 
-			while (record != null) {
-				var obj = ObjectSerializer.Deserialize(record.data);
-				yield return obj;
-				record = recordManager.GetNextRecord (record);
-			}
-		}
+        #region IEnumerable implementation
 
-		#endregion
+        IEnumerator IEnumerable.GetEnumerator ()
+        {
+            return GetEnumerator();
+        }
 
-		#region IEnumerable implementation
-
-		IEnumerator IEnumerable.GetEnumerator ()
-		{
-			return GetEnumerator();
-		}
-
-		#endregion
-	}
+        #endregion
+    }
 }
 

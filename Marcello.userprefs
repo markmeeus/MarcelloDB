@@ -1,24 +1,33 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Marcello.Test\TestMarcello.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Marcello/Collections/CollectionEnumeratorT.cs">
     <Files>
-      <File FileName="c:\Users\markm_000\Documents\GitHub\Marcello\Marcello\Marcello.cs" Line="1" Column="1" />
-      <File FileName="c:\Users\markm_000\Documents\GitHub\Marcello\Marcello\Collections\CollectionT.cs" Line="19" Column="19" />
-      <File FileName="Marcello\Storage\IStorageEngine.cs" Line="1" Column="1" />
-      <File FileName="Marcello\Records\Record.cs" Line="1" Column="1" />
-      <File FileName="Marcello\Records\CollectionMetaDataRecord.cs" Line="1" Column="1" />
-      <File FileName="Marcello.Test\TestMarcello.cs" Line="27" Column="12" />
-      <File FileName="Marcello.Test\Classes\Article.cs" Line="16" Column="4" />
+      <File FileName="Marcello/Collections/CollectionT.cs" Line="27" Column="27" />
+      <File FileName="Marcello/Collections/CollectionEnumeratorT.cs" Line="40" Column="40" />
+      <File FileName="Marcello/Records/RecordBuilder.cs" Line="1" Column="1" />
+      <File FileName="Marcello/Records/RecordManager.cs" Line="16" Column="16" />
+      <File FileName="Marcello/Storage/IStorageEngine.cs" Line="11" Column="11" />
+      <File FileName="Marcello/Storage/IStorageStreamProvider.cs" Line="47" Column="47" />
+      <File FileName="Marcello/Storage/IStorageStream.cs" Line="1" Column="1" />
+      <File FileName="Marcello/Storage/StorageStreamCollection.cs" Line="3" Column="3" />
+      <File FileName="Marcello/Marcello.cs" Line="35" Column="35" />
+      <File FileName="Marcello/Serialization/IObjectSerializer.cs" Line="16" Column="16" />
+      <File FileName="Marcello/Serialization/ObjectProxy.cs" Line="25" Column="25" />
+      <File FileName="Marcello/Records/RecordHeader.cs" Line="3" Column="3" />
+      <File FileName="Marcello/Records/CollectionMetaDataT.cs" Line="36" Column="36" />
+      <File FileName="Marcello/Records/CollectionMetaDataRecord.cs" Line="4" Column="4" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
-        <State expanded="True">
+        <State expanded="True" selected="True">
           <Node name="Marcello" expanded="True">
             <Node name="Collections" expanded="True" />
+            <Node name="Records" expanded="True" />
+            <Node name="Serialization" expanded="True" />
+            <Node name="Storage" expanded="True" />
           </Node>
-          <Node name="Marcello.Test" expanded="True" selected="True">
+          <Node name="Marcello.Test" expanded="True">
             <Node name="References" expanded="True" />
-            <Node name="Classes" expanded="True" />
           </Node>
         </State>
       </Pad>

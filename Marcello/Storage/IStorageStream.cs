@@ -2,11 +2,11 @@
 
 namespace Marcello
 {
-	public class IStorageStream
-	{
-		public IStorageStream ()
-		{
-		}
-	}
+    public class IStorageStream
+    {
+        public IStorageStream ()
+        {
+        }
+    }
 }
 
