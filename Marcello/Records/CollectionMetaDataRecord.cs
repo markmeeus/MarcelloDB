@@ -2,9 +2,12 @@
 
 namespace Marcello
 {
-	public class CollectionMetaDataRecord
+	internal class CollectionMetaDataRecord
 	{
-		public CollectionMetaDataRecord ()
+		internal long FirstRecordAddress { get; set; }
+		internal long LastRecordAddress { get; set; }
+
+		internal CollectionMetaDataRecord ()
 		{
 		}
 	}

@@ -2,11 +2,11 @@
 
 namespace Marcello
 {
-	public interface IObjectSerializer
+	public interface IObjectSerializer<T>
 	{
-		byte[] Serialize(object obj);
+		byte[] Serialize(T obj);
 
-		object[] Deserialize(byte[] bytes);
+		T Deserialize(byte[] bytes);
 	}
 }
 

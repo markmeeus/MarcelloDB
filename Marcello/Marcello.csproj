@@ -35,10 +35,16 @@
     <Compile Include="Storage\IStorageEngine.cs" />
     <Compile Include="Serialization\IObjectSerializer.cs" />
     <Compile Include="Collections\CollectionT.cs" />
-    <Compile Include="Collections\ObjectIdentification.cs" />
     <Compile Include="Records\Record.cs" />
     <Compile Include="Records\RecordBuilder.cs" />
     <Compile Include="Records\RecordHeader.cs" />
+    <Compile Include="Collections\CollectionEnumeratorT.cs" />
+    <Compile Include="Records\RecordManager.cs" />
+    <Compile Include="Storage\IStorageStream.cs" />
+    <Compile Include="Storage\IStorageStreamProvider.cs" />
+    <Compile Include="Storage\StorageStreamCollection.cs" />
+    <Compile Include="Serialization\ObjectProxy.cs" />
+    <Compile Include="Records\CollectionMetaDataT.cs" />
     <Compile Include="Records\CollectionMetaDataRecord.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
