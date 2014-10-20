@@ -18,13 +18,12 @@ namespace Marcello
 
         public IEnumerator<T> GetEnumerator ()
         {
-            var recordManager = new RecordManager (RecordManager);
-            var record = recordManager.GetFirstRecord ();
+            var record = RecordManager.GetFirstRecord ();
 
             while (record != null) {
                 var obj = ObjectSerializer.Deserialize(record.data);
                 yield return obj;
-                record = recordManager.GetNextRecord (record);
+                record = RecordManager.GetNextRecord (record);
             }
         }
         #endregion

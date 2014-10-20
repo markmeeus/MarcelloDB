@@ -13,7 +13,7 @@ namespace Marcello
        
         internal CollectionMetaDataRecord GetRecord()
         {
-
+            return new CollectionMetaDataRecord();
         }
 
         internal void Update(CollectionMetaDataRecord record)

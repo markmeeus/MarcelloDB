@@ -14,7 +14,7 @@ namespace Marcello
 
         IObjectSerializer<T> Serializer { get; set; }
 
-        CollectionMetaData<T> CollectionMetaData { get: set; }
+        CollectionMetaData<T> MetaData { get; set; }
 
         RecordManager _recordManager;
         RecordManager RecordManager 
@@ -44,7 +44,8 @@ namespace Marcello
         public void Persist(T obj)
         {
             var objectID = new ObjectProxy(obj).ID;
-            var record = All.Where (o => new ObjectProxy (o).ID == objectID).FirstOrDefault ();
+            //Try Load record with object ID
+            Record record = null; 
             if (record != null) 
             {
                 UpdateObject (record, obj);
@@ -60,10 +61,10 @@ namespace Marcello
         }
             
         #region private methods
-        void AppendObject(object obj)
+        void AppendObject(T obj)
         {
-            var bytes = Serializer.Serialize(obj);
             var record = new Record ();
+            record.data = Serializer.Serialize(obj);
 
             var lastRecord = RecordManager.GetLastRecord ();
             if (lastRecord != null) 
@@ -72,7 +73,7 @@ namespace Marcello
                 lastRecord.Header.Next = record.Header.Address;			
                 WriteHeader (lastRecord);
             } 
-	
+	        
             StorageEngine.Write(record.Header.Address, record.AsBytes());
             SetLastRecord (record);
         }
@@ -132,7 +133,7 @@ namespace Marcello
 			
         void WriteHeader(Record record)
         {
-            StorageEngine.Write (record.Header.Address, record.Header.AsBytes);
+            StorageEngine.Write (record.Header.Address, record.Header.AsBytes());
         }
 
         void SetFirstRecord(Record record)
@@ -155,9 +156,9 @@ namespace Marcello
             
         void UpdateMetaData(Action<CollectionMetaDataRecord> updateAction)
         {
-            var metaData = CollectionMetaData.GetRecord ();
+            var metaData = MetaData.GetRecord ();
             updateAction (metaData);
-            CollectionMetaData.Update (metaData);
+            MetaData.Update (metaData);
         }
     #endregion
     }

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marcello.Test", "Marcello.Test\Marcello.Test.csproj", "{7D3C1E47-EB03-4470-BD5A-15755302702F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marcello", "Marcello\Marcello.csproj", "{1B744A1E-86BE-4415-8382-0DAFA9C2704E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Marcello", "Marcello\Marcello.csproj", "{4172A119-2AE8-41D9-999E-9A2468267B28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,8 +11,8 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1B744A1E-86BE-4415-8382-0DAFA9C2704E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1B744A1E-86BE-4415-8382-0DAFA9C2704E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4172A119-2AE8-41D9-999E-9A2468267B28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4172A119-2AE8-41D9-999E-9A2468267B28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D3C1E47-EB03-4470-BD5A-15755302702F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7D3C1E47-EB03-4470-BD5A-15755302702F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D3C1E47-EB03-4470-BD5A-15755302702F}.Release|Any CPU.ActiveCfg = Release|Any CPU

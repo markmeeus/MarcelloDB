@@ -3,10 +3,13 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1B744A1E-86BE-4415-8382-0DAFA9C2704E}</ProjectGuid>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{4172A119-2AE8-41D9-999E-9A2468267B28}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>Marcello</RootNamespace>
     <AssemblyName>Marcello</AssemblyName>
+    <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -27,31 +30,31 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Marcello.cs" />
-    <Compile Include="Storage\IStorageEngine.cs" />
-    <Compile Include="Serialization\IObjectSerializer.cs" />
+    <Compile Include="Collections\CollectionEnumeratorT.cs" />
     <Compile Include="Collections\CollectionT.cs" />
+    <Compile Include="Records\CollectionMetaDataRecord.cs" />
+    <Compile Include="Records\CollectionMetaDataT.cs" />
     <Compile Include="Records\Record.cs" />
     <Compile Include="Records\RecordBuilder.cs" />
     <Compile Include="Records\RecordHeader.cs" />
-    <Compile Include="Collections\CollectionEnumeratorT.cs" />
     <Compile Include="Records\RecordManager.cs" />
+    <Compile Include="Serialization\IObjectSerializer.cs" />
+    <Compile Include="Serialization\ObjectProxy.cs" />
+    <Compile Include="Storage\IStorageEngine.cs" />
     <Compile Include="Storage\IStorageStream.cs" />
     <Compile Include="Storage\IStorageStreamProvider.cs" />
     <Compile Include="Storage\StorageStreamCollection.cs" />
-    <Compile Include="Serialization\ObjectProxy.cs" />
-    <Compile Include="Records\CollectionMetaDataT.cs" />
-    <Compile Include="Records\CollectionMetaDataRecord.cs" />
+    <Compile Include="Marcello.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
-    <Folder Include="Storage\" />
-    <Folder Include="Serialization\" />
     <Folder Include="Collections\" />
     <Folder Include="Records\" />
+    <Folder Include="Serialization\" />
+    <Folder Include="Storage\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Marcello.csproj" />
   </ItemGroup>
 </Project>
