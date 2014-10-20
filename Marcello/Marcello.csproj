@@ -46,6 +46,7 @@
     <Compile Include="Storage\IStorageStreamProvider.cs" />
     <Compile Include="Storage\StorageStreamCollection.cs" />
     <Compile Include="Marcello.cs" />
+    <Compile Include="Serialization\BsonSerializer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -56,5 +57,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Marcello.csproj" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

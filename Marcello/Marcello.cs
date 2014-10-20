@@ -9,7 +9,7 @@ namespace Marcello
         }
 
         public Collection<T> GetCollection<T>(){
-            return new Collection<T>(this, null, null);
+            return new Collection<T>(this, null, new BsonSerializer<T>());
         }
     }
 }
