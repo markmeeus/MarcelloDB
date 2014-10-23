@@ -13,7 +13,7 @@ namespace Marcello
 
         public byte[] AsBytes()
         {
-            var bytes = new byte[RecordHeader.ByteSize + data.Length];
+            var bytes = new byte[RecordHeader.ByteSize + Header.AllocatedSize];
             Header.AsBytes ().CopyTo (bytes, 0);
             data.CopyTo (bytes, RecordHeader.ByteSize);
             return bytes;

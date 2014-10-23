@@ -19,7 +19,7 @@ Global
 		{7D3C1E47-EB03-4470-BD5A-15755302702F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = Marcello\Marcello.csproj
+		StartupItem = Marcello.Test\Marcello.Test.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.FileWidth = 120

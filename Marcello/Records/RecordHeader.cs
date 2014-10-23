@@ -9,7 +9,7 @@ namespace Marcello
 
         internal long Next	 { get; set;}
         internal long Previous { get; set;}
-        internal long AllocatedSize { get; set; }
+        internal int AllocatedSize { get; set; }
 
         static internal int ByteSize {
             get {

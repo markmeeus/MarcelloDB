@@ -1,0 +1,46 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Marcello/Collections/CollectionT.cs">
+    <Files>
+      <File FileName="Marcello/Collections/CollectionT.cs" Line="1" Column="1" />
+      <File FileName="Marcello/Collections/CollectionEnumeratorT.cs" Line="9" Column="9" />
+      <File FileName="Marcello/Records/RecordBuilder.cs" Line="1" Column="1" />
+      <File FileName="Marcello/Records/RecordManager.cs" Line="1" Column="1" />
+      <File FileName="Marcello/Storage/IStorageStreamProvider.cs" Line="1" Column="1" />
+      <File FileName="Marcello/Storage/StorageStreamCollection.cs" Line="1" Column="1" />
+      <File FileName="Marcello/Marcello.cs" Line="6" Column="6" />
+      <File FileName="Marcello/Serialization/IObjectSerializer.cs" Line="19" Column="19" />
+      <File FileName="Marcello/Serialization/ObjectProxy.cs" Line="9" Column="9" />
+      <File FileName="Marcello/Records/RecordHeader.cs" Line="1" Column="1" />
+      <File FileName="Marcello/Records/CollectionMetaDataRecord.cs" Line="1" Column="1" />
+      <File FileName="Marcello/Records/Record.cs" Line="1" Column="1" />
+      <File FileName="Marcello.Test/Classes/Article.cs" Line="1" Column="1" />
+      <File FileName="Marcello.Test/TestMarcello.cs" Line="1" Column="1" />
+      <File FileName="Marcello/Storage/IStorageStream.cs" Line="1" Column="1" />
+      <File FileName="Marcello/Records/CollectionMetaDataT.cs" Line="1" Column="1" />
+      <File FileName="Marcello/Serialization/BsonSerializer.cs" Line="1" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="Marcello" expanded="True">
+            <Node name="Collections" expanded="True">
+              <Node name="CollectionT.cs" selected="True" />
+            </Node>
+            <Node name="Serialization" expanded="True" />
+          </Node>
+          <Node name="Marcello.Test" expanded="True" />
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.NUnit.TestPad">
+        <State expanded="True" selected="True" />
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/markmeeus/Projects/Marcello/Marcello/Collections/CollectionT.cs" line="46" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

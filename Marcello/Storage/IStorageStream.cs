@@ -2,11 +2,11 @@
 
 namespace Marcello
 {
-    public class IStorageStream
+    public interface IStorageStream
     {
-        public IStorageStream ()
-        {
-        }
+        byte[] Read(long address, int length);
+
+        void Write(long address, byte[] bytes);
     }
 }
 

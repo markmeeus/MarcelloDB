@@ -41,12 +41,14 @@
     <Compile Include="Records\RecordManager.cs" />
     <Compile Include="Serialization\IObjectSerializer.cs" />
     <Compile Include="Serialization\ObjectProxy.cs" />
-    <Compile Include="Storage\IStorageEngine.cs" />
     <Compile Include="Storage\IStorageStream.cs" />
     <Compile Include="Storage\IStorageStreamProvider.cs" />
     <Compile Include="Storage\StorageStreamCollection.cs" />
     <Compile Include="Marcello.cs" />
     <Compile Include="Serialization\BsonSerializer.cs" />
+    <Compile Include="AllocationStrategies\IAllocationStrategy.cs" />
+    <Compile Include="AllocationStrategies\DoubleSizeAllocationStrategy.cs" />
+    <Compile Include="Storage\StorageEngine.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -54,6 +56,7 @@
     <Folder Include="Records\" />
     <Folder Include="Serialization\" />
     <Folder Include="Storage\" />
+    <Folder Include="AllocationStrategies\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Marcello.csproj" />

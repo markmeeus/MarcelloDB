@@ -13,7 +13,7 @@ namespace Marcello.Test
 
         [SetUp]
         public void Setup(){
-            _marcello = new Marcello ();
+            _marcello = new Marcello (new InMemoryStreamProvider());
         }
 
         [Test ()]

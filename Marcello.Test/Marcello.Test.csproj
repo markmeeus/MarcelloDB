@@ -37,10 +37,12 @@
   <ItemGroup>
     <Compile Include="Classes\Article.cs" />
     <Compile Include="TestMarcello.cs" />
+    <Compile Include="TestStream\InMemoryStream.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Classes\" />
+    <Folder Include="TestStream\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Marcello\Marcello.csproj">

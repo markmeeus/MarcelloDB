@@ -10,29 +10,26 @@ namespace Marcello
     {
         Marcello Session { get; set; }
 
-        IStorageEngine StorageEngine{ get; set;}
+        StorageEngine<T> StorageEngine{ get; set;}
 
         IObjectSerializer<T> Serializer { get; set; }
 
         CollectionMetaData<T> MetaData { get; set; }
 
-        RecordManager _recordManager;
-        RecordManager RecordManager 
-        { 
-            get
-            {
-                if (_recordManager == null) {
-                    _recordManager = new RecordManager (Session);
-                }
-                return _recordManager;
-            }  
-        }			
+        IAllocationStrategy AllocationStrategy { get; set;}
 
-        internal Collection (Marcello session, IStorageEngine storageEngine, IObjectSerializer<T> serializer)
+        RecordManager RecordManager { get; set; }        		
+
+        internal Collection (Marcello session, 
+            IObjectSerializer<T> serializer,
+            IAllocationStrategy allocationStrategy)
         {
             Session = session;
-            StorageEngine = storageEngine;
             Serializer = serializer;
+            AllocationStrategy = allocationStrategy; 
+            RecordManager = new RecordManager (Session);
+            StorageEngine = new StorageEngine<T>(Session.StreamProvider);
+            MetaData = new CollectionMetaData<T> (Session);
         }
 
         public IEnumerable<T> All{
@@ -65,6 +62,7 @@ namespace Marcello
         {
             var record = new Record ();
             record.data = Serializer.Serialize(obj);
+            record.Header.AllocatedSize = AllocationStrategy.CalculateSize(record);
 
             var lastRecord = RecordManager.GetLastRecord ();
             if (lastRecord != null) 
