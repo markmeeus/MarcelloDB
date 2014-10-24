@@ -10,31 +10,31 @@ namespace Marcello
     {
         Marcello Session { get; set; }
 
-        StorageEngine<T> StorageEngine{ get; set;}
-
         IObjectSerializer<T> Serializer { get; set; }
-
-        CollectionMetaData<T> MetaData { get; set; }
 
         IAllocationStrategy AllocationStrategy { get; set;}
 
-        RecordManager RecordManager { get; set; }        		
+        RecordManager<T> RecordManager { get; set; }        		
 
         internal Collection (Marcello session, 
             IObjectSerializer<T> serializer,
             IAllocationStrategy allocationStrategy)
         {
             Session = session;
-            Serializer = serializer;
             AllocationStrategy = allocationStrategy; 
-            RecordManager = new RecordManager (Session);
-            StorageEngine = new StorageEngine<T>(Session.StreamProvider);
-            MetaData = new CollectionMetaData<T> (Session);
+            Serializer = serializer;
+
+            RecordManager = new RecordManager<T> (Session, 
+                new StorageEngine<T>(Session.StreamProvider),
+                serializer,
+                new DoubleSizeAllocationStrategy()
+            );
+
         }
 
         public IEnumerable<T> All{
             get{
-                return new CollectionEnumerator<T>(RecordManager);
+                return new CollectionEnumerator<T>(RecordManager, Serializer);
             }
         }
 
@@ -45,120 +45,17 @@ namespace Marcello
             Record record = null; 
             if (record != null) 
             {
-                UpdateObject (record, obj);
+                RecordManager.UpdateObject (record, obj);
             }
             else 
             {
-                AppendObject (obj);
+                RecordManager.AppendObject (obj);
             }   
         }
 
         public void Destroy(T obj)
         {
-        }
-            
-        #region private methods
-        void AppendObject(T obj)
-        {
-            var record = new Record ();
-            record.data = Serializer.Serialize(obj);
-            record.Header.AllocatedSize = AllocationStrategy.CalculateSize(record);
-
-            var lastRecord = RecordManager.GetLastRecord ();
-            if (lastRecord != null) 
-            {
-                record.Header.Address = lastRecord.Header.Address + lastRecord.Header.AllocatedSize;
-                lastRecord.Header.Next = record.Header.Address;			
-                WriteHeader (lastRecord);
-            } 
-	        
-            StorageEngine.Write(record.Header.Address, record.AsBytes());
-            SetLastRecord (record);
-        }
-            
-        void UpdateObject(Record record, T obj)
-        {
-            var bytes = Serializer.Serialize (obj);
-            if (bytes.Length > record.Header.AllocatedSize) 
-            {
-                ReleaseRecord (record);
-                AppendObject (obj); 
-            }
-        }
-
-        void ReleaseRecord(Record record)
-        {
-            var previousRecord = RecordManager.GetPreviousRecord(record);
-            var nextRecord = RecordManager.GetNextRecord (record);
-
-            if (previousRecord != null && nextRecord != null) 
-            {
-                //record in the middle, link previous to next and vice versa
-                nextRecord.Header.Previous = previousRecord.Header.Address;
-                previousRecord.Header.Next = nextRecord.Header.Address;
-            }
-
-            if (previousRecord != null && nextRecord == null) 
-            {
-                //no next record, so this was the last one
-                previousRecord.Header.Next = 0;
-                SetLastRecord (previousRecord);
-            }
-
-            if (previousRecord == null && nextRecord != null) 
-            {
-                //first record
-                nextRecord.Header.Previous = 0;
-                SetFirstRecord (nextRecord);
-            }
-				
-            if (previousRecord == null && nextRecord == null) 
-            {
-                //this was the last one
-                SetEmpty ();
-            }
-
-            if (nextRecord != null) 
-            {
-                WriteHeader (nextRecord);
-            }
-				
-            if (previousRecord != null) 
-            {
-                WriteHeader (previousRecord);
-            }
-        }
-			
-        void WriteHeader(Record record)
-        {
-            StorageEngine.Write (record.Header.Address, record.Header.AsBytes());
-        }
-
-        void SetFirstRecord(Record record)
-        {
-            UpdateMetaData (r => r.FirstRecordAddress = record.Header.Address);
-        }
-
-        void SetLastRecord(Record record)
-        {
-            UpdateMetaData (r => r.LastRecordAddress = record.Header.Address);
-        }
-
-        void SetEmpty()
-           {
-        	UpdateMetaData ((r) => {
-        		r.LastRecordAddress = 0;
-        		r.FirstRecordAddress = 0; 
-        	});
-        }
-            
-        void UpdateMetaData(Action<CollectionMetaDataRecord> updateAction)
-        {
-            var metaData = MetaData.GetRecord ();
-            updateAction (metaData);
-            MetaData.Update (metaData);
-        }
-    #endregion
+        }            
     }
 }
 

@@ -34,7 +34,6 @@
     <Compile Include="Collections\CollectionEnumeratorT.cs" />
     <Compile Include="Collections\CollectionT.cs" />
     <Compile Include="Records\CollectionMetaDataRecord.cs" />
-    <Compile Include="Records\CollectionMetaDataT.cs" />
     <Compile Include="Records\Record.cs" />
     <Compile Include="Records\RecordBuilder.cs" />
     <Compile Include="Records\RecordHeader.cs" />

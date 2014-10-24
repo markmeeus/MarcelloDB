@@ -26,7 +26,11 @@ namespace Marcello
 
         public T Deserialize (byte[] bytes)
         {
-            throw new NotImplementedException ();
+            var serializer = new JsonSerializer();
+            var memoryStream = new MemoryStream(bytes);
+            var reader = new BsonReader(memoryStream);
+
+            return serializer.Deserialize<T>(reader);
         }
 
         #endregion

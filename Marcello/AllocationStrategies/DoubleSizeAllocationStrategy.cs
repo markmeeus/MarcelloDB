@@ -8,7 +8,7 @@ namespace Marcello
 
         public int CalculateSize (Record record)
         {
-            return record.data.Length * 2;
+            return RecordHeader.ByteSize + (record.Header.DataSize * 2);
         }
 
         #endregion

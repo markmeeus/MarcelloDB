@@ -5,18 +5,31 @@ namespace Marcello
     internal class Record
     {
         internal RecordHeader Header { get; set;}
-        internal byte[] data;
+        internal byte[] Data;
 
         internal Record(){
             Header = new RecordHeader ();
         }
 
-        public byte[] AsBytes()
+        internal byte[] AsBytes()
         {
             var bytes = new byte[RecordHeader.ByteSize + Header.AllocatedSize];
             Header.AsBytes ().CopyTo (bytes, 0);
-            data.CopyTo (bytes, RecordHeader.ByteSize);
+            Data.CopyTo (bytes, RecordHeader.ByteSize);
             return bytes;
+        }
+
+        internal static Record FromBytes(byte[] bytes)
+        {
+            var header = RecordHeader.FromBytes(bytes);
+            var data = new byte[header.DataSize];
+        
+            Array.Copy (bytes, RecordHeader.ByteSize, data, 0, header.DataSize);                
+                
+            return new Record () {
+                Header = header,
+                Data = data
+            };
         }
     }
 }
