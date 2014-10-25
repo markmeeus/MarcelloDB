@@ -17,7 +17,9 @@ namespace Marcello
                 return sizeof(Int32) + ( 3 * sizeof(Int64));
             }
         }
-       
+
+        private RecordHeader(){} //only allow from factory methods
+
         internal byte[] AsBytes(){
             var bytes = new byte[ByteSize];
             BitConverter.GetBytes (this.Next).CopyTo (bytes, 0);
@@ -27,14 +29,19 @@ namespace Marcello
             return bytes;
         }
 
-        internal static RecordHeader FromBytes(byte[] bytes){
+        #region factory methods
+        internal static RecordHeader New (){ return new RecordHeader();}
+
+        internal static RecordHeader FromBytes(Int64 address, byte[] bytes){
             return new RecordHeader () {
                 Next = BitConverter.ToInt64 (bytes, 0),
                 Previous = BitConverter.ToInt64 (bytes, sizeof(Int64)),
                 DataSize = BitConverter.ToInt32 (bytes, 2 * sizeof(Int64)),
-                AllocatedSize = BitConverter.ToInt32 (bytes, (sizeof(Int32) + 2 * sizeof(long)))
+                AllocatedSize = BitConverter.ToInt32 (bytes, (sizeof(Int32) + 2 * sizeof(long))),
+                Address = address
             };
         }
+        #endregion
     }
 }
 

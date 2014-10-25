@@ -8,7 +8,7 @@ namespace Marcello
         internal byte[] Data;
 
         internal Record(){
-            Header = new RecordHeader ();
+            Header = RecordHeader.New();
         }
 
         internal byte[] AsBytes()
@@ -19,9 +19,9 @@ namespace Marcello
             return bytes;
         }
 
-        internal static Record FromBytes(byte[] bytes)
+        internal static Record FromBytes(Int64 address, byte[] bytes)
         {
-            var header = RecordHeader.FromBytes(bytes);
+            var header = RecordHeader.FromBytes(address, bytes);
             var data = new byte[header.DataSize];
         
             Array.Copy (bytes, RecordHeader.ByteSize, data, 0, header.DataSize);                
