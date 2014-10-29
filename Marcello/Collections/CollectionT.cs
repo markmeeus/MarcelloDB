@@ -41,8 +41,9 @@ namespace Marcello
         public void Persist(T obj)
         {
             var objectID = new ObjectProxy(obj).ID;
+
             //Try Load record with object ID
-            Record record = null; 
+            Record record = GetRecordForObjectID(objectID); 
             if (record != null) 
             {
                 RecordManager.UpdateObject (record, obj);
@@ -55,7 +56,24 @@ namespace Marcello
 
         public void Destroy(T obj)
         {
-        }            
+        }
+
+        #region private methods
+        Record GetRecordForObjectID(object objectID){
+            //temp implementation untill ID is indexed
+            var record = RecordManager.GetFirstRecord ();
+
+            while (record != null) {
+                var obj = Serializer.Deserialize(record.Data);
+                var objProxy = new ObjectProxy(obj);
+                if (objProxy.ID.Equals(objectID)){
+                    return record;
+                }
+                record = RecordManager.GetNextRecord (record);
+            }
+            return null;
+        }
+        #endregion
     }
 }
 

@@ -56,6 +56,22 @@ namespace Marcello.Test
         }
 
         [Test()]
+        public void TestUpdate(){
+            var toiletPaper = Article.ToiletPaper;
+            var spinalTapDvd = Article.SpinalTapDvd;
+
+            _marcello.GetCollection<Article>().Persist (toiletPaper);
+            _marcello.GetCollection<Article>().Persist (spinalTapDvd);
+
+            toiletPaper.Name += "Extra Strong ToiletPaper";
+
+            _marcello.GetCollection<Article>().Persist (toiletPaper);
+        
+            var reloadedArticle = _marcello.GetCollection<Article> ().All.Where (a => a.ID == Article.ToiletPaper.ID).FirstOrDefault ();
+            Assert.AreEqual(toiletPaper.Name, reloadedArticle.Name, "Should return updated article name");
+        }
+
+        [Test()]
         public void TestLargeUpdate(){
             var toiletPaper = Article.ToiletPaper;
             var spinalTapDvd = Article.SpinalTapDvd;
@@ -67,9 +83,9 @@ namespace Marcello.Test
 
             _marcello.GetCollection<Article>().Persist (toiletPaper);
 
-            var articleNames = _marcello.GetCollection<Article> ().All.Select(a => a.Name).ToList();
+            var articleNames = _marcello.GetCollection<Article>().All.Select(a => a.Name).ToList();
             articleNames.Sort ();
-            Assert.AreEqual (new List<string>{spinalTapDvd.Name, toiletPaper.Name}, articleNames, "Should return update article names");
+            Assert.AreEqual (new List<string>{spinalTapDvd.Name, toiletPaper.Name}, articleNames, "Should return updated article names");
         }
     }
 }
