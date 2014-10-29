@@ -48,6 +48,7 @@
     <Compile Include="AllocationStrategies\IAllocationStrategy.cs" />
     <Compile Include="AllocationStrategies\DoubleSizeAllocationStrategy.cs" />
     <Compile Include="Storage\StorageEngine.cs" />
+    <Compile Include="Attributes\IDAttribute.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -56,6 +57,7 @@
     <Folder Include="Serialization\" />
     <Folder Include="Storage\" />
     <Folder Include="AllocationStrategies\" />
+    <Folder Include="Attributes\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Marcello.csproj" />
