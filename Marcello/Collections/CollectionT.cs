@@ -56,6 +56,13 @@ namespace Marcello
 
         public void Destroy(T obj)
         {
+            var objectID = new ObjectProxy(obj).ID;
+
+            //Try Load record with object ID
+            Record record = GetRecordForObjectID(objectID); 
+
+            //release the record if present
+            RecordManager.ReleaseRecord (record);
         }
 
         #region private methods

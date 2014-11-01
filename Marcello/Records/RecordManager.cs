@@ -71,6 +71,7 @@ namespace Marcello
             if (lastRecord != null) 
             {
                 record.Header.Address = lastRecord.Header.Address + lastRecord.Header.AllocatedSize;
+                record.Header.Previous = lastRecord.Header.Address;
                 lastRecord.Header.Next = record.Header.Address;         
                 WriteHeader (lastRecord);
             }
@@ -101,7 +102,7 @@ namespace Marcello
             }
         }
 
-        void ReleaseRecord(Record record)
+        public void ReleaseRecord(Record record)
         {
             var previousRecord = GetPreviousRecord(record);
             var nextRecord = GetNextRecord (record);
