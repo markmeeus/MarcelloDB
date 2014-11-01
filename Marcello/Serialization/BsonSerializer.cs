@@ -21,7 +21,7 @@ namespace Marcello
 
             serializer.Serialize(bsonWriter, obj);
             bsonWriter.Flush();
-            return memoryStream.ToArray ();
+            return memoryStream.ToArray();
         }
 
         public T Deserialize (byte[] bytes)

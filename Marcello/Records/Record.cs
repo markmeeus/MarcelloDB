@@ -14,8 +14,8 @@ namespace Marcello
         internal byte[] AsBytes()
         {
             var bytes = new byte[RecordHeader.ByteSize + Header.AllocatedSize];
-            Header.AsBytes ().CopyTo (bytes, 0);
-            Data.CopyTo (bytes, RecordHeader.ByteSize);
+            Header.AsBytes ().CopyTo(bytes, 0);
+            Data.CopyTo(bytes, RecordHeader.ByteSize);
             return bytes;
         }
 
@@ -24,9 +24,9 @@ namespace Marcello
             var header = RecordHeader.FromBytes(address, bytes);
             var data = new byte[header.DataSize];
         
-            Array.Copy (bytes, RecordHeader.ByteSize, data, 0, header.DataSize);                
+            Array.Copy(bytes, RecordHeader.ByteSize, data, 0, header.DataSize);                
                 
-            return new Record () {
+            return new Record(){
                 Header = header,
                 Data = data
             };

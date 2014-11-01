@@ -6,7 +6,7 @@ namespace Marcello
     {
         #region IAllocationStrategy implementation
 
-        public int CalculateSize (Record record)
+        public int CalculateSize(Record record)
         {
             return RecordHeader.ByteSize + (record.Header.DataSize * 2);
         }

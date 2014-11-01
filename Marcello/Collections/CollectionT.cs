@@ -24,7 +24,8 @@ namespace Marcello
             AllocationStrategy = allocationStrategy; 
             Serializer = serializer;
 
-            RecordManager = new RecordManager<T> (Session, 
+            RecordManager = new RecordManager<T>(
+                Session, 
                 new StorageEngine<T>(Session.StreamProvider),
                 serializer,
                 new DoubleSizeAllocationStrategy()
@@ -46,11 +47,11 @@ namespace Marcello
             Record record = GetRecordForObjectID(objectID); 
             if (record != null) 
             {
-                RecordManager.UpdateObject (record, obj);
+                RecordManager.UpdateObject(record, obj);
             }
             else 
             {
-                RecordManager.AppendObject (obj);
+                RecordManager.AppendObject(obj);
             }   
         }
 
@@ -62,7 +63,7 @@ namespace Marcello
             Record record = GetRecordForObjectID(objectID); 
 
             //release the record if present
-            RecordManager.ReleaseRecord (record);
+            RecordManager.ReleaseRecord(record);
         }
 
         #region private methods
@@ -76,11 +77,10 @@ namespace Marcello
                 if (objProxy.ID.Equals(objectID)){
                     return record;
                 }
-                record = RecordManager.GetNextRecord (record);
+                record = RecordManager.GetNextRecord(record);
             }
             return null;
         }
         #endregion
     }
 }
-

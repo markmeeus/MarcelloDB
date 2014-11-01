@@ -11,12 +11,13 @@ namespace Marcello
         internal StorageStreamCollection (IStorageStreamProvider streamProvider)
         {
             StreamProvider = streamProvider;
-            Streams = new Dictionary<string, IStorageStream> ();
+            Streams = new Dictionary<string, IStorageStream>();
         }
 
         internal IStorageStream GetStream(string streamName)
         {
-            if(!Streams.ContainsKey(streamName)){
+            if(!Streams.ContainsKey(streamName))
+            {
                 Streams.Add(streamName, StreamProvider.GetStream(streamName));
             }
             return Streams[streamName];

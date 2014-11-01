@@ -9,7 +9,7 @@ namespace Marcello.Serialization
     {
         object Obj { get; set; }
 
-        public ObjectProxy (object obj)
+        public ObjectProxy(object obj)
         {
             Obj = obj;
         }
@@ -19,7 +19,8 @@ namespace Marcello.Serialization
             {
                 object id = null;
 
-                foreach (var propertyName in IDProperties) {
+                foreach (var propertyName in IDProperties) 
+                {
                     if(GetPropertyValue(propertyName, ref id))
                     {
                         return id;
@@ -47,17 +48,21 @@ namespace Marcello.Serialization
         #endregion
 
         #region private methods
-        bool GetAttributedId(ref object id){
-            var attributedProperty = GetPropertyWithAttribute (typeof(IDAttribute));
-            if (attributedProperty != null) {
-                id = ReadProperty (attributedProperty);
+        bool GetAttributedId(ref object id)
+        {
+            var attributedProperty = GetPropertyWithAttribute(typeof(IDAttribute));
+            if (attributedProperty != null) 
+            {
+                id = ReadProperty(attributedProperty);
                 return true;
             }
             return false;
         }
 
-        bool GetPropertyValue(string propertyName, ref object id){
-            if(HasProperty(propertyName)){
+        bool GetPropertyValue(string propertyName, ref object id)
+        {
+            if(HasProperty(propertyName))
+            {
                 id = ReadProperty(propertyName);
                 return true;
             }                       
@@ -70,35 +75,40 @@ namespace Marcello.Serialization
             return Obj.GetType ().Name;
         }
 
-        PropertyInfo GetPropertyInfo(string propertyName){
-            return Obj.GetType ()
-                .GetTypeInfo ()
+        PropertyInfo GetPropertyInfo(string propertyName)
+        {
+            return Obj.GetType()
+                .GetTypeInfo()
                 .DeclaredProperties
-                .Where (p => p.Name == propertyName).FirstOrDefault ();
+                .Where(p => p.Name == propertyName).FirstOrDefault();
         }
 
-        PropertyInfo GetPropertyWithAttribute(Type attributeType){
-            return Obj.GetType ()
-                .GetTypeInfo ()
+        PropertyInfo GetPropertyWithAttribute(Type attributeType)
+        {
+            return Obj.GetType()
+                .GetTypeInfo()
                 .DeclaredProperties
-                .Where (p => p.GetCustomAttribute(attributeType) != null)
-                .FirstOrDefault ();
+                .Where(p => p.GetCustomAttribute(attributeType) != null)
+                .FirstOrDefault();
         }
 
-        bool HasProperty(string propertyName){
+        bool HasProperty(string propertyName)
+        {
             return GetPropertyInfo(propertyName) != null;
         }
 
-        object ReadProperty(string propertyName){
-            var prop = GetPropertyInfo (propertyName);
+        object ReadProperty(string propertyName)
+        {
+            var prop = GetPropertyInfo(propertyName);
             if (prop != null) {
-                return ReadProperty (prop);
+                return ReadProperty(prop);
             }
             return null;
         }
 
-        object ReadProperty(PropertyInfo propertyInfo){
-            return propertyInfo.GetMethod.Invoke (this.Obj, new object[0]);
+        object ReadProperty(PropertyInfo propertyInfo)
+        {
+            return propertyInfo.GetMethod.Invoke(this.Obj, new object[0]);
         }
         #endregion
     }

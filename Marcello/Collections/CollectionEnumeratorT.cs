@@ -9,7 +9,7 @@ namespace Marcello
         RecordManager<T> RecordManager  { get; set; }
 
         IObjectSerializer<T> Serializer { get; set; }
-    
+        
         public CollectionEnumerator(RecordManager<T> recordManager, 
             IObjectSerializer<T> serializer)
         {   
@@ -19,21 +19,21 @@ namespace Marcello
 
         #region IEnumerable implementation
 
-        public IEnumerator<T> GetEnumerator ()
+        public IEnumerator<T> GetEnumerator()
         {
-            var record = RecordManager.GetFirstRecord ();
+            var record = RecordManager.GetFirstRecord();
 
             while (record != null) {
                 var obj = Serializer.Deserialize(record.Data);
                 yield return obj;
-                record = RecordManager.GetNextRecord (record);
+                record = RecordManager.GetNextRecord(record);
             }
         }
         #endregion
 
         #region IEnumerable implementation
 
-        IEnumerator IEnumerable.GetEnumerator ()
+        IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
@@ -41,4 +41,3 @@ namespace Marcello
         #endregion
     }
 }
-

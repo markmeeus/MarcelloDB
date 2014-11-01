@@ -18,7 +18,7 @@ namespace Marcello
                    
         internal void Write(long address, byte[] bytes)
         {
-            GetStream().Write (address, bytes);
+            GetStream().Write(address, bytes);
         }
 
         #region private methods
