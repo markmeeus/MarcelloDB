@@ -149,6 +149,40 @@ namespace Marcello.Test
             Assert.AreEqual (toiletPaper.ID, _marcello.GetCollection<Article> ().All.First().ID);
             Assert.AreEqual (spinalTapDvd.ID, _marcello.GetCollection<Article> ().All.Last().ID);
         }
+
+        [Test()]
+        public void DeleteLastInsertNew(){
+
+            var toiletPaper = Article.ToiletPaper;
+            var spinalTapDvd = Article.SpinalTapDvd;
+
+            _marcello.GetCollection<Article>().Persist (toiletPaper);
+            _marcello.GetCollection<Article>().Persist (spinalTapDvd);
+            _marcello.GetCollection<Article> ().Destroy (spinalTapDvd);
+
+            var barbieDoll = Article.BarbieDoll;
+            _marcello.GetCollection<Article>().Persist (barbieDoll);
+
+            Assert.AreEqual (2, _marcello.GetCollection<Article> ().All.Count());
+            Assert.AreEqual (toiletPaper.ID, _marcello.GetCollection<Article> ().All.First().ID);
+            Assert.AreEqual (barbieDoll.ID, _marcello.GetCollection<Article> ().All.Last().ID);
+        }
+
+        [Test()]
+        public void DeleteOnlyOnlyInsertNew(){
+        
+            var spinalTapDvd = Article.SpinalTapDvd;
+
+            _marcello.GetCollection<Article>().Persist (spinalTapDvd);
+            _marcello.GetCollection<Article> ().Destroy (spinalTapDvd);
+
+            var barbieDoll = Article.BarbieDoll;
+            _marcello.GetCollection<Article>().Persist (barbieDoll);
+
+            Assert.AreEqual (1, _marcello.GetCollection<Article> ().All.Count());
+            Assert.AreEqual (barbieDoll.ID, _marcello.GetCollection<Article> ().All.First().ID);
+            Assert.AreEqual (barbieDoll.ID, _marcello.GetCollection<Article> ().All.Last().ID);
+        }
     }
 }
 
