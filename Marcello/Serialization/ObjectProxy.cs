@@ -6,7 +6,7 @@ using Marcello.Attributes;
 
 namespace Marcello.Serialization
 {
-    public class ObjectProxy
+    internal class ObjectProxy
     {
         object Obj { get; set; }
 

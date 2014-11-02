@@ -40,6 +40,7 @@
     <Compile Include="TestStream\InMemoryStream.cs" />
     <Compile Include="Classes\ClassesWithIDs.cs" />
     <Compile Include="Serialization\ObjectProxyTest.cs" />
+    <Compile Include="Records\RecordHeaderTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
