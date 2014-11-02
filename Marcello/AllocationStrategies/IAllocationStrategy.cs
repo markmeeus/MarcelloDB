@@ -1,6 +1,7 @@
 ﻿using System;
+using Marcello.Records;
 
-namespace Marcello
+namespace Marcello.AllocationStrategies
 {
     internal interface IAllocationStrategy
     {

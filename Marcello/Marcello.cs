@@ -1,4 +1,7 @@
 ﻿using System;
+using Marcello.AllocationStrategies;
+using Marcello.Collections;
+using Marcello.Serialization;
 
 namespace Marcello
 {

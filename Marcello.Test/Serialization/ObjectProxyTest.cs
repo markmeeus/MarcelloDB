@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using Marcello.Serialization;
 
-namespace Marcello.Test
+namespace Marcello.Test.Serialization
 {   
     [TestFixture ()]
     public class ObjectProxyTest

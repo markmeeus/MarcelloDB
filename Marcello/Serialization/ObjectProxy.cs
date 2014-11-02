@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
+using Marcello.Attributes;
 
 namespace Marcello.Serialization
 {

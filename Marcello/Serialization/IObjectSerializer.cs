@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Marcello
+namespace Marcello.Serialization
 {
     public interface IObjectSerializer<T>
     {

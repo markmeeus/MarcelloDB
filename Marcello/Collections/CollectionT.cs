@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using Marcello.Serialization;
 using System.Linq;
 using System.Threading.Tasks;
+using Marcello.AllocationStrategies;
+using Marcello.Records;
 
-namespace Marcello
+namespace Marcello.Collections
 {
     public class Collection<T>
     {

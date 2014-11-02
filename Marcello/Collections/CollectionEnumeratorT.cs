@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Marcello.Records;
+using Marcello.Serialization;
 
-namespace Marcello
+namespace Marcello.Collections
 {
 	internal class CollectionEnumerator<T> : IEnumerable<T>
 	{

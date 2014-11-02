@@ -4,6 +4,7 @@ using System.Linq;
 
 using Marcello;
 using System.Collections.Generic;
+using Marcello.Test.Classes;
 
 namespace Marcello.Test
 {

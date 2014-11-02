@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Marcello.Test
+namespace Marcello.Test.Classes
 {
     public class Article
     {

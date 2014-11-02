@@ -1,4 +1,5 @@
 ﻿using System;
+using Marcello.Attributes;
 
 namespace Marcello.Test
 {

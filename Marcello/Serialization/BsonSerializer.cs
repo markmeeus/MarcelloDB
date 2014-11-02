@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System.IO;
 using Newtonsoft.Json.Bson;
 
-namespace Marcello
+namespace Marcello.Serialization
 {
     public class BsonSerializer<T> : IObjectSerializer<T>
     {

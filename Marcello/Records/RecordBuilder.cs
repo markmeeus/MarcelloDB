@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Marcello
+namespace Marcello.Records
 {
     public class RecordBuilder
     {

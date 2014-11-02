@@ -38,13 +38,15 @@
     <Compile Include="Classes\Article.cs" />
     <Compile Include="TestMarcello.cs" />
     <Compile Include="TestStream\InMemoryStream.cs" />
-    <Compile Include="ObjectProxyTest.cs" />
     <Compile Include="Classes\ClassesWithIDs.cs" />
+    <Compile Include="Serialization\ObjectProxyTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Classes\" />
     <Folder Include="TestStream\" />
+    <Folder Include="Serialization\" />
+    <Folder Include="Records\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Marcello\Marcello.csproj">

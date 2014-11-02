@@ -1,6 +1,8 @@
 ﻿using System;
+using Marcello.AllocationStrategies;
+using Marcello.Serialization;
 
-namespace Marcello
+namespace Marcello.Records
 {
     internal class RecordManager<T>
     {   
