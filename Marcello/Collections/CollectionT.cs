@@ -33,7 +33,8 @@ namespace Marcello
 
         }
 
-        public IEnumerable<T> All{
+        public IEnumerable<T> All
+        {
             get{
                 return new CollectionEnumerator<T>(RecordManager, Serializer);
             }
@@ -67,7 +68,8 @@ namespace Marcello
         }
 
         #region private methods
-        Record GetRecordForObjectID(object objectID){
+        Record GetRecordForObjectID(object objectID)
+        {
             //temp implementation untill ID is indexed
             var record = RecordManager.GetFirstRecord ();
 

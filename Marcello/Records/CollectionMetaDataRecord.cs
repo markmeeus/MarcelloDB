@@ -11,7 +11,8 @@ namespace Marcello
 		{
 		}
 
-        internal static int ByteSize{
+        internal static int ByteSize
+        {
             get { return 1024; } //some padding for future use 
         }
 

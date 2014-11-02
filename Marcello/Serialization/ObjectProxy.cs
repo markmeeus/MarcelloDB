@@ -14,7 +14,8 @@ namespace Marcello.Serialization
             Obj = obj;
         }
 
-        public object ID{
+        public object ID
+        {
             get
             {
                 object id = null;
@@ -33,8 +34,10 @@ namespace Marcello.Serialization
         }
           
         #region private properties
-        string[] IDProperties{
-            get{
+        string[] IDProperties
+        {
+            get
+            {
                 return new String[] {
                     "ID", 
                     "Id", 
@@ -71,7 +74,8 @@ namespace Marcello.Serialization
         #endregion
 
         #region reflection
-        string ClassName(){
+        string ClassName()
+        {
             return Obj.GetType ().Name;
         }
 

@@ -12,7 +12,8 @@ namespace Marcello
         internal Int32 DataSize { get; set; }
         internal Int32 AllocatedSize { get; set; }
 
-        static internal int ByteSize {
+        static internal int ByteSize 
+        {
             get {
                 return sizeof(Int32) + ( 3 * sizeof(Int64));
             }
@@ -20,7 +21,8 @@ namespace Marcello
 
         private RecordHeader(){} //only allow from factory methods
 
-        internal byte[] AsBytes(){
+        internal byte[] AsBytes()
+        {
             var bytes = new byte[ByteSize];
             BitConverter.GetBytes(this.Next).CopyTo (bytes, 0);
             BitConverter.GetBytes(this.Previous).CopyTo (bytes, sizeof(Int64));
@@ -32,7 +34,8 @@ namespace Marcello
         #region factory methods
         internal static RecordHeader New (){ return new RecordHeader();}
 
-        internal static RecordHeader FromBytes(Int64 address, byte[] bytes){
+        internal static RecordHeader FromBytes(Int64 address, byte[] bytes)
+        {
             return new RecordHeader() {
                 Next = BitConverter.ToInt64(bytes, 0),
                 Previous = BitConverter.ToInt64(bytes, sizeof(Int64)),

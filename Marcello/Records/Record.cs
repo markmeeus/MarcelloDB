@@ -7,7 +7,8 @@ namespace Marcello
         internal RecordHeader Header { get; set;}
         internal byte[] Data;
 
-        internal Record(){
+        internal Record()
+        {
             Header = RecordHeader.New();
         }
 
