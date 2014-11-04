@@ -20,6 +20,11 @@ namespace Marcello
                 new BsonSerializer<T>(), 
                 new DoubleSizeAllocationStrategy());
         }
+
+        public void Transaction(Action action)
+        {
+            action();
+        }
     }
 }
 

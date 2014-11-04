@@ -41,6 +41,7 @@
     <Compile Include="Classes\ClassesWithIDs.cs" />
     <Compile Include="Serialization\ObjectProxyTest.cs" />
     <Compile Include="Records\RecordHeaderTest.cs" />
+    <Compile Include="Transactions\TransactionTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -48,6 +49,7 @@
     <Folder Include="TestStream\" />
     <Folder Include="Serialization\" />
     <Folder Include="Records\" />
+    <Folder Include="Transactions\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Marcello\Marcello.csproj">
