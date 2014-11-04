@@ -44,18 +44,9 @@ namespace Marcello.Collections
 
         public void Persist(T obj)
         {
-            var objectID = new ObjectProxy(obj).ID;
-
-            //Try Load record with object ID
-            Record record = GetRecordForObjectID(objectID); 
-            if (record != null) 
-            {
-                RecordManager.UpdateObject(record, obj);
-            }
-            else 
-            {
-                RecordManager.AppendObject(obj);
-            }   
+            this.Session.Transaction (() => {
+                PersistInternal (obj);                
+            });               
         }
 
         public void Destroy(T obj)
@@ -84,6 +75,19 @@ namespace Marcello.Collections
                 record = RecordManager.GetNextRecord(record);
             }
             return null;
+        }
+
+        void PersistInternal (T obj)
+        {
+            var objectID = new ObjectProxy (obj).ID;
+            //Try Load record with object ID
+            Record record = GetRecordForObjectID (objectID);
+            if (record != null) {
+                RecordManager.UpdateObject (record, obj);
+            }
+            else {
+                RecordManager.AppendObject (obj);
+            }
         }
         #endregion
     }
