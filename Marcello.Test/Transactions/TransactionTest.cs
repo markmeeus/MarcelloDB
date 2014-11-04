@@ -88,6 +88,28 @@ namespace Marcello.Test.Transactions
                 Assert.AreEqual(0, _articles.All.Count());
             });
         }
+
+        [Test]
+        public void TestRollbackInsert()
+        {
+            _marcello.Transaction (() => {
+                _articles.Persist(Article.BarbieDoll);
+                throw new Exception ("Rollback");
+            });
+            Assert.AreEqual(0, _articles.All.Count());
+        }
+
+        [Test][Ignore]//pending
+        public void TestRollbackUpdate()
+        {
+                    
+        }
+
+        [Test][Ignore]//pending
+        public void TestRollbackDestroy()
+        {
+            //pending
+        }
     }
 }
 
