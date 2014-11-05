@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Marcello
+namespace Marcello.Storage
 {
     public interface IStorageStream
     {

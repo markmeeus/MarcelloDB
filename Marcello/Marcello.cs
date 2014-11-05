@@ -3,6 +3,7 @@ using Marcello.AllocationStrategies;
 using Marcello.Collections;
 using Marcello.Serialization;
 using Marcello.Transactions;
+using Marcello.Storage;
 
 namespace Marcello
 {
@@ -12,12 +13,15 @@ namespace Marcello
 
         internal Transaction CurrentTransaction { get; set; }
 
+        internal Journal Journal { get; set; }
+
         public Marcello (IStorageStreamProvider streamProvider)
         {
             StreamProvider = streamProvider;
+            Journal = new Journal(this);
         }
 
-        public Collection<T> GetCollection<T>()
+        public Collection<T> Collection<T>()
         {
             return new Collection<T>(this, 
                 new BsonSerializer<T>(), 
@@ -52,7 +56,7 @@ namespace Marcello
         {
             if (CurrentTransaction == null) 
             {
-                CurrentTransaction = new Transaction();
+                CurrentTransaction = new Transaction(this);
             }
         }
         #endregion

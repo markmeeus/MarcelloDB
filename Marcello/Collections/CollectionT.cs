@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Marcello.AllocationStrategies;
 using Marcello.Records;
+using Marcello.Storage;
 
 namespace Marcello.Collections
 {
@@ -27,8 +28,7 @@ namespace Marcello.Collections
             Serializer = serializer;
 
             RecordManager = new RecordManager<T>(
-                Session, 
-                new StorageEngine<T>(Session.StreamProvider),
+                Session,
                 serializer,
                 new DoubleSizeAllocationStrategy()
             );
@@ -40,14 +40,14 @@ namespace Marcello.Collections
             get{
                 return new CollectionEnumerator<T>(RecordManager, Serializer);
             }
-        }
+        }            
 
         public void Persist(T obj)
         {
             this.Session.Transaction (() => {
                 PersistInternal (obj);                
             });               
-        }
+        }            
 
         public void Destroy(T obj)
         {
@@ -59,6 +59,21 @@ namespace Marcello.Collections
             //release the record if present
             RecordManager.ReleaseRecord(record);
         }
+
+        #region internal methods
+        internal void DestroyAll()
+        {
+            foreach(var o in All)
+            {
+                Destroy(o);
+            }        
+        }
+
+        internal void DisableJournal()
+        {
+            this.RecordManager.DisableJournal();
+        }
+        #endregion
 
         #region private methods
         Record GetRecordForObjectID(object objectID)

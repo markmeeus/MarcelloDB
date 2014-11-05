@@ -42,7 +42,6 @@
     <Compile Include="Serialization\ObjectProxy.cs" />
     <Compile Include="Storage\IStorageStream.cs" />
     <Compile Include="Storage\IStorageStreamProvider.cs" />
-    <Compile Include="Storage\StorageStreamCollection.cs" />
     <Compile Include="Marcello.cs" />
     <Compile Include="Serialization\BsonSerializer.cs" />
     <Compile Include="AllocationStrategies\IAllocationStrategy.cs" />
@@ -50,6 +49,14 @@
     <Compile Include="Storage\StorageEngine.cs" />
     <Compile Include="Attributes\IDAttribute.cs" />
     <Compile Include="Transactions\Transaction.cs" />
+    <Compile Include="Transactions\Journal.cs" />
+    <Compile Include="Transactions\JournalEntry.cs" />
+    <Compile Include="Storage\StreamActors\Reader.cs" />
+    <Compile Include="Storage\StreamActors\Writer.cs" />
+    <Compile Include="Storage\StreamActors\StreamActor.cs" />
+    <Compile Include="Storage\StreamActors\JournalledReader.cs" />
+    <Compile Include="Storage\StreamActors\JournalledWriter.cs" />
+    <Compile Include="Helpers\DataHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -60,6 +67,8 @@
     <Folder Include="AllocationStrategies\" />
     <Folder Include="Attributes\" />
     <Folder Include="Transactions\" />
+    <Folder Include="Storage\StreamActors\" />
+    <Folder Include="Helpers\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Marcello.csproj" />

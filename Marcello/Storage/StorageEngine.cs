@@ -1,32 +1,70 @@
 ﻿using System;
+using Marcello;
+using Marcello.Storage.StreamActors;
 
-namespace Marcello
+namespace Marcello.Storage
 {
-    internal class StorageEngine<T>
+    public abstract class StorageEngine
     {
-        internal IStorageStreamProvider StreamProvider { get; set; }
+        internal abstract byte[] Read (long address, int length);
 
-        internal StorageEngine(IStorageStreamProvider streamProvider)
+        internal abstract void Write (long address, byte[] bytes);
+
+        protected bool JournalEnabled { get; set; }
+
+        #region internal methods
+        internal void DisableJournal()
         {
-            StreamProvider = streamProvider;
+            JournalEnabled = false;
+        }
+        #endregion 
+    }
+
+    public class StorageEngine<T> : StorageEngine
+    {
+        internal Marcello Session { get; set; }
+
+        public StorageEngine(Marcello session)
+        {
+            Session = session;
+            JournalEnabled = true;
         }
 
-        internal byte[] Read(long address, int length)
+        internal override byte[] Read(long address, int length)
         {
-            return GetStream().Read(address, length);
+            return Reader().Read(address, length);
         }
                    
-        internal void Write(long address, byte[] bytes)
+        internal override void Write(long address, byte[] bytes)
         {
-            GetStream().Write(address, bytes);
+            Writer().Write(address, bytes);
+        }       
+            
+        #region reader/writer factories
+        Writer<T> Writer()
+        {
+            if (JournalEnabled) 
+            {    
+                return new JournalledWriter<T>(this.Session);
+            }
+            else 
+            {
+                return new Writer<T>(this.Session);
+            }
         }
 
-        #region private methods
-        private IStorageStream GetStream()
+        Reader<T> Reader()
         {
-            return StreamProvider.GetStream(typeof(T).Name);
+            if (JournalEnabled) 
+            {    
+                return new JournalledReader<T>(this.Session);
+            }
+            else 
+            {
+                return new Reader<T>(this.Session);
+            }
         }
-        #endregion
+        #endregion 
     }
 }
     

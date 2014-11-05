@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Marcello.Test.Transactions
 {
-    [TestFixture ()]
+    [TestFixture]
     public class TransactionTest
     {
         Marcello _marcello;
@@ -16,7 +16,7 @@ namespace Marcello.Test.Transactions
         public void Setup()
         {
             _marcello = new Marcello(new InMemoryStreamProvider());
-            _articles = _marcello.GetCollection<Article>();;
+            _articles = _marcello.Collection<Article>();;
         }
 
         [Test]
@@ -92,23 +92,48 @@ namespace Marcello.Test.Transactions
         [Test]
         public void TestRollbackInsert()
         {
-            _marcello.Transaction (() => {
-                _articles.Persist(Article.BarbieDoll);
-                throw new Exception ("Rollback");
-            });
+            try{
+                _marcello.Transaction (() => {
+                    _articles.Persist(Article.BarbieDoll);
+                    throw new Exception ("Rollback");
+                });
+            }catch(Exception){
+            }
             Assert.AreEqual(0, _articles.All.Count());
         }
 
-        [Test][Ignore]//pending
+        [Test]
         public void TestRollbackUpdate()
         {
-                    
+            var article = Article.BarbieDoll;
+            _articles.Persist(article);
+
+            try{
+                _marcello.Transaction (() => {
+                    article.Name = "UPDATED";
+                    _articles.Persist(article);
+                    throw new Exception ("Rollback");
+                });
+            }catch(Exception){}
+
+            Assert.AreEqual(Article.BarbieDoll.Name, _articles.All.First().Name, "Update should be rolled back");
         }
 
-        [Test][Ignore]//pending
+        [Test]
         public void TestRollbackDestroy()
         {           
-            //pending
+            var article = Article.BarbieDoll;
+            _articles.Persist(article);
+
+            try{
+                _marcello.Transaction (() => {
+                    _articles.Destroy(article);
+                    throw new Exception ("Rollback");
+                });
+            }catch(Exception){}
+
+            Assert.AreEqual(Article.BarbieDoll.Name, _articles.All.First().Name, "Destroy should be rolled back");
+           
         }
     }
 }
