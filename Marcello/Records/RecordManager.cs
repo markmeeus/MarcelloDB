@@ -1,6 +1,7 @@
 ﻿using System;
 using Marcello.AllocationStrategies;
 using Marcello.Serialization;
+using Marcello.Storage;
 
 namespace Marcello.Records
 {
@@ -13,17 +14,19 @@ namespace Marcello.Records
         IObjectSerializer<T> Serializer { get; set; }
 
         IAllocationStrategy AllocationStrategy { get; set; }
-               
+
+        bool JournalEnabled { get; set; }
+
         internal RecordManager(Marcello session,
-            StorageEngine<T> storageEngine,
             IObjectSerializer<T> serializer,
             IAllocationStrategy allocationStrategy
         )
         {
             Session = session;
-            StorageEngine = new StorageEngine<T>(Session.StreamProvider);
+            StorageEngine = new StorageEngine<T>(Session);
             Serializer = serializer;
             AllocationStrategy = allocationStrategy;
+            JournalEnabled = true; //journal by default
         }
 
         internal Record GetFirstRecord()
@@ -59,6 +62,14 @@ namespace Marcello.Records
             }
             return null;
         }
+
+        #region internal methods
+        internal void DisableJournal()
+        {
+            JournalEnabled = false;
+            StorageEngine.DisableJournal();
+        }
+        #endregion 
 
         #region private methods
         public void AppendObject(T obj)
@@ -153,7 +164,7 @@ namespace Marcello.Records
 
         void WriteHeader(Record record)
         {
-            StorageEngine.Write (record.Header.Address, record.Header.AsBytes());
+            StorageEngine.Write(record.Header.Address, record.Header.AsBytes());
         }
 
         Record ReadEntireRecord(Int64 address)
