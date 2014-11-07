@@ -8,21 +8,30 @@ namespace Marcello.Transactions
 
         internal bool Running { get; set; }
 
+        internal bool IsCommitting { get; set; }
+
         int Enlisted { get; set; }
 
         internal Transaction(Marcello session)
         {
             this.Session = session;
             this.Running = true;
+            this.IsCommitting = false;
         }
 
         internal void Enlist()
         {
+            if (this.IsCommitting)
+                return;
+
             this.Enlisted++;
         }
 
         internal void Leave()
         {
+            if (this.IsCommitting)
+                return;
+
             this.Enlisted--;
 
             if (this.Enlisted == 0) 
@@ -34,14 +43,16 @@ namespace Marcello.Transactions
 
         internal void Rollback()
         {
-            Session.Journal.Clear();
+            Session.Journal.ClearUncommitted();
             this.Running = false;
         }
 
         internal void Commit()
         {
+            this.IsCommitting = true;
+            Session.Journal.Commit();
             Session.Journal.Apply();
-            this.Running = false;
+            this.IsCommitting = false;
         }
     }
 }

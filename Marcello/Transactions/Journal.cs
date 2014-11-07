@@ -14,14 +14,17 @@ namespace Marcello.Transactions
 
         Collection<JournalEntry> JournalCollection { get; set; }               
 
+        List<JournalEntry> UncommittedEntries { get;set; }
+
         Dictionary<Type, StorageEngine> StorageEngines { get; set; }
 
         internal Journal (Marcello session)
         {
             this.Session = session;
             this.StorageEngines = new Dictionary<Type, StorageEngine>();
-            JournalCollection = session.Collection<JournalEntry>();
-            JournalCollection.DisableJournal(); //no journalling for the journal ofcourse
+            this.JournalCollection = session.Collection<JournalEntry>();
+            this.JournalCollection.DisableJournal(); //no journalling for the journal ofcourse
+            this.UncommittedEntries = new List<JournalEntry> ();
         }
 
         internal void Write (Type objectType, long address, byte[] data)
@@ -32,7 +35,16 @@ namespace Marcello.Transactions
                 Address = address, 
                 Data = data 
             };
-            this.JournalCollection.Persist (entry);
+            this.UncommittedEntries.Add(entry);
+        }
+
+        internal void Commit()
+        {
+            foreach (var entry in this.UncommittedEntries) 
+            {
+                this.JournalCollection.Persist(entry);
+            }
+            this.ClearUncommitted();
         }
 
         internal void Apply()
@@ -43,14 +55,12 @@ namespace Marcello.Transactions
                 engine.Write (entry.Address, entry.Data);
             }
 
-            this.Clear();
+            this.JournalCollection.DestroyAll();
         }
 
         internal void ApplyToData(Type objectType, Int64 address, byte[] data)
         {
-            var lastAddress = address + data.Length -1;
-
-            var entries = this.JournalCollection.All.Where(e => e.ObjectTypeName == objectType.AssemblyQualifiedName);
+            var entries = this.AllEntriesForObjectType(objectType);
 
             foreach (var entry in entries) 
             {
@@ -58,9 +68,9 @@ namespace Marcello.Transactions
             }
         }
 
-        internal void Clear()
+        internal void ClearUncommitted()
         {
-            this.JournalCollection.DestroyAll();
+            this.UncommittedEntries.Clear();
         }
 
         StorageEngine GetStorageEngineForEntry(JournalEntry entry)
@@ -75,6 +85,13 @@ namespace Marcello.Transactions
             }
 
             return this.StorageEngines[type];
+        }
+
+        IEnumerable<JournalEntry> AllEntriesForObjectType(Type objectType)
+        {
+            var allEntries = this.JournalCollection.All.Where(e => e.ObjectTypeName == objectType.AssemblyQualifiedName).ToList();
+            allEntries.AddRange(this.UncommittedEntries.Where(e => e.ObjectTypeName == objectType.AssemblyQualifiedName));
+            return allEntries;
         }
     }
 }
