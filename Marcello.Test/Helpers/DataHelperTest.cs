@@ -8,7 +8,7 @@ namespace Marcello.Test.Helpers
     public class DataHelperTest
     {
         [Test]
-        public void TestSameAddressAndLength()
+        public void Same_Address_And_Length()
         {
             var source = new byte[]{ 1, 2 };
             var target = new byte[]{ 3, 4 };
@@ -17,7 +17,7 @@ namespace Marcello.Test.Helpers
         }
 
         [Test]
-        public void TestSameAddressShorterSource()
+        public void Same_Address_Shorter_Source()
         {
             var source = new byte[]{ 1 };
             var target = new byte[]{ 3, 4 };
@@ -26,7 +26,7 @@ namespace Marcello.Test.Helpers
         }
 
         [Test]
-        public void TestSameAddressShorterTarget()
+        public void Same_Address_Shorter_Target()
         {
             var source = new byte[]{ 1, 2, 3 };
             var target = new byte[]{ 3, 4 };
@@ -35,7 +35,7 @@ namespace Marcello.Test.Helpers
         }
 
         [Test]
-        public void TestSourceEmbedsTarget()
+        public void Source_Embeds_Target()
         {
             var source = new byte[]{ 1, 2, 3, 4 };
             var target = new byte[]{ 5, 6 };
@@ -44,7 +44,7 @@ namespace Marcello.Test.Helpers
         }
 
         [Test]
-        public void TestSourceOverlapsTargetBefore()
+        public void Source_Overlaps_Target_Before()
         {
             var source = new byte[]{ 1, 2, 3, 4 };
             var target = new byte[]{ 5, 6, 7 };
@@ -53,7 +53,7 @@ namespace Marcello.Test.Helpers
         }
 
         [Test]
-        public void TestSourceOverlapsTargetAfter()
+        public void Source_Overlaps_Target_After()
         {
             var source = new byte[]{ 1, 2, 3, 4 };
             var target = new byte[]{ 5, 6, 7 };
@@ -62,7 +62,7 @@ namespace Marcello.Test.Helpers
         }
 
         [Test]
-        public void TestTargetEmbedsSource()
+        public void Target_Embeds_Source()
         {
             var source = new byte[]{ 1, 2 };
             var target = new byte[]{ 3, 4, 5, 6 };
@@ -71,7 +71,7 @@ namespace Marcello.Test.Helpers
         }
 
         [Test]
-        public void TestTargetRightBeforeSource()
+        public void Target_Right_Before_Source()
         {
             var source = new byte[]{ 1, 2 };
             var target = new byte[]{ 3, 4, 5, 6 };
@@ -80,7 +80,7 @@ namespace Marcello.Test.Helpers
         }
 
         [Test]
-        public void TestTargetFarBeforeSource()
+        public void Target_Far_Before_Source()
         {
             var source = new byte[]{ 1, 2 };
             var target = new byte[]{ 3, 4, 5, 6 };
@@ -90,7 +90,7 @@ namespace Marcello.Test.Helpers
 
 
         [Test]
-        public void TestTargetRightAfterSource()
+        public void Target_Right_After_Source()
         {
             var source = new byte[]{ 1, 2 };
             var target = new byte[]{ 3, 4, 5, 6 };
@@ -99,7 +99,7 @@ namespace Marcello.Test.Helpers
         }
 
         [Test]
-        public void TestTargetFarAfterSource()
+        public void Target_Far_After_Source()
         {
             var source = new byte[]{ 1, 2 };
             var target = new byte[]{ 3, 4, 5, 6 };

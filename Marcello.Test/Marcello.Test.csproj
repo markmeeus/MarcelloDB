@@ -36,14 +36,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Article.cs" />
-    <Compile Include="TestMarcello.cs" />
     <Compile Include="TestStream\InMemoryStream.cs" />
     <Compile Include="Classes\ClassesWithIDs.cs" />
     <Compile Include="Serialization\ObjectProxyTest.cs" />
     <Compile Include="Records\RecordHeaderTest.cs" />
     <Compile Include="Transactions\TransactionTest.cs" />
-    <Compile Include="Storage\TestStorageEngine.cs" />
     <Compile Include="Helpers\DataHelperTest.cs" />
+    <Compile Include="Storage\StorageEngineTest.cs" />
+    <Compile Include="MarcelloIntegrationTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

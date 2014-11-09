@@ -9,7 +9,7 @@ using Marcello.Test.Classes;
 namespace Marcello.Test
 {
     [TestFixture ()]
-    public class Test
+    public class MarcelloIntegrationTest
     {
         Marcello _marcello;
 
@@ -20,14 +20,14 @@ namespace Marcello.Test
         }
 
         [Test]
-        public void TestGetCollectionReturnsACollection()
+        public void Get_Collection_Returns_A_Collection()
         {
             var collection = _marcello.Collection<Article>();
             Assert.NotNull(collection, "Collection should not be null");
         }
 
         [Test]
-        public void TestInsertObjectShouldFindObject()
+        public void Insert_Object()
         {
             var toiletPaper = Article.ToiletPaper;
             _marcello.Collection<Article>().Persist(toiletPaper);
@@ -36,7 +36,7 @@ namespace Marcello.Test
         }
 
         [Test]
-        public void Test2Objects()
+        public void Insert_2_Objects()
         {
             var toiletPaper = Article.ToiletPaper;
             var spinalTapDvd = Article.SpinalTapDvd;
@@ -50,7 +50,7 @@ namespace Marcello.Test
         }
 
         [Test()]
-        public void TestMultipleObjects()
+        public void Insert_Multiple_Objects()
         {
             var toiletPaper = Article.ToiletPaper;
             var spinalTapDvd = Article.SpinalTapDvd;
@@ -65,7 +65,7 @@ namespace Marcello.Test
         }
 
         [Test]
-        public void TestUpdate()
+        public void Update()
         {
             var toiletPaper = Article.ToiletPaper;
             var spinalTapDvd = Article.SpinalTapDvd;
@@ -83,7 +83,7 @@ namespace Marcello.Test
         }
 
         [Test]
-        public void TestSmallUpdate()
+        public void Small_Update()
         {
             var toiletPaper = Article.ToiletPaper;
             var spinalTapDvd = Article.SpinalTapDvd;
@@ -100,7 +100,7 @@ namespace Marcello.Test
         }
 
         [Test]
-        public void TestLargeUpdate()
+        public void Large_Update()
         {
             var toiletPaper = Article.ToiletPaper;
             var spinalTapDvd = Article.SpinalTapDvd;
@@ -119,7 +119,7 @@ namespace Marcello.Test
         }
 
         [Test]
-        public void TestLargeUpdateForLastObject()
+        public void Large_Update_For_Last_Object()
         {
             var toiletPaper = Article.ToiletPaper;
             var spinalTapDvd = Article.SpinalTapDvd;
@@ -138,7 +138,7 @@ namespace Marcello.Test
         }
             
         [Test]
-        public void TestDeleteOnlyObject()
+        public void Delete_Only_Object()
         {
             var toiletPaper = Article.ToiletPaper;
 
@@ -150,7 +150,7 @@ namespace Marcello.Test
         }
 
         [Test]
-        public void TestDeleteFirstObject()
+        public void Delete_First_Object()
         {
             var toiletPaper = Article.ToiletPaper;
             var spinalTapDvd = Article.SpinalTapDvd;
@@ -165,7 +165,7 @@ namespace Marcello.Test
         }
 
         [Test]
-        public void TestDeleteMiddleObject()
+        public void Delete_Middle_Object()
         {
             var toiletPaper = Article.ToiletPaper;
             var spinalTapDvd = Article.SpinalTapDvd;
@@ -183,7 +183,7 @@ namespace Marcello.Test
         }
 
         [Test]
-        public void TestDeleteLastObject()
+        public void Delete_Last_Object()
         {
 
             var toiletPaper = Article.ToiletPaper;
@@ -202,7 +202,7 @@ namespace Marcello.Test
         }
 
         [Test]
-        public void DeleteLastInsertNew()
+        public void Delete_Last_Insert_New()
         {
             var toiletPaper = Article.ToiletPaper;
             var spinalTapDvd = Article.SpinalTapDvd;
@@ -220,7 +220,7 @@ namespace Marcello.Test
         }
 
         [Test]
-        public void DeleteOnlyOnlyInsertNew()
+        public void Delete_Only_Insert_New()
         {        
             var spinalTapDvd = Article.SpinalTapDvd;
 

@@ -20,7 +20,7 @@ namespace Marcello.Test.Transactions
         }
 
         [Test]
-        public void TestInsertWithinTransactionSucceeds()
+        public void Insert()
         {
             _marcello.Transaction(() => {
                 _articles.Persist(Article.BarbieDoll);
@@ -30,7 +30,7 @@ namespace Marcello.Test.Transactions
         }
 
         [Test]
-        public void TestInsertIsVisibleWithinTransaction(){
+        public void Insert_Visibility(){
             _marcello.Transaction(() => {
                 _articles.Persist(Article.BarbieDoll);
                 Assert.AreEqual(Article.BarbieDoll.ID, _articles.All.First().ID);
@@ -38,7 +38,7 @@ namespace Marcello.Test.Transactions
         }
 
         [Test]
-        public void TestUpdateWithinTransactionSucceeds()
+        public void Update()
         {
             var barbieDoll = Article.BarbieDoll;
             _articles.Persist(Article.BarbieDoll);
@@ -52,7 +52,7 @@ namespace Marcello.Test.Transactions
         }
 
         [Test]
-        public void TestUpdateIsVisibleWithinTransaction()
+        public void Update_Visibility()
         {
             var barbieDoll = Article.BarbieDoll;
             _articles.Persist(Article.BarbieDoll);
@@ -65,7 +65,7 @@ namespace Marcello.Test.Transactions
         }
 
         [Test]
-        public void TestDestroyWithinTransactionSucceeds()
+        public void Destroy()
         {
             var barbieDoll = Article.BarbieDoll;
             _articles.Persist(Article.BarbieDoll);
@@ -78,7 +78,7 @@ namespace Marcello.Test.Transactions
         }
 
         [Test]
-        public void TestDestroyIsVisibleWithinTransaction()
+        public void Destroy_Visibility()
         {
             var barbieDoll = Article.BarbieDoll;
             _articles.Persist(Article.BarbieDoll);
@@ -90,7 +90,7 @@ namespace Marcello.Test.Transactions
         }
 
         [Test]
-        public void TestRollbackInsert()
+        public void Insert_Rollback()
         {
             try{
                 _marcello.Transaction (() => {
@@ -103,7 +103,7 @@ namespace Marcello.Test.Transactions
         }
 
         [Test]
-        public void TestRollbackUpdate()
+        public void Update_Rollback()
         {
             var article = Article.BarbieDoll;
             _articles.Persist(article);
@@ -120,7 +120,7 @@ namespace Marcello.Test.Transactions
         }
 
         [Test]
-        public void TestRollbackDestroy()
+        public void Rollback_Destroy()
         {           
             var article = Article.BarbieDoll;
             _articles.Persist(article);
