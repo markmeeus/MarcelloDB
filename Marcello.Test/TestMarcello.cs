@@ -83,6 +83,23 @@ namespace Marcello.Test
         }
 
         [Test]
+        public void TestSmallUpdate()
+        {
+            var toiletPaper = Article.ToiletPaper;
+            var spinalTapDvd = Article.SpinalTapDvd;
+
+            _marcello.Collection<Article>().Persist(toiletPaper);
+            _marcello.Collection<Article>().Persist(spinalTapDvd);
+            toiletPaper.Name = "Short";
+            _marcello.Collection<Article>().Persist(toiletPaper);
+
+            var articleNames = _marcello.Collection<Article>().All.Select(a => a.Name).ToList();
+            articleNames.Sort();
+
+            Assert.AreEqual(new List<string>{spinalTapDvd.Name, toiletPaper.Name}, articleNames, "Should return updated article names");
+        }
+
+        [Test]
         public void TestLargeUpdate()
         {
             var toiletPaper = Article.ToiletPaper;
@@ -101,6 +118,25 @@ namespace Marcello.Test
             Assert.AreEqual(new List<string>{spinalTapDvd.Name, toiletPaper.Name}, articleNames, "Should return updated article names");
         }
 
+        [Test]
+        public void TestLargeUpdateForLastObject()
+        {
+            var toiletPaper = Article.ToiletPaper;
+            var spinalTapDvd = Article.SpinalTapDvd;
+
+            _marcello.Collection<Article>().Persist(toiletPaper);
+            _marcello.Collection<Article>().Persist(spinalTapDvd);
+
+            spinalTapDvd.Name += "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus in lorem porta, mollis odio sit amet, tincidunt leo. Aliquam suscipit sapien nec orci fermentum imperdiet. Sed id est ante. Aliquam nec nibh id purus fermentum lobortis. Morbi posuere ullamcorper diam, in tincidunt mi pulvinar ut. Nam imperdiet mi a viverra congue. Proin eros metus, vehicula tempus eros vitae, pulvinar posuere nisi. Sed volutpat laoreet tortor. Sed sagittis nunc sed dui sollicitudin porta. Donec non neque ut erat commodo convallis vel ac dolor. Quisque eu lectus dapibus, varius sem non, semper dolor. Morbi at venenatis tellus. Integer efficitur neque ornare, lobortis nisi suscipit, consequat purus. Aliquam erat volutpat.";
+
+            _marcello.Collection<Article>().Persist(spinalTapDvd);
+
+            var articleNames = _marcello.Collection<Article>().All.Select(a => a.Name).ToList();
+            articleNames.Sort();
+
+            Assert.AreEqual(new List<string>{spinalTapDvd.Name, toiletPaper.Name}, articleNames, "Should return updated article names");
+        }
+            
         [Test]
         public void TestDeleteOnlyObject()
         {

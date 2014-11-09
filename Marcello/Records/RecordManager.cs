@@ -80,14 +80,13 @@ namespace Marcello.Records
 
             record.Header.AllocatedSize = AllocationStrategy.CalculateSize(record);
 
-
             record.Data = new byte[record.Header.AllocatedSize];
             data.CopyTo(record.Data, 0);
 
             var lastRecord = GetLastRecord();
             if (lastRecord != null) 
             {
-                record.Header.Address = lastRecord.Header.Address + lastRecord.Header.AllocatedSize;
+                record.Header.Address = lastRecord.Header.Address + lastRecord.ByteSize;
                 record.Header.Previous = lastRecord.Header.Address;
                 lastRecord.Header.Next = record.Header.Address;         
                 WriteHeader(lastRecord);
@@ -105,7 +104,7 @@ namespace Marcello.Records
         public void UpdateObject(Record record, T obj)
         {
             var bytes = Serializer.Serialize(obj);
-            if (bytes.Length > record.Header.AllocatedSize) 
+            if (bytes.Length > record.Header.AllocatedSize )
             {
                 ReleaseRecord(record);
                 AppendObject(obj); 

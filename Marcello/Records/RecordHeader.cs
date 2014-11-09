@@ -41,7 +41,7 @@ namespace Marcello.Records
         internal static RecordHeader New (){ return new RecordHeader();}
 
         internal static RecordHeader FromBytes(Int64 address, byte[] bytes)
-        {
+        {         
             return new RecordHeader() {
                 Next = BitConverter.ToInt64(bytes, NEXT_OFFSET),
                 Previous = BitConverter.ToInt64(bytes, PREVIOUS_OFFSET),

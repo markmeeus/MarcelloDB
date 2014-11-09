@@ -12,9 +12,17 @@ namespace Marcello.Records
             Header = RecordHeader.New();
         }
 
+        internal Int32 ByteSize
+        {
+            get
+            {
+                return RecordHeader.ByteSize + Header.AllocatedSize;
+            }
+        }
+
         internal byte[] AsBytes()
         {
-            var bytes = new byte[RecordHeader.ByteSize + Header.AllocatedSize];
+            var bytes = new byte[this.ByteSize];
             Header.AsBytes ().CopyTo(bytes, 0);
             Data.CopyTo(bytes, RecordHeader.ByteSize);
             return bytes;
