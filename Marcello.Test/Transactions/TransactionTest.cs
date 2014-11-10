@@ -16,7 +16,7 @@ namespace Marcello.Test.Transactions
         public void Setup()
         {
             _marcello = new Marcello(new InMemoryStreamProvider());
-            _articles = _marcello.Collection<Article>();;
+            _articles = _marcello.Collection<Article>();
         }
 
         [Test]
