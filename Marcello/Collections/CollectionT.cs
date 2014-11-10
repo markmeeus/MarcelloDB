@@ -9,7 +9,9 @@ using Marcello.Storage;
 
 namespace Marcello.Collections
 {
-    public class Collection<T>
+    public class Collection{}
+
+    public class Collection<T> : Collection
     {
         Marcello Session { get; set; }
 

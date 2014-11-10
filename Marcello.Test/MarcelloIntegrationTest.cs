@@ -21,12 +21,18 @@ namespace Marcello.Test
             _marcello = new Marcello(new InMemoryStreamProvider());
             _articles = _marcello.Collection<Article>();
         }
-
+            
         [Test]
-        public void Get_Collection_Returns_A_Collection()
+        public void Collection_Returns_A_Collection()
         {
             var collection = _articles;
             Assert.NotNull(collection, "Collection should not be null");
+        }
+
+        [Test]
+        public void Collections_Are_Reused_Per_Session()
+        {
+            Assert.AreSame(_marcello.Collection<Article>(), _marcello.Collection<Article>());
         }
 
         [Test]

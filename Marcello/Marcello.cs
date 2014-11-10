@@ -4,11 +4,14 @@ using Marcello.Collections;
 using Marcello.Serialization;
 using Marcello.Transactions;
 using Marcello.Storage;
+using System.Collections.Generic;
 
 namespace Marcello
 {
     public class Marcello
     {
+        internal Dictionary<Type, Collection> Collections { get; set; }
+
         internal IStorageStreamProvider StreamProvider { get; set; }
 
         internal Transaction CurrentTransaction { get; set; }
@@ -17,15 +20,21 @@ namespace Marcello
 
         public Marcello (IStorageStreamProvider streamProvider)
         {
+            Collections = new Dictionary<Type, Collection>();
             StreamProvider = streamProvider;
             Journal = new Journal(this);
         }
 
         public Collection<T> Collection<T>()
         {
-            return new Collection<T>(this, 
-                new BsonSerializer<T>(), 
-                new DoubleSizeAllocationStrategy());
+            if(!Collections.ContainsKey(typeof(T))){
+                Collections.Add (typeof(T), 
+                    new Collection<T> (this, 
+                        new BsonSerializer<T> (), 
+                        new DoubleSizeAllocationStrategy ())
+                );
+            }
+            return (Collection<T>)Collections[typeof(T)];
         }
 
         public void Transaction(Action action)
