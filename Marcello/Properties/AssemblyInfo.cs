@@ -25,4 +25,4 @@ using System.Runtime.CompilerServices;
 //[assembly: AssemblyDelaySign(false)]
 //[assembly: AssemblyKeyFile("")]
 
-[InternalsVisibleTo("Marcello.Test")]
+[assembly :InternalsVisibleTo("Marcello.Test")]
