@@ -40,7 +40,7 @@ namespace Marcello.Collections
         public IEnumerable<T> All
         {
             get{
-                return new CollectionEnumerator<T>(RecordManager, Serializer);
+                return new CollectionEnumerator<T>(this.Session, RecordManager, Serializer);
             }
         }            
 
@@ -53,13 +53,9 @@ namespace Marcello.Collections
 
         public void Destroy(T obj)
         {
-            var objectID = new ObjectProxy(obj).ID;
-
-            //Try Load record with object ID
-            Record record = GetRecordForObjectID(objectID); 
-
-            //release the record if present
-            RecordManager.ReleaseRecord(record);
+            this.Session.Transaction (() => {
+                DestroyInternal(obj);
+            });
         }
 
         #region internal methods
@@ -79,7 +75,7 @@ namespace Marcello.Collections
 
         #region private methods
         Record GetRecordForObjectID(object objectID)
-        {
+        {        
             //temp implementation untill ID is indexed
             var record = RecordManager.GetFirstRecord ();
 
@@ -105,6 +101,15 @@ namespace Marcello.Collections
             else {
                 RecordManager.AppendObject (obj);
             }
+        }
+
+        void DestroyInternal (T obj)
+        {
+            var objectID = new ObjectProxy (obj).ID;
+            //Try Load record with object ID
+            Record record = GetRecordForObjectID (objectID);
+            //release the record if present
+            RecordManager.ReleaseRecord (record);
         }
         #endregion
     }

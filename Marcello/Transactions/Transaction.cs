@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Marcello.Transactions
 {
@@ -51,8 +52,18 @@ namespace Marcello.Transactions
         {
             this.IsCommitting = true;
             Session.Journal.Commit();
-            Session.Journal.Apply();
-            this.IsCommitting = false;
+            this.IsCommitting = false;        
+            ApplyAsync();
+        }
+
+        void ApplyAsync()
+        {
+            Task.Run (() => {
+                lock (this.Session.SyncLock) 
+                {
+                    Session.Journal.Apply();
+                }
+            });
         }
     }
 }

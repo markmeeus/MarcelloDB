@@ -11,10 +11,15 @@ namespace Marcello.Collections
         RecordManager<T> RecordManager  { get; set; }
 
         IObjectSerializer<T> Serializer { get; set; }
-        
-        public CollectionEnumerator(RecordManager<T> recordManager, 
+
+        Marcello Session { get; set; }
+
+        public CollectionEnumerator(
+            Marcello session,
+            RecordManager<T> recordManager, 
             IObjectSerializer<T> serializer)
         {   
+            Session = session;
             RecordManager = recordManager;
             Serializer = serializer;
         }
@@ -23,13 +28,14 @@ namespace Marcello.Collections
 
         public IEnumerator<T> GetEnumerator()
         {
-            var record = RecordManager.GetFirstRecord();
-
-            while (record != null) {
-                var obj = Serializer.Deserialize(record.Data);
-                yield return obj;
-                record = RecordManager.GetNextRecord(record);
-            }
+            lock(this.Session.SyncLock){
+                var record = RecordManager.GetFirstRecord();
+                while (record != null) {
+                    var obj = Serializer.Deserialize(record.Data);
+                    yield return obj;
+                    record = RecordManager.GetNextRecord(record);
+                }
+            }            
         }
         #endregion
 

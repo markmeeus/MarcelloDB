@@ -168,7 +168,7 @@ namespace Marcello.Records
 
         Record ReadEntireRecord(Int64 address)
         {
-            var header = RecordHeader.FromBytes(address, StorageEngine.Read (address, RecordHeader.ByteSize));
+            var header = RecordHeader.FromBytes(address, StorageEngine.Read(address, RecordHeader.ByteSize));
             var allBytes = StorageEngine.Read(address, header.AllocatedSize);
             var record =  Record.FromBytes(address, allBytes);
             return record;

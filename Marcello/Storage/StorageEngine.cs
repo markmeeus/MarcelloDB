@@ -1,6 +1,7 @@
 ﻿using System;
 using Marcello;
 using Marcello.Storage.StreamActors;
+using Marcello.Transactions.__;
 
 namespace Marcello.Storage
 {
@@ -27,7 +28,7 @@ namespace Marcello.Storage
         public StorageEngine(Marcello session)
         {
             Session = session;
-            JournalEnabled = true;
+            JournalEnabled = typeof(T) != typeof(TransactionJournal);
         }
 
         internal override byte[] Read(long address, int length)
@@ -38,7 +39,7 @@ namespace Marcello.Storage
         internal override void Write(long address, byte[] bytes)
         {
             Writer().Write(address, bytes);
-        }       
+        }                   
             
         #region reader/writer factories
         Writer<T> Writer()
