@@ -7,7 +7,7 @@ namespace Marcello.Test
 {
     public class InMemoryStream : IStorageStream
     {
-        MemoryStream BackingStream { get; set; }
+        public MemoryStream BackingStream { get; set; }
 
         public InMemoryStream()
         {

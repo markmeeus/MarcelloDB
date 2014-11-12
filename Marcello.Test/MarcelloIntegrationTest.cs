@@ -14,11 +14,13 @@ namespace Marcello.Test
     {
         Marcello _marcello;
         Collection<Article> _articles;
+        InMemoryStreamProvider _provider;
 
         [SetUp]
         public void Setup()
         {
-            _marcello = new Marcello(new InMemoryStreamProvider());
+            _provider = new InMemoryStreamProvider();
+            _marcello = new Marcello(_provider);
             _articles = _marcello.Collection<Article>();
         }
             
@@ -244,6 +246,23 @@ namespace Marcello.Test
             Assert.AreEqual(1, _articles.All.Count());
             Assert.AreEqual(barbieDoll.ID, _articles.All.First().ID);
             Assert.AreEqual(barbieDoll.ID, _articles.All.Last().ID);
+        }
+
+        [Test]
+        public void Delete_And_Insert_Reuse_Storage_Space()
+        {
+            var barbieDoll = Article.BarbieDoll;
+            var spinalTapDvd = Article.SpinalTapDvd;
+
+            _articles.Persist(barbieDoll);
+            _articles.Persist(spinalTapDvd);
+
+            var storageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
+            _articles.Destroy(barbieDoll);
+            _articles.Persist(barbieDoll);
+
+            var newStorageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
+            Assert.AreEqual(storageSize, newStorageSize);
         }
     }
 }
