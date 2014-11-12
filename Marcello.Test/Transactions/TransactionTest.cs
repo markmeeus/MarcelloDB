@@ -120,7 +120,7 @@ namespace Marcello.Test.Transactions
         }
 
         [Test]
-        public void Rollback_Destroy()
+        public void Destroy_Rollback()
         {           
             var article = Article.BarbieDoll;
             _articles.Persist(article);
