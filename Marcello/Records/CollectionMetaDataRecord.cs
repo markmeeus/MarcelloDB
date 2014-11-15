@@ -6,6 +6,8 @@ namespace Marcello.Records
 	{
 		internal Int64 FirstRecordAddress { get; set; }
         internal Int64 LastRecordAddress { get; set; }
+        internal Int64 FirstEmptyRecordAddress { get; set; }
+        internal Int64 LastEmptyRecordAddress { get; set; }
 
 		internal CollectionMetaDataRecord()
 		{
