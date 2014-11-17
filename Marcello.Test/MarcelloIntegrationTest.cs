@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 using Marcello;
-using System.Collections.Generic;
 using Marcello.Test.Classes;
 using Marcello.Collections;
 
@@ -259,9 +259,13 @@ namespace Marcello.Test
             _articles.Persist(barbieDoll);
             _articles.Persist(spinalTapDvd);
 
+            _marcello.Journal.Apply (); //make sure the journal is applied to the backing stream
+
             var storageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
             _articles.Destroy(barbieDoll);
             _articles.Persist(barbieDoll);
+
+            _marcello.Journal.Apply (); //make sure the journal is applied to the backing stream
 
             var newStorageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
             Assert.AreEqual(storageSize, newStorageSize);
