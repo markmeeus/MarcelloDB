@@ -42,13 +42,19 @@ namespace Marcello.Records
 
         internal static RecordHeader FromBytes(Int64 address, byte[] bytes)
         {         
-            return new RecordHeader() {
-                Next = BitConverter.ToInt64(bytes, NEXT_OFFSET),
-                Previous = BitConverter.ToInt64(bytes, PREVIOUS_OFFSET),
-                DataSize = BitConverter.ToInt32(bytes, DATASIZE_OFFSET),
-                AllocatedSize = BitConverter.ToInt32(bytes, ALLOCATEDSIZE_OFFSET),
-                Address = address
-            };
+            try{
+
+                return new RecordHeader() {
+                    Next = BitConverter.ToInt64(bytes, NEXT_OFFSET),
+                    Previous = BitConverter.ToInt64(bytes, PREVIOUS_OFFSET),
+                    DataSize = BitConverter.ToInt32(bytes, DATASIZE_OFFSET),
+                    AllocatedSize = BitConverter.ToInt32(bytes, ALLOCATEDSIZE_OFFSET),
+                    Address = address
+                };
+            }catch(Exception e) 
+            {
+                return null;
+            }
         }
         #endregion
     }

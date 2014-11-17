@@ -50,7 +50,9 @@ namespace Marcello.Test
         [Test]
         public void Insert_2_Objects()
         {
+
             var toiletPaper = Article.ToiletPaper;
+
             var spinalTapDvd = Article.SpinalTapDvd;
 
             _articles.Persist(toiletPaper);

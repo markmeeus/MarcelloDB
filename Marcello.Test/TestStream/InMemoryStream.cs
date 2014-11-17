@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.IO;
 using Marcello.Storage;
+using System.Diagnostics;
 
 namespace Marcello.Test
 {
     public class InMemoryStream : IStorageStream
     {
         public MemoryStream BackingStream { get; set; }
-
-        public InMemoryStream()
+        public string Name {get; set; }
+        public InMemoryStream(string name)
         {
             BackingStream = new MemoryStream ();
+            this.Name = name;
         }
 
         #region IStorageStream implementation
@@ -26,6 +28,9 @@ namespace Marcello.Test
 
         public void Write (long address, byte[] bytes)
         {
+            var con = System.Text.Encoding.UTF8.GetString(bytes).Replace("\0", "0");
+            Console.Write (string.Format ("{0} Writing {1} bytes at {2} : {3}", this.Name, bytes.Length, address, con));
+            Console.WriteLine ();
             BackingStream.Seek (address, SeekOrigin.Begin);
             BackingStream.Write (bytes, 0, (int)bytes.Length);
         }
@@ -47,7 +52,7 @@ namespace Marcello.Test
         {
             if(!Streams.ContainsKey(streamName))
             {
-                Streams.Add (streamName, new InMemoryStream ());
+                Streams.Add (streamName, new InMemoryStream (streamName));
             }
             return Streams [streamName];
         }

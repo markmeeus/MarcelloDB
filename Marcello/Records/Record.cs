@@ -30,6 +30,7 @@ namespace Marcello.Records
 
         internal static Record FromBytes(Int64 address, byte[] bytes)
         {
+
             var header = RecordHeader.FromBytes(address, bytes);
             var data = new byte[header.DataSize];
         

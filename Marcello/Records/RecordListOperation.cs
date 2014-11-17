@@ -73,7 +73,8 @@ namespace Marcello.Records
                 var lastRecord = FetchRecord(ListEndPoints.EndAddress);
                 if (this.Record.Header.Address == 0) 
                 {
-                    Touch(this.Record).Header.Address = lastRecord.Header.Address + lastRecord.Header.AllocatedSize;
+                    Touch(this.Record).Header.Address = lastRecord.Header.Address + 
+                        RecordHeader.ByteSize + lastRecord.Header.AllocatedSize;
                 }
                 Touch(this.Record).Header.Previous = lastRecord.Header.Address;
                 Touch(lastRecord).Header.Next = this.Record.Header.Address;

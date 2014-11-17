@@ -77,34 +77,34 @@ namespace Marcello.Records
             var record = new Record();
             var data = Serializer.Serialize(obj);
             record.Header.DataSize = data.Length;
-
             record.Header.AllocatedSize = AllocationStrategy.CalculateSize(record);
-
             record.Data = new byte[record.Header.AllocatedSize];
             data.CopyTo(record.Data, 0);
 
-            var lastRecord = GetLastRecord();
-            if (lastRecord != null) 
-            {
-                record.Header.Address = lastRecord.Header.Address + lastRecord.ByteSize;
-                record.Header.Previous = lastRecord.Header.Address;
-                lastRecord.Header.Next = record.Header.Address;         
-                WriteHeader(lastRecord);
-            }
-            else 
-            {
-                record.Header.Address = CollectionMetaDataRecord.ByteSize; //first record starts after the metadata record         
-                SetFirstRecord(record);
-            }
+            var metaDataRecord = this.GetMetaDataRecord (); 
+            var operation = new RecordListAppendOperation (
+                new ListEndPoints(metaDataRecord.FirstRecordAddress, metaDataRecord.LastRecordAddress),
+                CollectionMetaDataRecord.ByteSize,
+                (address) => {
+                    return ReadEntireRecord(address);
+                });
+            operation.Record = record;
+            operation.Apply();
+
+            foreach(var touchedRecord in operation.TouchedRecords){
+                WriteHeader(touchedRecord);
+            };
 
             StorageEngine.Write(record.Header.Address, record.AsBytes());
-            SetLastRecord (record);
+            metaDataRecord.FirstRecordAddress = operation.ListEndPoints.StartAddress;
+            metaDataRecord.LastRecordAddress = operation.ListEndPoints.EndAddress;
+            SaveMetaDataRecord(metaDataRecord);
         }
 
         public void UpdateObject(Record record, T obj)
         {
             var bytes = Serializer.Serialize(obj);
-            if (bytes.Length > record.Header.AllocatedSize )
+            if (bytes.Length >= record.Header.AllocatedSize )
             {
                 ReleaseRecord(record);
                 AppendObject(obj); 
