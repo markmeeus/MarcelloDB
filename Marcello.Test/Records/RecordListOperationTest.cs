@@ -69,7 +69,9 @@ namespace Marcello.Test.Records
             var record = new Record();
             var operation = CreateListAppendOperationWithItems(1, record);
             operation.Apply();
-            Assert.AreEqual(200, record.Header.Address); 
+            var firstRecord = operation.LoadRecord (operation.ListEndPoints.StartAddress);
+            Assert.AreEqual(firstRecord.Header.Address + RecordHeader.ByteSize + firstRecord.Header.AllocatedSize,
+                record.Header.Address); 
         }
 
         [Test]
