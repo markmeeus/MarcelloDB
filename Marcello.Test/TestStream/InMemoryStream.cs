@@ -20,6 +20,8 @@ namespace Marcello.Test
 
         public byte[] Read (long address, int length)
         {
+            if (length == 0) {
+            }
             byte[] result = new byte[length];
             BackingStream.Seek (address, SeekOrigin.Begin);
             BackingStream.Read (result, 0, length);

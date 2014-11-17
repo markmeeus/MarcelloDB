@@ -65,22 +65,10 @@ namespace Marcello.Records
             record.Data = new byte[record.Header.AllocatedSize];
             data.CopyTo(record.Data, 0);
 
-            var metaDataRecord = this.GetMetaDataRecord (); 
-            var operation = new RecordListAppendOperation (
-                metaDataRecord.DataListEndPoints,
-                CollectionMetaDataRecord.ByteSize,
-                (address) => {
-                    return ReadEntireRecord(address);
-                });
-            operation.Record = record;
-            operation.Apply();
-
-            foreach(var touchedRecord in operation.TouchedRecords){
-                WriteHeader(touchedRecord);
-            };
-
-            StorageEngine.Write(record.Header.Address, record.AsBytes());
-            SaveMetaDataRecord(metaDataRecord);
+            ReuseEmptyRecordHeader(record);
+            var metaDataRecord = GetMetaDataRecord ();
+            AppendRecord(record, metaDataRecord.DataListEndPoints); 
+            SaveMetaDataRecord (metaDataRecord);        
         }
 
         public void UpdateObject(Record record, T obj)
@@ -116,7 +104,15 @@ namespace Marcello.Records
                 WriteHeader(touchedRecord);
             };
 
+            record.Header.Next = 0;
+            record.Header.Previous = 0;
             StorageEngine.Write(record.Header.Address, record.AsBytes());
+            AppendRecord(record, metaDataRecord.EmptyListEndPoints);
+            if (metaDataRecord.DataListEndPoints.StartAddress == 0) 
+            {
+                metaDataRecord.EmptyListEndPoints.StartAddress = 0;
+                metaDataRecord.EmptyListEndPoints.EndAddress = 0;
+            }
             SaveMetaDataRecord(metaDataRecord);
         }
             
@@ -142,6 +138,48 @@ namespace Marcello.Records
         void SaveMetaDataRecord(CollectionMetaDataRecord record)
         {
             StorageEngine.Write(0, record.AsBytes());
+        }
+
+        void AppendRecord (Record record, ListEndPoints listEndPoints)
+        {
+            var operation = new RecordListAppendOperation(
+                listEndPoints, 
+                CollectionMetaDataRecord.ByteSize, address =>  {
+                return ReadEntireRecord (address);
+            });
+            operation.Record = record;
+            operation.Apply ();
+            foreach (var touchedRecord in operation.TouchedRecords) {
+                WriteHeader (touchedRecord);
+            }
+
+            StorageEngine.Write (record.Header.Address, record.AsBytes ());
+        }
+
+        private void ReuseEmptyRecordHeader (Record record)
+        {
+            var metaDataRecord = GetMetaDataRecord();
+            if (metaDataRecord.EmptyListEndPoints.StartAddress > 0) 
+            {
+                var emptyRecord = ReadEntireRecord(metaDataRecord.EmptyListEndPoints.StartAddress);
+                while(emptyRecord != null)
+                {
+                    if(emptyRecord.Header.AllocatedSize > record.Header.DataSize)
+                    {
+                        //copy header
+                        record.Header = emptyRecord.Header;
+                        return;
+                    }
+                    if (emptyRecord.Header.Next > 0) 
+                    {
+                        emptyRecord = ReadEntireRecord (emptyRecord.Header.Next);
+                    } 
+                    else 
+                    {
+                        emptyRecord = null;
+                    }
+                }
+            }
         }
         #endregion
     }

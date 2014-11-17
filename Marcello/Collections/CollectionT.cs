@@ -61,7 +61,8 @@ namespace Marcello.Collections
         #region internal methods
         internal void DestroyAll()
         {
-            foreach(var o in All)
+            var toDestroy = All.ToList ();
+            foreach(var o in toDestroy)
             {
                 Destroy(o);
             }        

@@ -3,12 +3,9 @@
 namespace Marcello.Records
 {
 	internal class CollectionMetaDataRecord
-	{
-		
-        internal Int64 FirstEmptyRecordAddress { get; set; }
-        internal Int64 LastEmptyRecordAddress { get; set; }
-
+	{		
         internal ListEndPoints DataListEndPoints { get; set;}
+        internal ListEndPoints EmptyListEndPoints { get; set;}
 
 		internal CollectionMetaDataRecord()
 		{
@@ -25,9 +22,15 @@ namespace Marcello.Records
                 BitConverter.ToInt64(bytes, 0),
                 BitConverter.ToInt64(bytes, sizeof(Int64))
             );
+            var emptyListEndPoints = new ListEndPoints(
+                BitConverter.ToInt64(bytes, 2*sizeof(Int64)),
+                BitConverter.ToInt64(bytes, 3*sizeof(Int64))
+            );
             return new CollectionMetaDataRecord(){                    
-                DataListEndPoints = dataListEndPoints    
+                DataListEndPoints = dataListEndPoints,
+                EmptyListEndPoints = emptyListEndPoints
             };
+
         }
 
         internal byte[] AsBytes()
@@ -35,6 +38,9 @@ namespace Marcello.Records
             var bytes = new byte[ByteSize];
             BitConverter.GetBytes(this.DataListEndPoints.StartAddress).CopyTo(bytes, 0);
             BitConverter.GetBytes(this.DataListEndPoints.EndAddress).CopyTo(bytes, sizeof(Int64));
+            BitConverter.GetBytes(this.EmptyListEndPoints.StartAddress).CopyTo(bytes, 2*sizeof(Int64));
+            BitConverter.GetBytes(this.EmptyListEndPoints.EndAddress).CopyTo(bytes, 3*sizeof(Int64));
+
             return bytes;
         }
 	}
