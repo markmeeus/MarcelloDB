@@ -295,6 +295,27 @@ namespace Marcello.Test
             var newStorageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
             Assert.AreEqual(storageSize, newStorageSize);
         }
+
+        [Test]
+        public void Save_To_File_Stream()
+        {
+            var fileStreamProvider =  new FileStorageStreamProvider("//Users/markmeeus/documents/tmp/marcello");
+            var marcello = new Marcello (fileStreamProvider);
+
+            var toiletPaper = Article.ToiletPaper;
+            var spinalTapDvd = Article.SpinalTapDvd;
+            var barbieDoll = Article.BarbieDoll;
+
+            var articles = marcello.Collection<Article>();
+
+            articles.Persist(toiletPaper);
+            articles.Persist(spinalTapDvd);
+            articles.Persist(barbieDoll);
+
+            var articleNames = articles.All.Select(a => a.Name).ToList();
+
+            Assert.AreEqual(new List<string>{toiletPaper.Name, spinalTapDvd.Name, barbieDoll.Name }, articleNames);
+        }
     }
 }
 
