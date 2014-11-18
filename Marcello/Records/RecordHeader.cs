@@ -48,7 +48,7 @@ namespace Marcello.Records
                 DataSize = BitConverter.ToInt32(bytes, DATASIZE_OFFSET),
                 AllocatedSize = BitConverter.ToInt32(bytes, ALLOCATEDSIZE_OFFSET),
                 Address = address
-            };
+            };           
         }
         #endregion
     }

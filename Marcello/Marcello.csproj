@@ -57,6 +57,8 @@
     <Compile Include="Storage\StreamActors\JournalledReader.cs" />
     <Compile Include="Storage\StreamActors\JournalledWriter.cs" />
     <Compile Include="Helpers\DataHelper.cs" />
+    <Compile Include="Records\ListEndPoints.cs" />
+    <Compile Include="Records\RecordListOperation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>

@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace Marcello.Test.Records
 {
-    [TestFixture ()]
+    [TestFixture]
     public class RecordHeaderTest
     {
         [Test]

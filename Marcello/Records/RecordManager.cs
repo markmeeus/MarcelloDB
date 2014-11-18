@@ -31,7 +31,7 @@ namespace Marcello.Records
 
         internal Record GetFirstRecord()
         {
-            var firstRecordAddress = GetMetaDataRecord().FirstRecordAddress;
+            var firstRecordAddress = GetMetaDataRecord().DataListEndPoints.StartAddress;
             if (firstRecordAddress > 0) {
                 return ReadEntireRecord(firstRecordAddress);
             }
@@ -46,22 +46,6 @@ namespace Marcello.Records
             return null;
         }
 
-        internal Record GetPreviousRecord(Record record)
-        {
-            if (record.Header.Previous > 0) {
-                return ReadEntireRecord(record.Header.Previous);
-            }
-            return null;
-        }
-            
-        internal Record GetLastRecord()
-        {
-            var lastRecordAddress = GetMetaDataRecord().LastRecordAddress;
-            if (lastRecordAddress > 0) {
-                return ReadEntireRecord (lastRecordAddress);
-            }
-            return null;
-        }
 
         #region internal methods
         internal void DisableJournal()
@@ -77,34 +61,20 @@ namespace Marcello.Records
             var record = new Record();
             var data = Serializer.Serialize(obj);
             record.Header.DataSize = data.Length;
-
             record.Header.AllocatedSize = AllocationStrategy.CalculateSize(record);
-
             record.Data = new byte[record.Header.AllocatedSize];
             data.CopyTo(record.Data, 0);
 
-            var lastRecord = GetLastRecord();
-            if (lastRecord != null) 
-            {
-                record.Header.Address = lastRecord.Header.Address + lastRecord.ByteSize;
-                record.Header.Previous = lastRecord.Header.Address;
-                lastRecord.Header.Next = record.Header.Address;         
-                WriteHeader(lastRecord);
-            }
-            else 
-            {
-                record.Header.Address = CollectionMetaDataRecord.ByteSize; //first record starts after the metadata record         
-                SetFirstRecord(record);
-            }
-
-            StorageEngine.Write(record.Header.Address, record.AsBytes());
-            SetLastRecord (record);
+            ReuseEmptyRecordHeader(record);
+            var metaDataRecord = GetMetaDataRecord ();
+            AppendRecord(record, metaDataRecord.DataListEndPoints); 
+            SaveMetaDataRecord (metaDataRecord);        
         }
 
         public void UpdateObject(Record record, T obj)
         {
             var bytes = Serializer.Serialize(obj);
-            if (bytes.Length > record.Header.AllocatedSize )
+            if (bytes.Length >= record.Header.AllocatedSize )
             {
                 ReleaseRecord(record);
                 AppendObject(obj); 
@@ -119,48 +89,21 @@ namespace Marcello.Records
         }
 
         public void ReleaseRecord(Record record)
-        {
-            var previousRecord = GetPreviousRecord(record);
-            var nextRecord = GetNextRecord(record);
+        {                  
+            var metaDataRecord = GetMetaDataRecord ();
 
-            if (previousRecord != null && nextRecord != null) 
+            RemoveRecord(record, metaDataRecord.DataListEndPoints); 
+            AppendRecord(record, metaDataRecord.EmptyListEndPoints);
+
+            if (metaDataRecord.DataListEndPoints.StartAddress == 0) 
             {
-                //record in the middle, link previous to next and vice versa
-                nextRecord.Header.Previous = previousRecord.Header.Address;
-                previousRecord.Header.Next = nextRecord.Header.Address;
+                metaDataRecord.EmptyListEndPoints.StartAddress = 0;
+                metaDataRecord.EmptyListEndPoints.EndAddress = 0;
             }
 
-            if (previousRecord != null && nextRecord == null) 
-            {
-                //no next record, so this was the last one
-                previousRecord.Header.Next = 0;
-                SetLastRecord(previousRecord);
-            }
-
-            if (previousRecord == null && nextRecord != null) 
-            {
-                //first record
-                nextRecord.Header.Previous = 0;
-                SetFirstRecord(nextRecord);
-            }
-
-            if (previousRecord == null && nextRecord == null) 
-            {
-                //this was the last one
-                SetEmpty();
-            }
-
-            if (nextRecord != null) 
-            {
-                WriteHeader(nextRecord);
-            }
-
-            if (previousRecord != null) 
-            {
-                WriteHeader(previousRecord);
-            }
+            SaveMetaDataRecord(metaDataRecord);
         }
-
+            
         void WriteHeader(Record record)
         {
             StorageEngine.Write(record.Header.Address, record.Header.AsBytes());
@@ -174,31 +117,6 @@ namespace Marcello.Records
             return record;
         }
 
-        void SetFirstRecord(Record record)
-        {
-            UpdateMetaData(r => r.FirstRecordAddress = record.Header.Address);
-        }
-
-        void SetLastRecord(Record record)
-        {
-            UpdateMetaData(r => r.LastRecordAddress = record.Header.Address);
-        }
-
-        void SetEmpty()
-        {
-            UpdateMetaData((r) => {
-                r.LastRecordAddress = 0;
-                r.FirstRecordAddress = 0; 
-            });
-        }
-
-        void UpdateMetaData(Action<CollectionMetaDataRecord> updateAction)
-        {
-            var metaData = GetMetaDataRecord();
-            updateAction(metaData);
-            SaveMetaDataRecord(metaData);
-        }
-
         CollectionMetaDataRecord GetMetaDataRecord()
         {
             var bytes = StorageEngine.Read(0, CollectionMetaDataRecord.ByteSize);
@@ -208,6 +126,66 @@ namespace Marcello.Records
         void SaveMetaDataRecord(CollectionMetaDataRecord record)
         {
             StorageEngine.Write(0, record.AsBytes());
+        }
+
+        void AppendRecord (Record record, ListEndPoints listEndPoints)
+        {
+            var operation = new RecordListAppendOperation(
+                listEndPoints, 
+                CollectionMetaDataRecord.ByteSize, address =>  {
+                return ReadEntireRecord (address);
+            });
+            operation.Record = record;
+            operation.Apply ();
+            foreach (var touchedRecord in operation.TouchedRecords) {
+                WriteHeader (touchedRecord);
+            }
+
+            StorageEngine.Write (record.Header.Address, record.AsBytes ());
+        }
+
+        private void ReuseEmptyRecordHeader (Record record)
+        {
+            var metaDataRecord = GetMetaDataRecord();
+            if (metaDataRecord.EmptyListEndPoints.StartAddress > 0) 
+            {
+                var emptyRecord = ReadEntireRecord(metaDataRecord.EmptyListEndPoints.StartAddress);
+                while(emptyRecord != null)
+                {
+                    if(emptyRecord.Header.AllocatedSize > record.Header.DataSize)
+                    {
+                        //copy header
+                        record.Header = emptyRecord.Header;
+                        RemoveRecord(emptyRecord, metaDataRecord.EmptyListEndPoints);
+                        SaveMetaDataRecord(metaDataRecord);
+                        return;
+                    }
+                    if (emptyRecord.Header.Next > 0) 
+                    {
+                        emptyRecord = ReadEntireRecord (emptyRecord.Header.Next);
+                    } 
+                    else 
+                    {
+                        emptyRecord = null;
+                    }
+                }
+            }
+        }
+
+        void RemoveRecord (Record record, ListEndPoints listEndPoints)
+        {         
+            var operation = new RecordListReleaseOperation (
+                listEndPoints, 
+                CollectionMetaDataRecord.ByteSize, 
+                address =>  {
+                    return ReadEntireRecord (address);
+                }
+            );
+            operation.Record = record;
+            operation.Apply ();
+            foreach (var touchedRecord in operation.TouchedRecords) {
+                WriteHeader (touchedRecord);
+            }
         }
         #endregion
     }
