@@ -3,7 +3,7 @@ Marcello
 
 Marcello is a  Xamarin/.net/mono in-process NoSql database, targetting mobile devices explicitly.
 
-No more breaking down objets to fit them into sqlite.
+No more breaking down objets to fit them into sqlite, Marcello saves entire object graphs.
 
 Simply store the entire object and retrieve them back later.
 
