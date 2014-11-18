@@ -16,7 +16,7 @@ namespace Marcello.Records
         {
             get
             {
-                return RecordHeader.ByteSize + Header.AllocatedSize;
+                return RecordHeader.ByteSize + Header.AllocatedDataSize;
             }
         }
 

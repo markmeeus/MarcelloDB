@@ -15,7 +15,7 @@ namespace Marcello.Test.Records
             header.Next = 1;
             header.Previous = 2;
             header.DataSize = 3;
-            header.AllocatedSize = 4;
+            header.AllocatedDataSize = 4;
             Int64 address = 5;
 
             var bytes = header.AsBytes();
@@ -24,7 +24,7 @@ namespace Marcello.Test.Records
             Assert.AreEqual(header.Next, loadedHeader.Next, "Next");
             Assert.AreEqual(header.Previous, loadedHeader.Previous, "Previous");
             Assert.AreEqual(header.DataSize, loadedHeader.DataSize, "DataSize");
-            Assert.AreEqual(header.AllocatedSize, loadedHeader.AllocatedSize, "AllocatedSize");
+            Assert.AreEqual(header.AllocatedDataSize, loadedHeader.AllocatedDataSize, "AllocatedSize");
             Assert.AreEqual(address, loadedHeader.Address, "Address");
         }
     }

@@ -16,7 +16,14 @@ namespace Marcello.Records
         internal Int64 Next	 { get; set;}
         internal Int64 Previous { get; set;}
         internal Int32 DataSize { get; set; }
-        internal Int32 AllocatedSize { get; set; }
+        internal Int32 AllocatedDataSize { get; set; }
+
+        internal Int32 TotalRecordSize 
+        { 
+            get{ 
+                return ByteSize + AllocatedDataSize;    
+            }
+        }
 
         static internal int ByteSize 
         {
@@ -33,7 +40,7 @@ namespace Marcello.Records
             BitConverter.GetBytes(this.Next).CopyTo (bytes, NEXT_OFFSET);
             BitConverter.GetBytes(this.Previous).CopyTo (bytes, PREVIOUS_OFFSET);
             BitConverter.GetBytes(this.DataSize).CopyTo (bytes, DATASIZE_OFFSET);
-            BitConverter.GetBytes(this.AllocatedSize).CopyTo (bytes, ALLOCATEDSIZE_OFFSET);
+            BitConverter.GetBytes(this.AllocatedDataSize).CopyTo (bytes, ALLOCATEDSIZE_OFFSET);
             return bytes;
         }
 
@@ -46,7 +53,7 @@ namespace Marcello.Records
                 Next = BitConverter.ToInt64(bytes, NEXT_OFFSET),
                 Previous = BitConverter.ToInt64(bytes, PREVIOUS_OFFSET),
                 DataSize = BitConverter.ToInt32(bytes, DATASIZE_OFFSET),
-                AllocatedSize = BitConverter.ToInt32(bytes, ALLOCATEDSIZE_OFFSET),
+                AllocatedDataSize = BitConverter.ToInt32(bytes, ALLOCATEDSIZE_OFFSET),
                 Address = address
             };           
         }

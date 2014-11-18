@@ -61,8 +61,8 @@ namespace Marcello.Records
             var record = new Record();
             var data = Serializer.Serialize(obj);
             record.Header.DataSize = data.Length;
-            record.Header.AllocatedSize = AllocationStrategy.CalculateSize(record);
-            record.Data = new byte[record.Header.AllocatedSize];
+            record.Header.AllocatedDataSize = AllocationStrategy.CalculateSize(record);
+            record.Data = new byte[record.Header.AllocatedDataSize];
             data.CopyTo(record.Data, 0);
 
 
@@ -75,14 +75,14 @@ namespace Marcello.Records
         public void UpdateObject(Record record, T obj)
         {
             var bytes = Serializer.Serialize(obj);
-            if (bytes.Length >= record.Header.AllocatedSize )
+            if (bytes.Length >= record.Header.AllocatedDataSize )
             {
                 ReleaseRecord(record);
                 AppendObject(obj); 
             }
             else 
             {   
-                record.Data = new byte[record.Header.AllocatedSize];
+                record.Data = new byte[record.Header.AllocatedDataSize];
                 bytes.CopyTo(record.Data, 0);
                 record.Header.DataSize = bytes.Length;
                 StorageEngine.Write(record.Header.Address, record.AsBytes ());
@@ -109,7 +109,7 @@ namespace Marcello.Records
         Record ReadEntireRecord(Int64 address)
         {
             var header = RecordHeader.FromBytes(address, StorageEngine.Read(address, RecordHeader.ByteSize));
-            var allBytes = StorageEngine.Read(address, header.AllocatedSize);
+            var allBytes = StorageEngine.Read(address, header.AllocatedDataSize);
             var record =  Record.FromBytes(address, allBytes);
             return record;
         }
@@ -148,7 +148,7 @@ namespace Marcello.Records
                 var emptyRecord = ReadEntireRecord(metaDataRecord.EmptyListEndPoints.StartAddress);
                 while(emptyRecord != null)
                 {
-                    if(emptyRecord.Header.AllocatedSize > record.Header.DataSize)
+                    if(emptyRecord.Header.AllocatedDataSize > record.Header.DataSize)
                     {
                         //copy header
                         record.Header = emptyRecord.Header;

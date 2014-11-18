@@ -70,7 +70,7 @@ namespace Marcello.Test.Records
             var operation = CreateListAppendOperationWithItems(1, record);
             operation.Apply();
             var firstRecord = operation.LoadRecord (operation.ListEndPoints.StartAddress);
-            Assert.AreEqual(firstRecord.Header.Address + RecordHeader.ByteSize + firstRecord.Header.AllocatedSize,
+            Assert.AreEqual(firstRecord.Header.Address + RecordHeader.ByteSize + firstRecord.Header.AllocatedDataSize,
                 record.Header.Address); 
         }
 
@@ -321,7 +321,7 @@ namespace Marcello.Test.Records
                 if (i < number) {
                     existingRecord.Header.Next = (i + 1) * 100;
                 }
-                existingRecord.Header.AllocatedSize = 100;
+                existingRecord.Header.AllocatedDataSize = 100;
                 existingRecord.Header.DataSize = 20;
                 records.Add (existingRecord.Header.Address, existingRecord);
             }
