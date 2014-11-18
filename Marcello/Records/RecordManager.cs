@@ -90,29 +90,17 @@ namespace Marcello.Records
 
         public void ReleaseRecord(Record record)
         {                  
-            var metaDataRecord = this.GetMetaDataRecord (); 
-            var operation = new RecordListReleaseOperation (
-                metaDataRecord.DataListEndPoints,
-                CollectionMetaDataRecord.ByteSize,
-                (address) => {
-                    return ReadEntireRecord(address);
-                });
-            operation.Record = record;
-            operation.Apply();
+            var metaDataRecord = GetMetaDataRecord ();
 
-            foreach(var touchedRecord in operation.TouchedRecords){
-                WriteHeader(touchedRecord);
-            };
-
-            record.Header.Next = 0;
-            record.Header.Previous = 0;
-            StorageEngine.Write(record.Header.Address, record.AsBytes());
+            RemoveRecord(record, metaDataRecord.DataListEndPoints); 
             AppendRecord(record, metaDataRecord.EmptyListEndPoints);
+
             if (metaDataRecord.DataListEndPoints.StartAddress == 0) 
             {
                 metaDataRecord.EmptyListEndPoints.StartAddress = 0;
                 metaDataRecord.EmptyListEndPoints.EndAddress = 0;
             }
+
             SaveMetaDataRecord(metaDataRecord);
         }
             
@@ -168,6 +156,8 @@ namespace Marcello.Records
                     {
                         //copy header
                         record.Header = emptyRecord.Header;
+                        RemoveRecord(emptyRecord, metaDataRecord.EmptyListEndPoints);
+                        SaveMetaDataRecord(metaDataRecord);
                         return;
                     }
                     if (emptyRecord.Header.Next > 0) 
@@ -179,6 +169,22 @@ namespace Marcello.Records
                         emptyRecord = null;
                     }
                 }
+            }
+        }
+
+        void RemoveRecord (Record record, ListEndPoints listEndPoints)
+        {         
+            var operation = new RecordListReleaseOperation (
+                listEndPoints, 
+                CollectionMetaDataRecord.ByteSize, 
+                address =>  {
+                    return ReadEntireRecord (address);
+                }
+            );
+            operation.Record = record;
+            operation.Apply ();
+            foreach (var touchedRecord in operation.TouchedRecords) {
+                WriteHeader (touchedRecord);
             }
         }
         #endregion

@@ -270,6 +270,31 @@ namespace Marcello.Test
             var newStorageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
             Assert.AreEqual(storageSize, newStorageSize);
         }
+
+        [Test]
+        public void Multiple_Delete_And_Insert_Reuse_Storage_Space()
+        {
+            var barbieDoll = Article.BarbieDoll;
+            var spinalTapDvd = Article.SpinalTapDvd;
+            var toiletPaper = Article.ToiletPaper;
+
+            _articles.Persist(barbieDoll);
+            _articles.Persist(spinalTapDvd);
+            _articles.Persist(toiletPaper);
+
+            _marcello.Journal.Apply (); //make sure the journal is applied to the backing stream
+
+            var storageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
+            _articles.Destroy(barbieDoll);
+            _articles.Destroy(toiletPaper);
+
+            _articles.Persist(barbieDoll);
+            _articles.Persist(toiletPaper);
+            _marcello.Journal.Apply (); //make sure the journal is applied to the backing stream
+
+            var newStorageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
+            Assert.AreEqual(storageSize, newStorageSize);
+        }
     }
 }
 
