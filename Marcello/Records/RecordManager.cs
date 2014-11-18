@@ -65,10 +65,11 @@ namespace Marcello.Records
             record.Data = new byte[record.Header.AllocatedSize];
             data.CopyTo(record.Data, 0);
 
-            ReuseEmptyRecordHeader(record);
-            var metaDataRecord = GetMetaDataRecord ();
-            AppendRecord(record, metaDataRecord.DataListEndPoints); 
-            SaveMetaDataRecord (metaDataRecord);        
+
+            WithMetaDataRecord ((metaDataRecord) => {
+                ReuseEmptyRecordHeader(record, metaDataRecord);
+                AppendRecord(record, metaDataRecord.DataListEndPoints); 
+            });                
         }
 
         public void UpdateObject(Record record, T obj)
@@ -90,24 +91,20 @@ namespace Marcello.Records
 
         public void ReleaseRecord(Record record)
         {                  
-            var metaDataRecord = GetMetaDataRecord ();
+            WithMetaDataRecord ((metaDataRecord) => {
+                //remove from list
+                RemoveRecord(record, metaDataRecord.DataListEndPoints); 
+                //append to empty list
+                AppendRecord(record, metaDataRecord.EmptyListEndPoints);
 
-            RemoveRecord(record, metaDataRecord.DataListEndPoints); 
-            AppendRecord(record, metaDataRecord.EmptyListEndPoints);
-
-            if (metaDataRecord.DataListEndPoints.StartAddress == 0) 
-            {
-                metaDataRecord.EmptyListEndPoints.StartAddress = 0;
-                metaDataRecord.EmptyListEndPoints.EndAddress = 0;
-            }
-
-            SaveMetaDataRecord(metaDataRecord);
+                metaDataRecord.Sanitize();
+            });                
         }
             
         void WriteHeader(Record record)
         {
             StorageEngine.Write(record.Header.Address, record.Header.AsBytes());
-        }
+        }            
 
         Record ReadEntireRecord(Int64 address)
         {
@@ -144,9 +141,8 @@ namespace Marcello.Records
             StorageEngine.Write (record.Header.Address, record.AsBytes ());
         }
 
-        private void ReuseEmptyRecordHeader (Record record)
-        {
-            var metaDataRecord = GetMetaDataRecord();
+        private void ReuseEmptyRecordHeader(Record record, CollectionMetaDataRecord metaDataRecord)
+        {        
             if (metaDataRecord.EmptyListEndPoints.StartAddress > 0) 
             {
                 var emptyRecord = ReadEntireRecord(metaDataRecord.EmptyListEndPoints.StartAddress);
@@ -162,7 +158,7 @@ namespace Marcello.Records
                     }
                     if (emptyRecord.Header.Next > 0) 
                     {
-                        emptyRecord = ReadEntireRecord (emptyRecord.Header.Next);
+                        emptyRecord = ReadEntireRecord(emptyRecord.Header.Next);
                     } 
                     else 
                     {
@@ -186,6 +182,13 @@ namespace Marcello.Records
             foreach (var touchedRecord in operation.TouchedRecords) {
                 WriteHeader (touchedRecord);
             }
+        }
+
+        void WithMetaDataRecord(Action<CollectionMetaDataRecord> action)
+        {
+            var metaDataRecord = GetMetaDataRecord();
+            action(metaDataRecord);
+            SaveMetaDataRecord (metaDataRecord);
         }
         #endregion
     }

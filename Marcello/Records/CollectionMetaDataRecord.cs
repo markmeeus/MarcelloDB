@@ -43,6 +43,15 @@ namespace Marcello.Records
 
             return bytes;
         }
+
+        internal void Sanitize(){
+            //when the data list is empty, the empty list is empty too.
+            if (this.DataListEndPoints.StartAddress == 0) 
+            {
+                this.EmptyListEndPoints.StartAddress = 0;
+                this.EmptyListEndPoints.EndAddress = 0;
+            }
+        }
 	}
 }
 
