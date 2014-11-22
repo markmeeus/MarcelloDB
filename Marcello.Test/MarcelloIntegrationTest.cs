@@ -6,10 +6,11 @@ using System.Collections.Generic;
 using Marcello;
 using Marcello.Test.Classes;
 using Marcello.Collections;
+using Marcello.Storage;
 
 namespace Marcello.Test
 {
-    [TestFixture ()]
+    [TestFixture]
     public class MarcelloIntegrationTest
     {
         Marcello _marcello;
@@ -299,8 +300,9 @@ namespace Marcello.Test
         [Test]
         public void Save_To_File_Stream()
         {
-            var fileStreamProvider =  new FileStorageStreamProvider("//Users/markmeeus/documents/tmp/marcello");
-            var marcello = new Marcello (fileStreamProvider);
+            EnsureFolder("data");
+            var fileStreamProvider =  new FileStorageStreamProvider("./data/");
+            var marcello = new Marcello(fileStreamProvider);
 
             var toiletPaper = Article.ToiletPaper;
             var spinalTapDvd = Article.SpinalTapDvd;
@@ -315,6 +317,12 @@ namespace Marcello.Test
             var articleNames = articles.All.Select(a => a.Name).ToList();
 
             Assert.AreEqual(new List<string>{toiletPaper.Name, spinalTapDvd.Name, barbieDoll.Name }, articleNames);
+        }            
+
+
+        private void EnsureFolder(string path)
+        {
+            System.IO.Directory.CreateDirectory("data");
         }
     }
 }

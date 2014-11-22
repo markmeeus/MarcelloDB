@@ -45,6 +45,7 @@
     <Compile Include="Storage\StorageEngineTest.cs" />
     <Compile Include="MarcelloIntegrationTest.cs" />
     <Compile Include="Records\RecordListOperationTest.cs" />
+    <Compile Include="Serialization\BufferWriterTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
