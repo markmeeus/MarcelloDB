@@ -20,6 +20,9 @@ Marcello is still in an experimental status, but a first alpha version is near.
 
 Usage
 =
+MarcelloDB uses regular Streams to read and write the data to disk. These filestreams cannot be created in a PCL, so you'll have to create it in the specific platform.
+The FileStorageStreamProvider will be available for all supported platform. Or you can roll your own, it's quite simple.
+
 Creating the session
 ```cs
 //Create a steam provider for the specific platform
@@ -41,11 +44,28 @@ var collection = marcello.Collection<WhateverObject>();
 collection.Persist(myObject);
 ```
 
+Find and enumerate your objects
+```cs
+//Create your objects however you please
+
+//get the corresponding collection
+var collection = marcello.Collection<WhateverObject>();
+
+//and enumerate
+foreach(var obj in collection.all)
+{
+  DoSomethingWithTheObject(obj);
+}
+
+//or find by the ID property
+var o = collection.find(1234);
+```
+
 Deleting objects
 
 ```cs
-//Delete the article like this
-_articles.Destroy(toiletPaper);
+//Delete the object
+_articles.Destroy(myObject);
 ```
 
 How Objects are Identified
@@ -58,17 +78,17 @@ You can use any of the following conventions, or the ID attribute
 class Article
 {
   public string ID {get;set;}
-  
+
   public string Id {get;set;}
-  
+
   public string id {get;set;}
-  
+
   public string ArticleID {get;set;}
-  
+
   public string ArticleId {get;set;}
-  
+
   public string Articleid {get;set;}
-  
+
   [Marcello.Attributes.ID]
   public string CustomIDProp {get;set;}
 }
@@ -82,7 +102,7 @@ _marcello.Transaction(() => {
     marcello.Collection<Article>().Persist(article);
     marcello.Collection<Clients>().Persist(client);
     marcello.Collection<Project>().Destroy(project);
-}); 
+});
 ```
 
 Transactions roll back when an exception occurs within the block.

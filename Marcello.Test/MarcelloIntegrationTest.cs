@@ -154,7 +154,7 @@ namespace Marcello.Test
         }
             
         [Test]
-        public void Delete_Only_Object()
+        public void Destroy_Only_Object()
         {
             var toiletPaper = Article.ToiletPaper;
 
@@ -166,7 +166,7 @@ namespace Marcello.Test
         }
 
         [Test]
-        public void Delete_First_Object()
+        public void Destroy_First_Object()
         {
             var toiletPaper = Article.ToiletPaper;
             var spinalTapDvd = Article.SpinalTapDvd;
@@ -181,7 +181,7 @@ namespace Marcello.Test
         }
 
         [Test]
-        public void Delete_Middle_Object()
+        public void Destroy_Middle_Object()
         {
             var toiletPaper = Article.ToiletPaper;
             var spinalTapDvd = Article.SpinalTapDvd;
@@ -199,7 +199,7 @@ namespace Marcello.Test
         }
 
         [Test]
-        public void Delete_Last_Object()
+        public void Destroy_Last_Object()
         {
 
             var toiletPaper = Article.ToiletPaper;
@@ -218,7 +218,21 @@ namespace Marcello.Test
         }
 
         [Test]
-        public void Delete_Last_Insert_New()
+        public void Destroy_Virgin_Object()
+        {
+            var toiletPaper = Article.ToiletPaper;
+            var spinalTapDvd = Article.SpinalTapDvd;
+
+            _articles.Persist(toiletPaper);
+
+            Assert.DoesNotThrow(() =>
+                {
+                _articles.Destroy(spinalTapDvd);
+                });
+        }
+
+        [Test]
+        public void Destroy_Last_Insert_New()
         {
             var toiletPaper = Article.ToiletPaper;
             var spinalTapDvd = Article.SpinalTapDvd;
@@ -236,7 +250,7 @@ namespace Marcello.Test
         }
 
         [Test]
-        public void Delete_Only_Insert_New()
+        public void Destroy_Only_Insert_New()
         {        
             var spinalTapDvd = Article.SpinalTapDvd;
 
@@ -252,7 +266,7 @@ namespace Marcello.Test
         }
 
         [Test]
-        public void Delete_And_Insert_Reuse_Storage_Space()
+        public void Destroy_And_Insert_Reuse_Storage_Space()
         {
             var barbieDoll = Article.BarbieDoll;
             var spinalTapDvd = Article.SpinalTapDvd;

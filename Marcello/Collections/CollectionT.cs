@@ -46,14 +46,14 @@ namespace Marcello.Collections
 
         public void Persist(T obj)
         {
-            this.Session.Transaction (() => {
-                PersistInternal (obj);                
+            this.Session.Transaction(() => {
+                PersistInternal(obj);                
             });               
         }            
 
         public void Destroy(T obj)
         {
-            this.Session.Transaction (() => {
+            this.Session.Transaction(() => {
                 DestroyInternal(obj);
             });
         }
@@ -61,7 +61,7 @@ namespace Marcello.Collections
         #region internal methods
         internal void DestroyAll()
         {
-            var toDestroy = All.ToList ();
+            var toDestroy = All.ToList();
             foreach(var o in toDestroy)
             {
                 Destroy(o);
@@ -78,7 +78,7 @@ namespace Marcello.Collections
         Record GetRecordForObjectID(object objectID)
         {        
             //temp implementation untill ID is indexed
-            var record = RecordManager.GetFirstRecord ();
+            var record = RecordManager.GetFirstRecord();
 
             while (record != null) {
                 var obj = Serializer.Deserialize(record.Data);
@@ -91,26 +91,30 @@ namespace Marcello.Collections
             return null;
         }
 
-        void PersistInternal (T obj)
+        void PersistInternal(T obj)
         {
-            var objectID = new ObjectProxy (obj).ID;
+            var objectID = new ObjectProxy(obj).ID;
             //Try Load record with object ID
-            Record record = GetRecordForObjectID (objectID);
+            Record record = GetRecordForObjectID(objectID);
             if (record != null) {
-                RecordManager.UpdateObject (record, obj);
+                RecordManager.UpdateObject(record, obj);
             }
             else {
-                RecordManager.AppendObject (obj);
+                RecordManager.AppendObject(obj);
             }
         }
 
         void DestroyInternal (T obj)
         {
-            var objectID = new ObjectProxy (obj).ID;
+            var objectID = new ObjectProxy(obj).ID;
             //Try Load record with object ID
-            Record record = GetRecordForObjectID (objectID);
-            //release the record if present
-            RecordManager.ReleaseRecord (record);
+            Record record = GetRecordForObjectID(objectID);
+            if (record != null)
+            {
+                //release the record if present
+                RecordManager.ReleaseRecord(record);
+            }
+
         }
         #endregion
     }
