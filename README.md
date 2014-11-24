@@ -1,27 +1,25 @@
-Marcello
+MarcelloDB
 ========
 
-Marcello is a  Xamarin/.net/mono in-process NoSql database, targetting mobile devices explicitly.
+MarcelloDB is a low-memory-footprint  Xamarin/.net/Mono in-process Object database.
 
-No more breaking down objets to fit them into sqlite, Marcello saves entire object graphs.
-
-Simply store the entire object and retrieve them back later.
+MarcelloDB saves plain C# objects, including child objects and lists. So no more breaking down json data into relation data.
 
 No more packaging exotic binaries neither, Marcello is pure C#.
 
-
-It will be supported on Xamarin (iOS and Android), Windows 8 and Windows Phone 8
+Supported on Xamarin (iOS and Android), Windows 8 and Windows Phone 8
 
 
 Current Status
 =
 Marcello is still in an experimental status, but a first alpha version is near.
 
+Be carefull. Backwards compatibility with existing data will not be guaranteed untill the first rease.
 
 Usage
 =
-MarcelloDB uses regular Streams to read and write the data to disk. These filestreams cannot be created in a PCL, so you'll have to create it in the specific platform.
-The FileStorageStreamProvider will be available for all supported platform. Or you can roll your own, it's quite simple.
+MarcelloDB uses regular Streams to read and write the data to disk. These filestreams cannot be created in a PCL, so you'll have to create it on the specific platform.
+The FileStorageStreamProvider will be available for all supported platforms. Or you can roll your own, it's quite simple.
 
 Creating the session
 ```cs
@@ -46,19 +44,17 @@ collection.Persist(myObject);
 
 Find and enumerate your objects
 ```cs
-//Create your objects however you please
-
 //get the corresponding collection
 var collection = marcello.Collection<WhateverObject>();
 
 //and enumerate
-foreach(var obj in collection.all)
+foreach(var obj in collection.All)
 {
   DoSomethingWithTheObject(obj);
 }
 
 //or find by the ID property
-var o = collection.find(1234);
+var o = collection.Find(1234);
 ```
 
 Deleting objects
@@ -73,7 +69,7 @@ How Objects are Identified
 Marcello needs a single property which uniquely identifies an object.
 This value is needed to distinguish an insert from an update, and identify objects to delete.
 
-You can use any of the following conventions, or the ID attribute
+You can use any of the following naming conventions, or add the Marcello.Attributes.ID attribute.
 ```cs
 class Article
 {
