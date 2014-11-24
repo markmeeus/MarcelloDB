@@ -18,7 +18,7 @@ namespace Marcello.Test.Serialization
         [Test]
         public void Write_Int32_Little_Endian()
         {
-            _writer.Write((Int32)0x11223344);
+            _writer.WriteInt32((Int32)0x11223344);
             Assert.AreEqual(0x44, _writer.Buffer[0]);
             Assert.AreEqual(0x33, _writer.Buffer[1]);
             Assert.AreEqual(0x22, _writer.Buffer[2]);
@@ -28,8 +28,8 @@ namespace Marcello.Test.Serialization
         [Test]
         public void Write_Two_Ints()
         {
-            _writer.Write((Int32)0x11223344);
-            _writer.Write((Int32)0x55667788);
+            _writer.WriteInt32((Int32)0x11223344);
+            _writer.WriteInt32((Int32)0x55667788);
             Assert.AreEqual(0x88, _writer.Buffer[4]);
             Assert.AreEqual(0x77, _writer.Buffer[5]);
             Assert.AreEqual(0x66, _writer.Buffer[6]);
@@ -39,7 +39,7 @@ namespace Marcello.Test.Serialization
         [Test]
         public void Write_Int64_Little_Endian()
         {
-            _writer.Write((Int64)0x1122334455667788);
+            _writer.WriteInt64((Int64)0x1122334455667788);
             Assert.AreEqual(0x88, _writer.Buffer[0]);
             Assert.AreEqual(0x77, _writer.Buffer[1]);
             Assert.AreEqual(0x66, _writer.Buffer[2]);
@@ -54,7 +54,7 @@ namespace Marcello.Test.Serialization
         public void Write_Int_Little_Endian_On_Big_Endian_System()
         {
             var writer = new BufferWriter(new byte[1024], false);
-            writer.Write((Int32)0X44332211);
+            writer.WriteInt32((Int32)0X44332211);
             //on a big endian systems, bytes should be reordered
             Assert.AreEqual(0x44, writer.Buffer[0]);
             Assert.AreEqual(0x33, writer.Buffer[1]);
@@ -66,8 +66,8 @@ namespace Marcello.Test.Serialization
         public void Buffer_Grows_When_Overrun()
         {
             var writer = new BufferWriter(new byte[12], true);
-            writer.Write((Int64)123); //position at 8
-            writer.Write((Int64)456); 
+            writer.WriteInt64((Int64)123); //position at 8
+            writer.WriteInt64((Int64)456); 
             Assert.AreEqual(16, writer.Buffer.Length);
         }
 
@@ -75,8 +75,8 @@ namespace Marcello.Test.Serialization
         public void Buffer_Grows_When_Overrun_Edge_Case()
         {
             var writer = new BufferWriter(new byte[8], true);
-            writer.Write((Int64)123); //position at 8
-            writer.Write((Int64)456); 
+            writer.WriteInt64((Int64)123); //position at 8
+            writer.WriteInt64((Int64)456); 
             Assert.AreEqual(16, writer.Buffer.Length);
         }
 
@@ -84,7 +84,7 @@ namespace Marcello.Test.Serialization
         public void Get_Trimmed_Buffer_Returns_Correct_Buffer()
         {
             var writer = new BufferWriter(new byte[8], true);
-            writer.Write((Int64)123);
+            writer.WriteInt64((Int64)123);
             Assert.AreEqual(8, writer.GetTrimmedBuffer().Length); //8 bytes
         }
 
@@ -92,7 +92,7 @@ namespace Marcello.Test.Serialization
         public void Get_Trimmed_Buffer_Trims_Buffer()
         {
             var writer = new BufferWriter(new byte[1024], true);
-            writer.Write((Int64)123);
+            writer.WriteInt64((Int64)123);
             Assert.AreEqual(8, writer.GetTrimmedBuffer().Length); //8 bytes
         }
     }

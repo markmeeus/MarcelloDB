@@ -1,14 +1,11 @@
 ﻿using System;
+using Marcello.Serialization;
 
 namespace Marcello.Records
 {
     internal class RecordHeader
     {
-        const int NEXT_OFFSET = 0;
-        const int PREVIOUS_OFFSET = sizeof(Int64);
-        const int DATASIZE_OFFSET = PREVIOUS_OFFSET + sizeof(Int64);
-        const int ALLOCATEDSIZE_OFFSET = DATASIZE_OFFSET + sizeof(Int32);
-        const int BYTE_SIZE = ALLOCATEDSIZE_OFFSET + sizeof(Int32);
+        const int BYTE_SIZE = (2 * sizeof(Int64)) + (2 * sizeof(Int32));
 
         //Address is not stored
         internal long Address { get; set; }
@@ -37,25 +34,29 @@ namespace Marcello.Records
         internal byte[] AsBytes()
         {
             var bytes = new byte[ByteSize];
-            BitConverter.GetBytes(this.Next).CopyTo (bytes, NEXT_OFFSET);
-            BitConverter.GetBytes(this.Previous).CopyTo (bytes, PREVIOUS_OFFSET);
-            BitConverter.GetBytes(this.DataSize).CopyTo (bytes, DATASIZE_OFFSET);
-            BitConverter.GetBytes(this.AllocatedDataSize).CopyTo (bytes, ALLOCATEDSIZE_OFFSET);
-            return bytes;
+            var writer = new BufferWriter(bytes, BitConverter.IsLittleEndian);
+            writer.WriteInt64(this.Next);
+            writer.WriteInt64(this.Previous);
+            writer.WriteInt32(this.DataSize);
+            writer.WriteInt32(this.AllocatedDataSize);
+            return writer.GetTrimmedBuffer();
         }
 
         #region factory methods
         internal static RecordHeader New (){ return new RecordHeader();}
 
         internal static RecordHeader FromBytes(Int64 address, byte[] bytes)
-        {         
-            return new RecordHeader() {
-                Next = BitConverter.ToInt64(bytes, NEXT_OFFSET),
-                Previous = BitConverter.ToInt64(bytes, PREVIOUS_OFFSET),
-                DataSize = BitConverter.ToInt32(bytes, DATASIZE_OFFSET),
-                AllocatedDataSize = BitConverter.ToInt32(bytes, ALLOCATEDSIZE_OFFSET),
-                Address = address
-            };           
+        {   
+
+            var reader = new BufferReader(bytes, BitConverter.IsLittleEndian);
+            var recordHeader = new RecordHeader();
+            recordHeader.Address = address;
+
+            recordHeader.Next = reader.ReadInt64();
+            recordHeader.Previous = reader.ReadInt64();
+            recordHeader.DataSize = reader.ReadInt32();
+            recordHeader.AllocatedDataSize = reader.ReadInt32();
+            return recordHeader;
         }
         #endregion
     }

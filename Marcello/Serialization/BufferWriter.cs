@@ -17,12 +17,12 @@ namespace Marcello.Serialization
             this.Position = 0;
         }
 
-        public void Write(Int32 value)
+        public void WriteInt32(Int32 value)
         {
             WriteBytes(LittleEndian(BitConverter.GetBytes(value)));
         }
 
-        public void Write(Int64 value)
+        public void WriteInt64(Int64 value)
         {
             WriteBytes(LittleEndian(BitConverter.GetBytes(value)));
         }
