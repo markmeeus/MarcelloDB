@@ -73,6 +73,7 @@
     <Folder Include="Transactions\" />
     <Folder Include="Storage\StreamActors\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Indexing\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Marcello.csproj" />

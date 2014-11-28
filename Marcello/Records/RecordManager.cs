@@ -130,9 +130,11 @@ namespace Marcello.Records
         {
             var operation = new RecordListAppendOperation(
                 listEndPoints, 
-                CollectionMetaDataRecord.ByteSize, address =>  {
-                return ReadEntireRecord (address);
-            });
+                CollectionMetaDataRecord.ByteSize, 
+                address =>  {
+                    return ReadEntireRecord (address);
+                }
+            );
             operation.Record = record;
             operation.Apply ();
             foreach (var touchedRecord in operation.TouchedRecords) {
