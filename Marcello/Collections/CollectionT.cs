@@ -13,15 +13,15 @@ namespace Marcello.Collections
 
     public class Collection<T> : Collection
     {
+        internal StorageEngine<T> StorageEngine {get;set;}
+
+        internal RecordManager<T> RecordManager { get; set; }                
+
         Marcello Session { get; set; }
 
         IObjectSerializer<T> Serializer { get; set; }
 
         IAllocationStrategy AllocationStrategy { get; set;}
-
-        StorageEngine<T> StorageEngine {get;set;}
-
-        RecordManager<T> RecordManager { get; set; }        		
 
         internal Collection (Marcello session, 
             IObjectSerializer<T> serializer,

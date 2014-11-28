@@ -30,6 +30,7 @@ namespace Marcello.Records
             JournalEnabled = true; //journal by default
         }
 
+        #region internal methods
         internal Record GetFirstRecord()
         {
             var firstRecordAddress = GetMetaDataRecord().DataListEndPoints.StartAddress;
@@ -47,17 +48,20 @@ namespace Marcello.Records
             return null;
         }
 
+        internal CollectionMetaDataRecord GetMetaDataRecord()
+        {
+            var bytes = StorageEngine.Read(0, CollectionMetaDataRecord.ByteSize);
+            return CollectionMetaDataRecord.FromBytes(bytes);
+        }
 
-        #region internal methods
+
         internal void DisableJournal()
         {
             JournalEnabled = false;
             StorageEngine.DisableJournal();
         }
-        #endregion 
 
-        #region private methods
-        public void AppendObject(T obj)
+        internal void AppendObject(T obj)
         {
             var record = new Record();
             var data = Serializer.Serialize(obj);
@@ -73,7 +77,7 @@ namespace Marcello.Records
             });                
         }
 
-        public void UpdateObject(Record record, T obj)
+        internal void UpdateObject(Record record, T obj)
         {
             var bytes = Serializer.Serialize(obj);
             if (bytes.Length >= record.Header.AllocatedDataSize )
@@ -90,7 +94,7 @@ namespace Marcello.Records
             }
         }
 
-        public void ReleaseRecord(Record record)
+        internal void ReleaseRecord(Record record)
         {                  
             WithMetaDataRecord ((metaDataRecord) => {
                 //remove from list
@@ -101,7 +105,9 @@ namespace Marcello.Records
                 metaDataRecord.Sanitize();
             });                
         }
-            
+        #endregion 
+
+        #region private methods            
         void WriteHeader(Record record)
         {
             StorageEngine.Write(record.Header.Address, record.Header.AsBytes());
@@ -113,13 +119,7 @@ namespace Marcello.Records
             var allBytes = StorageEngine.Read(address, header.AllocatedDataSize);
             var record =  Record.FromBytes(address, allBytes);
             return record;
-        }
-
-        CollectionMetaDataRecord GetMetaDataRecord()
-        {
-            var bytes = StorageEngine.Read(0, CollectionMetaDataRecord.ByteSize);
-            return CollectionMetaDataRecord.FromBytes(bytes);
-        }
+        }            
 
         void SaveMetaDataRecord(CollectionMetaDataRecord record)
         {

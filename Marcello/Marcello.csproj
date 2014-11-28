@@ -61,6 +61,7 @@
     <Compile Include="Records\RecordListOperation.cs" />
     <Compile Include="Serialization\BufferWriter.cs" />
     <Compile Include="Serialization\BufferReader.cs" />
+    <Compile Include="Indexing\Index.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>

@@ -3,30 +3,32 @@ using NUnit.Framework;
 using Marcello.Indexing;
 using Marcello.Storage;
 using Marcello.Test.Classes;
-
+using Marcello.Records;
+using Marcello.Collections;
 
 namespace Marcello.Test.Indexing
-{
+{   
     [TestFixture]
 	public class TestIndex
 	{
         Marcello _session;
-        Index _index;
-        StorageEngine<Article> _storageEngine;
+        Collection<Article> _articles;
+        Index<Article> _index;
 
         [SetUp]
         public void Initialize()
         {
             _session = new Marcello(new InMemoryStreamProvider());
-            _storageEngine = new StorageEngine<Article>(_session);
-            _index = new Index(100, _session, _storageEngine);
+            _articles = _session.Collection<Article>();
+            _index = new Index<Article>(_articles);
         }
 
         [Test]
-        public void Add_Address_To_Empty_Index_Adds_Block()
+        public void Registers_Single_Address()
         {
-            _index.Add(123, 456);
-            _storageEngine.Read();
+            var barbieDoll = Article.BarbieDoll;
+            _index.RegisterAddress(barbieDoll, 1000);
+            Assert.AreEqual(1000, _index.GetAddressOf(barbieDoll));
         }
 	}
 }
