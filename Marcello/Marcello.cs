@@ -35,7 +35,8 @@ namespace Marcello
                 Collections.Add (typeof(T), 
                     new Collection<T> (this, 
                         new BsonSerializer<T> (), 
-                        new DoubleSizeAllocationStrategy ())
+                        new DoubleSizeAllocationStrategy (),
+                        new StorageEngine<T>(this))
                 );
             }
             return (Collection<T>)Collections[typeof(T)];

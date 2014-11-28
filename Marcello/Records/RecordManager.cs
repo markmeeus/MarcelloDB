@@ -19,11 +19,12 @@ namespace Marcello.Records
 
         internal RecordManager(Marcello session,
             IObjectSerializer<T> serializer,
-            IAllocationStrategy allocationStrategy
+            IAllocationStrategy allocationStrategy,
+            StorageEngine<T> storageEngine
         )
         {
             Session = session;
-            StorageEngine = new StorageEngine<T>(Session);
+            StorageEngine = storageEngine;
             Serializer = serializer;
             AllocationStrategy = allocationStrategy;
             JournalEnabled = true; //journal by default
