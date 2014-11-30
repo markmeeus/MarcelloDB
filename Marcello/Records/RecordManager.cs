@@ -54,6 +54,12 @@ namespace Marcello.Records
             return CollectionMetaDataRecord.FromBytes(bytes);
         }
 
+        internal void WithMetaDataRecord(Action<CollectionMetaDataRecord> action)
+        {
+            var metaDataRecord = GetMetaDataRecord();
+            action(metaDataRecord);
+            SaveMetaDataRecord (metaDataRecord);
+        }
 
         internal void DisableJournal()
         {
@@ -68,10 +74,12 @@ namespace Marcello.Records
             record.Header.DataSize = data.Length;
             record.Header.AllocatedDataSize = AllocationStrategy.CalculateSize(record);
             record.Data = new byte[record.Header.AllocatedDataSize];
-            data.CopyTo(record.Data, 0);
+            data.CopyTo(record.Data, 0);                               
+            AppendRecord(record);
+        }
 
-
-            WithMetaDataRecord ((metaDataRecord) => {
+        internal void AppendRecord (Record record){
+            WithMetaDataRecord((metaDataRecord) => {
                 ReuseEmptyRecordHeader(record, metaDataRecord);
                 AppendRecord(record, metaDataRecord.DataListEndPoints); 
             });                
@@ -116,15 +124,10 @@ namespace Marcello.Records
         Record ReadEntireRecord(Int64 address)
         {
             var header = RecordHeader.FromBytes(address, StorageEngine.Read(address, RecordHeader.ByteSize));
-            var allBytes = StorageEngine.Read(address, header.AllocatedDataSize);
+            var allBytes = StorageEngine.Read(address, header.TotalRecordSize);
             var record =  Record.FromBytes(address, allBytes);
             return record;
         }            
-
-        void SaveMetaDataRecord(CollectionMetaDataRecord record)
-        {
-            StorageEngine.Write(0, record.AsBytes());
-        }
 
         void AppendRecord (Record record, ListEndPoints listEndPoints)
         {
@@ -186,13 +189,13 @@ namespace Marcello.Records
                 WriteHeader (touchedRecord);
             }
         }
-
-        void WithMetaDataRecord(Action<CollectionMetaDataRecord> action)
+            
+        void SaveMetaDataRecord(CollectionMetaDataRecord record)
         {
-            var metaDataRecord = GetMetaDataRecord();
-            action(metaDataRecord);
-            SaveMetaDataRecord (metaDataRecord);
+            StorageEngine.Write(0, record.AsBytes());
         }
+
+
         #endregion
     }
 }

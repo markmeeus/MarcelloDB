@@ -8,6 +8,8 @@ namespace Marcello.Records
         internal ListEndPoints DataListEndPoints { get; set;}
         internal ListEndPoints EmptyListEndPoints { get; set;}
 
+        internal Int64 IndexRootBlockAddress { get; set;}
+
 		internal CollectionMetaDataRecord()
 		{
 		}
@@ -27,6 +29,7 @@ namespace Marcello.Records
             bufferWriter.WriteInt64(this.EmptyListEndPoints.StartAddress);
             bufferWriter.WriteInt64(this.EmptyListEndPoints.EndAddress);
 
+            bufferWriter.WriteInt64(this.IndexRootBlockAddress);           
             //do no use the trimmed buffer as we want some padding for future use
             return bufferWriter.Buffer; 
         }
@@ -43,9 +46,11 @@ namespace Marcello.Records
             endAddress = bufferReader.ReadInt64();
             var emptyListEndPoints = new ListEndPoints(startAddress, endAddress);
 
+            Int64 indexRootBlockAddress = bufferReader.ReadInt64();
             return new CollectionMetaDataRecord(){                    
                 DataListEndPoints = dataListEndPoints,
-                EmptyListEndPoints = emptyListEndPoints
+                EmptyListEndPoints = emptyListEndPoints,
+                IndexRootBlockAddress = indexRootBlockAddress
             };
 
         }
