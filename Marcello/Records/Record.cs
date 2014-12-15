@@ -9,7 +9,7 @@ namespace Marcello.Records
 
         internal Record()
         {
-            Header = RecordHeader.New();
+            Header = new RecordHeader();
         }
 
         internal Int32 ByteSize

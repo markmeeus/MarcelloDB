@@ -29,7 +29,7 @@ namespace Marcello.Records
             }
         }
 
-        private RecordHeader(){} //only construction allow from factory methods
+        internal RecordHeader(){}
 
         internal byte[] AsBytes()
         {
@@ -43,7 +43,6 @@ namespace Marcello.Records
         }
 
         #region factory methods
-        internal static RecordHeader New (){ return new RecordHeader();}
 
         internal static RecordHeader FromBytes(Int64 address, byte[] bytes)
         {   

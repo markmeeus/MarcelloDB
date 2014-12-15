@@ -10,7 +10,7 @@ namespace Marcello.Test.Records
         [Test]
         public void To_And_From_Bytes()
         {
-            var header = RecordHeader.New();
+            var header = new RecordHeader();
 
             header.Next = 1;
             header.Previous = 2;

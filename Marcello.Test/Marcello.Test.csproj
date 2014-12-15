@@ -48,7 +48,11 @@
     <Compile Include="Serialization\BufferWriterTest.cs" />
     <Compile Include="Serialization\BufferReaderTest.cs" />
     <Compile Include="Indexing\TestIndex.cs" />
-</ItemGroup>
+    <Compile Include="Records\DirectRecordAccessorTest.cs" />
+    <Compile Include="Records\RecordBuilderTest.cs" />
+    <Compile Include="Records\RecordBasedAddressArrayTest.cs" />
+    <Compile Include="Helpers\AddressHelperTest.cs" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Classes\" />
