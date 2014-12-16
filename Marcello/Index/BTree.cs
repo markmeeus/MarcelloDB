@@ -9,14 +9,18 @@ namespace Marcello.Index
     /// </summary>
     public class BTree<TK, TP> where TK : IComparable<TK>
     {
-        public BTree(int degree)
+        IBtreeDataProvider<TK, TP> DataProvider { get; set;}
+
+        public BTree(IBtreeDataProvider<TK, TP> dataProvider, int degree)
         {
+            DataProvider = dataProvider;
+
             if (degree < 2)
             {
                 throw new ArgumentException("BTree degree must be at least 2", "degree");
             }
 
-            this.Root = new Node<TK, TP>(degree);
+            this.Root = DataProvider.GetRootNode(degree);
             this.Degree = degree;
             this.Height = 1;
         }
@@ -54,8 +58,8 @@ namespace Marcello.Index
 
             // need to create new node and have it split
             Node<TK, TP> oldRoot = this.Root;
-            this.Root = new Node<TK, TP>(this.Degree);
-            this.Root.Children.Add(oldRoot);
+            this.Root = this.DataProvider.CreateNode(this.Degree);
+            this.Root.ChildrenAddresses.Add(oldRoot.Address);
             this.SplitChild(this.Root, 0, oldRoot);
             this.InsertNonFull(this.Root, newKey, newPointer);
 
@@ -74,7 +78,7 @@ namespace Marcello.Index
             // if root's last entry was moved to a child node, remove it
             if (this.Root.Entries.Count == 0 && !this.Root.IsLeaf)
             {
-                this.Root = this.Root.Children.Single();
+                this.Root = this.DataProvider.GetNode(this.Root.ChildrenAddresses.Single());
                 this.Height--;
             }
         }
@@ -110,7 +114,7 @@ namespace Marcello.Index
         /// <param name="subtreeIndexInNode">Index of subtree node in the parent node.</param>
         private void DeleteKeyFromSubtree(Node<TK, TP> parentNode, TK keyToDelete, int subtreeIndexInNode)
         {
-            Node<TK, TP> childNode = parentNode.Children[subtreeIndexInNode];
+            Node<TK, TP> childNode = this.DataProvider.GetNode(parentNode.ChildrenAddresses[subtreeIndexInNode]);
 
             // node has reached min # of entries, and removing any from it will break the btree property,
             // so this block makes sure that the "child" has at least "degree" # of nodes by moving an 
@@ -118,11 +122,12 @@ namespace Marcello.Index
             if (childNode.HasReachedMinEntries)
             {
                 int leftIndex = subtreeIndexInNode - 1;
-                Node<TK, TP> leftSibling = subtreeIndexInNode > 0 ? parentNode.Children[leftIndex] : null;
+                Node<TK, TP> leftSibling = subtreeIndexInNode > 0 ? 
+                      this.DataProvider.GetNode(parentNode.ChildrenAddresses[leftIndex]) : null;
 
                 int rightIndex = subtreeIndexInNode + 1;
-                Node<TK, TP> rightSibling = subtreeIndexInNode < parentNode.Children.Count - 1
-                    ? parentNode.Children[rightIndex]
+                Node<TK, TP> rightSibling = subtreeIndexInNode < parentNode.ChildrenAddresses.Count - 1
+                    ? this.DataProvider.GetNode(parentNode.ChildrenAddresses[rightIndex])
                     : null;
 
                 if (leftSibling != null && leftSibling.Entries.Count > this.Degree - 1)
@@ -135,8 +140,8 @@ namespace Marcello.Index
 
                     if (!leftSibling.IsLeaf)
                     {
-                        childNode.Children.Insert(0, leftSibling.Children.Last());
-                        leftSibling.Children.RemoveAt(leftSibling.Children.Count - 1);
+                        childNode.ChildrenAddresses.Insert(0, leftSibling.ChildrenAddresses.Last());
+                        leftSibling.ChildrenAddresses.RemoveAt(leftSibling.ChildrenAddresses.Count - 1);
                     }
                 }
                 else if (rightSibling != null && rightSibling.Entries.Count > this.Degree - 1)
@@ -149,8 +154,8 @@ namespace Marcello.Index
 
                     if (!rightSibling.IsLeaf)
                     {
-                        childNode.Children.Add(rightSibling.Children.First());
-                        rightSibling.Children.RemoveAt(0);
+                        childNode.ChildrenAddresses.Add(rightSibling.ChildrenAddresses.First());
+                        rightSibling.ChildrenAddresses.RemoveAt(0);
                     }
                 }
                 else
@@ -164,12 +169,12 @@ namespace Marcello.Index
                         childNode.Entries.AddRange(oldEntries);
                         if (!leftSibling.IsLeaf)
                         {
-                            var oldChildren = childNode.Children;
-                            childNode.Children = leftSibling.Children;
-                            childNode.Children.AddRange(oldChildren);
+                            var oldChildren = childNode.ChildrenAddresses;
+                            childNode.ChildrenAddresses = leftSibling.ChildrenAddresses;
+                            childNode.ChildrenAddresses.AddRange(oldChildren);
                         }
 
-                        parentNode.Children.RemoveAt(leftIndex);
+                        parentNode.ChildrenAddresses.RemoveAt(leftIndex);
                         parentNode.Entries.RemoveAt(subtreeIndexInNode);
                     }
                     else
@@ -179,10 +184,10 @@ namespace Marcello.Index
                         childNode.Entries.AddRange(rightSibling.Entries);
                         if (!rightSibling.IsLeaf)
                         {
-                            childNode.Children.AddRange(rightSibling.Children);
+                            childNode.ChildrenAddresses.AddRange(rightSibling.ChildrenAddresses);
                         }
 
-                        parentNode.Children.RemoveAt(rightIndex);
+                        parentNode.ChildrenAddresses.RemoveAt(rightIndex);
                         parentNode.Entries.RemoveAt(subtreeIndexInNode);
                     }
                 }
@@ -211,7 +216,7 @@ namespace Marcello.Index
                 return;
             }
 
-            Node<TK, TP> predecessorChild = node.Children[keyIndexInNode];
+            Node<TK, TP> predecessorChild = this.DataProvider.GetNode(node.ChildrenAddresses[keyIndexInNode]);
             if (predecessorChild.Entries.Count >= this.Degree)
             {
                 Entry<TK, TP> predecessor = this.DeletePredecessor(predecessorChild);
@@ -219,7 +224,7 @@ namespace Marcello.Index
             }
             else
             {
-                Node<TK, TP> successorChild = node.Children[keyIndexInNode + 1];
+                Node<TK, TP> successorChild = this.DataProvider.GetNode(node.ChildrenAddresses[keyIndexInNode + 1]);
                 if (successorChild.Entries.Count >= this.Degree)
                 {
                     Entry<TK, TP> successor = this.DeleteSuccessor(predecessorChild);
@@ -229,10 +234,10 @@ namespace Marcello.Index
                 {
                     predecessorChild.Entries.Add(node.Entries[keyIndexInNode]);
                     predecessorChild.Entries.AddRange(successorChild.Entries);
-                    predecessorChild.Children.AddRange(successorChild.Children);
+                    predecessorChild.ChildrenAddresses.AddRange(successorChild.ChildrenAddresses);
 
                     node.Entries.RemoveAt(keyIndexInNode);
-                    node.Children.RemoveAt(keyIndexInNode + 1);
+                    node.ChildrenAddresses.RemoveAt(keyIndexInNode + 1);
 
                     this.DeleteInternal(predecessorChild, keyToDelete);
                 }
@@ -253,7 +258,9 @@ namespace Marcello.Index
                 return result;
             }
 
-            return this.DeletePredecessor(node.Children.Last());
+            return this.DeletePredecessor(
+                this.DataProvider.GetNode(node.ChildrenAddresses.Last())
+            );
         }
 
         /// <summary>
@@ -270,7 +277,9 @@ namespace Marcello.Index
                 return result;
             }
 
-            return this.DeletePredecessor(node.Children.First());
+            return this.DeletePredecessor(
+                this.DataProvider.GetNode(node.ChildrenAddresses.First())
+            );
         }
 
         /// <summary>
@@ -288,7 +297,9 @@ namespace Marcello.Index
                 return node.Entries[i];
             }
 
-            return node.IsLeaf ? null : this.SearchInternal(node.Children[i], key);
+            return node.IsLeaf ? null : this.SearchInternal(
+                this.DataProvider.GetNode(node.ChildrenAddresses[i]),
+                key);
         }
 
         /// <summary>
@@ -299,10 +310,10 @@ namespace Marcello.Index
         /// <param name="nodeToBeSplit">Node to be split.</param>
         private void SplitChild(Node<TK, TP> parentNode, int nodeToBeSplitIndex, Node<TK, TP> nodeToBeSplit)
         {
-            var newNode = new Node<TK, TP>(this.Degree);
+            var newNode = this.DataProvider.CreateNode(this.Degree);;
 
             parentNode.Entries.Insert(nodeToBeSplitIndex, nodeToBeSplit.Entries[this.Degree - 1]);
-            parentNode.Children.Insert(nodeToBeSplitIndex + 1, newNode);
+            parentNode.ChildrenAddresses.Insert(nodeToBeSplitIndex + 1, newNode.Address);
 
             newNode.Entries.AddRange(nodeToBeSplit.Entries.GetRange(this.Degree, this.Degree - 1));
 
@@ -311,8 +322,8 @@ namespace Marcello.Index
 
             if (!nodeToBeSplit.IsLeaf)
             {
-                newNode.Children.AddRange(nodeToBeSplit.Children.GetRange(this.Degree, this.Degree));
-                nodeToBeSplit.Children.RemoveRange(this.Degree, this.Degree);
+                newNode.ChildrenAddresses.AddRange(nodeToBeSplit.ChildrenAddresses.GetRange(this.Degree, this.Degree));
+                nodeToBeSplit.ChildrenAddresses.RemoveRange(this.Degree, this.Degree);
             }
         }
 
@@ -328,7 +339,7 @@ namespace Marcello.Index
             }
 
             // non-leaf
-            Node<TK, TP> child = node.Children[positionToInsert];
+            Node<TK, TP> child = this.DataProvider.GetNode(node.ChildrenAddresses[positionToInsert]);
             if (child.HasReachedMaxEntries)
             {
                 this.SplitChild(node, positionToInsert, child);
@@ -338,7 +349,9 @@ namespace Marcello.Index
                 }
             }
 
-            this.InsertNonFull(node.Children[positionToInsert], newKey, newPointer);
+            this.InsertNonFull(
+                this.DataProvider.GetNode(node.ChildrenAddresses[positionToInsert]), 
+                newKey, newPointer);
         }
     }
 }

@@ -64,6 +64,7 @@
     <Compile Include="Index\BTree.cs" />
     <Compile Include="Index\Node.cs" />
     <Compile Include="Index\Entry.cs" />
+    <Compile Include="Index\IBtreeDataProvider.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>

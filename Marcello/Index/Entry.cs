@@ -2,6 +2,7 @@
 
 namespace Marcello.Index
 {
+
     public class Entry<TK, TP> : IEquatable<Entry<TK, TP>>
     {
         public TK Key { get; set; }

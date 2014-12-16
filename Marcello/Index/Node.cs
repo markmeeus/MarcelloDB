@@ -1,19 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Marcello.Index
 {
     public class Node<TK, TP>
     {
-        private int degree;
+        int degree;
+        public Int64 Address{ get; set; }
 
         public Node(int degree)
         {
             this.degree = degree;
-            this.Children = new List<Node<TK, TP>>(degree);
+            this.ChildrenAddresses = new List<Int64>(degree);
             this.Entries = new List<Entry<TK, TP>>(degree);
         }
 
-        public List<Node<TK, TP>> Children { get; set; }
+        public List<Int64> ChildrenAddresses { get; set; }
 
         public List<Entry<TK, TP>> Entries { get; set; }
 
@@ -21,7 +23,7 @@ namespace Marcello.Index
         {
             get
             {
-                return this.Children.Count == 0;
+                return this.ChildrenAddresses.Count == 0;
             }
         }
 
