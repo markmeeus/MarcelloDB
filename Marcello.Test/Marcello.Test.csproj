@@ -47,6 +47,7 @@
     <Compile Include="Records\RecordListOperationTest.cs" />
     <Compile Include="Serialization\BufferWriterTest.cs" />
     <Compile Include="Serialization\BufferReaderTest.cs" />
+    <Compile Include="Index\BTreeTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -57,6 +58,7 @@
     <Folder Include="Transactions\" />
     <Folder Include="Storage\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Index\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Marcello\Marcello.csproj">

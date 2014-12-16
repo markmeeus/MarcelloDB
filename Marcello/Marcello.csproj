@@ -61,6 +61,9 @@
     <Compile Include="Records\RecordListOperation.cs" />
     <Compile Include="Serialization\BufferWriter.cs" />
     <Compile Include="Serialization\BufferReader.cs" />
+    <Compile Include="Index\BTree.cs" />
+    <Compile Include="Index\Node.cs" />
+    <Compile Include="Index\Entry.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -73,6 +76,7 @@
     <Folder Include="Transactions\" />
     <Folder Include="Storage\StreamActors\" />
     <Folder Include="Helpers\" />
+    <Folder Include="Index\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Marcello.csproj" />
