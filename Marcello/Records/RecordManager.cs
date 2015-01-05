@@ -5,7 +5,16 @@ using Marcello.Storage;
 
 namespace Marcello.Records
 {
-    internal class RecordManager<T>
+    internal interface IRecordManager
+    {
+        Record AppendRecord(byte[] data);
+
+        Record UpdateRecord(Record record, byte[] data);
+
+        void ReleaseRecord(Record record);
+    }
+
+    internal class RecordManager<T> : IRecordManager
     {   
         Marcello Session { get; set; }
 
@@ -30,63 +39,36 @@ namespace Marcello.Records
             JournalEnabled = true; //journal by default
         }
 
-        internal Record GetFirstRecord()
-        {
-            var firstRecordAddress = GetMetaDataRecord().DataListEndPoints.StartAddress;
-            if (firstRecordAddress > 0) {
-                return ReadEntireRecord(firstRecordAddress);
-            }
-            return null;
-        }
-
-        internal Record GetNextRecord(Record record)
-        {
-            if (record.Header.Next > 0) {
-                return ReadEntireRecord(record.Header.Next);
-            }
-            return null;
-        }
-
-
-        #region internal methods
-        internal void DisableJournal()
-        {
-            JournalEnabled = false;
-            StorageEngine.DisableJournal();
-        }
-        #endregion 
-
-        #region private methods
-        public void AppendObject(T obj)
+        #region IRecordManager implementation
+        public Record AppendRecord(byte[] data)
         {
             var record = new Record();
-            var data = Serializer.Serialize(obj);
             record.Header.DataSize = data.Length;
             record.Header.AllocatedDataSize = AllocationStrategy.CalculateSize(record);
             record.Data = new byte[record.Header.AllocatedDataSize];
             data.CopyTo(record.Data, 0);
 
-
-            WithMetaDataRecord ((metaDataRecord) => {
+            WithMetaDataRecord((metaDataRecord) => {
                 ReuseEmptyRecordHeader(record, metaDataRecord);
-                AppendRecord(record, metaDataRecord.DataListEndPoints); 
-            });                
+                AppendRecordToList(record, metaDataRecord.DataListEndPoints); 
+            });
+            return record;
         }
 
-        public void UpdateObject(Record record, T obj)
+        public Record UpdateRecord(Record record, byte[] data)
         {
-            var bytes = Serializer.Serialize(obj);
-            if (bytes.Length >= record.Header.AllocatedDataSize )
+            if (data.Length >= record.Header.AllocatedDataSize )
             {
                 ReleaseRecord(record);
-                AppendObject(obj); 
+                return AppendRecord(data); 
             }
             else 
             {   
                 record.Data = new byte[record.Header.AllocatedDataSize];
-                bytes.CopyTo(record.Data, 0);
-                record.Header.DataSize = bytes.Length;
+                data.CopyTo(record.Data, 0);
+                record.Header.DataSize = data.Length;
                 StorageEngine.Write(record.Header.Address, record.AsBytes ());
+                return record;
             }
         }
 
@@ -96,12 +78,49 @@ namespace Marcello.Records
                 //remove from list
                 RemoveRecord(record, metaDataRecord.DataListEndPoints); 
                 //append to empty list
-                AppendRecord(record, metaDataRecord.EmptyListEndPoints);
+                AppendRecordToList(record, metaDataRecord.EmptyListEndPoints);
 
                 metaDataRecord.Sanitize();
             });                
         }
+        #endregion
+
+        #region internal methods
+
+        /// <summary>
+        /// LEAKY ABSTRACTION, FIX AFTER INDEX ENUMERATION
+        /// </summary>
+        /// <returns>The first record.</returns>
+        internal Record GetFirstRecord()
+        {
+            var firstRecordAddress = GetMetaDataRecord().DataListEndPoints.StartAddress;
+            if (firstRecordAddress > 0) {
+                return ReadEntireRecord(firstRecordAddress);
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// LEAKY ABSTRACTION, FIX AFTER INDEX ENUMERATION
+        /// </summary>
+        /// <returns>The first record.</returns>
+        internal Record GetNextRecord(Record record)
+        {
+            if (record.Header.Next > 0) {
+                return ReadEntireRecord(record.Header.Next);
+            }
+            return null;
+        }            
             
+        internal void DisableJournal()
+        {
+            JournalEnabled = false;
+            StorageEngine.DisableJournal();
+        }
+        #endregion 
+
+        #region private methods
+
         void WriteHeader(Record record)
         {
             StorageEngine.Write(record.Header.Address, record.Header.AsBytes());
@@ -126,7 +145,7 @@ namespace Marcello.Records
             StorageEngine.Write(0, record.AsBytes());
         }
 
-        void AppendRecord (Record record, ListEndPoints listEndPoints)
+        void AppendRecordToList (Record record, ListEndPoints listEndPoints)
         {
             var operation = new RecordListAppendOperation(
                 listEndPoints, 

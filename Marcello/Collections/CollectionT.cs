@@ -80,9 +80,11 @@ namespace Marcello.Collections
         #endregion
 
         #region private methods
+
         Record GetRecordForObjectID(object objectID)
         {        
             //temp implementation untill ID is indexed
+
             var record = RecordManager.GetFirstRecord();
 
             while (record != null) {
@@ -102,11 +104,23 @@ namespace Marcello.Collections
             //Try Load record with object ID
             Record record = GetRecordForObjectID(objectID);
             if (record != null) {
-                RecordManager.UpdateObject(record, obj);
+                UpdateObject(record, obj);
             }
             else {
-                RecordManager.AppendObject(obj);
+                AppendObject(obj);
             }
+        }
+
+        void AppendObject(T obj)
+        {
+            var data = Serializer.Serialize(obj);
+            RecordManager.AppendRecord(data);
+        }
+
+        void UpdateObject(Record record, T obj)
+        {
+            var bytes = Serializer.Serialize(obj);
+            RecordManager.UpdateRecord(record, bytes);
         }
 
         void DestroyInternal (T obj)
