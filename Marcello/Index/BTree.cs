@@ -141,7 +141,7 @@ namespace Marcello.Index
                     if (!leftSibling.IsLeaf)
                     {
                         childNode.ChildrenAddresses.Insert(0, leftSibling.ChildrenAddresses.Last());
-                        leftSibling.ChildrenAddresses.RemoveAt(leftSibling.ChildrenAddresses.Count - 1);
+                        leftSibling.ChildrenAddresses.RemoveAt(leftSibling.ChildrenAddresses.Count - 1);    
                     }
                 }
                 else if (rightSibling != null && rightSibling.Entries.Count > this.Degree - 1)

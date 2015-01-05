@@ -34,7 +34,7 @@ namespace Marcello.Index.BTreeTest
             node.Address = _lastAddress++;
             AddNode(node);
             return node;
-        }
+        }                               
 
         void AddNode(Node<int,int> node)
         {
