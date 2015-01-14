@@ -2,44 +2,48 @@
 using Marcello.AllocationStrategies;
 using Marcello.Serialization;
 using Marcello.Storage;
+using Marcello.Records.__;
 
 namespace Marcello.Records
 {
     internal interface IRecordManager
     {
+        Record GetRecord(Int64 address);
+
         Record AppendRecord(byte[] data);
 
         Record UpdateRecord(Record record, byte[] data);
 
         void ReleaseRecord(Record record);
+
+        void RegisterNamedRecordAddress(string name, Int64 recordAddress);
+
+        Int64 GetNamedRecordAddress(string name);
     }
 
     internal class RecordManager<T> : IRecordManager
     {   
-        Marcello Session { get; set; }
 
         StorageEngine<T> StorageEngine { get;set; }
-
-        IObjectSerializer<T> Serializer { get; set; }
 
         IAllocationStrategy AllocationStrategy { get; set; }
 
         bool JournalEnabled { get; set; }
 
-        internal RecordManager(Marcello session,
-            IObjectSerializer<T> serializer,
+        internal RecordManager(
             IAllocationStrategy allocationStrategy,
             StorageEngine<T> storageEngine
         )
         {
-            Session = session;
             StorageEngine = storageEngine;
-            Serializer = serializer;
             AllocationStrategy = allocationStrategy;
             JournalEnabled = true; //journal by default
         }
 
         #region IRecordManager implementation
+        public Record GetRecord(Int64 address){
+            return ReadEntireRecord(address);
+        }
         public Record AppendRecord(byte[] data)
         {
             var record = new Record();
@@ -64,10 +68,9 @@ namespace Marcello.Records
             }
             else 
             {   
-                record.Data = new byte[record.Header.AllocatedDataSize];
-                data.CopyTo(record.Data, 0);
+                record.Data = data;
                 record.Header.DataSize = data.Length;
-                StorageEngine.Write(record.Header.Address, record.AsBytes ());
+                StorageEngine.Write(record.Header.Address, record.AsBytes());
                 return record;
             }
         }
@@ -82,6 +85,42 @@ namespace Marcello.Records
 
                 metaDataRecord.Sanitize();
             });                
+        }
+
+        public void RegisterNamedRecordAddress(string name, Int64 recordAddress)
+        {       
+            WithMetaDataRecord((metaDataRecord) =>
+                {
+                    var namedRecordIndexRecord = GetNamedRecordIndexRecord(metaDataRecord);
+                    var namedRecordIndex = NamedRecordsIndex.FromBytes(namedRecordIndexRecord.Data);
+                    namedRecordIndex.NamedRecordIndexes.Add(name, recordAddress);
+                    UpdateRecord(namedRecordIndexRecord, namedRecordIndex.ToBytes());
+                });
+        }   
+
+        NamedRecordsIndex GetNamedRecordIndex(CollectionMetaDataRecord metaDataRecord){
+            return NamedRecordsIndex.FromBytes(GetNamedRecordIndexRecord(metaDataRecord).Data);
+        }
+
+        Record GetNamedRecordIndexRecord(CollectionMetaDataRecord metaDataRecord){
+
+            if (metaDataRecord.NamedRecordIndexAddress > 0)
+            {
+                return GetRecord(metaDataRecord.NamedRecordIndexAddress);
+            }
+            else
+            {
+                var namedRecordIndex = new NamedRecordsIndex();
+                var namedRecordIndexRecord = AppendRecord(namedRecordIndex.ToBytes());
+                metaDataRecord.NamedRecordIndexAddress = namedRecordIndexRecord.Header.Address;
+                return namedRecordIndexRecord;
+            }
+
+        }
+        public Int64 GetNamedRecordAddress(string name)
+        {
+            var metaDataRecord = GetMetaDataRecord();
+            return GetNamedRecordIndex(metaDataRecord).NamedRecordIndexes[name];
         }
         #endregion
 
@@ -210,6 +249,8 @@ namespace Marcello.Records
             action(metaDataRecord);
             SaveMetaDataRecord (metaDataRecord);
         }
+
+
         #endregion
     }
 }

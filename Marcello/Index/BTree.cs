@@ -9,9 +9,9 @@ namespace Marcello.Index
     /// </summary>
     public class BTree<TK, TP> where TK : IComparable<TK>
     {
-        IBtreeDataProvider<TK, TP> DataProvider { get; set;}
+        IBTreeDataProvider<TK, TP> DataProvider { get; set;}
 
-        public BTree(IBtreeDataProvider<TK, TP> dataProvider, int degree)
+        public BTree(IBTreeDataProvider<TK, TP> dataProvider, int degree)
         {
             DataProvider = dataProvider;
 

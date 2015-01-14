@@ -7,6 +7,7 @@ namespace Marcello.Records
 	{		
         internal ListEndPoints DataListEndPoints { get; set;}
         internal ListEndPoints EmptyListEndPoints { get; set;}
+        internal Int64 NamedRecordIndexAddress { get; set;}
 
 		internal CollectionMetaDataRecord()
 		{
@@ -27,12 +28,14 @@ namespace Marcello.Records
             bufferWriter.WriteInt64(this.EmptyListEndPoints.StartAddress);
             bufferWriter.WriteInt64(this.EmptyListEndPoints.EndAddress);
 
+            bufferWriter.WriteInt64(this.NamedRecordIndexAddress);
+
             //do no use the trimmed buffer as we want some padding for future use
             return bufferWriter.Buffer; 
         }
 
         internal static CollectionMetaDataRecord FromBytes(byte[] bytes)
-        {
+        {        
             var bufferReader = new BufferReader(bytes, BitConverter.IsLittleEndian);
 
             var startAddress = bufferReader.ReadInt64();
@@ -43,14 +46,15 @@ namespace Marcello.Records
             endAddress = bufferReader.ReadInt64();
             var emptyListEndPoints = new ListEndPoints(startAddress, endAddress);
 
+            var namedRecordIndexAddress = bufferReader.ReadInt64();
+
             return new CollectionMetaDataRecord(){                    
                 DataListEndPoints = dataListEndPoints,
-                EmptyListEndPoints = emptyListEndPoints
+                EmptyListEndPoints = emptyListEndPoints,
+                NamedRecordIndexAddress = namedRecordIndexAddress
             };
-
         }
-
-
+            
         internal void Sanitize(){
             //when the data list is empty, the empty list is empty too.
             if(this.DataListEndPoints.StartAddress == 0) 

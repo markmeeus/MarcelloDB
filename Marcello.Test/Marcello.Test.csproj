@@ -47,7 +47,8 @@
     <Compile Include="Serialization\BufferWriterTest.cs" />
     <Compile Include="Serialization\BufferReaderTest.cs" />
     <Compile Include="Index\BTreeTest.cs" />
-    <Compile Include="Index\RecordDataProviderTest.cs" />
+    <Compile Include="Index\RecordBTreeDataProviderTest.cs" />
+    <Compile Include="Records\RecordManagerTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

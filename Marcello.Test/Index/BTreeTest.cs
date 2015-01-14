@@ -2,10 +2,11 @@
 using NUnit.Framework;
 using System.Collections.Generic;
 using System;
+using Marcello.Index;
 
-namespace Marcello.Index.BTreeTest
+namespace Marcello.Test.Index
 {
-    public class TestDataProvider : IBtreeDataProvider<int, int>
+    public class TestDataProvider : IBTreeDataProvider<int, int>
     {
         Int64 _lastAddress = 1;
         Dictionary<Int64, Node<int,int>> _nodes = new Dictionary<long, Node<int, int>>();

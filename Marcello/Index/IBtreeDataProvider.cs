@@ -2,7 +2,7 @@
 
 namespace Marcello.Index
 {
-    public interface IBtreeDataProvider<TK, TP>
+    public interface IBTreeDataProvider<TK, TP>
     {
         Node<TK, TP> GetRootNode(int degree);
 

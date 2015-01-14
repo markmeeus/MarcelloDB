@@ -23,7 +23,7 @@ namespace Marcello.Records
         internal byte[] AsBytes()
         {
             var bytes = new byte[this.ByteSize];
-            Header.AsBytes ().CopyTo(bytes, 0);
+            Header.AsBytes().CopyTo(bytes, 0);
             Data.CopyTo(bytes, RecordHeader.ByteSize);
             return bytes;
         }

@@ -34,8 +34,7 @@ namespace Marcello.Collections
             StorageEngine = storageEngine;
 
             RecordManager = new RecordManager<T>(
-                Session,
-                serializer,
+
                 new DoubleSizeAllocationStrategy(),
                 StorageEngine
             );
