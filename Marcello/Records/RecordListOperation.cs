@@ -76,7 +76,7 @@ namespace Marcello.Records
                     Touch(this.Record).Header.Address = 
                         lastRecord.Header.Address + lastRecord.ByteSize;
                 }
-                Touch (this.Record).Header.Next = 0;
+                Touch(this.Record).Header.Next = 0;
                 Touch(this.Record).Header.Previous = lastRecord.Header.Address;
                 Touch(lastRecord).Header.Next = this.Record.Header.Address;
             }

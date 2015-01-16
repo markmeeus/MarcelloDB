@@ -43,10 +43,10 @@ namespace Marcello.Test
         {
             var toiletPaper = Article.ToiletPaper;
             _articles.Persist(toiletPaper);
-            var article = _articles.All.FirstOrDefault();
+            var article = _articles.Get(toiletPaper.ID);
 
             Assert.AreEqual(toiletPaper.Name, article.Name, "First article");
-        }
+        }            
 
         [Test]
         public void Insert_2_Objects()
@@ -242,6 +242,7 @@ namespace Marcello.Test
             _articles.Destroy(spinalTapDvd);
 
             var barbieDoll = Article.BarbieDoll;
+            var count = _articles.All.Count();
             _articles.Persist(barbieDoll);
 
             Assert.AreEqual(2, _articles.All.Count());
@@ -318,11 +319,11 @@ namespace Marcello.Test
             var fileStreamProvider =  new FileStorageStreamProvider("./data/");
             var marcello = new Marcello(fileStreamProvider);
 
+            var articles = marcello.Collection<Article>();
+
             var toiletPaper = Article.ToiletPaper;
             var spinalTapDvd = Article.SpinalTapDvd;
             var barbieDoll = Article.BarbieDoll;
-
-            var articles = marcello.Collection<Article>();
 
             articles.Persist(toiletPaper);
             articles.Persist(spinalTapDvd);
@@ -332,10 +333,10 @@ namespace Marcello.Test
 
             Assert.AreEqual(new List<string>{toiletPaper.Name, spinalTapDvd.Name, barbieDoll.Name }, articleNames);
         }            
-
-
+            
         private void EnsureFolder(string path)
         {
+            System.IO.Directory.Delete("data", true);
             System.IO.Directory.CreateDirectory("data");
         }
     }

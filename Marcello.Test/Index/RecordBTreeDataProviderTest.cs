@@ -24,11 +24,12 @@ namespace Marcello.Test.Index
             return Records[address];
         }
 
-        public Record AppendRecord(byte[] data)
+        public Record AppendRecord(byte[] data, bool hasObject = false)
         {
             var record = new Record();
             record.Data = data;
             record.Header.Address = Records.Count + 1;
+            record.Header.HasObject = hasObject;
             Records.Add(record.Header.Address, record);
 
             return record;
@@ -74,7 +75,7 @@ namespace Marcello.Test.Index
             manager = new TestRecordManager();
             provider = new RecordBTreeDataProvider(
                 manager,
-                new BsonSerializer<Node<object,Int64>>(),
+                new BsonSerializer<Node<ComparableObject,Int64>>(),
                 "Root");
         }
 
@@ -98,7 +99,7 @@ namespace Marcello.Test.Index
             var node = provider.CreateNode(2);
             var loadedNode = new RecordBTreeDataProvider(
                                  manager,
-                                 new BsonSerializer<Node<object,Int64>>(),
+                new BsonSerializer<Node<ComparableObject,Int64>>(),
                                 "Root").GetNode(node.Address);
             Assert.AreEqual(node.Address, loadedNode.Address);
         }
@@ -109,7 +110,7 @@ namespace Marcello.Test.Index
             var node = provider.CreateNode(2);
             var newProvider = new RecordBTreeDataProvider(
                 manager,
-                new BsonSerializer<Node<object,Int64>>(),
+                new BsonSerializer<Node<ComparableObject,Int64>>(),
                 "Root");
             node = newProvider.GetNode(node.Address); // get with new provider
             node.ChildrenAddresses.Add(12);
@@ -138,7 +139,7 @@ namespace Marcello.Test.Index
             var node = provider.GetRootNode(2);
             var newProvider = new RecordBTreeDataProvider(
                 manager,
-                new BsonSerializer<Node<object,Int64>>(),
+                new BsonSerializer<Node<ComparableObject,Int64>>(),
                 "Root");
             var secondNode = newProvider.GetRootNode(2);
 
@@ -151,7 +152,7 @@ namespace Marcello.Test.Index
             node.ChildrenAddresses.Add(1);
             var reloadedNode = provider.GetRootNode(2);
             Assert.AreSame(node, reloadedNode);
-        }
+        }            
     }
 }
 

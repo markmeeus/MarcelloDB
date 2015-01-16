@@ -67,6 +67,7 @@
     <Compile Include="Index\IBtreeDataProvider.cs" />
     <Compile Include="Index\RecordBTreeDataProvider.cs" />
     <Compile Include="Records\NamedRecordsIndex.cs" />
+    <Compile Include="Index\ComparableObject.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>

@@ -41,6 +41,12 @@ namespace Marcello.Test.Index
         {
             _nodes.Add(node.Address, node);
         }
+
+
+        public void Flush()
+        {
+        
+        }
     }
 
     [TestFixture]

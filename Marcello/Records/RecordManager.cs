@@ -10,7 +10,7 @@ namespace Marcello.Records
     {
         Record GetRecord(Int64 address);
 
-        Record AppendRecord(byte[] data);
+        Record AppendRecord(byte[] data, bool hasObject = false);
 
         Record UpdateRecord(Record record, byte[] data);
 
@@ -44,11 +44,13 @@ namespace Marcello.Records
         public Record GetRecord(Int64 address){
             return ReadEntireRecord(address);
         }
-        public Record AppendRecord(byte[] data)
+
+        public Record AppendRecord(byte[] data, bool hasObject = false)
         {
             var record = new Record();
             record.Header.DataSize = data.Length;
             record.Header.AllocatedDataSize = AllocationStrategy.CalculateSize(record);
+            record.Header.HasObject = hasObject;
             record.Data = new byte[record.Header.AllocatedDataSize];
             data.CopyTo(record.Data, 0);
 
@@ -64,7 +66,7 @@ namespace Marcello.Records
             if (data.Length >= record.Header.AllocatedDataSize )
             {
                 ReleaseRecord(record);
-                return AppendRecord(data); 
+                return AppendRecord(data, record.Header.HasObject); 
             }
             else 
             {   
@@ -89,38 +91,28 @@ namespace Marcello.Records
 
         public void RegisterNamedRecordAddress(string name, Int64 recordAddress)
         {       
+            var namedRecordIndexRecord = GetNamedRecordIndexRecord();
+
+            var namedRecordIndex = NamedRecordsIndex.FromBytes(namedRecordIndexRecord.Data);
+            namedRecordIndex.NamedRecordIndexes.Remove(name);
+            namedRecordIndex.NamedRecordIndexes.Add(name, recordAddress);
+            var updateRecord = UpdateRecord(namedRecordIndexRecord, namedRecordIndex.ToBytes());
+
             WithMetaDataRecord((metaDataRecord) =>
-                {
-                    var namedRecordIndexRecord = GetNamedRecordIndexRecord(metaDataRecord);
-                    var namedRecordIndex = NamedRecordsIndex.FromBytes(namedRecordIndexRecord.Data);
-                    namedRecordIndex.NamedRecordIndexes.Add(name, recordAddress);
-                    UpdateRecord(namedRecordIndexRecord, namedRecordIndex.ToBytes());
-                });
+            {
+                metaDataRecord.NamedRecordIndexAddress = updateRecord.Header.Address;
+            });
         }   
-
-        NamedRecordsIndex GetNamedRecordIndex(CollectionMetaDataRecord metaDataRecord){
-            return NamedRecordsIndex.FromBytes(GetNamedRecordIndexRecord(metaDataRecord).Data);
-        }
-
-        Record GetNamedRecordIndexRecord(CollectionMetaDataRecord metaDataRecord){
-
-            if (metaDataRecord.NamedRecordIndexAddress > 0)
-            {
-                return GetRecord(metaDataRecord.NamedRecordIndexAddress);
-            }
-            else
-            {
-                var namedRecordIndex = new NamedRecordsIndex();
-                var namedRecordIndexRecord = AppendRecord(namedRecordIndex.ToBytes());
-                metaDataRecord.NamedRecordIndexAddress = namedRecordIndexRecord.Header.Address;
-                return namedRecordIndexRecord;
-            }
-
-        }
+                   
         public Int64 GetNamedRecordAddress(string name)
         {
-            var metaDataRecord = GetMetaDataRecord();
-            return GetNamedRecordIndex(metaDataRecord).NamedRecordIndexes[name];
+            var namedRecordIndex = GetNamedRecordIndex();
+            if (namedRecordIndex.NamedRecordIndexes.ContainsKey(name))
+            {
+                return namedRecordIndex.NamedRecordIndexes[name];
+            }
+            return 0;
+
         }
         #endregion
 
@@ -173,14 +165,31 @@ namespace Marcello.Records
             return record;
         }
 
+        bool inWithMetaDataRecord = false;
+        void WithMetaDataRecord(Action<CollectionMetaDataRecord> action)
+        {
+
+            var metaDataRecord = GetMetaDataRecord();
+            inWithMetaDataRecord = true;
+            action(metaDataRecord);
+            inWithMetaDataRecord = false;
+            SaveMetaDataRecord (metaDataRecord);
+        }
+
         CollectionMetaDataRecord GetMetaDataRecord()
         {
+            if (inWithMetaDataRecord)
+                System.Diagnostics.Debugger.Break();
+
             var bytes = StorageEngine.Read(0, CollectionMetaDataRecord.ByteSize);
             return CollectionMetaDataRecord.FromBytes(bytes);
         }
 
         void SaveMetaDataRecord(CollectionMetaDataRecord record)
         {
+            if (inWithMetaDataRecord)
+                System.Diagnostics.Debugger.Break();
+
             StorageEngine.Write(0, record.AsBytes());
         }
 
@@ -212,7 +221,6 @@ namespace Marcello.Records
                         //copy header
                         record.Header = emptyRecord.Header;
                         RemoveRecord(emptyRecord, metaDataRecord.EmptyListEndPoints);
-                        SaveMetaDataRecord(metaDataRecord);
                         return;
                     }
                     if (emptyRecord.Header.Next > 0) 
@@ -241,16 +249,30 @@ namespace Marcello.Records
             foreach (var touchedRecord in operation.TouchedRecords) {
                 WriteHeader (touchedRecord);
             }
+        }            
+
+        NamedRecordsIndex GetNamedRecordIndex(){
+            return NamedRecordsIndex.FromBytes(GetNamedRecordIndexRecord().Data);
         }
 
-        void WithMetaDataRecord(Action<CollectionMetaDataRecord> action)
-        {
+        Record GetNamedRecordIndexRecord(){
+
             var metaDataRecord = GetMetaDataRecord();
-            action(metaDataRecord);
-            SaveMetaDataRecord (metaDataRecord);
+            if (metaDataRecord.NamedRecordIndexAddress > 0)
+            {
+                return GetRecord(metaDataRecord.NamedRecordIndexAddress);
+            }
+            else
+            {
+                var namedRecordIndex = new NamedRecordsIndex();
+                var namedRecordIndexRecord = AppendRecord(namedRecordIndex.ToBytes());
+                WithMetaDataRecord((newMetaDataRecord)=>{
+                    newMetaDataRecord.NamedRecordIndexAddress = namedRecordIndexRecord.Header.Address;
+                });
+                return namedRecordIndexRecord;
+            }
+
         }
-
-
         #endregion
     }
 }

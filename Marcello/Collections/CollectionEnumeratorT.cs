@@ -31,8 +31,11 @@ namespace Marcello.Collections
             lock(this.Session.SyncLock){
                 var record = RecordManager.GetFirstRecord();
                 while (record != null) {
-                    var obj = Serializer.Deserialize(record.Data);
-                    yield return obj;
+                    if (record.Header.HasObject)
+                    {   
+                        var obj = Serializer.Deserialize(record.Data);
+                        yield return obj;
+                    }
                     record = RecordManager.GetNextRecord(record);
                 }
             }            

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Marcello.AllocationStrategies;
 using Marcello.Records;
 using Marcello.Storage;
+using Marcello.Index;
 
 namespace Marcello.Collections
 {
@@ -37,7 +38,9 @@ namespace Marcello.Collections
 
                 new DoubleSizeAllocationStrategy(),
                 StorageEngine
-            );
+            );        
+
+            this.DisableJournal();
 
         }
 
@@ -47,6 +50,22 @@ namespace Marcello.Collections
                 return new CollectionEnumerator<T>(this.Session, RecordManager, Serializer);
             }
         }            
+
+        public T Get(object id)
+        {
+            T result = default(T);
+
+            this.Session.Transaction(() =>
+                {
+                    var record =  GetRecordForObjectID(id);
+                    if (record != null)
+                    {
+                        result = Serializer.Deserialize(record.Data);
+                    }
+
+                });
+            return result;
+        }
 
         public void Persist(T obj)
         {
@@ -81,18 +100,17 @@ namespace Marcello.Collections
         #region private methods
 
         Record GetRecordForObjectID(object objectID)
-        {        
-            //temp implementation untill ID is indexed
-
-            var record = RecordManager.GetFirstRecord();
-
-            while (record != null) {
-                var obj = Serializer.Deserialize(record.Data);
-                var objProxy = new ObjectProxy(obj);
-                if (objProxy.ID.Equals(objectID)){
-                    return record;
-                }
-                record = RecordManager.GetNextRecord(record);
+        {                
+            var provider = new RecordBTreeDataProvider(
+                this.RecordManager, 
+                new BsonSerializer<Node<ComparableObject, Int64>>(),
+                "ID_INDEX");
+            var bTree = new BTree<ComparableObject, Int64>(provider, 1024);
+            var indexEntry = bTree.Search(new ComparableObject(objectID));
+            if (indexEntry != null)
+            {
+                return RecordManager.GetRecord(indexEntry.Pointer);
+                
             }
             return null;
         }
@@ -106,14 +124,23 @@ namespace Marcello.Collections
                 UpdateObject(record, obj);
             }
             else {
-                AppendObject(obj);
+                record = AppendObject(obj);
             }
+                
+            var provider = new RecordBTreeDataProvider(
+                this.RecordManager, 
+                new BsonSerializer<Node<ComparableObject, Int64>>(),
+                "ID_INDEX");
+            var bTree = new BTree<ComparableObject, Int64>(provider, 1024);
+            bTree.Delete(new ComparableObject(objectID));
+            bTree.Insert(new ComparableObject(objectID), record.Header.Address);
+            provider.Flush();
         }
 
-        void AppendObject(T obj)
+        Record AppendObject(T obj)
         {
             var data = Serializer.Serialize(obj);
-            RecordManager.AppendRecord(data);
+            return RecordManager.AppendRecord(data, true);
         }
 
         void UpdateObject(Record record, T obj)
@@ -131,6 +158,14 @@ namespace Marcello.Collections
             {
                 //release the record if present
                 RecordManager.ReleaseRecord(record);
+
+                var provider = new RecordBTreeDataProvider(
+                    this.RecordManager, 
+                    new BsonSerializer<Node<ComparableObject, Int64>>(),
+                    "ID_INDEX");
+                var bTree = new BTree<ComparableObject, Int64>(provider, 1024);
+                bTree.Delete(new ComparableObject(objectID));
+                provider.Flush();
             }
 
         }

@@ -79,6 +79,13 @@ namespace Marcello.Test.Records
             Assert.AreEqual(streamLength, newStreamLength);           
         }
 
+
+        [Test]
+        public void GetNamedRecordReturnsNulWhenNotRegistered(){
+            var result = _recordManager.GetNamedRecordAddress("Test");
+            Assert.AreEqual(0, result, "Should be nul");
+        }
+
         [Test]
         public void StoresNamedRecordAddress(){
             _recordManager.RegisterNamedRecordAddress("Test", 123);

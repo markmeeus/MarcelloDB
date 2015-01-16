@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Marcello.Index
 {
@@ -9,6 +10,8 @@ namespace Marcello.Index
         Node<TK, TP> GetNode(Int64 address);
 
         Node<TK, TP> CreateNode(int degree);
+
+        void Flush();
     }
 }
 

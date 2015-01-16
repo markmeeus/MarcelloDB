@@ -5,27 +5,27 @@ using System.Collections.Generic;
 
 namespace Marcello.Index
 {
-    internal class RecordBTreeDataProvider :  IBTreeDataProvider<object, Int64>
+    internal class RecordBTreeDataProvider :  IBTreeDataProvider<ComparableObject, Int64>
     {
         IRecordManager RecordManager { get; set; }
-        IObjectSerializer<Node<object, Int64>> Serializer { get; set; }
-        Dictionary<Int64, Node<object, Int64>> NodeCache { get; set; }
+        IObjectSerializer<Node<ComparableObject, Int64>> Serializer { get; set; }
+        Dictionary<Int64, Node<ComparableObject, Int64>> NodeCache { get; set; }
         string RootRecordName {get;set;}
 
         internal RecordBTreeDataProvider(
             IRecordManager recordManager, 
-            IObjectSerializer<Node<object, Int64>> serializer,
+            IObjectSerializer<Node<ComparableObject, Int64>> serializer,
             string rootRecordName)
         {
             this.RecordManager = recordManager;
             this.Serializer = serializer;
-            this.NodeCache = new Dictionary<long, Node<object, long>>();
+            this.NodeCache = new Dictionary<long, Node<ComparableObject, long>>();
             this.RootRecordName = rootRecordName;
         }
 
         #region IBTreeDataProvider implementation
 
-        public Node<object, long> GetRootNode(int degree)
+        public Node<ComparableObject, long> GetRootNode(int degree)
         {
             var rootRecordAddress = this.RecordManager.GetNamedRecordAddress(this.RootRecordName);
             if (rootRecordAddress > 0)
@@ -40,7 +40,7 @@ namespace Marcello.Index
             }
         }
 
-        public Node<object, long> GetNode(long address)
+        public Node<ComparableObject, long> GetNode(long address)
         {
             if (this.NodeCache.ContainsKey(address))
             {
@@ -56,9 +56,9 @@ namespace Marcello.Index
             return node;
         }
 
-        public Node<object, long> CreateNode(int degree)
+        public Node<ComparableObject, long> CreateNode(int degree)
         {
-            var node = new Node<object, long>(degree);
+            var node = new Node<ComparableObject, long>(degree);
             var data = Serializer.Serialize(node);
             var record = RecordManager.AppendRecord(data);
 
@@ -69,11 +69,46 @@ namespace Marcello.Index
             return node;
         }
 
+        public void Flush()
+        {
+            var retry = true;
+            while (retry)
+            {
+                retry = false;
+                foreach (var node in NodeCache.Values)
+                {
+                    var record = RecordManager.GetRecord(node.Address);
+                    var updateData = Serializer.Serialize(node);
+                    var oldAddress = record.Header.Address;
+                    var updatedRecord = RecordManager.UpdateRecord(record, updateData);
+                    if (oldAddress != updatedRecord.Header.Address)
+                    {
+                        //update any children linking to this node
+                        foreach(var n in NodeCache.Values){
+                            if (n.Address == oldAddress)
+                            {
+                                n.Address = updatedRecord.Header.Address;
+                            }
+                            var indexOfOldAddress = n.ChildrenAddresses.IndexOf(oldAddress);
+                            if (indexOfOldAddress > 0)
+                            {
+                                n.ChildrenAddresses[indexOfOldAddress] = updatedRecord.Header.Address;
+                                retry = true;
+                            }
+                        }
+                    }
+                }
+            }
+                
+            var rootNode = GetRootNode(1024);
+            this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, rootNode.Address);
+
+        }
         #endregion
         //flushUnused
 
         #region private methods
-        private void CacheNode(Node<object, long> node){
+        private void CacheNode(Node<ComparableObject, long> node){
             this.NodeCache.Add(node.Address, node);
         }
         #endregion

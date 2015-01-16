@@ -5,7 +5,7 @@ namespace Marcello.Records
 {
     internal class RecordHeader
     {
-        const int BYTE_SIZE = (2 * sizeof(Int64)) + (2 * sizeof(Int32));
+        const int BYTE_SIZE = (2 * sizeof(Int64)) + (3 * sizeof(Int32));
 
         //Address is not stored
         internal long Address { get; set; }
@@ -14,6 +14,7 @@ namespace Marcello.Records
         internal Int64 Previous { get; set;}
         internal Int32 DataSize { get; set; }
         internal Int32 AllocatedDataSize { get; set; }
+        internal bool HasObject { get; set; }
 
         internal Int32 TotalRecordSize 
         { 
@@ -39,6 +40,7 @@ namespace Marcello.Records
             writer.WriteInt64(this.Previous);
             writer.WriteInt32(this.DataSize);
             writer.WriteInt32(this.AllocatedDataSize);
+            writer.WriteInt32(this.HasObject ? 1 : 0);
             return writer.GetTrimmedBuffer();
         }
 
@@ -56,6 +58,7 @@ namespace Marcello.Records
             recordHeader.Previous = reader.ReadInt64();
             recordHeader.DataSize = reader.ReadInt32();
             recordHeader.AllocatedDataSize = reader.ReadInt32();
+            recordHeader.HasObject = reader.ReadInt32() > 0 ? true : false;
             return recordHeader;
         }
         #endregion

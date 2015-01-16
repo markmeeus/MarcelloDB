@@ -5,14 +5,14 @@ namespace Marcello.Transactions.__
 {
     public class TransactionJournal
     {
-        public Guid ID { get; set;}
+        public String ID { get; set;}
     
         public List<JournalEntry> Entries { get; set; }
 
         public TransactionJournal()
         {
             this.Entries = new List<JournalEntry>();
-            this.ID = Guid.NewGuid();
+            this.ID = Guid.NewGuid().ToString();
         }
     }
 
