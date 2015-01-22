@@ -7,13 +7,16 @@ namespace Marcello.Index
     /// <summary>
     /// B tree implementation based on https://github.com/rdcastro/btree-dotnet
     /// </summary>
-    public class BTree<TK, TP> where TK : IComparable<TK>
+    public class BTree<TK, TP> 
     {
         IBTreeDataProvider<TK, TP> DataProvider { get; set;}
+
+        ObjectComparer Comparer { get; set; }
 
         public BTree(IBTreeDataProvider<TK, TP> dataProvider, int degree)
         {
             DataProvider = dataProvider;
+            Comparer = new ObjectComparer();
 
             if (degree < 2)
             {
@@ -90,10 +93,10 @@ namespace Marcello.Index
         /// <param name="keyToDelete">Key to be deleted.</param>
         private void DeleteInternal(Node<TK, TP> node, TK keyToDelete)
         {
-            int i = node.Entries.TakeWhile(entry => keyToDelete.CompareTo(entry.Key) > 0).Count();
+            int i = node.Entries.TakeWhile(entry => Comparer.Compare(keyToDelete, entry.Key) > 0).Count();
 
             // found key in node, so delete if from it
-            if (i < node.Entries.Count && node.Entries[i].Key.CompareTo(keyToDelete) == 0)
+            if (i < node.Entries.Count && Comparer.Compare(node.Entries[i].Key, keyToDelete) == 0)
             {
                 this.DeleteKeyFromNode(node, keyToDelete, i);
                 return;
@@ -290,9 +293,9 @@ namespace Marcello.Index
         /// <returns>Entry object with key information if found, null otherwise.</returns>
         private Entry<TK, TP> SearchInternal(Node<TK, TP> node, TK key)
         {
-            int i = node.Entries.TakeWhile(entry => key.CompareTo(entry.Key) > 0).Count();
+            int i = node.Entries.TakeWhile(entry => Comparer.Compare(key, entry.Key) > 0).Count();
 
-            if (i < node.Entries.Count && node.Entries[i].Key.CompareTo(key) == 0)
+            if (i < node.Entries.Count && Comparer.Compare(node.Entries[i].Key, key) == 0)
             {
                 return node.Entries[i];
             }
@@ -329,7 +332,7 @@ namespace Marcello.Index
 
         private void InsertNonFull(Node<TK, TP> node, TK newKey, TP newPointer)
         {
-            int positionToInsert = node.Entries.TakeWhile(entry => newKey.CompareTo(entry.Key) >= 0).Count();
+            int positionToInsert = node.Entries.TakeWhile(entry => Comparer.Compare(newKey, entry.Key) >= 0).Count();
 
             // leaf node
             if (node.IsLeaf)
@@ -343,7 +346,7 @@ namespace Marcello.Index
             if (child.HasReachedMaxEntries)
             {
                 this.SplitChild(node, positionToInsert, child);
-                if (newKey.CompareTo(node.Entries[positionToInsert].Key) > 0)
+                if (Comparer.Compare(newKey, node.Entries[positionToInsert].Key) > 0)
                 {
                     positionToInsert++;
                 }

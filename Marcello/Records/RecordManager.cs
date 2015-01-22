@@ -51,7 +51,7 @@ namespace Marcello.Records
             record.Header.DataSize = data.Length;
             record.Header.AllocatedDataSize = AllocationStrategy.CalculateSize(record);
             record.Header.HasObject = hasObject;
-            record.Data = new byte[record.Header.AllocatedDataSize];
+            record.Data = new byte[record.Header.DataSize];
             data.CopyTo(record.Data, 0);
 
             WithMetaDataRecord((metaDataRecord) => {

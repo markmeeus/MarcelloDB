@@ -75,7 +75,7 @@ namespace Marcello.Test.Index
             manager = new TestRecordManager();
             provider = new RecordBTreeDataProvider(
                 manager,
-                new BsonSerializer<Node<ComparableObject,Int64>>(),
+                new BsonSerializer<Node<object,Int64>>(),
                 "Root");
         }
 
@@ -99,7 +99,7 @@ namespace Marcello.Test.Index
             var node = provider.CreateNode(2);
             var loadedNode = new RecordBTreeDataProvider(
                                  manager,
-                new BsonSerializer<Node<ComparableObject,Int64>>(),
+                new BsonSerializer<Node<object,Int64>>(),
                                 "Root").GetNode(node.Address);
             Assert.AreEqual(node.Address, loadedNode.Address);
         }
@@ -110,7 +110,7 @@ namespace Marcello.Test.Index
             var node = provider.CreateNode(2);
             var newProvider = new RecordBTreeDataProvider(
                 manager,
-                new BsonSerializer<Node<ComparableObject,Int64>>(),
+                new BsonSerializer<Node<object,Int64>>(),
                 "Root");
             node = newProvider.GetNode(node.Address); // get with new provider
             node.ChildrenAddresses.Add(12);
@@ -130,18 +130,18 @@ namespace Marcello.Test.Index
         [Test]
         public void GetRootNodeCreatesANode()
         {
-            var node = provider.GetRootNode(2);
+            provider.GetRootNode(2);
             Assert.AreEqual(1, manager.Records.Values.Count);
         }
 
         [Test]
         public void GetRootNodeReturnsSameNode(){
-            var node = provider.GetRootNode(2);
+            provider.GetRootNode(2);
             var newProvider = new RecordBTreeDataProvider(
                 manager,
-                new BsonSerializer<Node<ComparableObject,Int64>>(),
+                new BsonSerializer<Node<object,Int64>>(),
                 "Root");
-            var secondNode = newProvider.GetRootNode(2);
+            newProvider.GetRootNode(2);
 
             Assert.AreEqual(1, manager.Records.Values.Count());
         }

@@ -103,10 +103,10 @@ namespace Marcello.Collections
         {                
             var provider = new RecordBTreeDataProvider(
                 this.RecordManager, 
-                new BsonSerializer<Node<ComparableObject, Int64>>(),
+                new BsonSerializer<Node<object, Int64>>(),
                 "ID_INDEX");
-            var bTree = new BTree<ComparableObject, Int64>(provider, 1024);
-            var indexEntry = bTree.Search(new ComparableObject(objectID));
+            var bTree = new BTree<object, Int64>(provider, 1024);
+            var indexEntry = bTree.Search(objectID);
             if (indexEntry != null)
             {
                 return RecordManager.GetRecord(indexEntry.Pointer);
@@ -129,11 +129,11 @@ namespace Marcello.Collections
                 
             var provider = new RecordBTreeDataProvider(
                 this.RecordManager, 
-                new BsonSerializer<Node<ComparableObject, Int64>>(),
+                new BsonSerializer<Node<object, Int64>>(),
                 "ID_INDEX");
-            var bTree = new BTree<ComparableObject, Int64>(provider, 1024);
-            bTree.Delete(new ComparableObject(objectID));
-            bTree.Insert(new ComparableObject(objectID), record.Header.Address);
+            var bTree = new BTree<object, Int64>(provider, 1024);
+            bTree.Delete(objectID);
+            bTree.Insert(objectID, record.Header.Address);
             provider.Flush();
         }
 
@@ -161,10 +161,10 @@ namespace Marcello.Collections
 
                 var provider = new RecordBTreeDataProvider(
                     this.RecordManager, 
-                    new BsonSerializer<Node<ComparableObject, Int64>>(),
+                    new BsonSerializer<Node<object, Int64>>(),
                     "ID_INDEX");
-                var bTree = new BTree<ComparableObject, Int64>(provider, 1024);
-                bTree.Delete(new ComparableObject(objectID));
+                var bTree = new BTree<object, Int64>(provider, 1024);
+                bTree.Delete(objectID);
                 provider.Flush();
             }
 

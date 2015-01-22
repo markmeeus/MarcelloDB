@@ -49,6 +49,7 @@
     <Compile Include="Index\BTreeTest.cs" />
     <Compile Include="Index\RecordBTreeDataProviderTest.cs" />
     <Compile Include="Records\RecordManagerTest.cs" />
+    <Compile Include="Index\ObjectComparerTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
