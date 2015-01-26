@@ -42,7 +42,10 @@ namespace Marcello.Records
 
             var header = RecordHeader.FromBytes(address, bytes);
             var data = new byte[header.DataSize];
-        
+
+            if (bytes.Length < header.DataSize + RecordHeader.ByteSize)
+                Debug.Assert(false);
+
             Array.Copy(bytes, RecordHeader.ByteSize, data, 0, header.DataSize);                
                 
             return new Record(){

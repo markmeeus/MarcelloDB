@@ -83,7 +83,7 @@ namespace Marcello.Transactions
 
         StorageEngine GetStorageEngineForEntry(JournalEntry entry)
         {
-            var type = Type.GetType (entry.ObjectTypeName);
+            var type = Type.GetType(entry.ObjectTypeName);
             if (!this.StorageEngines.ContainsKey (type)) 
             {
                 var genericType = typeof(StorageEngine<>).GetTypeInfo().MakeGenericType(new Type[] { type });

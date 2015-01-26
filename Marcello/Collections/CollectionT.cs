@@ -7,6 +7,7 @@ using Marcello.AllocationStrategies;
 using Marcello.Records;
 using Marcello.Storage;
 using Marcello.Index;
+using Marcello.Transactions.__;
 
 namespace Marcello.Collections
 {
@@ -39,9 +40,8 @@ namespace Marcello.Collections
                 new DoubleSizeAllocationStrategy(),
                 StorageEngine
             );        
-
-            this.DisableJournal();
-
+                
+            this.DisableJournal(); //transactions broken
         }
 
         public IEnumerable<T> All
