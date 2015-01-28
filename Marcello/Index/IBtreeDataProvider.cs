@@ -12,6 +12,8 @@ namespace Marcello.Index
         Node<TK, TP> CreateNode(int degree);
 
         void Flush();
+
+        void SetRootNodeAddress(Int64 rootNodeAddress);
     }
 }
 

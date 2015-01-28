@@ -24,6 +24,11 @@ namespace Marcello.Test.Index
             return _rootNode;
         }
 
+        public void SetRootNodeAddress(long rootNodeAddress)
+        {
+            
+        }
+            
         public Node<int, int> GetNode(Int64 address)
         {
             return _nodes[address];

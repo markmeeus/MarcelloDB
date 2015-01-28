@@ -43,7 +43,7 @@ namespace Marcello.Test
         {
             var toiletPaper = Article.ToiletPaper;
             _articles.Persist(toiletPaper);
-            var article = _articles.Get(toiletPaper.ID);
+            var article = _articles.Find(toiletPaper.ID);
 
             Assert.AreEqual(toiletPaper.Name, article.Name, "First article");
         }            
@@ -332,7 +332,29 @@ namespace Marcello.Test
             var articleNames = articles.All.Select(a => a.Name).ToList();
 
             Assert.AreEqual(new List<string>{toiletPaper.Name, spinalTapDvd.Name, barbieDoll.Name }, articleNames);
-        }            
+        }  
+
+        [Test]
+        public void Add1000()
+        {
+            EnsureFolder("data");
+            var fileStreamProvider =  new FileStorageStreamProvider("./data/");
+            var marcello = new Marcello(fileStreamProvider);
+
+            var articles = marcello.Collection<Article>();
+
+            for (int i = 1; i < 1000; i++)
+            {
+                var a = new Article{ID = i, Name = "Article " + i.ToString()};
+                articles.Persist(a);
+            }
+
+            for (int i = 1; i < 1000; i++)
+            {
+                var a = articles.Find(i);
+                Assert.AreEqual(i, a.ID, "Article " + i.ToString() + " should have been found.");
+            }
+        }
             
         private void EnsureFolder(string path)
         {

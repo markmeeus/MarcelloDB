@@ -5,12 +5,12 @@ namespace Marcello.Index
 {
     public class Node<TK, TP>
     {
-        int degree;
+        public int Degree { get; set; }
         public Int64 Address{ get; set; }
 
         public Node(int degree)
         {
-            this.degree = degree;
+            this.Degree = degree;
             this.ChildrenAddresses = new List<Int64>(degree);
             this.Entries = new List<Entry<TK, TP>>(degree);
         }
@@ -31,7 +31,7 @@ namespace Marcello.Index
         {
             get
             {
-                return this.Entries.Count == (2 * this.degree) - 1;
+                return this.Entries.Count == (2 * this.Degree) - 1;
             }
         }
 
@@ -39,7 +39,7 @@ namespace Marcello.Index
         {
             get
             {
-                return this.Entries.Count == this.degree - 1;
+                return this.Entries.Count == this.Degree - 1;
             }
         }
     }

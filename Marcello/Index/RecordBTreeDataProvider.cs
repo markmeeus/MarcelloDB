@@ -38,6 +38,11 @@ namespace Marcello.Index
                 this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, node.Address);
                 return node;
             }
+        }            
+
+        public void SetRootNodeAddress(long rootNodeAddress)
+        {
+            this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, rootNodeAddress);
         }
 
         public Node<object, long> GetNode(long address)
@@ -75,6 +80,7 @@ namespace Marcello.Index
             while (retry)
             {
                 retry = false;
+
                 foreach (var node in NodeCache.Values)
                 {
                     var record = RecordManager.GetRecord(node.Address);
@@ -98,12 +104,9 @@ namespace Marcello.Index
                         }
                     }
                 }
-            }
-                
-            var rootNode = GetRootNode(1024);
-            this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, rootNode.Address);
+            }                
+        }            
 
-        }
         #endregion
         //flushUnused
 

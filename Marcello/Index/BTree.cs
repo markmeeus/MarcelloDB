@@ -13,6 +13,8 @@ namespace Marcello.Index
 
         ObjectComparer Comparer { get; set; }
 
+        public Node<TK, TP> Root { get; private set; } 
+
         public BTree(IBTreeDataProvider<TK, TP> dataProvider, int degree)
         {
             DataProvider = dataProvider;
@@ -28,7 +30,7 @@ namespace Marcello.Index
             this.Height = 1;
         }
 
-        public Node<TK, TP> Root { get; private set; }
+       
 
         public int Degree { get; private set; }
 
@@ -61,6 +63,7 @@ namespace Marcello.Index
 
             // need to create new node and have it split
             Node<TK, TP> oldRoot = this.Root;
+
             this.Root = this.DataProvider.CreateNode(this.Degree);
             this.Root.ChildrenAddresses.Add(oldRoot.Address);
             this.SplitChild(this.Root, 0, oldRoot);
@@ -166,7 +169,7 @@ namespace Marcello.Index
                     // this block merges either left or right sibling into the current node "child"
                     if (leftSibling != null)
                     {
-                        childNode.Entries.Insert(0, parentNode.Entries[subtreeIndexInNode]);
+                        childNode.Entries.Insert(0, parentNode.Entries[subtreeIndexInNode - 1]);                     
                         var oldEntries = childNode.Entries;
                         childNode.Entries = leftSibling.Entries;
                         childNode.Entries.AddRange(oldEntries);
@@ -178,7 +181,7 @@ namespace Marcello.Index
                         }
 
                         parentNode.ChildrenAddresses.RemoveAt(leftIndex);
-                        parentNode.Entries.RemoveAt(subtreeIndexInNode);
+                        parentNode.Entries.RemoveAt(subtreeIndexInNode - 1);
                     }
                     else
                     {

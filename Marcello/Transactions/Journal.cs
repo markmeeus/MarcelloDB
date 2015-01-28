@@ -55,9 +55,9 @@ namespace Marcello.Transactions
 
         internal void Apply()
         {
-            foreach (var transactionJournal in this.JournalCollection.All) 
+            foreach (var transactionJournal in this.JournalCollection.All.OrderBy(j => j.Stamp)) 
             {
-                foreach (var entry in transactionJournal.Entries) {
+                foreach (var entry in transactionJournal.Entries.OrderBy(e => e.Stamp)) {
                     var engine = GetStorageEngineForEntry(entry);
                     engine.Write (entry.Address, entry.Data);
                 }
@@ -103,7 +103,10 @@ namespace Marcello.Transactions
         }
 
         IEnumerable<JournalEntry> AllCommittedEntries(){
-            return this.JournalCollection.All.SelectMany(c => c.Entries);
+            var list = this.JournalCollection.All.ToList(); 
+            return list.SelectMany(c => {
+                return c.Entries;
+            });
         }
     }
 }

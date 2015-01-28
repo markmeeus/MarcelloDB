@@ -147,12 +147,13 @@ namespace Marcello.Test.Index
         }
 
         [Test]
-        public void CachesRootNode(){
+        public void CachesRootNode()
+        {
             var node = provider.GetRootNode(2);
             node.ChildrenAddresses.Add(1);
             var reloadedNode = provider.GetRootNode(2);
             Assert.AreSame(node, reloadedNode);
-        }            
+        }                        
     }
 }
 

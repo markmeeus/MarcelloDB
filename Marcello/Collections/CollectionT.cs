@@ -39,9 +39,7 @@ namespace Marcello.Collections
 
                 new DoubleSizeAllocationStrategy(),
                 StorageEngine
-            );        
-                
-            this.DisableJournal(); //transactions broken
+            );                        
         }
 
         public IEnumerable<T> All
@@ -51,7 +49,7 @@ namespace Marcello.Collections
             }
         }            
 
-        public T Get(object id)
+        public T Find(object id)
         {
             T result = default(T);
 
@@ -87,7 +85,7 @@ namespace Marcello.Collections
             var toDestroy = All.ToList();
             foreach(var o in toDestroy)
             {
-                Destroy(o);
+                DestroyInternal(o);
             }        
         }
 
@@ -98,14 +96,14 @@ namespace Marcello.Collections
         #endregion
 
         #region private methods
-
+        const int BTREE_DEGREE = 16;
         Record GetRecordForObjectID(object objectID)
         {                
             var provider = new RecordBTreeDataProvider(
                 this.RecordManager, 
                 new BsonSerializer<Node<object, Int64>>(),
                 "ID_INDEX");
-            var bTree = new BTree<object, Int64>(provider, 1024);
+            var bTree = new BTree<object, Int64>(provider, BTREE_DEGREE);
             var indexEntry = bTree.Search(objectID);
             if (indexEntry != null)
             {
@@ -131,10 +129,11 @@ namespace Marcello.Collections
                 this.RecordManager, 
                 new BsonSerializer<Node<object, Int64>>(),
                 "ID_INDEX");
-            var bTree = new BTree<object, Int64>(provider, 1024);
+            var bTree = new BTree<object, Int64>(provider, BTREE_DEGREE);
             bTree.Delete(objectID);
             bTree.Insert(objectID, record.Header.Address);
             provider.Flush();
+            provider.SetRootNodeAddress(bTree.Root.Address);
         }
 
         Record AppendObject(T obj)
@@ -163,7 +162,7 @@ namespace Marcello.Collections
                     this.RecordManager, 
                     new BsonSerializer<Node<object, Int64>>(),
                     "ID_INDEX");
-                var bTree = new BTree<object, Int64>(provider, 1024);
+                var bTree = new BTree<object, Int64>(provider, BTREE_DEGREE);
                 bTree.Delete(objectID);
                 provider.Flush();
             }

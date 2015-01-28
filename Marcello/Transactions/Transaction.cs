@@ -18,6 +18,7 @@ namespace Marcello.Transactions
             this.Session = session;
             this.Running = true;
             this.IsCommitting = false;
+            this.Apply(); //apply to be sure
         }
 
         internal void Enlist()
@@ -53,16 +54,21 @@ namespace Marcello.Transactions
             this.IsCommitting = true;
             Session.Journal.Commit();
             this.IsCommitting = false;        
-            ApplyAsync();
+            this.ApplyAsync();
+        }
+
+        void Apply()
+        {
+            lock (this.Session.SyncLock) 
+            {
+                Session.Journal.Apply();
+            }
         }
 
         void ApplyAsync()
         {
             Task.Run (() => {
-                lock (this.Session.SyncLock) 
-                {
-                    Session.Journal.Apply();
-                }
+                Apply(); 
             });
         }
     }

@@ -211,6 +211,7 @@ namespace Marcello.Records
 
         private void ReuseEmptyRecordHeader(Record record, CollectionMetaDataRecord metaDataRecord)
         {        
+            return;
             if (metaDataRecord.EmptyListEndPoints.StartAddress > 0) 
             {
                 var emptyRecord = ReadEntireRecord(metaDataRecord.EmptyListEndPoints.StartAddress);
