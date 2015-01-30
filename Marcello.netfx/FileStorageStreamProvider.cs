@@ -18,7 +18,6 @@ namespace Marcello
         }
 
         #region IStorageStreamProvider implementation
-
         public IStorageStream GetStream (string streamName)
         {
             if (!this.Streams.ContainsKey (streamName)) 

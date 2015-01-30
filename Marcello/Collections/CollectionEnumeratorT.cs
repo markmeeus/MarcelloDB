@@ -23,9 +23,7 @@ namespace Marcello.Collections
             RecordManager = recordManager;
             Serializer = serializer;
         }
-
-        #region IEnumerable implementation
-
+            
         public IEnumerator<T> GetEnumerator()
         {
             lock(this.Session.SyncLock){
@@ -40,15 +38,10 @@ namespace Marcello.Collections
                 }
             }            
         }
-        #endregion
-
-        #region IEnumerable implementation
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
-
-        #endregion
     }
 }

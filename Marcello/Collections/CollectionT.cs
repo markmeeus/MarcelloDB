@@ -36,7 +36,6 @@ namespace Marcello.Collections
             StorageEngine = storageEngine;
 
             RecordManager = new RecordManager<T>(
-
                 new DoubleSizeAllocationStrategy(),
                 StorageEngine
             );                        
@@ -79,7 +78,6 @@ namespace Marcello.Collections
             });
         }
 
-        #region internal methods
         internal void DestroyAll()
         {
             var toDestroy = All.ToList();
@@ -93,10 +91,9 @@ namespace Marcello.Collections
         {
             this.RecordManager.DisableJournal();
         }
-        #endregion
 
-        #region private methods
         const int BTREE_DEGREE = 16;
+
         Record GetRecordForObjectID(object objectID)
         {                
             var provider = new RecordBTreeDataProvider(
@@ -168,6 +165,5 @@ namespace Marcello.Collections
             }
 
         }
-        #endregion
     }
 }

@@ -24,7 +24,6 @@ namespace Marcello.Index
         }
 
         #region IBTreeDataProvider implementation
-
         public Node<object, long> GetRootNode(int degree)
         {
             var rootRecordAddress = this.RecordManager.GetNamedRecordAddress(this.RootRecordName);
@@ -106,15 +105,12 @@ namespace Marcello.Index
                 }
             }                
         }            
-
         #endregion
-        //flushUnused
 
-        #region private methods
-        private void CacheNode(Node<object, long> node){
+        private void CacheNode(Node<object, long> node)
+        {
             this.NodeCache.Add(node.Address, node);
         }
-        #endregion
     }
 }
 

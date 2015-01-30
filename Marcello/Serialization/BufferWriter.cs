@@ -26,8 +26,7 @@ namespace Marcello.Serialization
         {
             WriteBytes(LittleEndian(BitConverter.GetBytes(value)));
         }
-
-
+            
         public byte[] GetTrimmedBuffer()
         {
             if (this.Buffer.Length == this.Position)
@@ -41,9 +40,8 @@ namespace Marcello.Serialization
                 return trimmed;
             }
         }
-
-        #region private methods
-        private byte[] LittleEndian(byte[] bytes)
+            
+        byte[] LittleEndian(byte[] bytes)
         {
             if (!this.IsLittleEndian)
             {
@@ -52,7 +50,7 @@ namespace Marcello.Serialization
             return bytes;
         }
 
-        private void WriteBytes(byte[] bytes)
+        void WriteBytes(byte[] bytes)
         {
             if (this.Position + bytes.Length > Buffer.Length)
             {
@@ -62,8 +60,7 @@ namespace Marcello.Serialization
             }
             bytes.CopyTo(Buffer, this.Position);
             this.Position += bytes.Length;
-        }            
-        #endregion private methods
+        }
     }
 }
 

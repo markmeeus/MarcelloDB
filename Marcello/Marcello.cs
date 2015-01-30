@@ -60,17 +60,14 @@ namespace Marcello
                 }
             }
         }
-
-        #region private methods
+            
         void EnsureTransaction()
         {
-
             if (CurrentTransaction == null) 
             {
                 CurrentTransaction = new Transaction(this);
             }
         }
-        #endregion
     }
 }
 

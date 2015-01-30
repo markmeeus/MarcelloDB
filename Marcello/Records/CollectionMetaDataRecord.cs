@@ -55,7 +55,8 @@ namespace Marcello.Records
             };
         }
             
-        internal void Sanitize(){
+        internal void Sanitize()
+        {
             //when the data list is empty, the empty list is empty too.
             if(this.DataListEndPoints.StartAddress == 0) 
             {

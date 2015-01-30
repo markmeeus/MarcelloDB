@@ -13,6 +13,7 @@ namespace Marcello.Test.Records
         InMemoryStreamProvider _streamProvider;
         RecordManager<Article> _recordManager;
         Marcello _marcello;
+
         [SetUp]
         public void Initialze()
         {
@@ -26,34 +27,38 @@ namespace Marcello.Test.Records
         }
 
         [Test]
-        public void AppendRecordReturnsRecord(){
+        public void Append_Record_Returns_Record()
+        {
             var record = _recordManager.AppendRecord(new byte[0]);
             Assert.NotNull(record);
         }
 
         [Test]
-        public void GetAppendedRecord(){
+        public void Get_Record_Returns_Appended_Record()
+        {
             var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 });
             var readRecord = _recordManager.GetRecord(record.Header.Address);
             Assert.AreEqual(new byte[3]{ 1, 2, 3 }, readRecord.Data);
         }
 
         [Test]
-        public void UpdateRecordReturnsUpdatedRecord(){
+        public void Update_Record_Returns_Updated_Record()
+        {
             var record = _recordManager.AppendRecord(new byte[3] { 1, 2, 3 });
             record = _recordManager.UpdateRecord(record, new byte[3]{ 4, 5, 6 });
             Assert.AreEqual(new byte[3]{ 4, 5, 6}, record.Data);
         }
 
         [Test]
-        public void AppendRecordAssignsAddress()
+        public void Append_Record_Assigns_Address()
         {
             var record = _recordManager.AppendRecord(new byte[0]);
             Assert.Greater(record.Header.Address, 0);
         }
 
         [Test]
-        public void AppendRecordUpdatesRecord(){
+        public void Append_Record_Updates_Record()
+        {
             var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 });
             _recordManager.UpdateRecord(record, new byte[3] { 4, 5, 6 });
             var readRecord = _recordManager.GetRecord(record.Header.Address);
@@ -61,7 +66,8 @@ namespace Marcello.Test.Records
         }
 
         [Test] 
-        public void UpdateRecordDoesntIncreaeDataSize(){
+        public void Update_Record_Doesnt_Increase_StorageSize()
+        {
             var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 });
             var streamLength =  GetStreamLength();
             _recordManager.UpdateRecord(record, new byte[3] { 4, 5, 6 });
@@ -70,7 +76,8 @@ namespace Marcello.Test.Records
         }            
 
         [Test]
-        public void AppendAfterReleaseReusesStorage(){
+        public void Append_After_Release_Doesnt_Increase_StorageSize()
+        {
             var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 });
             _recordManager.ReleaseRecord(record);
             var streamLength = GetStreamLength();
@@ -79,28 +86,30 @@ namespace Marcello.Test.Records
             Assert.AreEqual(streamLength, newStreamLength);           
         }
 
-
         [Test]
-        public void GetNamedRecordReturnsNulWhenNotRegistered(){
+        public void Get_Named_Record_Address_Returns_Null_When_Not_Registered()
+        {
             var result = _recordManager.GetNamedRecordAddress("Test");
             Assert.AreEqual(0, result, "Should be nul");
         }
 
         [Test]
-        public void StoresNamedRecordAddress(){
+        public void Stores_Named_Record_Address(){
             _recordManager.RegisterNamedRecordAddress("Test", 123);
             Assert.AreEqual(123, _recordManager.GetNamedRecordAddress("Test"));
         }
 
         [Test]
-        public void StoreMultipleNamedRecordAddress(){
+        public void Store_Multiple_Named_Record_Addresses()
+        {
             _recordManager.RegisterNamedRecordAddress("Test1", 123);
             _recordManager.RegisterNamedRecordAddress("Test2", 456);
             Assert.AreEqual(123, _recordManager.GetNamedRecordAddress("Test1"));
             Assert.AreEqual(456, _recordManager.GetNamedRecordAddress("Test2"));
         }
 
-        Int64 GetStreamLength(){
+        Int64 GetStreamLength()
+        {
             return ((InMemoryStream)_streamProvider.GetStream("Article")).BackingStream.Length;
         }
     }

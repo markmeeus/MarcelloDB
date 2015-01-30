@@ -40,7 +40,8 @@ namespace Marcello.Test.Index
         }
 
         [Test]
-        public void Compares_Strings(){
+        public void Compares_Strings()
+        {
             Assert.AreEqual(-1, _comparer.Compare("1", "2"));
             Assert.AreEqual(0, _comparer.Compare("2", "2"));
             Assert.AreEqual(1, _comparer.Compare("2", "1"));

@@ -71,7 +71,7 @@ namespace Marcello.Test.Index
         }
 
         [Test]
-        public void CreateBTree()
+        public void Create_BTree()
         {
             var btree = new BTree<int, int>(_testDataProvider, Degree);
 
@@ -84,7 +84,7 @@ namespace Marcello.Test.Index
         }
 
         [Test]
-        public void InsertOneNode()
+        public void Insert_One_Node()
         {
             var btree = new BTree<int, int>(_testDataProvider, Degree);
             this.InsertTestDataAndValidateTree(btree, 0);
@@ -92,7 +92,7 @@ namespace Marcello.Test.Index
         }
 
         [Test]
-        public void InsertMultipleNodesToSplit()
+        public void Insert_Multiple_Nodes_To_Split()
         {
             var btree = new BTree<int, int>(_testDataProvider, Degree);
 
@@ -105,7 +105,7 @@ namespace Marcello.Test.Index
         }
 
         [Test]
-        public void DeleteNodes()
+        public void Delete_Nodes()
         {
             var btree = new BTree<int, int>(_testDataProvider, Degree);
 
@@ -124,7 +124,7 @@ namespace Marcello.Test.Index
         }
 
         [Test]
-        public void DeleteNonExistingNode()
+        public void Delete_NonExisting_Node()
         {
             var btree = new BTree<int, int>(_testDataProvider, Degree);
 
@@ -138,7 +138,7 @@ namespace Marcello.Test.Index
         }
 
         [Test]
-        public void SearchNodes()
+        public void Search_Nodes()
         {
             var btree = new BTree<int, int>(_testDataProvider, Degree);
 
@@ -150,7 +150,7 @@ namespace Marcello.Test.Index
         }
 
         [Test]
-        public void SearchNonExistingNode()
+        public void Search_NonExisting_Node()
         {
             var btree = new BTree<int, int>(_testDataProvider, Degree);
 
@@ -250,7 +250,6 @@ namespace Marcello.Test.Index
                 }
             }
         }
-
         #endregion
     }
 }

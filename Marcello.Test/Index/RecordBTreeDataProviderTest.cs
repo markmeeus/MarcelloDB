@@ -18,9 +18,10 @@ namespace Marcello.Test.Index
             Records = new Dictionary<Int64, Record>();
             NamedRecords = new Dictionary<string, Int64>();
         }
-        #region IRecordManager implementation
 
-        public Record GetRecord(Int64 address){
+        #region IRecordManager implementation
+        public Record GetRecord(Int64 address)
+        {
             return Records[address];
         }
 
@@ -80,21 +81,21 @@ namespace Marcello.Test.Index
         }
 
         [Test]
-        public void CreateNodeAppendsRecord()
+        public void Create_Node_Appends_Record()
         {
             provider.CreateNode(2);
             Assert.AreEqual(1, manager.Records.Count);
         }
 
         [Test]
-        public void CreateNodeAssignsNodeAddress()
+        public void Create_Node_Assigns_Node_Address()
         {
             var node = provider.CreateNode(2);
             Assert.AreEqual(1, node.Address);
         }
 
         [Test]
-        public void GetNodeLoadsFromRecord()
+        public void Get_Node_Loads_From_Record()
         {
             var node = provider.CreateNode(2);
             var loadedNode = new RecordBTreeDataProvider(
@@ -105,7 +106,7 @@ namespace Marcello.Test.Index
         }
 
         [Test]
-        public void GetNodeCachesNode()
+        public void Get_Node_Caches_Node()
         {
             var node = provider.CreateNode(2);
             var newProvider = new RecordBTreeDataProvider(
@@ -119,7 +120,7 @@ namespace Marcello.Test.Index
         }
 
         [Test]
-        public void CreateNodeCachesLoadedNodes()
+        public void Create_Node_Caches_Loaded_Nodes()
         {
             var node = provider.CreateNode(2);
             node.ChildrenAddresses.Add(12);
@@ -128,14 +129,15 @@ namespace Marcello.Test.Index
         }
 
         [Test]
-        public void GetRootNodeCreatesANode()
+        public void Get_RootNode_Creates_a_Node()
         {
             provider.GetRootNode(2);
             Assert.AreEqual(1, manager.Records.Values.Count);
         }
 
         [Test]
-        public void GetRootNodeReturnsSameNode(){
+        public void Get_RootNode_Returns_Same_Node()
+        {
             provider.GetRootNode(2);
             var newProvider = new RecordBTreeDataProvider(
                 manager,
@@ -147,7 +149,7 @@ namespace Marcello.Test.Index
         }
 
         [Test]
-        public void CachesRootNode()
+        public void Caches_RootNode()
         {
             var node = provider.GetRootNode(2);
             node.ChildrenAddresses.Add(1);

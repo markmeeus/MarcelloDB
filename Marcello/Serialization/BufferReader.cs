@@ -33,9 +33,8 @@ namespace Marcello.Serialization
             var value = BitConverter.ToInt64(bytes, 0);
             this.Position += sizeof(Int64);
             return value;
-        }
+        }            
 
-        #region private methods
         byte[] GetBytesInLittleEndianOrder(int size)
         {
             var bytes = new byte[size];
@@ -46,7 +45,6 @@ namespace Marcello.Serialization
             }
             return bytes;
         }
-        #endregion private methods
     }
 }
 

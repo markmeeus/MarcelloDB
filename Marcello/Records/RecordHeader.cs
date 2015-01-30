@@ -30,7 +30,7 @@ namespace Marcello.Records
             }
         }
 
-        private RecordHeader(){} //only construction allow from factory methods
+        private RecordHeader(){} //construction only allowed from factory methods
 
         internal byte[] AsBytes()
         {
@@ -45,6 +45,7 @@ namespace Marcello.Records
         }
 
         #region factory methods
+
         internal static RecordHeader New (){ return new RecordHeader();}
 
         internal static RecordHeader FromBytes(Int64 address, byte[] bytes)
@@ -61,6 +62,7 @@ namespace Marcello.Records
             recordHeader.HasObject = reader.ReadInt32() > 0 ? true : false;
             return recordHeader;
         }
+
         #endregion
     }
 }

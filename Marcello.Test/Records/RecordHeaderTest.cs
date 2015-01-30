@@ -8,7 +8,7 @@ namespace Marcello.Test.Records
     public class RecordHeaderTest
     {
         [Test]
-        public void To_And_From_Bytes()
+        public void Serializes_To_And_From_Bytes()
         {
             var header = RecordHeader.New();
 

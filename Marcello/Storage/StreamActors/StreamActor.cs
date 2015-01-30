@@ -10,13 +10,11 @@ namespace Marcello.Storage.StreamActors
         {
             this.Session = session;
         }     
-
-        #region protected methods
+            
         protected IStorageStream GetStream()
         {
             return this.Session.StreamProvider.GetStream(typeof(T).Name);
         }
-        #endregion
     }
 }
 

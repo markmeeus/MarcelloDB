@@ -11,8 +11,7 @@ namespace Marcello.Transactions.__
             return ++_lastStamp;
         }
     }
-
-
+        
     public class TransactionJournal
     {
         public String ID { get; set;}

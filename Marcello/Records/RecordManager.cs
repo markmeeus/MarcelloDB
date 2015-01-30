@@ -64,12 +64,11 @@ namespace Marcello.Records
                     record.Header.AllocatedDataSize = AllocationStrategy.CalculateSize(record);
                     record.Header.HasObject = hasObject;
                     record.Data = new byte[record.Header.DataSize];
+
                     data.CopyTo(record.Data, 0);
 
-
                     ReuseEmptyRecordHeader(record, this.MetaDataRecord);
-                    AppendRecordToList(record, this.MetaDataRecord.DataListEndPoints); 
-                    SaveMetaDataRecord();
+                    AppendRecordToList(record, this.MetaDataRecord.DataListEndPoints);                                       
                 });
 
             return record;
@@ -142,10 +141,8 @@ namespace Marcello.Records
                 });
             return result;
         }
-        #endregion
-
-        #region internal methods
-
+        #endregion //IRecordManager implementation
+               
         /// <summary>
         /// LEAKY ABSTRACTION, FIX AFTER INDEX ENUMERATION
         /// </summary>
@@ -189,10 +186,7 @@ namespace Marcello.Records
             JournalEnabled = false;
             StorageEngine.DisableJournal();
         }
-        #endregion 
-
-        #region private methods
-
+            
         void WriteHeader(Record record)
         {
             StorageEngine.Write(record.Header.Address, record.Header.AsBytes());
@@ -285,11 +279,13 @@ namespace Marcello.Records
             }
         }            
 
-        NamedRecordsIndex GetNamedRecordIndex(){
+        NamedRecordsIndex GetNamedRecordIndex()
+        {
             return NamedRecordsIndex.FromBytes(GetNamedRecordIndexRecord().Data);
         }
 
-        Record GetNamedRecordIndexRecord(){
+        Record GetNamedRecordIndexRecord()
+        {
         
             if (this.MetaDataRecord.NamedRecordIndexAddress > 0)
             {
@@ -305,7 +301,6 @@ namespace Marcello.Records
                 return namedRecordIndexRecord;
             }
         }
-        #endregion
     }
 }
 

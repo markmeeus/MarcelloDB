@@ -13,12 +13,10 @@ namespace Marcello.Storage
 
         protected bool JournalEnabled { get; set; }
 
-        #region internal methods
         internal void DisableJournal()
         {
             JournalEnabled = false;
-        }
-        #endregion 
+        }       
     }
 
     public class StorageEngine<T> : StorageEngine

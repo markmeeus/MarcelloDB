@@ -12,7 +12,6 @@ namespace Marcello.Serialization
         }
 
         #region IObjectSerializer implementation
-
         public byte[] Serialize (T obj)
         {
             var serializer = new JsonSerializer();
@@ -32,7 +31,6 @@ namespace Marcello.Serialization
 
             return serializer.Deserialize<T>(reader);
         }
-
         #endregion
     }
 }

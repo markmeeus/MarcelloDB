@@ -34,7 +34,6 @@ namespace Marcello.Serialization
             }
         }
           
-        #region private properties
         string[] IDProperties
         {
             get
@@ -49,9 +48,7 @@ namespace Marcello.Serialization
                 };
             }
         }
-        #endregion
 
-        #region private methods
         bool GetAttributedId(ref object id)
         {
             var attributedProperty = GetPropertyWithAttribute(typeof(IDAttribute));
@@ -72,9 +69,9 @@ namespace Marcello.Serialization
             }                       
             return false;
         }
-        #endregion
 
         #region reflection
+
         string ClassName()
         {
             return Obj.GetType ().Name;
@@ -115,7 +112,8 @@ namespace Marcello.Serialization
         {
             return propertyInfo.GetMethod.Invoke(this.Obj, new object[0]);
         }
-        #endregion
+
+        #endregion //Reflection
     }
 }
 
