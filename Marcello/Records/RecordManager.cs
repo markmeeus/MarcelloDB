@@ -152,13 +152,18 @@ namespace Marcello.Records
         /// <returns>The first record.</returns>
         internal Record GetFirstRecord()
         {
-            LoadMetaDataRecord();
-            var firstRecordAddress = this.MetaDataRecord.DataListEndPoints.StartAddress;
-            if (firstRecordAddress > 0) {
-                return ReadEntireRecord(firstRecordAddress);
-            }
-            SaveMetaDataRecord();
-            return null;
+            Record firstRecord = null;
+
+            WithMetaDataRecord(() =>
+                {
+                    var firstRecordAddress = this.MetaDataRecord.DataListEndPoints.StartAddress;
+                    if (firstRecordAddress > 0) {
+                        firstRecord = ReadEntireRecord(firstRecordAddress);
+                    }
+
+                });
+
+            return firstRecord;
         }
 
         /// <summary>
@@ -167,12 +172,16 @@ namespace Marcello.Records
         /// <returns>The first record.</returns>
         internal Record GetNextRecord(Record record)
         {
-            LoadMetaDataRecord();
-            if (record.Header.Next > 0) {
-                return ReadEntireRecord(record.Header.Next);
-            }
-            SaveMetaDataRecord();
-            return null;
+            Record nextRecord = null;
+
+            WithMetaDataRecord(() =>
+                {
+                    if (record.Header.Next > 0) {
+                        nextRecord = ReadEntireRecord(record.Header.Next);
+                    }
+                });
+
+            return nextRecord;
         }            
             
         internal void DisableJournal()
@@ -195,7 +204,27 @@ namespace Marcello.Records
             var allBytes = StorageEngine.Read(address, RecordHeader.ByteSize + header.AllocatedDataSize);
             var record =  Record.FromBytes(address, allBytes);
             return record;
-        }            
+        }
+            
+        void WithMetaDataRecord(Action action)
+        {
+            LoadMetaDataRecord();
+            action();
+            SaveMetaDataRecord();
+        }
+
+        void LoadMetaDataRecord()
+        {        
+            if (this.MetaDataRecord != null)
+                return;
+            var bytes = StorageEngine.Read(0, CollectionMetaDataRecord.ByteSize);
+            this.MetaDataRecord = CollectionMetaDataRecord.FromBytes(bytes);
+        }
+
+        void SaveMetaDataRecord()
+        {
+            StorageEngine.Write(0, this.MetaDataRecord.AsBytes());
+        }
 
         void AppendRecordToList (Record record, ListEndPoints listEndPoints)
         {
@@ -213,7 +242,7 @@ namespace Marcello.Records
             StorageEngine.Write (record.Header.Address, record.AsBytes ());
         }
 
-        void ReuseEmptyRecordHeader(Record record, CollectionMetaDataRecord metaDataRecord)
+        private void ReuseEmptyRecordHeader(Record record, CollectionMetaDataRecord metaDataRecord)
         {        
             return;
             if (metaDataRecord.EmptyListEndPoints.StartAddress > 0) 
@@ -275,27 +304,6 @@ namespace Marcello.Records
 
                 return namedRecordIndexRecord;
             }
-        }
-
-        void WithMetaDataRecord(Action action)
-        {
-            LoadMetaDataRecord();
-            action();
-            SaveMetaDataRecord();
-        }
-
-        void LoadMetaDataRecord()
-        {        
-            if (this.MetaDataRecord != null)
-                return;
-
-            var bytes = StorageEngine.Read(0, CollectionMetaDataRecord.ByteSize);
-            this.MetaDataRecord = CollectionMetaDataRecord.FromBytes(bytes);
-        }
-
-        void SaveMetaDataRecord()
-        {
-            StorageEngine.Write(0, this.MetaDataRecord.AsBytes());
         }
         #endregion
     }

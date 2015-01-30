@@ -242,7 +242,6 @@ namespace Marcello.Test
             _articles.Destroy(spinalTapDvd);
 
             var barbieDoll = Article.BarbieDoll;
-            var count = _articles.All.Count();
             _articles.Persist(barbieDoll);
 
             Assert.AreEqual(2, _articles.All.Count());

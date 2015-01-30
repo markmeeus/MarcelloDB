@@ -21,13 +21,8 @@ namespace Marcello
         public T Deserialize (byte[] bytes)
         {
             string json = "";
-            try{
-
-                json = System.Text.Encoding.UTF8.GetString(bytes, 0, bytes.Length);
-                return JsonConvert.DeserializeObject<T>(json);
-            }catch(Exception e){
-                throw;
-            }
+            json = System.Text.Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+            return JsonConvert.DeserializeObject<T>(json);            
         }
 
         #endregion

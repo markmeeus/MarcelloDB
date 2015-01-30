@@ -9,20 +9,15 @@ namespace Marcello
         }
 
         public int Compare(object a, object b)
-        {
-            try{
-                long lngA;
-                long lngB;
-                if(TryLongify(a, out lngA) && TryLongify(b, out lngB))
-                {
-                    return lngA.CompareTo(lngB);
-                }
-                     
-                return ((IComparable)a).CompareTo((IComparable)b);
-
-            }catch(Exception e){
-                throw;
+        {        
+            long lngA;
+            long lngB;
+            if(TryLongify(a, out lngA) && TryLongify(b, out lngB))
+            {
+                return lngA.CompareTo(lngB);
             }
+                 
+            return ((IComparable)a).CompareTo((IComparable)b);              
         }
 
         bool TryLongify(object o, out long result)
