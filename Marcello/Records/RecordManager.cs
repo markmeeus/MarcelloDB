@@ -23,12 +23,13 @@ namespace Marcello.Records
 
     internal class RecordManager<T> : IRecordManager
     {   
-
         StorageEngine<T> StorageEngine { get;set; }
 
         IAllocationStrategy AllocationStrategy { get; set; }
 
         bool JournalEnabled { get; set; }
+
+        CollectionMetaDataRecord MetaDataRecord{ get; set; }
 
         internal RecordManager(
             IAllocationStrategy allocationStrategy,
@@ -42,77 +43,104 @@ namespace Marcello.Records
 
         #region IRecordManager implementation
         public Record GetRecord(Int64 address){
-            return ReadEntireRecord(address);
+
+            Record record = null;
+
+            WithMetaDataRecord(() =>
+                {
+                    record = ReadEntireRecord(address);
+                });
+
+            return record;
         }
 
         public Record AppendRecord(byte[] data, bool hasObject = false)
         {
             var record = new Record();
-            record.Header.DataSize = data.Length;
-            record.Header.AllocatedDataSize = AllocationStrategy.CalculateSize(record);
-            record.Header.HasObject = hasObject;
-            record.Data = new byte[record.Header.DataSize];
-            data.CopyTo(record.Data, 0);
 
-            WithMetaDataRecord((metaDataRecord) => {
-                ReuseEmptyRecordHeader(record, metaDataRecord);
-                AppendRecordToList(record, metaDataRecord.DataListEndPoints); 
-            });
+            WithMetaDataRecord(() =>
+                {
+                    record.Header.DataSize = data.Length;
+                    record.Header.AllocatedDataSize = AllocationStrategy.CalculateSize(record);
+                    record.Header.HasObject = hasObject;
+                    record.Data = new byte[record.Header.DataSize];
+                    data.CopyTo(record.Data, 0);
+
+
+                    ReuseEmptyRecordHeader(record, this.MetaDataRecord);
+                    AppendRecordToList(record, this.MetaDataRecord.DataListEndPoints); 
+                    SaveMetaDataRecord();
+                });
+
             return record;
         }
 
         public Record UpdateRecord(Record record, byte[] data)
         {
-            if (data.Length >= record.Header.AllocatedDataSize )
-            {
-                ReleaseRecord(record);
-                return AppendRecord(data, record.Header.HasObject); 
-            }
-            else 
-            {   
-                record.Data = data;
-                record.Header.DataSize = data.Length;
-                StorageEngine.Write(record.Header.Address, record.AsBytes());
-                return record;
-            }
+            Record result = null;
+
+            WithMetaDataRecord(() =>
+                {
+                    if (data.Length >= record.Header.AllocatedDataSize )
+                    {
+                        ReleaseRecord(record);
+                        result = AppendRecord(data, record.Header.HasObject); 
+                    }
+                    else 
+                    {   
+                        record.Data = data;
+                        record.Header.DataSize = data.Length;
+                        StorageEngine.Write(record.Header.Address, record.AsBytes());
+                        result = record;
+                    }
+
+                });
+
+            return result;
         }
 
         public void ReleaseRecord(Record record)
-        {                  
-            WithMetaDataRecord ((metaDataRecord) => {
-                //remove from list
-                RemoveRecord(record, metaDataRecord.DataListEndPoints); 
-                //append to empty list
-                AppendRecordToList(record, metaDataRecord.EmptyListEndPoints);
+        {    
+            WithMetaDataRecord(() =>
+                {
+                    //remove from list
+                    RemoveRecord(record, this.MetaDataRecord.DataListEndPoints); 
+                    //append to empty list
+                    AppendRecordToList(record, this.MetaDataRecord.EmptyListEndPoints);
 
-                metaDataRecord.Sanitize();
-            });                
+                    this.MetaDataRecord.Sanitize();
+                });
         }
 
         public void RegisterNamedRecordAddress(string name, Int64 recordAddress)
         {       
-            var namedRecordIndexRecord = GetNamedRecordIndexRecord();
+            WithMetaDataRecord(() =>
+                {
+                    var namedRecordIndexRecord = GetNamedRecordIndexRecord();
 
-            var namedRecordIndex = NamedRecordsIndex.FromBytes(namedRecordIndexRecord.Data);
-            namedRecordIndex.NamedRecordIndexes.Remove(name);
-            namedRecordIndex.NamedRecordIndexes.Add(name, recordAddress);
-            var updateRecord = UpdateRecord(namedRecordIndexRecord, namedRecordIndex.ToBytes());
+                    var namedRecordIndex = NamedRecordsIndex.FromBytes(namedRecordIndexRecord.Data);
 
-            WithMetaDataRecord((metaDataRecord) =>
-            {
-                metaDataRecord.NamedRecordIndexAddress = updateRecord.Header.Address;
-            });
+                    namedRecordIndex.NamedRecordIndexes.Remove(name);
+                    namedRecordIndex.NamedRecordIndexes.Add(name, recordAddress);
+
+                    var updateRecord = UpdateRecord(namedRecordIndexRecord, namedRecordIndex.ToBytes());
+
+                    this.MetaDataRecord.NamedRecordIndexAddress = updateRecord.Header.Address;
+                });
         }   
                    
         public Int64 GetNamedRecordAddress(string name)
         {
-            var namedRecordIndex = GetNamedRecordIndex();
-            if (namedRecordIndex.NamedRecordIndexes.ContainsKey(name))
-            {
-                return namedRecordIndex.NamedRecordIndexes[name];
-            }
-            return 0;
-
+            Int64 result = 0;
+            WithMetaDataRecord(() => 
+                {
+                    var namedRecordIndex = GetNamedRecordIndex();
+                    if (namedRecordIndex.NamedRecordIndexes.ContainsKey(name))
+                    {
+                        result = namedRecordIndex.NamedRecordIndexes[name];
+                    }
+                });
+            return result;
         }
         #endregion
 
@@ -124,10 +152,12 @@ namespace Marcello.Records
         /// <returns>The first record.</returns>
         internal Record GetFirstRecord()
         {
-            var firstRecordAddress = GetMetaDataRecord().DataListEndPoints.StartAddress;
+            LoadMetaDataRecord();
+            var firstRecordAddress = this.MetaDataRecord.DataListEndPoints.StartAddress;
             if (firstRecordAddress > 0) {
                 return ReadEntireRecord(firstRecordAddress);
             }
+            SaveMetaDataRecord();
             return null;
         }
 
@@ -137,9 +167,11 @@ namespace Marcello.Records
         /// <returns>The first record.</returns>
         internal Record GetNextRecord(Record record)
         {
+            LoadMetaDataRecord();
             if (record.Header.Next > 0) {
                 return ReadEntireRecord(record.Header.Next);
             }
+            SaveMetaDataRecord();
             return null;
         }            
             
@@ -163,35 +195,7 @@ namespace Marcello.Records
             var allBytes = StorageEngine.Read(address, RecordHeader.ByteSize + header.AllocatedDataSize);
             var record =  Record.FromBytes(address, allBytes);
             return record;
-        }
-
-        bool inWithMetaDataRecord = false;
-        void WithMetaDataRecord(Action<CollectionMetaDataRecord> action)
-        {
-
-            var metaDataRecord = GetMetaDataRecord();
-            inWithMetaDataRecord = true;
-            action(metaDataRecord);
-            inWithMetaDataRecord = false;
-            SaveMetaDataRecord (metaDataRecord);
-        }
-
-        CollectionMetaDataRecord GetMetaDataRecord()
-        {
-            if (inWithMetaDataRecord)
-                System.Diagnostics.Debugger.Break();
-
-            var bytes = StorageEngine.Read(0, CollectionMetaDataRecord.ByteSize);
-            return CollectionMetaDataRecord.FromBytes(bytes);
-        }
-
-        void SaveMetaDataRecord(CollectionMetaDataRecord record)
-        {
-            if (inWithMetaDataRecord)
-                System.Diagnostics.Debugger.Break();
-
-            StorageEngine.Write(0, record.AsBytes());
-        }
+        }            
 
         void AppendRecordToList (Record record, ListEndPoints listEndPoints)
         {
@@ -209,7 +213,7 @@ namespace Marcello.Records
             StorageEngine.Write (record.Header.Address, record.AsBytes ());
         }
 
-        private void ReuseEmptyRecordHeader(Record record, CollectionMetaDataRecord metaDataRecord)
+        void ReuseEmptyRecordHeader(Record record, CollectionMetaDataRecord metaDataRecord)
         {        
             return;
             if (metaDataRecord.EmptyListEndPoints.StartAddress > 0) 
@@ -257,22 +261,41 @@ namespace Marcello.Records
         }
 
         Record GetNamedRecordIndexRecord(){
-
-            var metaDataRecord = GetMetaDataRecord();
-            if (metaDataRecord.NamedRecordIndexAddress > 0)
+        
+            if (this.MetaDataRecord.NamedRecordIndexAddress > 0)
             {
-                return GetRecord(metaDataRecord.NamedRecordIndexAddress);
+                return GetRecord(this.MetaDataRecord.NamedRecordIndexAddress);
             }
             else
             {
                 var namedRecordIndex = new NamedRecordsIndex();
                 var namedRecordIndexRecord = AppendRecord(namedRecordIndex.ToBytes());
-                WithMetaDataRecord((newMetaDataRecord)=>{
-                    newMetaDataRecord.NamedRecordIndexAddress = namedRecordIndexRecord.Header.Address;
-                });
+
+                this.MetaDataRecord.NamedRecordIndexAddress = namedRecordIndexRecord.Header.Address;
+
                 return namedRecordIndexRecord;
             }
+        }
 
+        void WithMetaDataRecord(Action action)
+        {
+            LoadMetaDataRecord();
+            action();
+            SaveMetaDataRecord();
+        }
+
+        void LoadMetaDataRecord()
+        {        
+            if (this.MetaDataRecord != null)
+                return;
+
+            var bytes = StorageEngine.Read(0, CollectionMetaDataRecord.ByteSize);
+            this.MetaDataRecord = CollectionMetaDataRecord.FromBytes(bytes);
+        }
+
+        void SaveMetaDataRecord()
+        {
+            StorageEngine.Write(0, this.MetaDataRecord.AsBytes());
         }
         #endregion
     }
