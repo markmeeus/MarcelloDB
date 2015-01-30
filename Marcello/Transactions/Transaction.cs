@@ -53,8 +53,8 @@ namespace Marcello.Transactions
         {
             this.IsCommitting = true;
             Session.Journal.Commit();
-            this.IsCommitting = false;        
-            this.ApplyAsync();
+            this.IsCommitting = false;  
+            this.TryApply();
         }
 
         void Apply()
@@ -65,11 +65,11 @@ namespace Marcello.Transactions
             }
         }
 
-        void ApplyAsync()
+        void TryApply()
         {
-            Task.Run (() => {
+            try{
                 Apply(); 
-            });
+            }catch(Exception){}
         }
     }
 }
