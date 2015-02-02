@@ -92,24 +92,19 @@ namespace Marcello.Collections
             this.RecordManager.DisableJournal();
         }
 
-        const int BTREE_DEGREE = 16;
+
 
         Record GetRecordForObjectID(object objectID)
         {                
-            var provider = new RecordBTreeDataProvider(
-                this.RecordManager, 
-                new BsonSerializer<Node<object, Int64>>(),
-                "ID_INDEX");
-            var bTree = new BTree<object, Int64>(provider, BTREE_DEGREE);
-            var indexEntry = bTree.Search(objectID);
-            if (indexEntry != null)
+            var index = RecordIndex.Create(this.RecordManager, RecordIndex.ID_INDEX_NAME);
+            var address = index.Search(objectID);
+            if (address > 0)
             {
-                return RecordManager.GetRecord(indexEntry.Pointer);
-                
+                return RecordManager.GetRecord(address);
             }
             return null;
         }
-
+            
         void PersistInternal(T obj)
         {
             var objectID = new ObjectProxy(obj).ID;
@@ -122,15 +117,8 @@ namespace Marcello.Collections
                 record = AppendObject(obj);
             }
                 
-            var provider = new RecordBTreeDataProvider(
-                this.RecordManager, 
-                new BsonSerializer<Node<object, Int64>>(),
-                "ID_INDEX");
-            var bTree = new BTree<object, Int64>(provider, BTREE_DEGREE);
-            bTree.Delete(objectID);
-            bTree.Insert(objectID, record.Header.Address);
-            provider.Flush();
-            provider.SetRootNodeAddress(bTree.Root.Address);
+            var index = RecordIndex.Create(this.RecordManager, RecordIndex.ID_INDEX_NAME);
+            index.Register(objectID, record.Header.Address);
         }
 
         Record AppendObject(T obj)
@@ -155,13 +143,8 @@ namespace Marcello.Collections
                 //release the record if present
                 RecordManager.ReleaseRecord(record);
 
-                var provider = new RecordBTreeDataProvider(
-                    this.RecordManager, 
-                    new BsonSerializer<Node<object, Int64>>(),
-                    "ID_INDEX");
-                var bTree = new BTree<object, Int64>(provider, BTREE_DEGREE);
-                bTree.Delete(objectID);
-                provider.Flush();
+                var index = RecordIndex.Create(this.RecordManager, RecordIndex.ID_INDEX_NAME);
+                index.UnRegister(objectID);
             }
 
         }

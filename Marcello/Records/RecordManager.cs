@@ -29,7 +29,7 @@ namespace Marcello.Records
 
         bool JournalEnabled { get; set; }
 
-        CollectionMetaDataRecord MetaDataRecord{ get; set; }
+        CollectionRoot CollectionRoot{ get; set; }
 
         internal RecordManager(
             IAllocationStrategy allocationStrategy,
@@ -46,7 +46,7 @@ namespace Marcello.Records
 
             Record record = null;
 
-            WithMetaDataRecord(() =>
+            WithCollectionRoot(() =>
                 {
                     record = ReadEntireRecord(address);
                 });
@@ -58,7 +58,7 @@ namespace Marcello.Records
         {
             var record = new Record();
 
-            WithMetaDataRecord(() =>
+            WithCollectionRoot(() =>
                 {
                     record.Header.DataSize = data.Length;
                     record.Header.AllocatedDataSize = AllocationStrategy.CalculateSize(record);
@@ -67,8 +67,8 @@ namespace Marcello.Records
 
                     data.CopyTo(record.Data, 0);
 
-                    ReuseEmptyRecordHeader(record, this.MetaDataRecord);
-                    AppendRecordToList(record, this.MetaDataRecord.DataListEndPoints);                                       
+                    ReuseEmptyRecordHeader(record);
+                    AppendRecordToList(record, this.CollectionRoot.DataListEndPoints);                                       
                 });
 
             return record;
@@ -78,7 +78,7 @@ namespace Marcello.Records
         {
             Record result = null;
 
-            WithMetaDataRecord(() =>
+            WithCollectionRoot(() =>
                 {
                     if (data.Length >= record.Header.AllocatedDataSize )
                     {
@@ -100,20 +100,20 @@ namespace Marcello.Records
 
         public void ReleaseRecord(Record record)
         {    
-            WithMetaDataRecord(() =>
+            WithCollectionRoot(() =>
                 {
                     //remove from list
-                    RemoveRecord(record, this.MetaDataRecord.DataListEndPoints); 
+                    RemoveRecord(record, this.CollectionRoot.DataListEndPoints); 
                     //append to empty list
-                    AppendRecordToList(record, this.MetaDataRecord.EmptyListEndPoints);
+                    AppendRecordToList(record, this.CollectionRoot.EmptyListEndPoints);
 
-                    this.MetaDataRecord.Sanitize();
+                    this.CollectionRoot.Sanitize();
                 });
         }
 
         public void RegisterNamedRecordAddress(string name, Int64 recordAddress)
         {       
-            WithMetaDataRecord(() =>
+            WithCollectionRoot(() =>
                 {
                     var namedRecordIndexRecord = GetNamedRecordIndexRecord();
 
@@ -124,14 +124,14 @@ namespace Marcello.Records
 
                     var updateRecord = UpdateRecord(namedRecordIndexRecord, namedRecordIndex.ToBytes());
 
-                    this.MetaDataRecord.NamedRecordIndexAddress = updateRecord.Header.Address;
+                    this.CollectionRoot.NamedRecordIndexAddress = updateRecord.Header.Address;
                 });
         }   
                    
         public Int64 GetNamedRecordAddress(string name)
         {
             Int64 result = 0;
-            WithMetaDataRecord(() => 
+            WithCollectionRoot(() => 
                 {
                     var namedRecordIndex = GetNamedRecordIndex();
                     if (namedRecordIndex.NamedRecordIndexes.ContainsKey(name))
@@ -151,9 +151,9 @@ namespace Marcello.Records
         {
             Record firstRecord = null;
 
-            WithMetaDataRecord(() =>
+            WithCollectionRoot(() =>
                 {
-                    var firstRecordAddress = this.MetaDataRecord.DataListEndPoints.StartAddress;
+                    var firstRecordAddress = this.CollectionRoot.DataListEndPoints.StartAddress;
                     if (firstRecordAddress > 0) {
                         firstRecord = ReadEntireRecord(firstRecordAddress);
                     }
@@ -171,7 +171,7 @@ namespace Marcello.Records
         {
             Record nextRecord = null;
 
-            WithMetaDataRecord(() =>
+            WithCollectionRoot(() =>
                 {
                     if (record.Header.Next > 0) {
                         nextRecord = ReadEntireRecord(record.Header.Next);
@@ -200,31 +200,32 @@ namespace Marcello.Records
             return record;
         }
             
-        void WithMetaDataRecord(Action action)
+        void WithCollectionRoot(Action action)
         {
-            LoadMetaDataRecord();
+            LoadCollectionRoot();
             action();
-            SaveMetaDataRecord();
+            SaveCollectionRoot();
         }
 
-        void LoadMetaDataRecord()
+        void LoadCollectionRoot()
         {        
-            if (this.MetaDataRecord != null)
+            if (this.CollectionRoot != null)
                 return;
-            var bytes = StorageEngine.Read(0, CollectionMetaDataRecord.ByteSize);
-            this.MetaDataRecord = CollectionMetaDataRecord.FromBytes(bytes);
+
+            var bytes = StorageEngine.Read(0, CollectionRoot.ByteSize);
+            this.CollectionRoot = CollectionRoot.FromBytes(bytes);
         }
 
-        void SaveMetaDataRecord()
+        void SaveCollectionRoot()
         {
-            StorageEngine.Write(0, this.MetaDataRecord.AsBytes());
+            StorageEngine.Write(0, this.CollectionRoot.AsBytes());
         }
 
         void AppendRecordToList (Record record, ListEndPoints listEndPoints)
         {
             var operation = new RecordListAppendOperation(
                 listEndPoints, 
-                CollectionMetaDataRecord.ByteSize, address =>  {
+                CollectionRoot.ByteSize, address =>  {
                 return ReadEntireRecord (address);
             });
             operation.Record = record;
@@ -236,19 +237,19 @@ namespace Marcello.Records
             StorageEngine.Write (record.Header.Address, record.AsBytes ());
         }
 
-        private void ReuseEmptyRecordHeader(Record record, CollectionMetaDataRecord metaDataRecord)
+        private void ReuseEmptyRecordHeader(Record record)
         {        
             return;
-            if (metaDataRecord.EmptyListEndPoints.StartAddress > 0) 
+            if (CollectionRoot.EmptyListEndPoints.StartAddress > 0) 
             {
-                var emptyRecord = ReadEntireRecord(metaDataRecord.EmptyListEndPoints.StartAddress);
+                var emptyRecord = ReadEntireRecord(CollectionRoot.EmptyListEndPoints.StartAddress);
                 while(emptyRecord != null)
                 {
                     if(emptyRecord.Header.AllocatedDataSize > record.Header.DataSize)
                     {
                         //copy header
                         record.Header = emptyRecord.Header;
-                        RemoveRecord(emptyRecord, metaDataRecord.EmptyListEndPoints);
+                        RemoveRecord(emptyRecord, CollectionRoot.EmptyListEndPoints);
                         return;
                     }
                     if (emptyRecord.Header.Next > 0) 
@@ -267,7 +268,7 @@ namespace Marcello.Records
         {         
             var operation = new RecordListReleaseOperation (
                 listEndPoints, 
-                CollectionMetaDataRecord.ByteSize, 
+                CollectionRoot.ByteSize, 
                 address =>  {
                     return ReadEntireRecord (address);
                 }
@@ -287,16 +288,16 @@ namespace Marcello.Records
         Record GetNamedRecordIndexRecord()
         {
         
-            if (this.MetaDataRecord.NamedRecordIndexAddress > 0)
+            if (this.CollectionRoot.NamedRecordIndexAddress > 0)
             {
-                return GetRecord(this.MetaDataRecord.NamedRecordIndexAddress);
+                return GetRecord(this.CollectionRoot.NamedRecordIndexAddress);
             }
             else
             {
                 var namedRecordIndex = new NamedRecordsIndex();
                 var namedRecordIndexRecord = AppendRecord(namedRecordIndex.ToBytes());
 
-                this.MetaDataRecord.NamedRecordIndexAddress = namedRecordIndexRecord.Header.Address;
+                this.CollectionRoot.NamedRecordIndexAddress = namedRecordIndexRecord.Header.Address;
 
                 return namedRecordIndexRecord;
             }

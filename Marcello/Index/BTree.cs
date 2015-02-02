@@ -4,10 +4,21 @@ using System.Linq;
 
 namespace Marcello.Index
 {
+    public interface IBTree<TK, TP>
+    {
+        Entry<TK, TP> Search(TK key);
+
+        void Insert(TK newKey, TP newPointer);
+
+        void Delete(TK keyToDelete);
+
+        Node<TK, TP> Root { get; } 
+    }
+
     /// <summary>
     /// B tree implementation based on https://github.com/rdcastro/btree-dotnet
     /// </summary>
-    public class BTree<TK, TP> 
+    public class BTree<TK, TP> : IBTree<TK, TP>
     {
         IBTreeDataProvider<TK, TP> DataProvider { get; set;}
 

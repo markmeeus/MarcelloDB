@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -50,6 +51,9 @@
     <Compile Include="Records\RecordManagerTest.cs" />
     <Compile Include="Index\ObjectComparerTest.cs" />
     <Compile Include="Index\BTreeWalkerTest.cs" />
+    <Compile Include="Index\IndexTest.cs" />
+    <Compile Include="Index\Mocks\MockBTreeDataProvider.cs" />
+    <Compile Include="Index\Mocks\MockBTree.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -60,6 +64,7 @@
     <Folder Include="Transactions\" />
     <Folder Include="Helpers\" />
     <Folder Include="Index\" />
+    <Folder Include="Index\Mocks\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Marcello\Marcello.csproj">

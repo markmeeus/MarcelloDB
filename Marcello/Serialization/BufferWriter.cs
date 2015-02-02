@@ -17,14 +17,16 @@ namespace Marcello.Serialization
             this.Position = 0;
         }
 
-        public void WriteInt32(Int32 value)
+        public BufferWriter WriteInt32(Int32 value)
         {
             WriteBytes(LittleEndian(BitConverter.GetBytes(value)));
+            return this;
         }
 
-        public void WriteInt64(Int64 value)
+        public BufferWriter WriteInt64(Int64 value)
         {
             WriteBytes(LittleEndian(BitConverter.GetBytes(value)));
+            return this;
         }
             
         public byte[] GetTrimmedBuffer()

@@ -3,13 +3,13 @@ using Marcello.Serialization;
 
 namespace Marcello.Records
 {
-	internal class RootBlock
+	internal class CollectionRoot
 	{		
         internal ListEndPoints DataListEndPoints { get; set;}
         internal ListEndPoints EmptyListEndPoints { get; set;}
         internal Int64 NamedRecordIndexAddress { get; set;}
 
-        internal RootBlock()
+        internal CollectionRoot()
 		{
 		}
 
@@ -34,7 +34,7 @@ namespace Marcello.Records
             return bufferWriter.Buffer; 
         }
 
-        internal static RootBlock FromBytes(byte[] bytes)
+        internal static CollectionRoot FromBytes(byte[] bytes)
         {        
             var bufferReader = new BufferReader(bytes, BitConverter.IsLittleEndian);
 
@@ -48,7 +48,7 @@ namespace Marcello.Records
 
             var namedRecordIndexAddress = bufferReader.ReadInt64();
 
-            return new RootBlock(){                    
+            return new CollectionRoot(){                    
                 DataListEndPoints = dataListEndPoints,
                 EmptyListEndPoints = emptyListEndPoints,
                 NamedRecordIndexAddress = namedRecordIndexAddress

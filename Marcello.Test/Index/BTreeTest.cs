@@ -6,58 +6,12 @@ using Marcello.Index;
 
 namespace Marcello.Test.Index
 {
-    public class TestDataProvider : IBTreeDataProvider<int, int>
-    {
-        Int64 _lastAddress = 1;
-        Dictionary<Int64, Node<int,int>> _nodes = new Dictionary<long, Node<int, int>>();
 
-        Node<int, int> _rootNode;
-
-        public Node<int, int> GetRootNode(int degree)
-        {
-            if (_rootNode == null)
-            {
-                _rootNode = new Node<int, int>(degree);
-                _rootNode.Address = 0;
-                AddNode(_rootNode);
-            }
-            return _rootNode;
-        }
-
-        public void SetRootNodeAddress(long rootNodeAddress)
-        {
-            
-        }
-            
-        public Node<int, int> GetNode(Int64 address)
-        {
-            return _nodes[address];
-        }
-
-        public Node<int, int> CreateNode(int degree)
-        {
-            var node = new Node<int, int>(degree);
-            node.Address = _lastAddress++;
-            AddNode(node);
-            return node;
-        }                               
-
-        void AddNode(Node<int,int> node)
-        {
-            _nodes.Add(node.Address, node);
-        }
-
-
-        public void Flush()
-        {
-        
-        }
-    }
 
     [TestFixture]
     public class BTreeTest
     {
-        private TestDataProvider _testDataProvider;
+        private MockBTreeDataProvider<int, int> _mockDataProvider;
         private const int Degree = 2;
 
         private readonly int[] testKeyData = new int[] { 10, 20, 30, 50 };
@@ -67,13 +21,13 @@ namespace Marcello.Test.Index
         [SetUp]
         public void Initialize()
         {
-            _testDataProvider = new TestDataProvider();
+            _mockDataProvider = new MockBTreeDataProvider<int, int>();
         }
 
         [Test]
         public void Create_BTree()
         {
-            var btree = new BTree<int, int>(_testDataProvider, Degree);
+            var btree = new BTree<int, int>(_mockDataProvider, Degree);
 
             Node<int, int> root = btree.Root;
             Assert.IsNotNull(root);
@@ -86,7 +40,7 @@ namespace Marcello.Test.Index
         [Test]
         public void Insert_One_Node()
         {
-            var btree = new BTree<int, int>(_testDataProvider, Degree);
+            var btree = new BTree<int, int>(_mockDataProvider, Degree);
             this.InsertTestDataAndValidateTree(btree, 0);
             Assert.AreEqual(1, btree.Height);
         }
@@ -94,7 +48,7 @@ namespace Marcello.Test.Index
         [Test]
         public void Insert_Multiple_Nodes_To_Split()
         {
-            var btree = new BTree<int, int>(_testDataProvider, Degree);
+            var btree = new BTree<int, int>(_mockDataProvider, Degree);
 
             for (int i = 0; i < this.testKeyData.Length; i++)
             {
@@ -107,7 +61,7 @@ namespace Marcello.Test.Index
         [Test]
         public void Delete_Nodes()
         {
-            var btree = new BTree<int, int>(_testDataProvider, Degree);
+            var btree = new BTree<int, int>(_mockDataProvider, Degree);
 
             for (int i = 0; i < this.testKeyData.Length; i++)
             {
@@ -126,7 +80,7 @@ namespace Marcello.Test.Index
         [Test]
         public void Delete_NonExisting_Node()
         {
-            var btree = new BTree<int, int>(_testDataProvider, Degree);
+            var btree = new BTree<int, int>(_mockDataProvider, Degree);
 
             for (int i = 0; i < this.testKeyData.Length; i++)
             {
@@ -140,7 +94,7 @@ namespace Marcello.Test.Index
         [Test]
         public void Search_Nodes()
         {
-            var btree = new BTree<int, int>(_testDataProvider, Degree);
+            var btree = new BTree<int, int>(_mockDataProvider, Degree);
 
             for (int i = 0; i < this.testKeyData.Length; i++)
             {
@@ -152,7 +106,7 @@ namespace Marcello.Test.Index
         [Test]
         public void Search_NonExisting_Node()
         {
-            var btree = new BTree<int, int>(_testDataProvider, Degree);
+            var btree = new BTree<int, int>(_mockDataProvider, Degree);
 
             // search an empty tree
             Entry<int, int> nonExisting = btree.Search(9999);
@@ -246,7 +200,7 @@ namespace Marcello.Test.Index
                 if (!node.IsLeaf)
                 {
                     Assert.IsTrue(node.ChildrenAddresses.Count >= degree);
-                    ValidateSubtree(root, _testDataProvider.GetNode(node.ChildrenAddresses[i]), degree, subtreeMin, subtreeMax, foundKeys);
+                    ValidateSubtree(root, _mockDataProvider.GetNode(node.ChildrenAddresses[i]), degree, subtreeMin, subtreeMax, foundKeys);
                 }
             }
         }
