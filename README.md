@@ -1,20 +1,21 @@
 MarcelloDB
 ========
 
-MarcelloDB is a low-memory-footprint  Xamarin/.net/Mono in-process Object database.
+MarcelloDB is a document database built for mobile app usage. 
+Being light-weight and limiting memory usage to the absolute minimum are the main objectives.
 
-MarcelloDB saves plain C# objects, including child objects and lists. So no more breaking down json data into relation data.
+MarcelloDB saves plain C# objects, including child objects and lists. 
+Not having to map your objects to the relational model can save you hundreds of lines of code. 
 
 No more packaging exotic binaries neither, Marcello is pure C#.
 
-Supported on Xamarin (iOS and Android), Windows 8 and Windows Phone 8
-
+Supported on Xamarin (iOS and Android), Windows 8.1 and Windows Phone 8.1 
 
 Current Status
 =
 Marcello is still in an experimental status, but a first alpha version is near.
 
-Be carefull. Backwards compatibility with existing data will not be guaranteed untill the first rease.
+Be carefull. Backwards compatibility with existing data will not be guaranteed untill the first relase.
 
 Usage
 =
@@ -125,10 +126,12 @@ First alpha version will include all of below
 - ~~reusing storage of deleted objects (done)~~
 - ~~cross-collection transaction support (done)~~
 - ~~iOS/Android (Xamarin) support (done)~~
+- ~~Indexing (ID)~~
 - Windows 8 Support
 - Windows Phone 8 Support
-- Indexing (ID and custom indexes) (todo)
-- IOC for Serialization and Storage
+- IOC for Serialization
+- 
+
 
 
 
