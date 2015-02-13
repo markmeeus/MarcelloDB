@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Marcello.Records;
 using Marcello.Serialization;
+using Marcello.Index;
 
 namespace Marcello.Collections
 {
@@ -27,14 +28,15 @@ namespace Marcello.Collections
         public IEnumerator<T> GetEnumerator()
         {
             lock(this.Session.SyncLock){
-                var record = RecordManager.GetFirstRecord();
-                while (record != null) {
-                    if (record.Header.HasObject)
-                    {   
-                        var obj = Serializer.Deserialize(record.Data);
-                        yield return obj;
-                    }
-                    record = RecordManager.GetNextRecord(record);
+                var index = RecordIndex.Create(this.RecordManager, RecordIndex.ID_INDEX_NAME);
+                var walker = index.GetWalker();
+                var node = walker.Next();
+                while (node != null)
+                {
+                    var record = RecordManager.GetRecord(node.Pointer);
+                    var obj = Serializer.Deserialize(record.Data);
+                    yield return obj;
+                    node = walker.Next();
                 }
             }            
         }

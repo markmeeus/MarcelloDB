@@ -111,7 +111,7 @@ namespace Marcello.Collections
             //Try Load record with object ID
             Record record = GetRecordForObjectID(objectID);
             if (record != null) {
-                UpdateObject(record, obj);
+                record = UpdateObject(record, obj);
             }
             else {
                 record = AppendObject(obj);
@@ -127,10 +127,10 @@ namespace Marcello.Collections
             return RecordManager.AppendRecord(data, true);
         }
 
-        void UpdateObject(Record record, T obj)
+        Record UpdateObject(Record record, T obj)
         {
             var bytes = Serializer.Serialize(obj);
-            RecordManager.UpdateRecord(record, bytes);
+            return RecordManager.UpdateRecord(record, bytes);
         }
 
         void DestroyInternal (T obj)

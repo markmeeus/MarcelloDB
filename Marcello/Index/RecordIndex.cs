@@ -21,6 +21,11 @@ namespace Marcello.Index
             this.DataProvider = dataProvider;
         }
 
+        internal BTreeWalker<object, Int64> GetWalker()
+        {
+            return new BTreeWalker<object, long>(BTREE_DEGREE, this.DataProvider);
+        }
+
         internal Int64 Search(object keyValue)
         {
             var node = this.Tree.Search(keyValue);

@@ -141,45 +141,7 @@ namespace Marcello.Records
                 });
             return result;
         }
-        #endregion //IRecordManager implementation
-               
-        /// <summary>
-        /// LEAKY ABSTRACTION, FIX AFTER INDEX ENUMERATION
-        /// </summary>
-        /// <returns>The first record.</returns>
-        internal Record GetFirstRecord()
-        {
-            Record firstRecord = null;
-
-            WithCollectionRoot(() =>
-                {
-                    var firstRecordAddress = this.CollectionRoot.DataListEndPoints.StartAddress;
-                    if (firstRecordAddress > 0) {
-                        firstRecord = ReadEntireRecord(firstRecordAddress);
-                    }
-
-                });
-
-            return firstRecord;
-        }
-
-        /// <summary>
-        /// LEAKY ABSTRACTION, FIX AFTER INDEX ENUMERATION
-        /// </summary>
-        /// <returns>The first record.</returns>
-        internal Record GetNextRecord(Record record)
-        {
-            Record nextRecord = null;
-
-            WithCollectionRoot(() =>
-                {
-                    if (record.Header.Next > 0) {
-                        nextRecord = ReadEntireRecord(record.Header.Next);
-                    }
-                });
-
-            return nextRecord;
-        }            
+        #endregion //IRecordManager implementation               
             
         internal void DisableJournal()
         {
@@ -209,9 +171,6 @@ namespace Marcello.Records
 
         void LoadCollectionRoot()
         {        
-            if (this.CollectionRoot != null)
-                return;
-
             var bytes = StorageEngine.Read(0, CollectionRoot.ByteSize);
             this.CollectionRoot = CollectionRoot.FromBytes(bytes);
         }
