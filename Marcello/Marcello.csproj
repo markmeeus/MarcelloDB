@@ -70,6 +70,7 @@
     <Compile Include="Serialization\JsonSerializer.cs" />
     <Compile Include="Records\CollectionRoot.cs" />
     <Compile Include="Index\RecordIndex.cs" />
+    <Compile Include="Index\BTreeWalker.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
