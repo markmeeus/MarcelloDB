@@ -57,7 +57,6 @@
     <Compile Include="Storage\StreamActors\JournalledWriter.cs" />
     <Compile Include="Helpers\DataHelper.cs" />
     <Compile Include="Records\ListEndPoints.cs" />
-    <Compile Include="Records\RecordListOperation.cs" />
     <Compile Include="Serialization\BufferWriter.cs" />
     <Compile Include="Serialization\BufferReader.cs" />
     <Compile Include="Index\BTree.cs" />

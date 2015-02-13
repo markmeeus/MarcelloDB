@@ -43,7 +43,6 @@
     <Compile Include="Transactions\TransactionTest.cs" />
     <Compile Include="Helpers\DataHelperTest.cs" />
     <Compile Include="MarcelloIntegrationTest.cs" />
-    <Compile Include="Records\RecordListOperationTest.cs" />
     <Compile Include="Serialization\BufferWriterTest.cs" />
     <Compile Include="Serialization\BufferReaderTest.cs" />
     <Compile Include="Index\BTreeTest.cs" />

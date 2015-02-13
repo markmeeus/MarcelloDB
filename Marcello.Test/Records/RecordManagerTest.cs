@@ -73,18 +73,7 @@ namespace Marcello.Test.Records
             _recordManager.UpdateRecord(record, new byte[3] { 4, 5, 6 });
             var newStreamLength =  GetStreamLength();
             Assert.AreEqual(streamLength, newStreamLength);           
-        }            
-
-        [Test]
-        public void Append_After_Release_Doesnt_Increase_StorageSize()
-        {
-            var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 });
-            _recordManager.ReleaseRecord(record);
-            var streamLength = GetStreamLength();
-            _recordManager.AppendRecord(new byte[]{ 4, 5, 6});
-            var newStreamLength = GetStreamLength();
-            Assert.AreEqual(streamLength, newStreamLength);           
-        }
+        }                        
 
         [Test]
         public void Get_Named_Record_Address_Returns_Null_When_Not_Registered()

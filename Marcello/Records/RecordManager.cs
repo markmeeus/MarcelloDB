@@ -13,9 +13,7 @@ namespace Marcello.Records
         Record AppendRecord(byte[] data, bool hasObject = false);
 
         Record UpdateRecord(Record record, byte[] data);
-
-        void ReleaseRecord(Record record);
-
+            
         void RegisterNamedRecordAddress(string name, Int64 recordAddress);
 
         Int64 GetNamedRecordAddress(string name);
@@ -68,7 +66,7 @@ namespace Marcello.Records
                     data.CopyTo(record.Data, 0);
 
                     ReuseEmptyRecordHeader(record);
-                    AppendRecordToList(record, this.CollectionRoot.DataListEndPoints);                                       
+                    AppendRecordToList(record);                                       
                 });
 
             return record;
@@ -82,7 +80,6 @@ namespace Marcello.Records
                 {
                     if (data.Length >= record.Header.AllocatedDataSize )
                     {
-                        ReleaseRecord(record);
                         result = AppendRecord(data, record.Header.HasObject); 
                     }
                     else 
@@ -97,20 +94,7 @@ namespace Marcello.Records
 
             return result;
         }
-
-        public void ReleaseRecord(Record record)
-        {    
-            WithCollectionRoot(() =>
-                {
-                    //remove from list
-                    RemoveRecord(record, this.CollectionRoot.DataListEndPoints); 
-                    //append to empty list
-                    AppendRecordToList(record, this.CollectionRoot.EmptyListEndPoints);
-
-                    this.CollectionRoot.Sanitize();
-                });
-        }
-
+                   
         public void RegisterNamedRecordAddress(string name, Int64 recordAddress)
         {       
             WithCollectionRoot(() =>
@@ -180,65 +164,18 @@ namespace Marcello.Records
             StorageEngine.Write(0, this.CollectionRoot.AsBytes());
         }
 
-        void AppendRecordToList (Record record, ListEndPoints listEndPoints)
+        void AppendRecordToList (Record record)
         {
-            var operation = new RecordListAppendOperation(
-                listEndPoints, 
-                CollectionRoot.ByteSize, address =>  {
-                return ReadEntireRecord (address);
-            });
-            operation.Record = record;
-            operation.Apply ();
-            foreach (var touchedRecord in operation.TouchedRecords) {
-                WriteHeader (touchedRecord);
-            }
-
+            record.Header.Address = this.CollectionRoot.Head;
+            this.CollectionRoot.Head += record.Header.TotalRecordSize;
             StorageEngine.Write (record.Header.Address, record.AsBytes ());
         }
 
         private void ReuseEmptyRecordHeader(Record record)
         {        
-            return;
-            if (CollectionRoot.EmptyListEndPoints.StartAddress > 0) 
-            {
-                var emptyRecord = ReadEntireRecord(CollectionRoot.EmptyListEndPoints.StartAddress);
-                while(emptyRecord != null)
-                {
-                    if(emptyRecord.Header.AllocatedDataSize > record.Header.DataSize)
-                    {
-                        //copy header
-                        record.Header = emptyRecord.Header;
-                        RemoveRecord(emptyRecord, CollectionRoot.EmptyListEndPoints);
-                        return;
-                    }
-                    if (emptyRecord.Header.Next > 0) 
-                    {
-                        emptyRecord = ReadEntireRecord(emptyRecord.Header.Next);
-                    } 
-                    else 
-                    {
-                        emptyRecord = null;
-                    }
-                }
-            }
+            return;           
         }
-
-        void RemoveRecord (Record record, ListEndPoints listEndPoints)
-        {         
-            var operation = new RecordListReleaseOperation (
-                listEndPoints, 
-                CollectionRoot.ByteSize, 
-                address =>  {
-                    return ReadEntireRecord (address);
-                }
-            );
-            operation.Record = record;
-            operation.Apply ();
-            foreach (var touchedRecord in operation.TouchedRecords) {
-                WriteHeader (touchedRecord);
-            }
-        }            
-
+            
         NamedRecordsIndex GetNamedRecordIndex()
         {
             return NamedRecordsIndex.FromBytes(GetNamedRecordIndexRecord().Data);

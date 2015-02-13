@@ -5,12 +5,12 @@ namespace Marcello.Records
 {
 	internal class CollectionRoot
 	{		
-        internal ListEndPoints DataListEndPoints { get; set;}
-        internal ListEndPoints EmptyListEndPoints { get; set;}
         internal Int64 NamedRecordIndexAddress { get; set;}
+        internal Int64 Head { get; set;}
 
         internal CollectionRoot()
 		{
+            this.Head = ByteSize;
 		}
 
         internal static int ByteSize
@@ -23,12 +23,8 @@ namespace Marcello.Records
             var bytes = new byte[ByteSize];
             var bufferWriter = new BufferWriter(bytes, BitConverter.IsLittleEndian);
 
-            bufferWriter.WriteInt64(this.DataListEndPoints.StartAddress);
-            bufferWriter.WriteInt64(this.DataListEndPoints.EndAddress);
-            bufferWriter.WriteInt64(this.EmptyListEndPoints.StartAddress);
-            bufferWriter.WriteInt64(this.EmptyListEndPoints.EndAddress);
-
             bufferWriter.WriteInt64(this.NamedRecordIndexAddress);
+            bufferWriter.WriteInt64(Head);
 
             //do no use the trimmed buffer as we want some padding for future use
             return bufferWriter.Buffer; 
@@ -38,32 +34,19 @@ namespace Marcello.Records
         {        
             var bufferReader = new BufferReader(bytes, BitConverter.IsLittleEndian);
 
-            var startAddress = bufferReader.ReadInt64();
-            var endAddress = bufferReader.ReadInt64();
-            var dataListEndPoints = new ListEndPoints(startAddress, endAddress);
-
-            startAddress = bufferReader.ReadInt64();
-            endAddress = bufferReader.ReadInt64();
-            var emptyListEndPoints = new ListEndPoints(startAddress, endAddress);
-
             var namedRecordIndexAddress = bufferReader.ReadInt64();
+            var head = bufferReader.ReadInt64();
+
+            if (head == 0)
+            {
+                head = ByteSize; //when reading from empty data
+            }
 
             return new CollectionRoot(){                    
-                DataListEndPoints = dataListEndPoints,
-                EmptyListEndPoints = emptyListEndPoints,
-                NamedRecordIndexAddress = namedRecordIndexAddress
+                NamedRecordIndexAddress = namedRecordIndexAddress,
+                Head = head
             };
-        }
-            
-        internal void Sanitize()
-        {
-            //when the data list is empty, the empty list is empty too.
-            if(this.DataListEndPoints.StartAddress == 0) 
-            {
-                this.EmptyListEndPoints.StartAddress = 0;
-                this.EmptyListEndPoints.EndAddress = 0;
-            }
-        }
+        }           
 	}
 }
 

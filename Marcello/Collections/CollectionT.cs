@@ -140,9 +140,6 @@ namespace Marcello.Collections
             Record record = GetRecordForObjectID(objectID);
             if (record != null)
             {
-                //release the record if present
-                RecordManager.ReleaseRecord(record);
-
                 var index = RecordIndex.Create(this.RecordManager, RecordIndex.ID_INDEX_NAME);
                 index.UnRegister(objectID);
             }
