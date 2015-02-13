@@ -5,12 +5,16 @@ namespace Marcello.Records
 {
 	internal class CollectionRoot
 	{		
+        const int CURRENT_FORMAT_VERSION = 1;
+
+        internal Int32 FormatVersion { get; set;}
         internal Int64 NamedRecordIndexAddress { get; set;}
         internal Int64 Head { get; set;}
 
         internal CollectionRoot()
 		{
             this.Head = ByteSize;
+            this.FormatVersion = CURRENT_FORMAT_VERSION;
 		}
 
         internal static int ByteSize
@@ -23,6 +27,7 @@ namespace Marcello.Records
             var bytes = new byte[ByteSize];
             var bufferWriter = new BufferWriter(bytes, BitConverter.IsLittleEndian);
 
+            bufferWriter.WriteInt32(this.FormatVersion);
             bufferWriter.WriteInt64(this.NamedRecordIndexAddress);
             bufferWriter.WriteInt64(Head);
 
@@ -33,7 +38,7 @@ namespace Marcello.Records
         internal static CollectionRoot FromBytes(byte[] bytes)
         {        
             var bufferReader = new BufferReader(bytes, BitConverter.IsLittleEndian);
-
+            var formatVersion = bufferReader.ReadInt32();
             var namedRecordIndexAddress = bufferReader.ReadInt64();
             var head = bufferReader.ReadInt64();
 
@@ -44,7 +49,8 @@ namespace Marcello.Records
 
             return new CollectionRoot(){                    
                 NamedRecordIndexAddress = namedRecordIndexAddress,
-                Head = head
+                Head = head,
+                FormatVersion = formatVersion
             };
         }           
 	}
