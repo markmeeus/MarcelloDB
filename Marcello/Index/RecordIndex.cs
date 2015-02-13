@@ -13,6 +13,7 @@ namespace Marcello.Index
         IBTreeDataProvider<object, Int64> DataProvider { get; set; }
 
         internal const string ID_INDEX_NAME = "__ID_INDEX__";
+        internal const string EMPTY_RECORDS_BY_SIZE = "__EMPTY_RECORDS_BY_SIZE__";
 
         internal RecordIndex(IBTree<object, Int64> btree,
             IBTreeDataProvider<object, Int64> dataProvider)

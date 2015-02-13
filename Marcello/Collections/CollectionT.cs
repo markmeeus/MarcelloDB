@@ -124,7 +124,28 @@ namespace Marcello.Collections
         Record AppendObject(T obj)
         {
             var data = Serializer.Serialize(obj);
+            var reuseRecord = FindRecordToReuse(data.Length);
+            if (reuseRecord != null)
+            {
+                return RecordManager.UpdateRecord(reuseRecord, data);
+            }
             return RecordManager.AppendRecord(data, true);
+        }
+
+        Record FindRecordToReuse(Int64 minimumLength)
+        {
+            var emptyRecordsIndex = RecordIndex.Create(this.RecordManager, RecordIndex.EMPTY_RECORDS_BY_SIZE);
+            var walker = emptyRecordsIndex.GetWalker();
+            var entry = walker.Next();
+            while (entry != null && new ObjectComparer().Compare(entry.Key, minimumLength) <= 0)
+            {
+                entry = walker.Next();
+            }
+            if (entry != null)
+            {
+                return RecordManager.GetRecord(entry.Pointer);
+            }
+            return null;
         }
 
         Record UpdateObject(Record record, T obj)
@@ -142,6 +163,10 @@ namespace Marcello.Collections
             {
                 var index = RecordIndex.Create(this.RecordManager, RecordIndex.ID_INDEX_NAME);
                 index.UnRegister(objectID);
+
+                //register record as empty;
+                var emptyRecords = RecordIndex.Create(this.RecordManager, RecordIndex.EMPTY_RECORDS_BY_SIZE);
+                emptyRecords.Register(record.Header.TotalRecordSize, record.Header.Address);
             }
 
         }
