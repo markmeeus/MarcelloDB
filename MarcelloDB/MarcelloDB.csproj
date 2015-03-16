@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProjectGuid>{4172A119-2AE8-41D9-999E-9A2468267B28}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MarcelloDB</RootNamespace>
+    <AssemblyName>MarcelloDB</AssemblyName>
+    <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Collections\CollectionEnumeratorT.cs" />
+    <Compile Include="Collections\CollectionT.cs" />
+    <Compile Include="Records\Record.cs" />
+    <Compile Include="Records\RecordBuilder.cs" />
+    <Compile Include="Records\RecordHeader.cs" />
+    <Compile Include="Records\RecordManager.cs" />
+    <Compile Include="Serialization\IObjectSerializer.cs" />
+    <Compile Include="Serialization\ObjectProxy.cs" />
+    <Compile Include="Storage\IStorageStream.cs" />
+    <Compile Include="Storage\IStorageStreamProvider.cs" />
+    <Compile Include="Marcello.cs" />
+    <Compile Include="Serialization\BsonSerializer.cs" />
+    <Compile Include="AllocationStrategies\IAllocationStrategy.cs" />
+    <Compile Include="AllocationStrategies\DoubleSizeAllocationStrategy.cs" />
+    <Compile Include="Storage\StorageEngine.cs" />
+    <Compile Include="Attributes\IDAttribute.cs" />
+    <Compile Include="Transactions\Transaction.cs" />
+    <Compile Include="Transactions\Journal.cs" />
+    <Compile Include="Transactions\JournalEntry.cs" />
+    <Compile Include="Storage\StreamActors\Reader.cs" />
+    <Compile Include="Storage\StreamActors\Writer.cs" />
+    <Compile Include="Storage\StreamActors\StreamActor.cs" />
+    <Compile Include="Storage\StreamActors\JournalledReader.cs" />
+    <Compile Include="Storage\StreamActors\JournalledWriter.cs" />
+    <Compile Include="Helpers\DataHelper.cs" />
+    <Compile Include="Records\ListEndPoints.cs" />
+    <Compile Include="Serialization\BufferWriter.cs" />
+    <Compile Include="Serialization\BufferReader.cs" />
+    <Compile Include="Index\BTree.cs" />
+    <Compile Include="Index\Node.cs" />
+    <Compile Include="Index\Entry.cs" />
+    <Compile Include="Index\IBtreeDataProvider.cs" />
+    <Compile Include="Index\RecordBTreeDataProvider.cs" />
+    <Compile Include="Records\NamedRecordsIndex.cs" />
+    <Compile Include="Index\ObjectComparer.cs" />
+    <Compile Include="Serialization\JsonSerializer.cs" />
+    <Compile Include="Records\CollectionRoot.cs" />
+    <Compile Include="Index\RecordIndex.cs" />
+    <Compile Include="Index\BTreeWalker.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Collections\" />
+    <Folder Include="Records\" />
+    <Folder Include="Serialization\" />
+    <Folder Include="Storage\" />
+    <Folder Include="AllocationStrategies\" />
+    <Folder Include="Attributes\" />
+    <Folder Include="Transactions\" />
+    <Folder Include="Storage\StreamActors\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Index\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+</Project>
