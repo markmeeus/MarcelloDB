@@ -1,2 +1,7 @@
 language: csharp
 solution: MarcelloDB.sln
+before_script:
+  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
+after_success:
+  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./MarcelloDB.Test/bin/Release/MarcelloDB.Tests.dll 
+
