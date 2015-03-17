@@ -357,8 +357,10 @@ namespace MarcelloDB.Test
             
         private void EnsureFolder(string path)
         {
-            System.IO.Directory.Delete("data", true);
-            System.IO.Directory.CreateDirectory("data");
+            if(System.IO.Directory.Exists("data")){
+                System.IO.Directory.Delete("data", true);
+            }
+            System.IO.Directory.CreateDirectory("data");                       
         }
     }
 }
