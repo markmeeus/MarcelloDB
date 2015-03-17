@@ -1,8 +1,10 @@
 MarcelloDB
 ========
 
-MarcelloDB is a document database built for mobile app usage. 
-Being light-weight and limiting memory usage to the absolute minimum are the main objectives.
+[![Build Status](https://travis-ci.org/markmeeus/MarcelloDB.svg?branch=master)](https://travis-ci.org/markmeeus/MarcelloDB)
+
+MarcelloDB is a mobile document database.
+It is light-weight and has a minimal memory footprint.
 
 MarcelloDB saves plain C# objects, including child objects and lists. 
 Not having to map your objects to the relational model can save you hundreds of lines of code. 
@@ -13,14 +15,18 @@ Supported on Xamarin (iOS and Android), Windows 8.1 and Windows Phone 8.1
 
 Current Status
 =
-Marcello is still in an experimental status, but a first alpha version is near.
+Marcello is still experimental.
 
-Be carefull. Backwards compatibility with existing data will not be guaranteed untill the first relase.
+Be carefull. Backwards compatibility with existing data will not be guaranteed untill v1.
 
 Usage
 =
-MarcelloDB uses regular Streams to read and write the data to disk. These filestreams cannot be created in a PCL, so you'll have to create it on the specific platform.
-The FileStorageStreamProvider will be available for all supported platforms. Or you can roll your own, it's quite simple.
+MarcelloDB is a Portable Class Library, the only platform specific thing you need to do is creating a StreamProvider.
+This is because there isn't a platform independent way to interact with the FileSystem.
+
+For iOS and Android you need to use the FileStorageStreamProvider included in the MarcelloDB.netfx assembly.
+Currently there is no implementation for Windows 8 and Windows Phone. 
+Feel free to contribute... 
 
 Creating the session
 ```cs
@@ -34,7 +40,7 @@ var marcello = new Marcello(fileStreamProvider);
 Persisting objects
 ```cs
 //Create your objects however you please
-var myObject = new WhateverObject(){Name="Value"};
+var myObject = new WhateverObject(){ Name = "Value" };
 
 //get the corresponding collection
 var collection = marcello.Collection<WhateverObject>();
@@ -74,20 +80,20 @@ You can use any of the following naming conventions, or add the Marcello.Attribu
 ```cs
 class Article
 {
-  public string ID {get;set;}
+  public string ID { get; set; }
 
-  public string Id {get;set;}
+  public string Id { get; set; }
 
-  public string id {get;set;}
+  public string id { get; set; }
 
-  public string ArticleID {get;set;}
+  public string ArticleID { get; set; }
 
-  public string ArticleId {get;set;}
+  public string ArticleId { get; set; }
 
-  public string Articleid {get;set;}
+  public string Articleid { get; set; }
 
   [Marcello.Attributes.ID]
-  public string CustomIDProp {get;set;}
+  public string CustomIDProp { get; set; }
 }
 ```
 
@@ -95,7 +101,7 @@ Transactions
 =
 Marcello supports transactions spanning multiple operations over multiple collections
 ```cs
-_marcello.Transaction(() => {
+marcello.Transaction(() => {
     marcello.Collection<Article>().Persist(article);
     marcello.Collection<Clients>().Persist(client);
     marcello.Collection<Project>().Destroy(project);
@@ -104,7 +110,7 @@ _marcello.Transaction(() => {
 
 Transactions roll back when an exception occurs within the block.
 ```cs
-_marcello.Transaction(() => {
+marcello.Transaction(() => {
     marcello.Collection<Article>().Persist(article);
     marcello.Collection<Clients>().Persist(client);
     marcello.Collection<Project>().Destroy(project);
