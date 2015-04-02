@@ -65,7 +65,6 @@ namespace MarcelloDB.Records
 
                     data.CopyTo(record.Data, 0);
 
-                    ReuseEmptyRecordHeader(record);
                     AppendRecordToList(record);                                       
                 });
 
@@ -169,12 +168,7 @@ namespace MarcelloDB.Records
             record.Header.Address = this.CollectionRoot.Head;
             this.CollectionRoot.Head += record.Header.TotalRecordSize;
             StorageEngine.Write (record.Header.Address, record.AsBytes ());
-        }
-
-        private void ReuseEmptyRecordHeader(Record record)
-        {        
-            return;           
-        }
+        }            
             
         NamedRecordsIndex GetNamedRecordIndex()
         {
