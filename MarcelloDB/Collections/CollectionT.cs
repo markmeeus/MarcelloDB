@@ -44,7 +44,8 @@ namespace MarcelloDB.Collections
         public IEnumerable<T> All
         {
             get{
-                return new CollectionEnumerator<T>(this.Session, RecordManager, Serializer);
+                return new CollectionEnumerator<T>(
+                    this.Session, RecordManager, Serializer);
             }
         }            
 
@@ -52,15 +53,13 @@ namespace MarcelloDB.Collections
         {
             T result = default(T);
 
-            this.Session.Transaction(() =>
+            this.Session.Transaction(() => {
+                var record =  GetRecordForObjectID(id);
+                if (record != null)
                 {
-                    var record =  GetRecordForObjectID(id);
-                    if (record != null)
-                    {
-                        result = Serializer.Deserialize(record.Data);
-                    }
-
-                });
+                    result = Serializer.Deserialize(record.Data);
+                }
+            });
             return result;
         }
 
@@ -94,7 +93,8 @@ namespace MarcelloDB.Collections
             
         Record GetRecordForObjectID(object objectID)
         {                
-            var index = RecordIndex.Create(this.RecordManager, RecordIndex.ID_INDEX_NAME);
+            var index = RecordIndex.Create(this.RecordManager, 
+                RecordIndex.ID_INDEX_NAME);
             var address = index.Search(objectID);
             if (address > 0)
             {
@@ -106,7 +106,7 @@ namespace MarcelloDB.Collections
         void PersistInternal(T obj)
         {
             var objectID = new ObjectProxy(obj).ID;
-            //Try Load record with object ID
+            //Try to load the record with object ID
             Record record = GetRecordForObjectID(objectID);
             if (record != null) {
                 record = UpdateObject(record, obj);
@@ -115,7 +115,8 @@ namespace MarcelloDB.Collections
                 record = AppendObject(obj);
             }
                 
-            var index = RecordIndex.Create(this.RecordManager, RecordIndex.ID_INDEX_NAME);
+            var index = RecordIndex.Create(
+                this.RecordManager, RecordIndex.ID_INDEX_NAME);
             index.Register(objectID, record.Header.Address);
         }
 
@@ -132,7 +133,8 @@ namespace MarcelloDB.Collections
 
         Record FindRecordToReuse(Int64 minimumLength)
         {
-            var emptyRecordsIndex = RecordIndex.Create(this.RecordManager, RecordIndex.EMPTY_RECORDS_BY_SIZE);
+            var emptyRecordsIndex = RecordIndex.Create(this.RecordManager, 
+                RecordIndex.EMPTY_RECORDS_BY_SIZE);
             var walker = emptyRecordsIndex.GetWalker();
             var entry = walker.Next();
             while (entry != null && new ObjectComparer().Compare(entry.Key, minimumLength) <= 0)
@@ -155,16 +157,20 @@ namespace MarcelloDB.Collections
         void DestroyInternal (T obj)
         {
             var objectID = new ObjectProxy(obj).ID;
-            //Try Load record with object ID
+            //Try to load the record with object ID
             Record record = GetRecordForObjectID(objectID);
             if (record != null)
             {
-                var index = RecordIndex.Create(this.RecordManager, RecordIndex.ID_INDEX_NAME);
+                var index = RecordIndex.Create(
+                    this.RecordManager, RecordIndex.ID_INDEX_NAME);
                 index.UnRegister(objectID);
 
                 //register record as empty;
-                var emptyRecords = RecordIndex.Create(this.RecordManager, RecordIndex.EMPTY_RECORDS_BY_SIZE);
-                emptyRecords.Register(record.Header.TotalRecordSize, record.Header.Address);
+                var emptyRecords = RecordIndex.Create(
+                    this.RecordManager, RecordIndex.EMPTY_RECORDS_BY_SIZE);
+                emptyRecords.Register(
+                    record.Header.TotalRecordSize, 
+                    record.Header.Address);
             }
 
         }

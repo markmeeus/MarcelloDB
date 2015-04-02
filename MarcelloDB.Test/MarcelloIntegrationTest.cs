@@ -51,7 +51,6 @@ namespace MarcelloDB.Test
         [Test]
         public void Insert_2_Objects()
         {
-
             var toiletPaper = Article.ToiletPaper;
 
             var spinalTapDvd = Article.SpinalTapDvd;
