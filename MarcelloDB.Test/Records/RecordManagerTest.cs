@@ -57,7 +57,7 @@ namespace MarcelloDB.Test.Records
         }
 
         [Test]
-        public void Append_Record_Updates_Record()
+        public void Update_Record_Updates_Record()
         {
             var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 });
             _recordManager.UpdateRecord(record, new byte[3] { 4, 5, 6 });
@@ -95,6 +95,45 @@ namespace MarcelloDB.Test.Records
             _recordManager.RegisterNamedRecordAddress("Test2", 456);
             Assert.AreEqual(123, _recordManager.GetNamedRecordAddress("Test1"));
             Assert.AreEqual(456, _recordManager.GetNamedRecordAddress("Test2"));
+        }            
+
+        [Test]
+        public void Append_Record_Reuses_Empty_Record()
+        {
+            var record = _recordManager.AppendRecord(new byte[3]{1, 2, 3});
+
+            _recordManager.Recycle(record.Header.Address);
+
+            var expectedLength = GetStreamLength();
+            _recordManager.AppendRecord(new byte[3]{1, 2, 3});
+            var newLength = GetStreamLength();
+            Assert.AreEqual(expectedLength, newLength);
+        }
+
+        [Test]
+        public void Record_Does_Not_Get_Recycled_Twice()
+        {
+            var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 });
+            _recordManager.Recycle(record.Header.Address);
+
+            var firstNewRecord = _recordManager.AppendRecord(new byte[3]{ 4, 5, 6 });
+            var secondNewRecord = _recordManager.AppendRecord(new byte[3]{ 7, 8, 9 });
+            Assert.AreNotEqual(firstNewRecord.Header.Address, secondNewRecord.Header.Address);
+        }
+
+        [Test]
+        public void Update_Record_Reuses_Empty_Record()
+        {
+            var smallRecord = _recordManager.AppendRecord(new byte[1]{ 1 });
+            var giantRecord = _recordManager.AppendRecord(new byte[100]);
+            _recordManager.Recycle(giantRecord.Header.Address);
+
+            var expectedLength = GetStreamLength();
+            var updatedRecord = _recordManager.UpdateRecord(smallRecord, new byte[20]);
+            var newLength = GetStreamLength();
+            Assert.AreEqual(giantRecord.Header.Address, updatedRecord.Header.Address);
+            Assert.AreEqual(expectedLength, newLength);
+
         }
 
         Int64 GetStreamLength()

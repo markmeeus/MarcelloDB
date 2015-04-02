@@ -123,30 +123,9 @@ namespace MarcelloDB.Collections
         Record AppendObject(T obj)
         {
             var data = Serializer.Serialize(obj);
-            var reuseRecord = FindRecordToReuse(data.Length);
-            if (reuseRecord != null)
-            {
-                return RecordManager.UpdateRecord(reuseRecord, data);
-            }
-            return RecordManager.AppendRecord(data, true);
-        }
 
-        Record FindRecordToReuse(Int64 minimumLength)
-        {
-            var emptyRecordsIndex = RecordIndex.Create(this.RecordManager, 
-                RecordIndex.EMPTY_RECORDS_BY_SIZE);
-            var walker = emptyRecordsIndex.GetWalker();
-            var entry = walker.Next();
-            while (entry != null && new ObjectComparer().Compare(entry.Key, minimumLength) <= 0)
-            {
-                entry = walker.Next();
-            }
-            if (entry != null)
-            {
-                return RecordManager.GetRecord(entry.Pointer);
-            }
-            return null;
-        }
+            return RecordManager.AppendRecord(data, true);
+        }            
 
         Record UpdateObject(Record record, T obj)
         {
@@ -165,14 +144,8 @@ namespace MarcelloDB.Collections
                     this.RecordManager, RecordIndex.ID_INDEX_NAME);
                 index.UnRegister(objectID);
 
-                //register record as empty;
-                var emptyRecords = RecordIndex.Create(
-                    this.RecordManager, RecordIndex.EMPTY_RECORDS_BY_SIZE);
-                emptyRecords.Register(
-                    record.Header.TotalRecordSize, 
-                    record.Header.Address);
+                this.RecordManager.Recycle(record.Header.Address);
             }
-
         }
     }
 }

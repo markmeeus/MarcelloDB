@@ -10,17 +10,20 @@ namespace MarcelloDB.Index
         IRecordManager RecordManager { get; set; }
         IObjectSerializer<Node<object, Int64>> Serializer { get; set; }
         Dictionary<Int64, Node<object, Int64>> NodeCache { get; set; }
-        string RootRecordName {get;set;}
+        string RootRecordName { get; set; }
+        bool CanReuseRecycledRecords { get; set; }
 
         internal RecordBTreeDataProvider(
             IRecordManager recordManager, 
             IObjectSerializer<Node<object, Int64>> serializer,
-            string rootRecordName)
+            string rootRecordName,
+            bool canReuseRecycledRecords)
         {
             this.RecordManager = recordManager;
             this.Serializer = serializer;
             this.NodeCache = new Dictionary<long, Node<object, long>>();
             this.RootRecordName = rootRecordName;
+            this.CanReuseRecycledRecords = canReuseRecycledRecords;
         }
 
         #region IBTreeDataProvider implementation
@@ -64,7 +67,8 @@ namespace MarcelloDB.Index
         {
             var node = new Node<object, long>(degree);
             var data = Serializer.Serialize(node);
-            var record = RecordManager.AppendRecord(data);
+
+            var record = RecordManager.AppendRecord(data, reuseRecycledRecord:this.CanReuseRecycledRecords);
 
             node.Address = record.Header.Address;
 

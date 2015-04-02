@@ -309,7 +309,7 @@ namespace MarcelloDB.Test
             var newStorageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
             Assert.AreEqual(storageSize, newStorageSize);
         }
-
+            
         [Test]
         public void Save_To_File_Stream()
         {

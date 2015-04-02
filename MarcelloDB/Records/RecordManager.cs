@@ -3,6 +3,7 @@ using MarcelloDB.AllocationStrategies;
 using MarcelloDB.Serialization;
 using MarcelloDB.Storage;
 using MarcelloDB.Records.__;
+using MarcelloDB.Index;
 
 namespace MarcelloDB.Records
 {
@@ -10,9 +11,11 @@ namespace MarcelloDB.Records
     {
         Record GetRecord(Int64 address);
 
-        Record AppendRecord(byte[] data, bool hasObject = false);
+        Record AppendRecord(byte[] data, bool hasObject = false, bool reuseRecycledRecord = true);
 
         Record UpdateRecord(Record record, byte[] data);
+
+        void Recycle(Int64 address);
             
         void RegisterNamedRecordAddress(string name, Int64 recordAddress);
 
@@ -52,22 +55,35 @@ namespace MarcelloDB.Records
             return record;
         }
 
-        public Record AppendRecord(byte[] data, bool hasObject = false)
+        public Record AppendRecord(byte[] data, bool hasObject = false, bool reuseRecycledRecord = true)
         {
-            var record = new Record();
+            Record record = null;
+            if (reuseRecycledRecord)
+            {
+                record = ReuseRecycledRecord(data.Length);
+            }
 
-            WithCollectionRoot(() =>
-                {
-                    record.Header.DataSize = data.Length;
-                    record.Header.AllocatedDataSize = AllocationStrategy.CalculateSize(record);
-                    record.Header.HasObject = hasObject;
-                    record.Data = new byte[record.Header.DataSize];
+            if (record == null)
+            {
+                //append
+                record = new Record();
+            
+                WithCollectionRoot(() =>
+                    {
+                        record.Header.DataSize = data.Length;
+                        record.Header.AllocatedDataSize = AllocationStrategy.CalculateSize(record);
+                        record.Header.HasObject = hasObject;
+                        record.Data = new byte[record.Header.DataSize];
 
-                    data.CopyTo(record.Data, 0);
+                        data.CopyTo(record.Data, 0);
 
-                    AppendRecordToList(record);                                       
-                });
-
+                        AppendRecordToList(record);                                       
+                    });
+            }
+            else //reuse
+            {
+                UpdateRecord(record, data);
+            }
             return record;
         }
 
@@ -93,7 +109,16 @@ namespace MarcelloDB.Records
 
             return result;
         }
-                   
+
+        public void Recycle(Int64 address)
+        {
+            var recordHeader = ReadRecordHeader(address);
+            var emptyRecordIndex = GetEmptyRecordIndex();
+            emptyRecordIndex.Register(
+                recordHeader.AllocatedDataSize, 
+                recordHeader.Address);
+        }
+
         public void RegisterNamedRecordAddress(string name, Int64 recordAddress)
         {       
             WithCollectionRoot(() =>
@@ -139,12 +164,17 @@ namespace MarcelloDB.Records
 
         Record ReadEntireRecord(Int64 address)
         {
-            var header = RecordHeader.FromBytes(address, StorageEngine.Read(address, RecordHeader.ByteSize));
+            var header = ReadRecordHeader(address);
             var allBytes = StorageEngine.Read(address, RecordHeader.ByteSize + header.AllocatedDataSize);
             var record =  Record.FromBytes(address, allBytes);
             return record;
         }
-            
+
+        RecordHeader ReadRecordHeader(Int64 address)
+        {
+           return RecordHeader.FromBytes(address, StorageEngine.Read(address, RecordHeader.ByteSize));
+        }
+
         void WithCollectionRoot(Action action)
         {
             LoadCollectionRoot();
@@ -177,20 +207,49 @@ namespace MarcelloDB.Records
 
         Record GetNamedRecordIndexRecord()
         {
-        
-            if (this.CollectionRoot.NamedRecordIndexAddress > 0)
-            {
-                return GetRecord(this.CollectionRoot.NamedRecordIndexAddress);
-            }
-            else
+            EnsureNamedRecordIndex();
+            return GetRecord(this.CollectionRoot.NamedRecordIndexAddress);
+        }
+
+        void EnsureNamedRecordIndex()
+        {
+            if (this.CollectionRoot.NamedRecordIndexAddress == 0)
             {
                 var namedRecordIndex = new NamedRecordsIndex();
-                var namedRecordIndexRecord = AppendRecord(namedRecordIndex.ToBytes());
+                var namedRecordIndexRecord = AppendRecord(
+                    namedRecordIndex.ToBytes(), reuseRecycledRecord:false);
 
-                this.CollectionRoot.NamedRecordIndexAddress = namedRecordIndexRecord.Header.Address;
-
-                return namedRecordIndexRecord;
+                this.CollectionRoot.NamedRecordIndexAddress = 
+                    namedRecordIndexRecord.Header.Address;
             }
+
+        }
+
+        RecordIndex GetEmptyRecordIndex()
+        {
+            return RecordIndex.Create(
+                this, 
+                RecordIndex.EMPTY_RECORDS_BY_SIZE, 
+                canReuseRecycledRecords:false); //do not reuse records for this index. It will try to reuse for building itself.
+        }
+
+        Record ReuseRecycledRecord(int minimumLength)
+        {
+            var emptyRecordIndex = GetEmptyRecordIndex();
+            var walker = emptyRecordIndex.GetWalker();
+
+            var entry = walker.Next();
+            while (entry != null && 
+                new ObjectComparer().Compare(entry.Key, minimumLength) <= 0)
+            {
+                entry = walker.Next();
+            }
+            if (entry != null)
+            {
+                emptyRecordIndex.UnRegister(entry.Key);
+                return GetRecord(entry.Pointer);
+            }
+            return null;
         }
     }
 }

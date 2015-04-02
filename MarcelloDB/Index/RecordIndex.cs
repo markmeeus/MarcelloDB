@@ -54,12 +54,16 @@ namespace MarcelloDB.Index
             UpdateRootAddress();
         }
 
-        internal static RecordIndex Create(IRecordManager recordManager, string indexName)
+        internal static RecordIndex Create(
+            IRecordManager recordManager, 
+            string indexName, 
+            bool canReuseRecycledRecords = true)
         {
             var dataProvider = new RecordBTreeDataProvider(
                 recordManager, 
                 new BsonSerializer<Node<object, Int64>>(),
-                indexName);
+                indexName,
+                canReuseRecycledRecords);
 
             var btree = new BTree<object, Int64>(dataProvider, BTREE_DEGREE);
 
