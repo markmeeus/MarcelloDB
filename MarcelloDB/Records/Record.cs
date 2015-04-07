@@ -6,7 +6,21 @@ namespace MarcelloDB.Records
     internal class Record
     {
         internal RecordHeader Header { get; set;}
-        internal byte[] Data;
+
+        private byte[] _data;
+        internal byte[] Data
+        {
+            get{return _data; }
+            set
+            {
+                if (value.Length > this.Header.AllocatedDataSize)
+                {
+                    throw new Exception("PANIC: Data cannot exceed AllocatedDataSize");
+                }
+                _data = value;
+            }
+        }
+
 
         internal Record()
         {

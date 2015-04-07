@@ -7,7 +7,7 @@ namespace MarcelloDB.AllocationStrategies
     {
         public int CalculateSize(Record record)
         {
-            return RecordHeader.ByteSize + (record.Header.DataSize * 2);
+            return record.Header.DataSize * 2;
         }
     }
 }

@@ -37,14 +37,14 @@ namespace MarcelloDB.Index
             else
             {
                 var node = CreateNode(degree);
-                this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, node.Address);
+                this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, node.Address, false);
                 return node;
             }
         }            
 
         public void SetRootNodeAddress(long rootNodeAddress)
         {
-            this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, rootNodeAddress);
+            this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, rootNodeAddress, false);
         }
 
         public Node<object, long> GetNode(long address)

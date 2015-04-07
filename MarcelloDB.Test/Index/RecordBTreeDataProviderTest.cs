@@ -28,6 +28,7 @@ namespace MarcelloDB.Test.Index
         public Record AppendRecord(byte[] data, bool hasObject = false, bool reuseRecycledRecord = true)
         {
             var record = new Record();
+            record.Header.AllocatedDataSize = data.Length;
             record.Data = data;
             record.Header.Address = Records.Count + 1;
             record.Header.HasObject = hasObject;
@@ -36,7 +37,7 @@ namespace MarcelloDB.Test.Index
             return record;
         }
 
-        public Record UpdateRecord(Record record, byte[] data)
+        public Record UpdateRecord(Record record, byte[] data, bool reuseRecycledRecord = true)
         {
             Records[record.Header.Address].Data = data;
             return record;
@@ -51,7 +52,7 @@ namespace MarcelloDB.Test.Index
             Records.Remove(record.Header.Address);
         }
 
-        public void RegisterNamedRecordAddress(string name, Int64 recordAddress)
+        public void RegisterNamedRecordAddress(string name, Int64 recordAddress, bool reuseRecycledRecord = true)
         {
             this.NamedRecords[name] = recordAddress;
         }

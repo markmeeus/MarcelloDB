@@ -13,11 +13,11 @@ namespace MarcelloDB.Records
 
         Record AppendRecord(byte[] data, bool hasObject = false, bool reuseRecycledRecord = true);
 
-        Record UpdateRecord(Record record, byte[] data);
+        Record UpdateRecord(Record record, byte[] data, bool reuseRecycledRecord = true);
 
         void Recycle(Int64 address);
             
-        void RegisterNamedRecordAddress(string name, Int64 recordAddress);
+        void RegisterNamedRecordAddress(string name, Int64 recordAddress, bool reuseRecycledRecord = true);
 
         Int64 GetNamedRecordAddress(string name);
     }
@@ -87,7 +87,7 @@ namespace MarcelloDB.Records
             return record;
         }
 
-        public Record UpdateRecord(Record record, byte[] data)
+        public Record UpdateRecord(Record record, byte[] data, bool reuseRecycledRecord = true)
         {
             Record result = null;
 
@@ -95,7 +95,7 @@ namespace MarcelloDB.Records
                 {
                     if (data.Length >= record.Header.AllocatedDataSize )
                     {
-                        result = AppendRecord(data, record.Header.HasObject); 
+                        result = AppendRecord(data, record.Header.HasObject, reuseRecycledRecord); 
                     }
                     else 
                     {   
@@ -119,7 +119,7 @@ namespace MarcelloDB.Records
                 recordHeader.Address);
         }
 
-        public void RegisterNamedRecordAddress(string name, Int64 recordAddress)
+        public void RegisterNamedRecordAddress(string name, Int64 recordAddress, bool reuseRecycledRecord = true)
         {       
             WithCollectionRoot(() =>
                 {
@@ -130,7 +130,7 @@ namespace MarcelloDB.Records
                     namedRecordIndex.NamedRecordIndexes.Remove(name);
                     namedRecordIndex.NamedRecordIndexes.Add(name, recordAddress);
 
-                    var updateRecord = UpdateRecord(namedRecordIndexRecord, namedRecordIndex.ToBytes());
+                    var updateRecord = UpdateRecord(namedRecordIndexRecord, namedRecordIndex.ToBytes(), reuseRecycledRecord);
 
                     this.CollectionRoot.NamedRecordIndexAddress = updateRecord.Header.Address;
                 });
