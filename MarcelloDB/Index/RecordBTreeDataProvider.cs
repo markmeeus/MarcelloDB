@@ -37,14 +37,14 @@ namespace MarcelloDB.Index
             else
             {
                 var node = CreateNode(degree);
-                this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, node.Address, false);
+                this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, node.Address, CanReuseRecycledRecords);
                 return node;
             }
         }            
 
         public void SetRootNodeAddress(long rootNodeAddress)
         {
-            this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, rootNodeAddress, false);
+            this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, rootNodeAddress, CanReuseRecycledRecords);
         }
 
         public Node<object, long> GetNode(long address)
@@ -89,7 +89,7 @@ namespace MarcelloDB.Index
                     var record = RecordManager.GetRecord(node.Address);
                     var updateData = Serializer.Serialize(node);
                     var oldAddress = record.Header.Address;
-                    var updatedRecord = RecordManager.UpdateRecord(record, updateData);
+                    var updatedRecord = RecordManager.UpdateRecord(record, updateData, CanReuseRecycledRecords);
                     if (oldAddress != updatedRecord.Header.Address)
                     {
                         //update any children linking to this node

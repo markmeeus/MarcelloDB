@@ -5,7 +5,7 @@ namespace MarcelloDB.AllocationStrategies
 {
     internal interface IAllocationStrategy
     {
-        int CalculateSize(Record record);
+        int CalculateSize(int dataSize);
     }
 }
 

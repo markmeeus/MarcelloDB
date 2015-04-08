@@ -15,7 +15,7 @@ namespace MarcelloDB.Test.Records
         Marcello _marcello;
 
         [SetUp]
-        public void Initialze()
+        public void Initialize()
         {
             _streamProvider = new InMemoryStreamProvider();
             _marcello = new Marcello(_streamProvider);

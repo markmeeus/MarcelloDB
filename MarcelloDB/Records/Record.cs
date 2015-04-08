@@ -17,6 +17,8 @@ namespace MarcelloDB.Records
                 {
                     throw new Exception("PANIC: Data cannot exceed AllocatedDataSize");
                 }
+
+                this.Header.DataSize = value.Length;
                 _data = value;
             }
         }

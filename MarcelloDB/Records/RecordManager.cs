@@ -24,6 +24,7 @@ namespace MarcelloDB.Records
 
     internal class RecordManager<T> : IRecordManager
     {   
+
         StorageEngine<T> StorageEngine { get;set; }
 
         IAllocationStrategy AllocationStrategy { get; set; }
@@ -70,12 +71,9 @@ namespace MarcelloDB.Records
             
                 WithCollectionRoot(() =>
                     {
-                        record.Header.DataSize = data.Length;
-                        record.Header.AllocatedDataSize = AllocationStrategy.CalculateSize(record);
+                        record.Header.AllocatedDataSize = AllocationStrategy.CalculateSize(data.Length);
+                        record.Data = data;
                         record.Header.HasObject = hasObject;
-                        record.Data = new byte[record.Header.DataSize];
-
-                        data.CopyTo(record.Data, 0);
 
                         AppendRecordToList(record);                                       
                     });
@@ -93,15 +91,19 @@ namespace MarcelloDB.Records
 
             WithCollectionRoot(() =>
                 {
-                    if (data.Length >= record.Header.AllocatedDataSize )
+                    if (data.Length > record.Header.AllocatedDataSize )
                     {
                         result = AppendRecord(data, record.Header.HasObject, reuseRecycledRecord); 
+                        if(reuseRecycledRecord){
+                            Recycle(record.Header.Address);
+                        }
                     }
                     else 
                     {   
                         record.Data = data;
-                        record.Header.DataSize = data.Length;
-                        StorageEngine.Write(record.Header.Address, record.AsBytes());
+
+                        var bytes = record.AsBytes();
+                        StorageEngine.Write(record.Header.Address, bytes);
                         result = record;
                     }
 
@@ -159,13 +161,15 @@ namespace MarcelloDB.Records
             
         void WriteHeader(Record record)
         {
-            StorageEngine.Write(record.Header.Address, record.Header.AsBytes());
+            var bytes = record.Header.AsBytes();
+            StorageEngine.Write(record.Header.Address, bytes);
         }            
 
         Record ReadEntireRecord(Int64 address)
         {
             var header = ReadRecordHeader(address);
-            var allBytes = StorageEngine.Read(address, RecordHeader.ByteSize + header.AllocatedDataSize);
+            //only read real data. (not all alocated data)
+            var allBytes = StorageEngine.Read(address, RecordHeader.ByteSize + header.DataSize);
             var record =  Record.FromBytes(address, allBytes);
             return record;
         }
@@ -197,7 +201,10 @@ namespace MarcelloDB.Records
         {
             record.Header.Address = this.CollectionRoot.Head;
             this.CollectionRoot.Head += record.Header.TotalRecordSize;
-            StorageEngine.Write (record.Header.Address, record.AsBytes ());
+
+            var bytes = record.AsBytes();
+
+            StorageEngine.Write (record.Header.Address,bytes );
         }            
             
         NamedRecordsIndex GetNamedRecordIndex()
@@ -245,12 +252,12 @@ namespace MarcelloDB.Records
                 entry = walker.Next();
             }
             if (entry != null)
-            {
+            {         
                 emptyRecordIndex.UnRegister(entry.Key);
                 return GetRecord(entry.Pointer);
             }
             return null;
-        }
+        }                              
     }
 }
 

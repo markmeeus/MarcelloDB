@@ -5,7 +5,19 @@ namespace MarcelloDB.Index
 
     public class Entry<TK, TP> : IEquatable<Entry<TK, TP>>
     {
-        public TK Key { get; set; }
+        TK _key;
+        public TK Key 
+        {
+            get { return _key; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new Exception("PANIC: Entry keys cannot be null");
+                }
+                _key = value;
+            }
+        }
 
         public TP Pointer { get; set; }
 

@@ -20,7 +20,7 @@ namespace MarcelloDB
         internal Journal Journal { get; set; }
 
         internal object SyncLock { get; set; }
-
+            
         public Marcello (IStorageStreamProvider streamProvider)
         {
             Collections = new Dictionary<Type, Collection>();
@@ -59,8 +59,8 @@ namespace MarcelloDB
                     }
                 }
             }
-        }
-            
+        }            
+
         void EnsureTransaction()
         {
             if (CurrentTransaction == null) 

@@ -338,7 +338,6 @@ namespace MarcelloDB.Test
             EnsureFolder("data");
             var fileStreamProvider =  new FileStorageStreamProvider("./data/");
             var marcello = new Marcello(fileStreamProvider);
-
             var articles = marcello.Collection<Article>();
 
             for (int i = 1; i < 1000; i++)
@@ -351,7 +350,7 @@ namespace MarcelloDB.Test
             {
                 var a = articles.Find(i);
                 Assert.AreEqual(i, a.ID, "Article " + i.ToString() + " should have been found.");
-            }
+            }      
         }
             
         private void EnsureFolder(string path)

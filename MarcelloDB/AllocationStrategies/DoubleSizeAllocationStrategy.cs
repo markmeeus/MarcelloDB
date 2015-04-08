@@ -5,9 +5,9 @@ namespace MarcelloDB.AllocationStrategies
 {
     internal class DoubleSizeAllocationStrategy : IAllocationStrategy
     {
-        public int CalculateSize(Record record)
+        public int CalculateSize(int dataSize)
         {
-            return record.Header.DataSize * 2;
+            return dataSize * 2;
         }
     }
 }
