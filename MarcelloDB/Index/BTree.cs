@@ -313,10 +313,11 @@ namespace MarcelloDB.Index
             {
                 return node.Entries[i];
             }
-
+                
             return node.IsLeaf ? null : this.SearchInternal(
                 this.DataProvider.GetNode(node.ChildrenAddresses[i]),
                 key);
+
         }
 
         /// <summary>

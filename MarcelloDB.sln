@@ -33,7 +33,7 @@ Global
 		{F62F30FD-5473-4427-BED9-6760B2C6C0FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = MarcelloDB.Test\MarcelloDB.Test.csproj
+		StartupItem = MarcelloDB.BenchmarkTool\MarcelloDB.BenchmarkTool.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
 		$1.inheritsSet = VisualStudio

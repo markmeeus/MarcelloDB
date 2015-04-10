@@ -39,8 +39,21 @@ namespace MarcelloDB.Index
 
         internal void Register(object keyValue, Int64 recordAddress)
         {
-            this.Tree.Delete(keyValue);
-            this.Tree.Insert(keyValue, recordAddress);
+            var entry = this.Tree.Search(keyValue);
+            if (entry != null)
+            {
+                if (entry.Pointer != recordAddress)
+                {
+                    //keyvalue found, but record moved to other adress
+                    this.Tree.Delete(keyValue);
+                    this.Tree.Insert(keyValue, recordAddress);
+                }
+            }
+            else
+            {
+                //keyvalue not yet in index
+                this.Tree.Insert(keyValue, recordAddress);
+            }
 
             this.DataProvider.Flush();           
             UpdateRootAddress();
