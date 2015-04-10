@@ -7,12 +7,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarcelloDB", "MarcelloDB\Ma
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarcelloDB.netfx", "MarcelloDB.netfx\MarcelloDB.netfx.csproj", "{F62F30FD-5473-4427-BED9-6760B2C6C0FD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarcelloDB.BenchmarkTool", "MarcelloDB.BenchmarkTool\MarcelloDB.BenchmarkTool.csproj", "{2B134E3E-4DF4-44CE-9F28-2273B61894F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2B134E3E-4DF4-44CE-9F28-2273B61894F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B134E3E-4DF4-44CE-9F28-2273B61894F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B134E3E-4DF4-44CE-9F28-2273B61894F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B134E3E-4DF4-44CE-9F28-2273B61894F1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4172A119-2AE8-41D9-999E-9A2468267B28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4172A119-2AE8-41D9-999E-9A2468267B28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4172A119-2AE8-41D9-999E-9A2468267B28}.Release|Any CPU.ActiveCfg = Release|Any CPU

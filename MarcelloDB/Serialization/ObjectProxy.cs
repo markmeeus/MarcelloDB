@@ -10,6 +10,28 @@ namespace MarcelloDB.Serialization
     {
         object Obj { get; set; }
 
+        static Dictionary<Type, TypeInfo> _typeInfoCache = new Dictionary<Type, TypeInfo>();
+
+        TypeInfo _typeInfo;
+        TypeInfo TypeInfo
+        {
+            get{
+                if(_typeInfo == null)
+                {
+                    var type = Obj.GetType();
+                    if (_typeInfoCache.ContainsKey(type))
+                    {
+                        _typeInfo = _typeInfoCache[type];
+                    }
+                    else
+                    {
+                        _typeInfoCache[type] = _typeInfo = Obj.GetType().GetTypeInfo();
+                    }
+                }
+                return _typeInfo;
+            }
+        }
+
         public ObjectProxy(object obj)
         {
             Obj = obj;
@@ -75,21 +97,17 @@ namespace MarcelloDB.Serialization
         string ClassName()
         {
             return Obj.GetType ().Name;
-        }
+        }            
 
         PropertyInfo GetPropertyInfo(string propertyName)
         {
-            return Obj.GetType()
-                .GetTypeInfo()
-                .DeclaredProperties
+            return TypeInfo.DeclaredProperties
                 .Where(p => p.Name == propertyName).FirstOrDefault();
         }
 
         PropertyInfo GetPropertyWithAttribute(Type attributeType)
         {
-            return Obj.GetType()
-                .GetTypeInfo()
-                .DeclaredProperties
+            return TypeInfo.DeclaredProperties
                 .Where(p => p.GetCustomAttribute(attributeType) != null)
                 .FirstOrDefault();
         }
