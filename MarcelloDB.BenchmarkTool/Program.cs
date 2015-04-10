@@ -6,9 +6,13 @@ namespace MarcelloDB.BenchmarkTool
     class MainClass
     {
         public static void Main(string[] args)
-        {
-            var elapsed = new SequentialIDsBulkInsert(1000).Run();
-            Console.WriteLine(string.Format("SequentialIDsBulkInsert took: {0} ms", elapsed.TotalMilliseconds));
+        {   
+            foreach (var objectCount in new int[]{500, 1000, 2000, 4000})
+            {
+                var elapsed = new SequentialIDsBulkInsert(objectCount).Run();
+                Console.WriteLine(string.Format("SequentialIDsBulkInsert {0} took: {1} ms", objectCount, elapsed.TotalMilliseconds));
+
+            }
         }
     }
 }

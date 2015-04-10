@@ -22,8 +22,14 @@ namespace MarcelloDB.Records
         Int64 GetNamedRecordAddress(string name);
     }
 
-    internal class RecordManager<T> : IRecordManager
+    internal class TransactionState
+    {
+        internal CollectionRoot CollectionRoot { get; set; }
+    }
+
+    internal class RecordManager<T> : IRecordManager, ITransactor
     {   
+        Marcello Session { get; set; }
 
         StorageEngine<T> StorageEngine { get;set; }
 
@@ -31,16 +37,17 @@ namespace MarcelloDB.Records
 
         bool JournalEnabled { get; set; }
 
-        CollectionRoot CollectionRoot{ get; set; }
+        TransactionState TransactionState { get; set; }
 
         internal RecordManager(
             IAllocationStrategy allocationStrategy,
             StorageEngine<T> storageEngine
         )
-        {
+        {         
             StorageEngine = storageEngine;
             AllocationStrategy = allocationStrategy;
             JournalEnabled = true; //journal by default
+            ResetTransactionState();
         }
 
         #region IRecordManager implementation
@@ -134,7 +141,7 @@ namespace MarcelloDB.Records
 
                     var updateRecord = UpdateRecord(namedRecordIndexRecord, namedRecordIndex.ToBytes(), reuseRecycledRecord);
 
-                    this.CollectionRoot.NamedRecordIndexAddress = updateRecord.Header.Address;
+                    TransactionState.CollectionRoot.NamedRecordIndexAddress = updateRecord.Header.Address;
                 });
         }   
                    
@@ -152,6 +159,19 @@ namespace MarcelloDB.Records
             return result;
         }
         #endregion //IRecordManager implementation               
+
+        #region ITransactor implementation
+
+        public void SaveState()
+        {
+            SaveCollectionRoot();
+        }
+
+        public void RollbackState()
+        {
+            ResetTransactionState();
+        }
+        #endregion
             
         internal void DisableJournal()
         {
@@ -181,26 +201,35 @@ namespace MarcelloDB.Records
 
         void WithCollectionRoot(Action action)
         {
+            //makes sure the collection root is loaded into the transaction state
             LoadCollectionRoot();
             action();
-            SaveCollectionRoot();
         }
 
         void LoadCollectionRoot()
         {        
-            var bytes = StorageEngine.Read(0, CollectionRoot.ByteSize);
-            this.CollectionRoot = CollectionRoot.FromBytes(bytes);
+            if (TransactionState.CollectionRoot == null)
+            {
+                var bytes = StorageEngine.Read(0, CollectionRoot.ByteSize);
+                TransactionState.CollectionRoot = CollectionRoot.FromBytes(bytes);                 
+            }
+
         }
 
         void SaveCollectionRoot()
         {
-            StorageEngine.Write(0, this.CollectionRoot.AsBytes());
+            StorageEngine.Write(0, TransactionState.CollectionRoot.AsBytes());
+        }
+        
+        void ResetTransactionState()
+        {
+            this.TransactionState = new TransactionState();
         }
 
         void AppendRecordToList (Record record)
         {
-            record.Header.Address = this.CollectionRoot.Head;
-            this.CollectionRoot.Head += record.Header.TotalRecordSize;
+            record.Header.Address = TransactionState.CollectionRoot.Head;
+            TransactionState.CollectionRoot.Head += record.Header.TotalRecordSize;
 
             var bytes = record.AsBytes();
 
@@ -215,18 +244,18 @@ namespace MarcelloDB.Records
         Record GetNamedRecordIndexRecord()
         {
             EnsureNamedRecordIndex();
-            return GetRecord(this.CollectionRoot.NamedRecordIndexAddress);
+            return GetRecord(TransactionState.CollectionRoot.NamedRecordIndexAddress);
         }
 
         void EnsureNamedRecordIndex()
         {
-            if (this.CollectionRoot.NamedRecordIndexAddress == 0)
+            if (TransactionState.CollectionRoot.NamedRecordIndexAddress == 0)
             {
                 var namedRecordIndex = new NamedRecordsIndex();
                 var namedRecordIndexRecord = AppendRecord(
                     namedRecordIndex.ToBytes(), reuseRecycledRecord:false);
 
-                this.CollectionRoot.NamedRecordIndexAddress = 
+                TransactionState.CollectionRoot.NamedRecordIndexAddress = 
                     namedRecordIndexRecord.Header.Address;
             }
 
@@ -257,7 +286,7 @@ namespace MarcelloDB.Records
                 return GetRecord(entry.Pointer);
             }
             return null;
-        }                              
+        }                                          
     }
 }
 

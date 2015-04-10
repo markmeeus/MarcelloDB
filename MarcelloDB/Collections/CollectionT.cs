@@ -53,7 +53,7 @@ namespace MarcelloDB.Collections
         {
             T result = default(T);
 
-            this.Session.Transaction(() => {
+            Transacted(() => {
                 var record =  GetRecordForObjectID(id);
                 if (record != null)
                 {
@@ -65,14 +65,14 @@ namespace MarcelloDB.Collections
 
         public void Persist(T obj)
         {
-            this.Session.Transaction(() => {
+            Transacted(() => {
                 PersistInternal(obj);                
             });               
         }            
 
         public void Destroy(T obj)
         {
-            this.Session.Transaction(() => {
+            Transacted(() => {
                 DestroyInternal(obj);
             });
         }
@@ -91,6 +91,15 @@ namespace MarcelloDB.Collections
             this.RecordManager.DisableJournal();
         }
             
+        void Transacted(Action action)
+        {
+            this.Session.Transaction(() =>
+                {
+                    this.Session.CurrentTransaction.AddTransactor(this.RecordManager);
+                    action();
+                });
+        }
+
         Record GetRecordForObjectID(object objectID)
         {                
             var index = RecordIndex.Create(this.RecordManager, 

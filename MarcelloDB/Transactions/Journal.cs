@@ -68,8 +68,7 @@ namespace MarcelloDB.Transactions
 
         internal void ApplyToData(Type objectType, Int64 address, byte[] data)
         {
-            var entries = this.AllEntriesForObjectType(objectType);
-
+            var entries = this.AllEntriesForObjectType(objectType);          
             foreach (var entry in entries) 
             {
                 DataHelper.CopyData(entry.Address, entry.Data, address, data);
@@ -97,9 +96,7 @@ namespace MarcelloDB.Transactions
 
         IEnumerable<JournalEntry> AllEntriesForObjectType(Type objectType)
         {
-            var allEntries = this.AllCommittedEntries().ToList();
-            allEntries.AddRange(this.UncommittedEntries.Where(e => e.ObjectTypeName == objectType.AssemblyQualifiedName));
-            return allEntries;
+            return this.UncommittedEntries.Where(e => e.ObjectTypeName == objectType.AssemblyQualifiedName);         
         }
 
         IEnumerable<JournalEntry> AllCommittedEntries(){
