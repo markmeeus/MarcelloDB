@@ -2,6 +2,7 @@
 using MarcelloDB;
 using MarcelloDB.Storage.StreamActors;
 using MarcelloDB.Transactions.__;
+using MarcelloDB.Buffers;
 
 namespace MarcelloDB.Storage
 {
@@ -9,7 +10,7 @@ namespace MarcelloDB.Storage
     {
         internal abstract byte[] Read (long address, int length);
 
-        internal abstract void Write (long address, byte[] bytes);
+        internal abstract void Write (long address, ByteBuffer buffer);
 
         protected bool JournalEnabled { get; set; }
 
@@ -34,9 +35,9 @@ namespace MarcelloDB.Storage
             return Reader().Read(address, length);
         }
                    
-        internal override void Write(long address, byte[] bytes)
+        internal override void Write(long address, ByteBuffer buffer)
         {
-            Writer().Write(address, bytes);
+            Writer().Write(address, buffer);
         }                   
             
         #region reader/writer factories

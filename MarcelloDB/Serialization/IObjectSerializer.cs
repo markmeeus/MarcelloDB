@@ -1,4 +1,5 @@
 ﻿using System;
+using MarcelloDB.Buffers;
 
 namespace MarcelloDB.Serialization
 {
@@ -6,7 +7,7 @@ namespace MarcelloDB.Serialization
     {
         byte[] Serialize(T obj);
 
-        T Deserialize(byte[] bytes);
+        T Deserialize(ByteBuffer buffer);
     }
 }
 

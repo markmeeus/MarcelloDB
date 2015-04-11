@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MarcelloDB.Serialization;
+using MarcelloDB.Buffers;
 
 namespace MarcelloDB.Records.__
 {
@@ -13,15 +14,15 @@ namespace MarcelloDB.Records.__
             this.NamedRecordIndexes = new Dictionary<string, long>();
         }
 
-        public byte[] ToBytes()
+        public ByteBuffer ToBuffer(Marcello session)
         {
             var bytes = GetSerializer().Serialize(this);
-            return bytes;
+            return session.ByteBufferManager.FromBytes(bytes);
         }
 
-        public static NamedRecordsIndex FromBytes(byte[] bytes)
+        public static NamedRecordsIndex FromBuffer(ByteBuffer buffer)
         {
-            return GetSerializer().Deserialize(bytes);
+            return GetSerializer().Deserialize(buffer);
         }
 
         static IObjectSerializer<NamedRecordsIndex> GetSerializer()

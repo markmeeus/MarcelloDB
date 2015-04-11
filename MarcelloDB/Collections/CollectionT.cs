@@ -36,6 +36,7 @@ namespace MarcelloDB.Collections
             StorageEngine = storageEngine;
 
             RecordManager = new RecordManager<T>(
+                this.Session,
                 new DoubleSizeAllocationStrategy(),
                 StorageEngine
             );                        
@@ -102,8 +103,11 @@ namespace MarcelloDB.Collections
 
         Record GetRecordForObjectID(object objectID)
         {                
-            var index = RecordIndex.Create(this.RecordManager, 
+            var index = RecordIndex.Create(
+                this.Session,
+                this.RecordManager, 
                 RecordIndex.ID_INDEX_NAME);
+
             var address = index.Search(objectID);
             if (address > 0)
             {
@@ -125,21 +129,25 @@ namespace MarcelloDB.Collections
             }
                 
             var index = RecordIndex.Create(
-                this.RecordManager, RecordIndex.ID_INDEX_NAME);
+                this.Session,
+                this.RecordManager, 
+                RecordIndex.ID_INDEX_NAME);
+
             index.Register(objectID, record.Header.Address);
         }
 
         Record AppendObject(T obj)
         {
-            var data = Serializer.Serialize(obj);
-
-            return RecordManager.AppendRecord(data, true);
+            var bytes = Serializer.Serialize(obj);
+            var buffer = Session.ByteBufferManager.FromBytes(bytes);
+            return RecordManager.AppendRecord(buffer, true);
         }            
 
         Record UpdateObject(Record record, T obj)
         {
             var bytes = Serializer.Serialize(obj);
-            return RecordManager.UpdateRecord(record, bytes);
+            var buffer = Session.ByteBufferManager.FromBytes(bytes);
+            return RecordManager.UpdateRecord(record, buffer);
         }
 
         void DestroyInternal (T obj)
@@ -150,7 +158,10 @@ namespace MarcelloDB.Collections
             if (record != null)
             {
                 var index = RecordIndex.Create(
-                    this.RecordManager, RecordIndex.ID_INDEX_NAME);
+                    this.Session,
+                    this.RecordManager, 
+                    RecordIndex.ID_INDEX_NAME);
+
                 index.UnRegister(objectID);
 
                 this.RecordManager.Recycle(record.Header.Address);

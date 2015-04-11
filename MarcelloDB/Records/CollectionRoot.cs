@@ -1,5 +1,6 @@
 ﻿using System;
 using MarcelloDB.Serialization;
+using MarcelloDB.Buffers;
 
 namespace MarcelloDB.Records
 {
@@ -22,10 +23,10 @@ namespace MarcelloDB.Records
             get { return 1024; } //some padding for future use 
         }
 
-        internal byte[] AsBytes()
+        internal ByteBuffer AsBuffer(Marcello session)
         {
-            var bytes = new byte[ByteSize];
-            var bufferWriter = new BufferWriter(bytes, BitConverter.IsLittleEndian);
+            var buffer = session.ByteBufferManager.Create(ByteSize);
+            var bufferWriter = new BufferWriter(session, buffer, BitConverter.IsLittleEndian);
 
             bufferWriter.WriteInt32(this.FormatVersion);
             bufferWriter.WriteInt64(this.NamedRecordIndexAddress);
@@ -35,9 +36,9 @@ namespace MarcelloDB.Records
             return bufferWriter.Buffer; 
         }
 
-        internal static CollectionRoot FromBytes(byte[] bytes)
+        internal static CollectionRoot FromBuffer(Marcello session, ByteBuffer buffer)
         {        
-            var bufferReader = new BufferReader(bytes, BitConverter.IsLittleEndian);
+            var bufferReader = new BufferReader(session, buffer, BitConverter.IsLittleEndian);
             var formatVersion = bufferReader.ReadInt32();
             var namedRecordIndexAddress = bufferReader.ReadInt64();
             var head = bufferReader.ReadInt64();

@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using MarcelloDB.Buffers;
 
 namespace MarcelloDB.Serialization
 {
@@ -17,10 +18,10 @@ namespace MarcelloDB.Serialization
             return System.Text.Encoding.UTF8.GetBytes(json.ToCharArray());
         }
 
-        public T Deserialize (byte[] bytes)
+        public T Deserialize (ByteBuffer buffer)
         {
             string json = "";
-            json = System.Text.Encoding.UTF8.GetString(bytes, 0, bytes.Length);
+            json = System.Text.Encoding.UTF8.GetString(buffer.Bytes, 0, buffer.Length);
             return JsonConvert.DeserializeObject<T>(json);            
         }
 

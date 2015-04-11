@@ -6,6 +6,7 @@ using MarcelloDB.Storage;
 using System.Linq;
 using MarcelloDB.Helpers;
 using MarcelloDB.Transactions.__;
+using MarcelloDB.Buffers;
 
 namespace MarcelloDB.Transactions
 {
@@ -28,13 +29,16 @@ namespace MarcelloDB.Transactions
             this.UncommittedEntries = new List<JournalEntry> ();
         }
 
-        internal void Write (Type objectType, long address, byte[] data)
+        internal void Write (Type objectType, long address, ByteBuffer buffer)
         {
+            var bytes = new byte[buffer.Length];
+            Array.Copy(buffer.Bytes, bytes, buffer.Length);
+
             var entry = new JournalEntry()
             {
                 ObjectTypeName = objectType.AssemblyQualifiedName,
                 Address = address, 
-                Data = data 
+                Data = bytes
             };
             this.UncommittedEntries.Add(entry);
         }
@@ -59,7 +63,7 @@ namespace MarcelloDB.Transactions
             {
                 foreach (var entry in transactionJournal.Entries.OrderBy(e => e.Stamp)) {
                     var engine = GetStorageEngineForEntry(entry);
-                    engine.Write (entry.Address, entry.Data);
+                    engine.Write(entry.Address, this.Session.ByteBufferManager.FromBytes(entry.Data));
                 }
             }
 

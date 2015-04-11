@@ -2,6 +2,7 @@
 using MarcelloDB.Storage;
 using System.Collections.Generic;
 using System.IO;
+using MarcelloDB.Buffers;
 
 namespace MarcelloDB
 {
@@ -52,10 +53,10 @@ namespace MarcelloDB
             return result;
         }
 
-        public void Write (long address, byte[] bytes)
+        public void Write (long address, ByteBuffer buffer)
         {
             _backingStream.Seek(address, SeekOrigin.Begin);
-            _backingStream.Write(bytes, 0, (int)bytes.Length);
+            _backingStream.Write(buffer.Bytes, 0, buffer.Length);
         }
         #endregion
     }

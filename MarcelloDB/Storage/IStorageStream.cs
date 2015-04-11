@@ -1,4 +1,5 @@
 ﻿using System;
+using MarcelloDB.Buffers;
 
 namespace MarcelloDB.Storage
 {
@@ -6,7 +7,7 @@ namespace MarcelloDB.Storage
     {
         byte[] Read(long address, int length);
 
-        void Write(long address, byte[] bytes);
+        void Write(long address, ByteBuffer buffer);
     }
 }
 

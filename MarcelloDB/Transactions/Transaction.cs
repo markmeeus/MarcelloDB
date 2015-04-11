@@ -58,6 +58,7 @@ namespace MarcelloDB.Transactions
             foreach (var transactor in Transactors)
             {
                 transactor.RollbackState();
+                transactor.CleanUp();
             }
             this.Running = false;
         }
@@ -73,6 +74,11 @@ namespace MarcelloDB.Transactions
 
             Session.Journal.Commit();
 
+            foreach (var transactor in Transactors)
+            {
+                transactor.CleanUp();
+            }
+                
             this.IsCommitting = false;  
             this.TryApply();
         }

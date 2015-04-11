@@ -12,65 +12,74 @@ namespace MarcelloDB.Test.Records
     {
         InMemoryStreamProvider _streamProvider;
         RecordManager<Article> _recordManager;
-        Marcello _marcello;
+        Marcello _session;
 
         [SetUp]
         public void Initialize()
         {
             _streamProvider = new InMemoryStreamProvider();
-            _marcello = new Marcello(_streamProvider);
+            _session = new Marcello(_streamProvider);
 
             _recordManager = new RecordManager<Article>(
+                _session,
                 new DoubleSizeAllocationStrategy(),
-                new StorageEngine<Article>(_marcello));
+                new StorageEngine<Article>(_session));
             _recordManager.DisableJournal();
         }
 
         [Test]
         public void Append_Record_Returns_Record()
         {
-            var record = _recordManager.AppendRecord(new byte[0]);
+            var record = _recordManager.AppendRecord(_session.ByteBufferManager.Create(0));
             Assert.NotNull(record);
         }
 
         [Test]
         public void Get_Record_Returns_Appended_Record()
         {
-            var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 });
+            var buffer = _session.ByteBufferManager.FromBytes(new byte[3]{ 1, 2, 3 });
+            var record = _recordManager.AppendRecord(buffer);
             var readRecord = _recordManager.GetRecord(record.Header.Address);
-            Assert.AreEqual(new byte[3]{ 1, 2, 3 }, readRecord.Data);
+            Assert.AreEqual(new byte[3]{ 1, 2, 3 }, readRecord.Data.Bytes);
         }
 
         [Test]
         public void Update_Record_Returns_Updated_Record()
         {
-            var record = _recordManager.AppendRecord(new byte[3] { 1, 2, 3 });
-            record = _recordManager.UpdateRecord(record, new byte[3]{ 4, 5, 6 });
-            Assert.AreEqual(new byte[3]{ 4, 5, 6}, record.Data);
+            var buffer = _session.ByteBufferManager.FromBytes(new byte[3]{ 1, 2, 3 });
+            var record = _recordManager.AppendRecord(buffer);
+            buffer = _session.ByteBufferManager.FromBytes(new byte[3]{ 4, 5, 6 });
+            record = _recordManager.UpdateRecord(record, buffer);
+            Assert.AreEqual(new byte[3]{ 4, 5, 6}, record.Data.Bytes);
         }
 
         [Test]
         public void Append_Record_Assigns_Address()
         {
-            var record = _recordManager.AppendRecord(new byte[0]);
+            var buffer = _session.ByteBufferManager.FromBytes(new byte[0]);
+            var record = _recordManager.AppendRecord(buffer);
             Assert.Greater(record.Header.Address, 0);
         }
 
         [Test]
         public void Update_Record_Updates_Record()
         {
-            var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 });
-            _recordManager.UpdateRecord(record, new byte[3] { 4, 5, 6 });
+            var buffer = _session.ByteBufferManager.FromBytes(new byte[3]{ 1, 2, 3 });
+            var record = _recordManager.AppendRecord(buffer);
+            buffer = _session.ByteBufferManager.FromBytes(new byte[3]{ 4, 5, 6 });
+            _recordManager.UpdateRecord(record, buffer);
             var readRecord = _recordManager.GetRecord(record.Header.Address);
-            Assert.AreEqual(new byte[3]{ 4, 5, 6}, readRecord.Data);
+            Assert.AreEqual(new byte[3]{ 4, 5, 6}, readRecord.Data.Bytes);
         }
 
         [Test] 
         public void Update_Record_Doesnt_Increase_StorageSize()
         {
-            var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 });
+            var buffer = _session.ByteBufferManager.FromBytes(new byte[3]{ 1, 2, 3 });
+            var record = _recordManager.AppendRecord(buffer);
             var streamLength =  GetStreamLength();
-            _recordManager.UpdateRecord(record, new byte[3] { 4, 5, 6 });
+            buffer = _session.ByteBufferManager.FromBytes(new byte[3]{ 4, 5, 6  });
+            _recordManager.UpdateRecord(record, buffer);
             var newStreamLength =  GetStreamLength();
             Assert.AreEqual(streamLength, newStreamLength);           
         }                        
@@ -100,12 +109,14 @@ namespace MarcelloDB.Test.Records
         [Test]
         public void Append_Record_Reuses_Empty_Record()
         {
-            var record = _recordManager.AppendRecord(new byte[3]{1, 2, 3});
+            var buffer = _session.ByteBufferManager.FromBytes(new byte[3]{ 1, 2, 3 });
+            var record = _recordManager.AppendRecord(buffer);
 
             _recordManager.Recycle(record.Header.Address);
 
             var expectedLength = GetStreamLength();
-            _recordManager.AppendRecord(new byte[3]{1, 2, 3});
+            buffer = _session.ByteBufferManager.FromBytes(new byte[3]{ 1, 2, 3 });
+            _recordManager.AppendRecord(buffer);
             var newLength = GetStreamLength();
             Assert.AreEqual(expectedLength, newLength);
         }
@@ -113,23 +124,30 @@ namespace MarcelloDB.Test.Records
         [Test]
         public void Record_Does_Not_Get_Recycled_Twice()
         {
-            var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 });
+            var buffer = _session.ByteBufferManager.FromBytes(new byte[3]{ 1, 2, 3 });
+            var record = _recordManager.AppendRecord(buffer);
             _recordManager.Recycle(record.Header.Address);
 
-            var firstNewRecord = _recordManager.AppendRecord(new byte[3]{ 4, 5, 6 });
-            var secondNewRecord = _recordManager.AppendRecord(new byte[3]{ 7, 8, 9 });
+            var buffer1 = _session.ByteBufferManager.FromBytes(new byte[3]{ 4, 5, 6 });
+            var buffer2 = _session.ByteBufferManager.FromBytes(new byte[3]{ 7, 8, 9 });
+
+            var firstNewRecord = _recordManager.AppendRecord(buffer1);
+            var secondNewRecord = _recordManager.AppendRecord(buffer2);
             Assert.AreNotEqual(firstNewRecord.Header.Address, secondNewRecord.Header.Address);
         }
 
         [Test]
         public void Update_Record_Reuses_Empty_Record()
         {
-            var smallRecord = _recordManager.AppendRecord(new byte[1]{ 1 });
-            var giantRecord = _recordManager.AppendRecord(new byte[100]);
+            var smallBuffer = _session.ByteBufferManager.FromBytes(new byte[1]{ 1 });
+            var giantbuffer = _session.ByteBufferManager.Create(100);
+            var smallRecord = _recordManager.AppendRecord(smallBuffer);
+            var giantRecord = _recordManager.AppendRecord(giantbuffer);
             _recordManager.Recycle(giantRecord.Header.Address);
 
             var expectedLength = GetStreamLength();
-            var updatedRecord = _recordManager.UpdateRecord(smallRecord, new byte[20]);
+            var updateBuffer = _session.ByteBufferManager.Create(20);
+            var updatedRecord = _recordManager.UpdateRecord(smallRecord, updateBuffer );
             var newLength = GetStreamLength();
             Assert.AreEqual(giantRecord.Header.Address, updatedRecord.Header.Address);
             Assert.AreEqual(expectedLength, newLength);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using MarcelloDB.Storage;
 using System.Diagnostics;
+using MarcelloDB.Buffers;
 
 namespace MarcelloDB.Test
 {
@@ -28,10 +29,10 @@ namespace MarcelloDB.Test
             return result;
         }
 
-        public void Write (long address, byte[] bytes)
+        public void Write (long address, ByteBuffer buffer)
         {
             BackingStream.Seek (address, SeekOrigin.Begin);
-            BackingStream.Write (bytes, 0, (int)bytes.Length);
+            BackingStream.Write (buffer.Bytes, 0, buffer.Length);
         }
 
         #endregion

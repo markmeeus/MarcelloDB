@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using MarcelloDB.Buffers;
 
 namespace MarcelloDB.Records
 {
@@ -7,8 +8,8 @@ namespace MarcelloDB.Records
     {
         internal RecordHeader Header { get; set;}
 
-        private byte[] _data;
-        internal byte[] Data
+        private ByteBuffer _data;
+        internal ByteBuffer Data
         {
             get{return _data; }
             set
@@ -37,22 +38,24 @@ namespace MarcelloDB.Records
             }
         }
 
-        internal byte[] AsBytes()
+        internal ByteBuffer AsBuffer(Marcello session)
         {
-            var bytes = new byte[this.ByteSize];
+            var buffer = session.ByteBufferManager.Create(this.ByteSize);
+            var headerBuffer = Header.AsBuffer(session);
 
-            Header.AsBytes().CopyTo(bytes, 0);
-            Data.CopyTo(bytes, RecordHeader.ByteSize);
+            Array.Copy(headerBuffer.Bytes, buffer.Bytes, headerBuffer.Length);             
+            Array.Copy(Data.Bytes, 0, buffer.Bytes, headerBuffer.Length, Data.Length);
 
-            return bytes;
+            return buffer;
         }
 
-        internal static Record FromBytes(Int64 address, byte[] bytes)
+        internal static Record FromBuffer(Marcello session, Int64 address, ByteBuffer buffer)
         {
-            var header = RecordHeader.FromBytes(address, bytes);
-            var data = new byte[header.DataSize];
+            var header = RecordHeader.FromBuffer(session, address, buffer);
+
+            var data = session.ByteBufferManager.Create(header.DataSize);
                      
-            Array.Copy(bytes, RecordHeader.ByteSize, data, 0, header.DataSize);                
+            Array.Copy(buffer.Bytes, RecordHeader.ByteSize, data.Bytes, 0, header.DataSize);                
                 
             return new Record(){
                 Header = header,

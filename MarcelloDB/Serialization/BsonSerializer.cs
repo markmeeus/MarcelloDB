@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System.IO;
 using Newtonsoft.Json.Bson;
+using MarcelloDB.Buffers;
 
 namespace MarcelloDB.Serialization
 {
@@ -23,10 +24,10 @@ namespace MarcelloDB.Serialization
             return memoryStream.ToArray();
         }
 
-        public T Deserialize (byte[] bytes)
+        public T Deserialize (ByteBuffer buffer)
         {
             var serializer = new JsonSerializer();
-            var memoryStream = new MemoryStream(bytes);
+            var memoryStream = new MemoryStream(buffer.Bytes, 0, buffer.Length);
             var reader = new BsonReader(memoryStream);
 
             return serializer.Deserialize<T>(reader);

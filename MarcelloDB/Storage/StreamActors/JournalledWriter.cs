@@ -1,4 +1,5 @@
 ﻿using System;
+using MarcelloDB.Buffers;
 
 namespace MarcelloDB.Storage.StreamActors
 {
@@ -8,9 +9,9 @@ namespace MarcelloDB.Storage.StreamActors
         {
         }
 
-        internal override void Write (long address, byte[] bytes)
+        internal override void Write (long address, ByteBuffer buffer)
         {
-            Session.Journal.Write(typeof(T), address, bytes);
+            Session.Journal.Write(typeof(T), address, buffer);
         }
     }
 }

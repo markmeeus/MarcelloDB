@@ -34,6 +34,14 @@ namespace MarcelloDB.Test.Buffers
         }
 
         [Test]
+        public void Test_FromBytes_Creates_Buffer()
+        {
+            var buffer = _manager.FromBytes(new byte[3]{ 1, 2, 3 });
+            Assert.AreEqual(new byte[3]{ 1, 2, 3 }, buffer.Bytes);
+            Assert.AreEqual(3, buffer.Length);
+        }
+
+        [Test]
         public void Assigns_A_Byte_Array_Of_Correct_Minimum_Length()
         {
             var buffer = _manager.Create(10);

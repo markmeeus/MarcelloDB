@@ -1,4 +1,5 @@
 ﻿using System;
+using MarcelloDB.Buffers;
 
 namespace MarcelloDB.Storage.StreamActors
 {
@@ -8,9 +9,9 @@ namespace MarcelloDB.Storage.StreamActors
         {
         }
 
-        internal virtual void Write(long address, byte[] bytes)
+        internal virtual void Write(long address, ByteBuffer buffer)
         {
-            GetStream ().Write (address, bytes);
+            GetStream().Write(address, buffer);
         }            
     }
 }

@@ -7,6 +7,7 @@ namespace MarcelloDB.Transactions
     {
         void SaveState();
         void RollbackState();
+        void CleanUp();
     }
 }
 

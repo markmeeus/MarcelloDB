@@ -1,17 +1,21 @@
 ﻿using System;
+using MarcelloDB.Buffers;
 
 namespace MarcelloDB.Serialization
 {
     internal class BufferWriter
     {
-        internal byte[] Buffer { get; set; }
+        internal Marcello Session { get; set; }
+
+        internal ByteBuffer Buffer { get; set; }
 
         internal bool IsLittleEndian { get; set; }
 
         internal int Position { get; set; }
 
-        public BufferWriter(byte[] buffer, bool isLittleEndian)
+        public BufferWriter(Marcello session, ByteBuffer buffer, bool isLittleEndian)
         {
+            this.Session = session;
             this.Buffer = buffer;
             this.IsLittleEndian = isLittleEndian;
             this.Position = 0;
@@ -29,7 +33,7 @@ namespace MarcelloDB.Serialization
             return this;
         }
             
-        public byte[] GetTrimmedBuffer()
+        public ByteBuffer GetTrimmedBuffer()
         {
             if (this.Buffer.Length == this.Position)
             {
@@ -38,8 +42,8 @@ namespace MarcelloDB.Serialization
             else
             {
                 var trimmed = new byte[this.Position];
-                Array.Copy(this.Buffer, trimmed, this.Position - 1);
-                return trimmed;
+                Array.Copy(this.Buffer.Bytes, trimmed, this.Position - 1);
+                return this.Session.ByteBufferManager.FromBytes(trimmed);
             }
         }
             
@@ -56,11 +60,11 @@ namespace MarcelloDB.Serialization
         {
             if (this.Position + bytes.Length > Buffer.Length)
             {
-                var newBuffer = new byte[this.Position + bytes.Length];
-                this.Buffer.CopyTo(newBuffer, 0);
+                var newBuffer = this.Session.ByteBufferManager.Create(this.Position + bytes.Length);
+                this.Buffer.Bytes.CopyTo(newBuffer.Bytes, 0);
                 this.Buffer = newBuffer;
             }
-            bytes.CopyTo(Buffer, this.Position);
+            bytes.CopyTo(Buffer.Bytes, this.Position);
             this.Position += bytes.Length;
         }
     }

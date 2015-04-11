@@ -7,20 +7,28 @@ namespace MarcelloDB.Buffers
 {
     internal class ByteBufferManager : ITransactor
     {
+        Dictionary<byte[], byte[]> RecycledBytesHash { get; set;}
+
         List<byte[]> RecycledBytes { get; set;}
-        List<byte[]> CreatedBytes { get; set; }
+
+        List<byte[]> TrackedBytes { get; set; }
 
         internal ByteBufferManager()
         {
+            RecycledBytesHash = new Dictionary<byte[], byte[]>();
             RecycledBytes = new List<byte[]>();
-            CreatedBytes = new List<byte[]>();
+            TrackedBytes = new List<byte[]>();
         }
 
         internal ByteBuffer Create(int length)
         {
             var bytes = GetRecycledBytes(length) ?? CreateBytes(length);
-            CreatedBytes.Add(bytes);
             return new ByteBuffer(bytes, length);
+        }
+
+        internal ByteBuffer FromBytes(byte[] bytes)
+        {
+            return new ByteBuffer(bytes, bytes.Length);
         }
 
         internal void Recycle(ByteBuffer buffer)
@@ -28,18 +36,30 @@ namespace MarcelloDB.Buffers
             Recycle(buffer.Bytes);
         }
 
-        internal void Recycle(byte[] bytes)
+        internal void Recycle(byte[] bytes, bool sortImmediately = true)
         {
-            RecycledBytes.Add(bytes);
-            RecycledBytes = RecycledBytes.OrderBy(b => b.Length).ToList();
+            if (RecycledBytesHash.ContainsKey(bytes))
+            {
+                return; //bytes allready recycled
+            }
+
+            //RecycledBytes.Add(bytes);
+            RecycledBytesHash.Add(bytes, bytes);
+
+            if (sortImmediately)
+            {
+                RecycledBytes = RecycledBytes.OrderBy(b => b.Length).ToList();
+            }
         }
 
         internal void RecycleAll()
         {
-            foreach (var bytes in CreatedBytes)
+            foreach (var bytes in TrackedBytes)
             {
-                Recycle(bytes);
+                Recycle(bytes, false);
+                
             }
+            RecycledBytes = RecycledBytes.OrderBy(b => b.Length).ToList();
         }
         #region ITransactor implementation
 
@@ -53,19 +73,27 @@ namespace MarcelloDB.Buffers
 
         }
 
+        public void CleanUp()
+        {
+            RecycleAll();
+        }
+
         #endregion
 
         protected virtual byte[] CreateBytes(int minimumLength)
         {
-            return new byte[minimumLength];
+            var bytes = new byte[minimumLength];
+            TrackedBytes.Add(bytes);
+            return bytes;
         }
 
         byte[] GetRecycledBytes(int minimumLength)
         {
-            byte[] result = this.RecycledBytes.FirstOrDefault(b => b.Length >= minimumLength);
+            byte[] result = this.RecycledBytesHash.Values.FirstOrDefault(b => b.Length >= minimumLength);
             if (result != null)
             {
-                this.RecycledBytes.Remove(result);
+                //this.RecycledBytes.Remove(result);
+                this.RecycledBytesHash.Remove(result);
                 return result;
             }
             return null;

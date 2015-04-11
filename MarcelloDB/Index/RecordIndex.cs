@@ -68,11 +68,13 @@ namespace MarcelloDB.Index
         }
 
         internal static RecordIndex Create(
+            Marcello session,
             IRecordManager recordManager, 
             string indexName, 
             bool canReuseRecycledRecords = true)
         {
             var dataProvider = new RecordBTreeDataProvider(
+                session,
                 recordManager, 
                 new BsonSerializer<Node<object, Int64>>(),
                 indexName,
