@@ -6,6 +6,7 @@ using MarcelloDB.Transactions;
 using MarcelloDB.Storage;
 using System.Collections.Generic;
 using System.Threading;
+using MarcelloDB.Buffers;
 
 namespace MarcelloDB
 {
@@ -17,6 +18,8 @@ namespace MarcelloDB
 
         internal Transaction CurrentTransaction { get; set; }
 
+        internal ByteBufferManager ByteBufferManager { get; set; }
+
         internal Journal Journal { get; set; }
 
         internal object SyncLock { get; set; }
@@ -25,6 +28,7 @@ namespace MarcelloDB
         {
             Collections = new Dictionary<Type, Collection>();
             StreamProvider = streamProvider;
+            ByteBufferManager = new ByteBufferManager();
             Journal = new Journal(this);
             SyncLock = new object();
         }
@@ -66,6 +70,7 @@ namespace MarcelloDB
             if (CurrentTransaction == null) 
             {
                 CurrentTransaction = new Transaction(this);
+                CurrentTransaction.AddTransactor(this.ByteBufferManager);
             }
         }
     }

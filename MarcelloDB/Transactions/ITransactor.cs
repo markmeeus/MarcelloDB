@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MarcelloDB
+namespace MarcelloDB.Transactions
 {
 
     internal interface ITransactor

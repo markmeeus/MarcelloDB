@@ -4,6 +4,7 @@ using MarcelloDB.Serialization;
 using MarcelloDB.Storage;
 using MarcelloDB.Records.__;
 using MarcelloDB.Index;
+using MarcelloDB.Transactions;
 
 namespace MarcelloDB.Records
 {

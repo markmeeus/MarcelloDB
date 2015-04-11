@@ -84,6 +84,28 @@ namespace MarcelloDB.Test.Buffers
             var newBuffer = _manager.Create(9);
             Assert.AreEqual(10, newBuffer.Bytes.Length);
         }
+
+        [Test]
+        public void Recycle_All_Recycles_All()
+        {
+            var buffers = new ByteBuffer[3]
+                {
+                    _manager.Create(200),
+                    _manager.Create(10),
+                    _manager.Create(100)
+                };
+
+            _manager.RecycleAll();
+
+            buffers = new ByteBuffer[3]
+                {
+                    _manager.Create(200),
+                    _manager.Create(10),
+                    _manager.Create(100)
+                };
+
+            Assert.AreEqual(310, _manager.BytesCreated);
+        }
     }
 }
 
