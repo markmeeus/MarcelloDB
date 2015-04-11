@@ -53,6 +53,7 @@
     <Compile Include="Index\IndexTest.cs" />
     <Compile Include="Index\Mocks\MockBTreeDataProvider.cs" />
     <Compile Include="Index\Mocks\MockBTree.cs" />
+    <Compile Include="Buffers\ByteBufferManagerTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -64,6 +65,7 @@
     <Folder Include="Helpers\" />
     <Folder Include="Index\" />
     <Folder Include="Index\Mocks\" />
+    <Folder Include="Buffers\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MarcelloDB.netfx\MarcelloDB.netfx.csproj">

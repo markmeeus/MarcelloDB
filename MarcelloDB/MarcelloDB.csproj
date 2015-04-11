@@ -71,6 +71,8 @@
     <Compile Include="Index\RecordIndex.cs" />
     <Compile Include="Index\BTreeWalker.cs" />
     <Compile Include="Transactions\ITransactor.cs" />
+    <Compile Include="Buffers\ByteBuffer.cs" />
+    <Compile Include="Buffers\ByteBufferManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -84,6 +86,7 @@
     <Folder Include="Storage\StreamActors\" />
     <Folder Include="Helpers\" />
     <Folder Include="Index\" />
+    <Folder Include="Buffers\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
