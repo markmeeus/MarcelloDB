@@ -36,6 +36,9 @@
     <Compile Include="Benchmarks\SequentialIDsBulkInsert.cs" />
     <Compile Include="Benchmarks\RandomIDsBulkInsert.cs" />
     <Compile Include="Benchmarks\Base.cs" />
+    <Compile Include="DataClasses\Person.cs" />
+    <Compile Include="DataClasses\Address.cs" />
+    <Compile Include="DataClasses\Base.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -50,6 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Benchmarks\" />
+    <Folder Include="DataClasses\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
