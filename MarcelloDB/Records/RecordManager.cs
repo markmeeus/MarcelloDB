@@ -84,7 +84,7 @@ namespace MarcelloDB.Records
                         record.Data = data;
                         record.Header.HasObject = hasObject;
 
-                        AppendRecordToList(record);                                       
+                        WriteRecordAtHead(record);                                       
                     });
             }
             else //reuse
@@ -228,7 +228,7 @@ namespace MarcelloDB.Records
             this.TransactionState = new TransactionState();
         }
 
-        void AppendRecordToList (Record record)
+        void WriteRecordAtHead (Record record)
         {
             record.Header.Address = TransactionState.CollectionRoot.Head;
             TransactionState.CollectionRoot.Head += record.Header.TotalRecordSize;
