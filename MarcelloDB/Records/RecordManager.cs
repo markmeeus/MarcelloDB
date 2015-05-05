@@ -37,8 +37,6 @@ namespace MarcelloDB.Records
 
         IAllocationStrategy AllocationStrategy { get; set; }
 
-        bool JournalEnabled { get; set; }
-
         TransactionState TransactionState { get; set; }
 
         internal RecordManager(
@@ -48,7 +46,6 @@ namespace MarcelloDB.Records
         {         
             StorageEngine = storageEngine;
             AllocationStrategy = allocationStrategy;
-            JournalEnabled = true; //journal by default
             ResetTransactionState();
         }
 
@@ -174,13 +171,7 @@ namespace MarcelloDB.Records
             ResetTransactionState();
         }
         #endregion
-            
-        internal void DisableJournal()
-        {
-            JournalEnabled = false;
-            StorageEngine.DisableJournal();
-        }
-            
+                   
         void WriteHeader(Record record)
         {
             var bytes = record.Header.AsBytes();

@@ -84,12 +84,7 @@ namespace MarcelloDB.Collections
             {
                 DestroyInternal(o);
             }        
-        }
-
-        internal void DisableJournal()
-        {
-            this.RecordManager.DisableJournal();
-        }
+        }            
             
         void Transacted(Action action)
         {

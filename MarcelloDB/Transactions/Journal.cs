@@ -6,6 +6,7 @@ using MarcelloDB.Storage;
 using System.Linq;
 using MarcelloDB.Helpers;
 using MarcelloDB.Transactions.__;
+using MarcelloDB.Serialization;
 
 namespace MarcelloDB.Transactions
 {
@@ -13,18 +14,17 @@ namespace MarcelloDB.Transactions
     {
         Marcello Session { get; set; }
 
-        Collection<TransactionJournal> JournalCollection { get; set; }               
-
         List<JournalEntry> UncommittedEntries { get;set; }
 
         Dictionary<Type, StorageEngine> StorageEngines { get; set; }
+
+        StorageEngine<TransactionJournal> JournalStorageEngine { get; set; }
 
         internal Journal (Marcello session)
         {
             this.Session = session;
             this.StorageEngines = new Dictionary<Type, StorageEngine>();
-            this.JournalCollection = session.Collection<TransactionJournal>();
-            this.JournalCollection.DisableJournal(); //no journalling for the journal ofcourse
+            this.JournalStorageEngine = new StorageEngine<TransactionJournal>(this.Session);
             this.UncommittedEntries = new List<JournalEntry> ();
         }
 
@@ -49,21 +49,24 @@ namespace MarcelloDB.Transactions
             {
                 transactionJournal.Entries.Add(entry);
             }
-            this.JournalCollection.Persist(transactionJournal);
+            PersistJournal(transactionJournal);
             this.ClearUncommitted();
         }
 
         internal void Apply()
-        {
-            foreach (var transactionJournal in this.JournalCollection.All.OrderBy(j => j.Stamp)) 
+        {           
+            var journal = LoadJournal();
+            if (journal == null)
             {
-                foreach (var entry in transactionJournal.Entries.OrderBy(e => e.Stamp)) {
-                    var engine = GetStorageEngineForEntry(entry);
-                    engine.Write (entry.Address, entry.Data);
-                }
+                return; //nothing to apply
             }
 
-            this.JournalCollection.DestroyAll();
+            foreach (var entry in journal.Entries.OrderBy(e => e.Stamp)) {
+                var engine = GetStorageEngineForEntry(entry);
+                engine.DisableJournal ();
+                engine.Write (entry.Address, entry.Data);
+            }
+            ClearJournal();
         }
 
         internal void ApplyToData(Type objectType, Int64 address, byte[] data)
@@ -87,7 +90,6 @@ namespace MarcelloDB.Transactions
             {
                 var genericType = typeof(StorageEngine<>).GetTypeInfo().MakeGenericType(new Type[] { type });
                 var engine = (StorageEngine)Activator.CreateInstance (genericType, new object[] {this.Session});
-                engine.DisableJournal ();
                 this.StorageEngines.Add(type, engine);
             }
 
@@ -97,13 +99,33 @@ namespace MarcelloDB.Transactions
         IEnumerable<JournalEntry> AllEntriesForObjectType(Type objectType)
         {
             return this.UncommittedEntries.Where(e => e.ObjectTypeName == objectType.AssemblyQualifiedName);         
+        }                  
+
+
+        void PersistJournal(TransactionJournal transactionJournal){
+            var bson = new BsonSerializer<TransactionJournal>().Serialize(transactionJournal);
+
+            this.JournalStorageEngine.Write(0, 
+                new BufferWriter(new byte[sizeof(int)], BitConverter.IsLittleEndian)
+                    .WriteInt32(bson.Length).GetTrimmedBuffer()
+            );
+            this.JournalStorageEngine.Write(sizeof(int), bson); 
         }
 
-        IEnumerable<JournalEntry> AllCommittedEntries(){
-            var list = this.JournalCollection.All.ToList(); 
-            return list.SelectMany(c => {
-                return c.Entries;
-            });
+        TransactionJournal LoadJournal(){
+            var length = new BufferReader(
+                this.JournalStorageEngine.Read(0, sizeof(int)), BitConverter.IsLittleEndian
+            ).ReadInt32();
+            var bytes = this.JournalStorageEngine.Read(sizeof(int), length);
+            return new BsonSerializer<TransactionJournal>().Deserialize(bytes);
+        }
+
+        void ClearJournal(){
+            this.JournalStorageEngine.Write(0, 
+                //add 0 as length, ignore all after
+                new BufferWriter(new byte[sizeof(int)], BitConverter.IsLittleEndian)
+                .WriteInt32(0).GetTrimmedBuffer()
+            );
         }
     }
 }
