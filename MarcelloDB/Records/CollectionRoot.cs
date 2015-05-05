@@ -13,26 +13,25 @@ namespace MarcelloDB.Records
 
         internal CollectionRoot()
 		{
-            this.Head = ByteSize;
+            this.Head = MaxByteSize;
             this.FormatVersion = CURRENT_FORMAT_VERSION;
 		}
 
-        internal static int ByteSize
+        internal static int MaxByteSize
         {
             get { return 1024; } //some padding for future use 
         }
 
         internal byte[] AsBytes()
         {
-            var bytes = new byte[ByteSize];
+            var bytes = new byte[MaxByteSize];
             var bufferWriter = new BufferWriter(bytes, BitConverter.IsLittleEndian);
 
             bufferWriter.WriteInt32(this.FormatVersion);
             bufferWriter.WriteInt64(this.NamedRecordIndexAddress);
             bufferWriter.WriteInt64(Head);
 
-            //do no use the trimmed buffer as we want some padding for future use
-            return bufferWriter.Buffer; 
+            return bufferWriter.GetTrimmedBuffer(); 
         }
 
         internal static CollectionRoot FromBytes(byte[] bytes)
@@ -44,7 +43,7 @@ namespace MarcelloDB.Records
 
             if (head == 0)
             {
-                head = ByteSize; //when reading from empty data
+                head = MaxByteSize; //when reading from empty data
             }
 
             return new CollectionRoot(){                    

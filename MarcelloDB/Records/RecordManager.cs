@@ -212,7 +212,7 @@ namespace MarcelloDB.Records
         {        
             if (TransactionState.CollectionRoot == null)
             {
-                var bytes = StorageEngine.Read(0, CollectionRoot.ByteSize);
+                var bytes = StorageEngine.Read(0, CollectionRoot.MaxByteSize);
                 TransactionState.CollectionRoot = CollectionRoot.FromBytes(bytes);                 
             }
 
@@ -260,7 +260,6 @@ namespace MarcelloDB.Records
                 TransactionState.CollectionRoot.NamedRecordIndexAddress = 
                     namedRecordIndexRecord.Header.Address;
             }
-
         }
 
         RecordIndex GetEmptyRecordIndex()
