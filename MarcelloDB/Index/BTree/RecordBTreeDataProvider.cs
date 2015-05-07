@@ -3,7 +3,7 @@ using MarcelloDB.Records;
 using MarcelloDB.Serialization;
 using System.Collections.Generic;
 
-namespace MarcelloDB.Index
+namespace MarcelloDB.Index.BTree
 {
     internal class RecordBTreeDataProvider :  IBTreeDataProvider<object, Int64>
     {

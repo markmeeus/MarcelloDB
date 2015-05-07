@@ -56,21 +56,20 @@
     <Compile Include="Storage\StreamActors\JournalledReader.cs" />
     <Compile Include="Storage\StreamActors\JournalledWriter.cs" />
     <Compile Include="Helpers\DataHelper.cs" />
-    <Compile Include="Records\ListEndPoints.cs" />
     <Compile Include="Serialization\BufferWriter.cs" />
     <Compile Include="Serialization\BufferReader.cs" />
-    <Compile Include="Index\BTree.cs" />
     <Compile Include="Index\Node.cs" />
     <Compile Include="Index\Entry.cs" />
-    <Compile Include="Index\IBtreeDataProvider.cs" />
-    <Compile Include="Index\RecordBTreeDataProvider.cs" />
     <Compile Include="Records\NamedRecordsIndex.cs" />
     <Compile Include="Index\ObjectComparer.cs" />
     <Compile Include="Serialization\JsonSerializer.cs" />
     <Compile Include="Records\CollectionRoot.cs" />
     <Compile Include="Index\RecordIndex.cs" />
-    <Compile Include="Index\BTreeWalker.cs" />
     <Compile Include="Transactions\ITransactor.cs" />
+    <Compile Include="Index\BTree\BTree.cs" />
+    <Compile Include="Index\BTree\BTreeWalker.cs" />
+    <Compile Include="Index\BTree\IBtreeDataProvider.cs" />
+    <Compile Include="Index\BTree\RecordBTreeDataProvider.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup>
@@ -84,6 +83,7 @@
     <Folder Include="Storage\StreamActors\" />
     <Folder Include="Helpers\" />
     <Folder Include="Index\" />
+    <Folder Include="Index\BTree\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

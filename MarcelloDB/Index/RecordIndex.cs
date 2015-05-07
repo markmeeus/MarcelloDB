@@ -1,6 +1,7 @@
 ﻿using System;
 using MarcelloDB.Records;
 using MarcelloDB.Serialization;
+using MarcelloDB.Index.BTree;
 
 namespace MarcelloDB.Index
 {

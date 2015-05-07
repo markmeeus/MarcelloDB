@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MarcelloDB.Index
+namespace MarcelloDB.Index.BTree
 {   
     public class BTreeWalker<TK, TP>
     {

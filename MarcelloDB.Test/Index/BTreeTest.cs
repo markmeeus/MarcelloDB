@@ -3,6 +3,7 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System;
 using MarcelloDB.Index;
+using MarcelloDB.Index.BTree;
 
 namespace MarcelloDB.Test.Index
 {
