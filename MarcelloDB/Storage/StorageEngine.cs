@@ -40,27 +40,27 @@ namespace MarcelloDB.Storage
         }                   
             
         #region reader/writer factories
-        Writer<T> Writer()
+        Writer Writer()
         {
             if (JournalEnabled) 
             {    
-                return new JournalledWriter<T>(this.Session, typeof(T).Name);
+                return new JournalledWriter(this.Session, typeof(T).Name);
             }
             else 
             {
-                return new Writer<T>(this.Session, typeof(T).Name);
+                return new Writer(this.Session, typeof(T).Name);
             }
         }
 
-        Reader<T> Reader()
+        Reader Reader()
         {
             if (JournalEnabled) 
             {    
-                return new JournalledReader<T>(this.Session, typeof(T).Name);
+                return new JournalledReader(this.Session, typeof(T).Name);
             }
             else 
             {
-                return new Reader<T>(this.Session, typeof(T).Name);
+                return new Reader(this.Session, typeof(T).Name);
             }
         }
         #endregion 

@@ -6,7 +6,7 @@ namespace MarcelloDB.Storage.StreamActors
     {
         protected Marcello Session { get; set; }
 
-        string CollectionName {get;set;}
+        protected string CollectionName {get;set;}
 
         internal StreamActor(Marcello session, string collectionName)
         {

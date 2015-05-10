@@ -7,32 +7,37 @@ using System.Linq;
 using MarcelloDB.Helpers;
 using MarcelloDB.Transactions.__;
 using MarcelloDB.Serialization;
+using MarcelloDB.Storage.StreamActors;
 
 namespace MarcelloDB.Transactions
 {
     internal class Journal
     {
+        const string JOURNAL_COLLECTION_NAME = "journal";
+
         Marcello Session { get; set; }
 
         List<JournalEntry> UncommittedEntries { get;set; }
 
-        Dictionary<Type, StorageEngine> StorageEngines { get; set; }
+        Dictionary<string, Writer> Writers {get;set;}
 
-        StorageEngine<TransactionJournal> JournalStorageEngine { get; set; }
+        Writer JournalWriter { get; set; }
+        Reader JournalReader { get; set; }
 
         internal Journal (Marcello session)
         {
             this.Session = session;
-            this.StorageEngines = new Dictionary<Type, StorageEngine>();
-            this.JournalStorageEngine = new StorageEngine<TransactionJournal>(this.Session);
+            this.Writers = new Dictionary<string, Writer>();
+            this.JournalWriter = new Writer(this.Session, JOURNAL_COLLECTION_NAME);
+            this.JournalReader = new Reader(this.Session, JOURNAL_COLLECTION_NAME);
             this.UncommittedEntries = new List<JournalEntry> ();
         }
 
-        internal void Write (Type objectType, long address, byte[] data)
+        internal void Write (string collectionName, long address, byte[] data)
         {
             var entry = new JournalEntry()
             {
-                ObjectTypeName = objectType.AssemblyQualifiedName,
+                CollectionName = collectionName,
                 Address = address, 
                 Data = data 
             };
@@ -62,16 +67,15 @@ namespace MarcelloDB.Transactions
             }
 
             foreach (var entry in journal.Entries.OrderBy(e => e.Stamp)) {
-                var engine = GetStorageEngineForEntry(entry);
-                engine.DisableJournal ();
-                engine.Write (entry.Address, entry.Data);
+                var writer = GetWriterForEntry(entry);
+                writer.Write(entry.Address, entry.Data);
             }
             ClearJournal();
         }
 
-        internal void ApplyToData(Type objectType, Int64 address, byte[] data)
+        internal void ApplyToData(string collectionName, Int64 address, byte[] data)
         {
-            var entries = this.AllEntriesForObjectType(objectType);          
+            var entries = this.AllEntriesForCollectionName(collectionName);          
             foreach (var entry in entries) 
             {
                 DataHelper.CopyData(entry.Address, entry.Data, address, data);
@@ -81,47 +85,43 @@ namespace MarcelloDB.Transactions
         internal void ClearUncommitted()
         {
             this.UncommittedEntries.Clear();
-        }
+        }           
 
-        StorageEngine GetStorageEngineForEntry(JournalEntry entry)
+        Writer GetWriterForEntry(JournalEntry entry)
         {
-            var type = Type.GetType(entry.ObjectTypeName);
-            if (!this.StorageEngines.ContainsKey (type)) 
+            if(!this.Writers.ContainsKey(entry.CollectionName))
             {
-                var genericType = typeof(StorageEngine<>).GetTypeInfo().MakeGenericType(new Type[] { type });
-                var engine = (StorageEngine)Activator.CreateInstance (genericType, new object[] {this.Session});
-                this.StorageEngines.Add(type, engine);
+                var writer = new Writer(this.Session, entry.CollectionName);
+                this.Writers[entry.CollectionName] = writer;
             }
-
-            return this.StorageEngines[type];
+            return this.Writers[entry.CollectionName];
         }
-
-        IEnumerable<JournalEntry> AllEntriesForObjectType(Type objectType)
+            
+        IEnumerable<JournalEntry> AllEntriesForCollectionName(string collectionName)
         {
-            return this.UncommittedEntries.Where(e => e.ObjectTypeName == objectType.AssemblyQualifiedName);         
+            return this.UncommittedEntries.Where(e => e.CollectionName == collectionName);         
         }                  
-
-
+            
         void PersistJournal(TransactionJournal transactionJournal){
             var bson = new BsonSerializer<TransactionJournal>().Serialize(transactionJournal);
 
-            this.JournalStorageEngine.Write(0, 
+            this.JournalWriter.Write(0, 
                 new BufferWriter(new byte[sizeof(int)], BitConverter.IsLittleEndian)
                     .WriteInt32(bson.Length).GetTrimmedBuffer()
             );
-            this.JournalStorageEngine.Write(sizeof(int), bson); 
+            this.JournalWriter.Write(sizeof(int), bson); 
         }
 
         TransactionJournal LoadJournal(){
             var length = new BufferReader(
-                this.JournalStorageEngine.Read(0, sizeof(int)), BitConverter.IsLittleEndian
+                this.JournalReader.Read(0, sizeof(int)), BitConverter.IsLittleEndian
             ).ReadInt32();
-            var bytes = this.JournalStorageEngine.Read(sizeof(int), length);
+            var bytes = this.JournalReader.Read(sizeof(int), length);
             return new BsonSerializer<TransactionJournal>().Deserialize(bytes);
         }
 
         void ClearJournal(){
-            this.JournalStorageEngine.Write(0, 
+            this.JournalWriter.Write(0, 
                 //add 0 as length, ignore all after
                 new BufferWriter(new byte[sizeof(int)], BitConverter.IsLittleEndian)
                 .WriteInt32(0).GetTrimmedBuffer()

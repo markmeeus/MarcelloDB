@@ -2,7 +2,7 @@
 
 namespace MarcelloDB.Storage.StreamActors
 {
-    internal class JournalledReader<T> : Reader<T>
+    internal class JournalledReader : Reader
     {
         internal JournalledReader(Marcello session, string collectionName) 
             : base(session, collectionName) 
@@ -12,7 +12,7 @@ namespace MarcelloDB.Storage.StreamActors
         internal override byte[] Read (long address, int length)
         {
             var readBytes = base.Read (address, length);
-            Session.Journal.ApplyToData (typeof(T), address, readBytes);
+            Session.Journal.ApplyToData(this.CollectionName, address, readBytes);
             return readBytes;
         }
     }
