@@ -4,7 +4,8 @@ namespace MarcelloDB.Storage.StreamActors
 {
     internal class JournalledWriter<T> : Writer<T>
     {
-        internal JournalledWriter(Marcello session) : base(session)
+        internal JournalledWriter(Marcello session, string collectionName) 
+            : base(session, collectionName)
         {
         }
 

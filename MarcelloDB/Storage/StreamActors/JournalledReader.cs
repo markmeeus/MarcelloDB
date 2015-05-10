@@ -4,7 +4,8 @@ namespace MarcelloDB.Storage.StreamActors
 {
     internal class JournalledReader<T> : Reader<T>
     {
-        internal JournalledReader(Marcello session) : base(session) 
+        internal JournalledReader(Marcello session, string collectionName) 
+            : base(session, collectionName) 
         {
         }
 

@@ -44,11 +44,11 @@ namespace MarcelloDB.Storage
         {
             if (JournalEnabled) 
             {    
-                return new JournalledWriter<T>(this.Session);
+                return new JournalledWriter<T>(this.Session, typeof(T).Name);
             }
             else 
             {
-                return new Writer<T>(this.Session);
+                return new Writer<T>(this.Session, typeof(T).Name);
             }
         }
 
@@ -56,11 +56,11 @@ namespace MarcelloDB.Storage
         {
             if (JournalEnabled) 
             {    
-                return new JournalledReader<T>(this.Session);
+                return new JournalledReader<T>(this.Session, typeof(T).Name);
             }
             else 
             {
-                return new Reader<T>(this.Session);
+                return new Reader<T>(this.Session, typeof(T).Name);
             }
         }
         #endregion 
