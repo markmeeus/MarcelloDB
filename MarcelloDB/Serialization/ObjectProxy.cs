@@ -11,7 +11,7 @@ namespace MarcelloDB.Serialization
         object Obj { get; set; }
 
         static Dictionary<Type, TypeInfo> _typeInfoCache = new Dictionary<Type, TypeInfo>();
-        static Dictionary<Type, string> _idPropertyCache = new Dictionary<Type, string>();
+        static Dictionary<Type, PropertyInfo> _idPropertyInfoCache = new Dictionary<Type, PropertyInfo>();
 
         TypeInfo _typeInfo;
         TypeInfo TypeInfo
@@ -44,19 +44,19 @@ namespace MarcelloDB.Serialization
             {
                 object id = null;
                 var type = Obj.GetType();
-                if(!_idPropertyCache.ContainsKey(type))
+                if(!_idPropertyInfoCache.ContainsKey(type))
                 {
                     foreach (var propertyName in IDProperties) 
                     {
                         if(HasProperty(propertyName))
-                        {
-                            _idPropertyCache[type] = propertyName;
+                        {                            
+                            _idPropertyInfoCache[type] = GetPropertyInfo(propertyName);
                         }
                     }    
                 }
-                if (_idPropertyCache.ContainsKey(type))
-                {
-                    GetPropertyValue(_idPropertyCache[type], ref id);
+                if (_idPropertyInfoCache.ContainsKey(type))
+                {                    
+                    id = ReadProperty(_idPropertyInfoCache[type]);
                 }
                 else
                 {
