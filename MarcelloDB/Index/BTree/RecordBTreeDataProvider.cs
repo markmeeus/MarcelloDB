@@ -10,6 +10,7 @@ namespace MarcelloDB.Index.BTree
         IRecordManager RecordManager { get; set; }
         IObjectSerializer<Node<object, Int64>> Serializer { get; set; }
         Dictionary<Int64, Node<object, Int64>> NodeCache { get; set; }
+        Node<object, Int64> RootNode { get; set; }
         string RootRecordName { get; set; }
         bool CanReuseRecycledRecords { get; set; }
 
@@ -32,14 +33,14 @@ namespace MarcelloDB.Index.BTree
             var rootRecordAddress = this.RecordManager.GetNamedRecordAddress(this.RootRecordName);
             if (rootRecordAddress > 0)
             {
-                return GetNode(rootRecordAddress);
+                this.RootNode = GetNode(rootRecordAddress);
             }
             else
             {
-                var node = CreateNode(degree);
-                this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, node.Address, CanReuseRecycledRecords);
-                return node;
+                this.RootNode = CreateNode(degree);
+                this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, this.RootNode.Address, CanReuseRecycledRecords);
             }
+            return this.RootNode;
         }            
 
         public void SetRootNodeAddress(long rootNodeAddress)
@@ -83,7 +84,24 @@ namespace MarcelloDB.Index.BTree
             while (retry)
             {
                 retry = false;
+                var nodesToKeep = new Dictionary<Int64, Node<Object,Int64>>();
 
+                if (this.RootNode != null)
+                {                    
+                    nodesToKeep[this.RootNode.Address] = this.RootNode;
+                    FindAllNodes(this.RootNode, nodesToKeep);
+                }
+
+                foreach (var nodeAddress in NodeCache.Keys)
+                {                    
+                    if (!nodesToKeep.ContainsKey(nodeAddress) && CanReuseRecycledRecords)
+                    {
+                        RecordManager.Recycle(nodeAddress);
+                    }
+
+                }
+
+                NodeCache = nodesToKeep;
                 foreach (var node in NodeCache.Values)
                 {
                     var record = RecordManager.GetRecord(node.Address);
@@ -107,13 +125,27 @@ namespace MarcelloDB.Index.BTree
                         }
                     }
                 }
+                    
             }                
         }            
         #endregion
+        private void FindAllNodes(Node<object, Int64> node, Dictionary<Int64, Node<object, Int64>> acc )
+        {
+            foreach(var childNodeAddress in node.ChildrenAddresses)
+            {
+                var childNode = GetNode(childNodeAddress);
+                acc[node.Address] = node;
+                FindAllNodes(node, acc);
+            }
+        }
 
         private void CacheNode(Node<object, long> node)
         {
-            this.NodeCache.Add(node.Address, node);
+            try{                
+                this.NodeCache.Add(node.Address, node);
+            }catch(Exception e){
+                
+            }
         }
     }
 }

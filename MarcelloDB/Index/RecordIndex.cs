@@ -7,7 +7,7 @@ namespace MarcelloDB.Index
 {
     internal class RecordIndex
     {
-        const int BTREE_DEGREE = 16;
+        const int BTREE_DEGREE = 8;
 
         IBTree<object, Int64> Tree { get; set; }
 
