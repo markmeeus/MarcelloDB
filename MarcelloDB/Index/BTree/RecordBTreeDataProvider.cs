@@ -43,9 +43,9 @@ namespace MarcelloDB.Index.BTree
             return this.RootNode;
         }            
 
-        public void SetRootNodeAddress(long rootNodeAddress)
+        public void SetRootNode(Node<object, long> rootNode)
         {
-            this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, rootNodeAddress, CanReuseRecycledRecords);
+            this.RootNode = rootNode;
         }
 
         public Node<object, long> GetNode(long address)
@@ -102,6 +102,7 @@ namespace MarcelloDB.Index.BTree
                 }
 
                 NodeCache = nodesToKeep;
+                Dictionary<Int64, Node<object, Int64>> updateNodes = new Dictionary<Int64, Node<object, Int64>>() ;
                 foreach (var node in NodeCache.Values)
                 {
                     var record = RecordManager.GetRecord(node.Address);
@@ -110,12 +111,10 @@ namespace MarcelloDB.Index.BTree
                     var updatedRecord = RecordManager.UpdateRecord(record, updateData, CanReuseRecycledRecords);
                     if (oldAddress != updatedRecord.Header.Address)
                     {
+                        node.Address = updatedRecord.Header.Address;
+                        updateNodes.Add(oldAddress, node);
                         //update any children linking to this node
-                        foreach(var n in NodeCache.Values){
-                            if (n.Address == oldAddress)
-                            {
-                                n.Address = updatedRecord.Header.Address;
-                            }
+                        foreach(var n in NodeCache.Values){                            
                             var indexOfOldAddress = n.ChildrenAddresses.IndexOf(oldAddress);
                             if (indexOfOldAddress > 0)
                             {
@@ -125,27 +124,36 @@ namespace MarcelloDB.Index.BTree
                         }
                     }
                 }
-                    
+                foreach (var oldAddress in updateNodes.Keys)
+                {
+                    NodeCache.Remove(oldAddress);
+                    var node = updateNodes[oldAddress];
+                    NodeCache[node.Address] = node;
+                }
+                this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, this.RootNode.Address, CanReuseRecycledRecords);
             }                
         }            
         #endregion
-        private void FindAllNodes(Node<object, Int64> node, Dictionary<Int64, Node<object, Int64>> acc )
-        {
-            foreach(var childNodeAddress in node.ChildrenAddresses)
+        private void FindAllNodes(Node<object, Int64> node, Dictionary<Int64, Node<object, Int64>> acc, int depth = 0)
+        {           
+            if (depth > 64)
             {
-                var childNode = GetNode(childNodeAddress);
-                acc[node.Address] = node;
-                FindAllNodes(node, acc);
+                throw new InvalidOperationException("Panic, a btree node is linked self or one of its parents");
+            }
+            foreach(var childNodeAddress in node.ChildrenAddresses)
+            {                
+                if (NodeCache.ContainsKey(childNodeAddress))
+                {
+                    var childNode = NodeCache[childNodeAddress];
+                    acc[childNodeAddress] = childNode;
+                    FindAllNodes(childNode, acc, depth +1);
+                }
             }
         }
 
         private void CacheNode(Node<object, long> node)
-        {
-            try{                
-                this.NodeCache.Add(node.Address, node);
-            }catch(Exception e){
-                
-            }
+        {         
+            this.NodeCache.Add(node.Address, node);
         }
     }
 }

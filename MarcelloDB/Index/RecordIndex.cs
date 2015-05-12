@@ -7,7 +7,7 @@ namespace MarcelloDB.Index
 {
     internal class RecordIndex
     {
-        const int BTREE_DEGREE = 8;
+        const int BTREE_DEGREE = 12;
 
         IBTree<object, Int64> Tree { get; set; }
 
@@ -55,17 +55,13 @@ namespace MarcelloDB.Index
                 //keyvalue not yet in index
                 this.Tree.Insert(keyValue, recordAddress);
             }
-
-            this.DataProvider.Flush();           
-            UpdateRootAddress();
+            FlushProvider();                
         }
 
         internal void UnRegister(object keyValue)
         {
             this.Tree.Delete(keyValue);
-
-            this.DataProvider.Flush();
-            UpdateRootAddress();
+            FlushProvider();
         }
 
         internal static RecordIndex Create(
@@ -83,10 +79,11 @@ namespace MarcelloDB.Index
 
             return new RecordIndex(btree, dataProvider);
         }
-
-        void UpdateRootAddress()
+            
+        void FlushProvider()
         {
-            this.DataProvider.SetRootNodeAddress(this.Tree.Root.Address);
+            this.DataProvider.SetRootNode(this.Tree.Root);
+            this.DataProvider.Flush();
         }
     }
 }

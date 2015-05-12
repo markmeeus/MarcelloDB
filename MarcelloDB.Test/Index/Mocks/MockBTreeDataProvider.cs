@@ -27,9 +27,9 @@ namespace MarcelloDB.Test
             return _rootNode;
         }
 
-        public void SetRootNodeAddress(long rootNodeAddress)
+        public void SetRootNode(Node<TK, TP> rootNode)
         {
-            this.RootNodeAddress = rootNodeAddress;
+            this.RootNodeAddress = rootNode.Address;
         }
 
         public Node<TK, TP> GetNode(Int64 address)
