@@ -3,15 +3,15 @@ MarcelloDB
 
 [![Build Status](https://travis-ci.org/markmeeus/MarcelloDB.svg?branch=master)](https://travis-ci.org/markmeeus/MarcelloDB)
 
-MarcelloDB is a mobile document database.
+MarcelloDB is a mobile NoSql Object database.
 It is light-weight and has a minimal memory footprint.
 
-MarcelloDB saves plain C# objects, including child objects and lists. 
+MarcelloDB saves plain C# objects, including child objects, lists and collections. 
 Not having to map your objects to the relational model can save you hundreds of lines of code. 
 
-No more packaging exotic binaries neither, Marcello is pure C#.
+Marcello is pure C#, so there is no need to package other binaries.
 
-Supported on Xamarin (iOS and Android), Windows 8.1 and Windows Phone 8.1 
+Marcello will support Xamarin (iOS and Android), Windows 8.1 and Windows Phone 8.1 and Windows 10
 
 Current Status
 =
@@ -21,7 +21,7 @@ Be carefull. Backwards compatibility with existing data will not be guaranteed u
 
 Usage
 =
-MarcelloDB is a Portable Class Library, the only platform specific thing you need to do is creating a StreamProvider.
+MarcelloDB is a Portable Class Library, but you need to create and inject a StreamProvider on the specific platform.
 This is because there isn't a platform independent way to interact with the FileSystem.
 
 For iOS and Android you need to use the FileStorageStreamProvider included in the MarcelloDB.netfx assembly.
@@ -121,11 +121,12 @@ marcello.Transaction(() => {
 
 Indexing
 =
-TODO
+Will be implemented in 0.2.x and 0.3.x
 
 Roadmap
 =
-First alpha version will include all of below
+0.1.0
+-
 - ~~Persisting objects (done)~~
 - ~~Deleting objects (done)~~
 - ~~enumerating objects (done)~~
@@ -135,8 +136,17 @@ First alpha version will include all of below
 - ~~Indexing (ID)~~
 - Windows 8 Support
 - Windows Phone 8 Support
-- IOC for Serialization
 - 
+
+0.2.0
+-
+- Indexed Properties
+
+0.3.0
+-
+- Indexed Properties of nested objects
+
+ 
 
 
 
