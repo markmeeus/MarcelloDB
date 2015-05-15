@@ -33,7 +33,7 @@ namespace MarcelloDB.Records
     {   
         Marcello Session { get; set; }
 
-        StorageEngine<T> StorageEngine { get;set; }
+        StorageEngine StorageEngine { get;set; }
 
         IAllocationStrategy AllocationStrategy { get; set; }
 
@@ -41,7 +41,7 @@ namespace MarcelloDB.Records
 
         internal RecordManager(
             IAllocationStrategy allocationStrategy,
-            StorageEngine<T> storageEngine
+            StorageEngine storageEngine
         )
         {         
             StorageEngine = storageEngine;

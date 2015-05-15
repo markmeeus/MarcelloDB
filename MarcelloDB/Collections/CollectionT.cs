@@ -21,14 +21,14 @@ namespace MarcelloDB.Collections
 
         IAllocationStrategy AllocationStrategy { get; set;}
 
-        StorageEngine<T> StorageEngine {get;set;}
+        StorageEngine StorageEngine {get;set;}
 
         RecordManager<T> RecordManager { get; set; }        		
 
         internal Collection (Marcello session, 
             IObjectSerializer<T> serializer,
             IAllocationStrategy allocationStrategy,
-            StorageEngine<T> storageEngine)
+            StorageEngine storageEngine)
         {
             Session = session;
             AllocationStrategy = allocationStrategy; 

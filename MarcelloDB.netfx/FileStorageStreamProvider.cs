@@ -20,7 +20,7 @@ namespace MarcelloDB
         #region IStorageStreamProvider implementation
         public IStorageStream GetStream (string streamName)
         {
-            if (!this.Streams.ContainsKey (streamName)) 
+            if (!this.Streams.ContainsKey(streamName)) 
             {
                 this.Streams.Add(
                     streamName,

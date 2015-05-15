@@ -36,8 +36,8 @@ namespace MarcelloDB
                     new Collection<T> (this, 
                         new BsonSerializer<T> (), 
                         new DoubleSizeAllocationStrategy (),
-                        new StorageEngine<T>(this))
-                );
+                        new StorageEngine(this, typeof(T).Name)
+                    ));
             }
             return (Collection<T>)Collections[typeof(T)];
         }

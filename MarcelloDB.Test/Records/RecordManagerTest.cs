@@ -22,7 +22,7 @@ namespace MarcelloDB.Test.Records
 
             _recordManager = new RecordManager<Article>(
                 new DoubleSizeAllocationStrategy(),
-                new StorageEngine<Article>(_marcello));            
+                new StorageEngine(_marcello, "article"));            
         }
 
         [Test]

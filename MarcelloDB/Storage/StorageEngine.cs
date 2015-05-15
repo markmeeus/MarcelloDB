@@ -5,13 +5,16 @@ using MarcelloDB.Transactions.__;
 
 namespace MarcelloDB.Storage
 {
-    internal class StorageEngine<T>
+    internal class StorageEngine
     {
         internal Marcello Session { get; set; }
 
-        public StorageEngine(Marcello session)
+        string CollectionName { get; set; }
+
+        public StorageEngine(Marcello session,string collectionName)
         {
-            Session = session;
+            this.Session = session;
+            this.CollectionName = collectionName;
         }
 
         internal byte[] Read(long address, int length)
@@ -27,12 +30,12 @@ namespace MarcelloDB.Storage
         #region reader/writer factories
         Writer Writer()
         {            
-            return new JournalledWriter(this.Session, typeof(T).Name);
+            return new JournalledWriter(this.Session, this.CollectionName);
         }
 
         Reader Reader()
         {            
-            return new JournalledReader(this.Session, typeof(T).Name);
+            return new JournalledReader(this.Session, this.CollectionName);
         }
         #endregion 
     }
