@@ -11,7 +11,7 @@ namespace MarcelloDB.Test.Records
     public class RecordManagerTest
     {
         InMemoryStreamProvider _streamProvider;
-        RecordManager<Article> _recordManager;
+        RecordManager _recordManager;
         Marcello _marcello;
 
         [SetUp]
@@ -20,7 +20,7 @@ namespace MarcelloDB.Test.Records
             _streamProvider = new InMemoryStreamProvider();
             _marcello = new Marcello(_streamProvider);
 
-            _recordManager = new RecordManager<Article>(
+            _recordManager = new RecordManager(
                 new DoubleSizeAllocationStrategy(),
                 new StorageEngine(_marcello, "article"));            
         }

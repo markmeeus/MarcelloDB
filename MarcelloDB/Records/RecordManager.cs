@@ -29,7 +29,7 @@ namespace MarcelloDB.Records
         internal RecordIndex EmptyRecordIndex{ get; set;}
     }
 
-    internal class RecordManager<T> : IRecordManager, ITransactor
+    internal class RecordManager : IRecordManager, ITransactor
     {   
         Marcello Session { get; set; }
 

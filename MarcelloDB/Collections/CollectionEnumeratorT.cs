@@ -9,7 +9,7 @@ namespace MarcelloDB.Collections
 {
 	internal class CollectionEnumerator<T> : IEnumerable<T>
 	{
-        RecordManager<T> RecordManager  { get; set; }
+        RecordManager RecordManager  { get; set; }
 
         IObjectSerializer<T> Serializer { get; set; }
 
@@ -17,7 +17,7 @@ namespace MarcelloDB.Collections
 
         public CollectionEnumerator(
             Marcello session,
-            RecordManager<T> recordManager, 
+            RecordManager recordManager, 
             IObjectSerializer<T> serializer)
         {   
             Session = session;

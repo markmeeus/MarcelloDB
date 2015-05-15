@@ -23,7 +23,7 @@ namespace MarcelloDB.Collections
 
         StorageEngine StorageEngine {get;set;}
 
-        RecordManager<T> RecordManager { get; set; }        		
+        RecordManager RecordManager { get; set; }        		
 
         internal Collection (Marcello session, 
             IObjectSerializer<T> serializer,
@@ -35,7 +35,7 @@ namespace MarcelloDB.Collections
             Serializer = serializer;
             StorageEngine = storageEngine;
 
-            RecordManager = new RecordManager<T>(
+            RecordManager = new RecordManager(
                 new DoubleSizeAllocationStrategy(),
                 StorageEngine
             );                        
