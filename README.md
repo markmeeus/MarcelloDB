@@ -132,11 +132,11 @@ Roadmap
 - ~~enumerating objects (done)~~
 - ~~reusing storage of deleted objects (done)~~
 - ~~cross-collection transaction support (done)~~
-- ~~iOS/Android (Xamarin) support (done)~~
 - ~~Indexing (ID)~~
-- Windows 8 Support
-- Windows Phone 8 Support
-- 
+- ~~iOS/Android (Xamarin) support (done)~~
+- Windows 8.1 Support
+- Windows Phone 8.1 Support
+- Windows 10 Support
 
 0.2.0
 -
