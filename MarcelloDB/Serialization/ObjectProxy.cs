@@ -10,26 +10,18 @@ namespace MarcelloDB.Serialization
     {
         object Obj { get; set; }
 
-        static Dictionary<Type, TypeInfo> _typeInfoCache = new Dictionary<Type, TypeInfo>();
         static Dictionary<Type, PropertyInfo> _idPropertyInfoCache = new Dictionary<Type, PropertyInfo>();
 
-        TypeInfo _typeInfo;
-        TypeInfo TypeInfo
+        IEnumerable<PropertyInfo> _properties;
+        IEnumerable<PropertyInfo> Properties
         {
-            get{
-                if(_typeInfo == null)
+            get
+            { 
+                if (_properties == null)
                 {
-                    var type = Obj.GetType();
-                    if (_typeInfoCache.ContainsKey(type))
-                    {
-                        _typeInfo = _typeInfoCache[type];
-                    }
-                    else
-                    {
-                        _typeInfoCache[type] = _typeInfo = Obj.GetType().GetTypeInfo();
-                    }
+                    _properties = Obj.GetType().GetRuntimeProperties();
                 }
-                return _typeInfo;
+                return _properties;
             }
         }
 
@@ -108,13 +100,13 @@ namespace MarcelloDB.Serialization
 
         PropertyInfo GetPropertyInfo(string propertyName)
         {
-            return TypeInfo.DeclaredProperties
+            return this.Properties
                 .Where(p => p.Name == propertyName).FirstOrDefault();
         }
 
         PropertyInfo GetPropertyWithAttribute(Type attributeType)
         {
-            return TypeInfo.DeclaredProperties
+            return this.Properties
                 .Where(p => p.GetCustomAttribute(attributeType) != null)
                 .FirstOrDefault();
         }

@@ -8,6 +8,8 @@ namespace MarcelloDB.Test
         public int ID { get; set; }
     }
 
+    public class SubclassWithID : ClassWithID {}
+
     public class ClassWithId
     {
         public int Id { get; set; }
