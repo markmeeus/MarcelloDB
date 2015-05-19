@@ -309,7 +309,18 @@ namespace MarcelloDB.Test
             var newStorageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
             Assert.AreEqual(storageSize, newStorageSize);
         }
-            
+
+        [Test]
+        public void Can_Handle_Subclasses()
+        {            
+            var bread = Food.Bread;
+            _articles.Persist(bread);
+            var breadFromDB = (Food) _articles.All.First();
+            Assert.NotNull(breadFromDB);
+            Assert.AreEqual(bread.Expires.ToString(), breadFromDB.Expires.ToString());
+            Assert.AreEqual(bread.Name, breadFromDB.Name );
+        }
+
         [Test]
         public void Save_To_File_Stream()
         {
@@ -330,7 +341,7 @@ namespace MarcelloDB.Test
             var articleNames = articles.All.Select(a => a.Name).ToList();
 
             Assert.AreEqual(new List<string>{toiletPaper.Name, spinalTapDvd.Name, barbieDoll.Name }, articleNames);
-        }  
+        }
 
         [Test]
         public void Add1000()
