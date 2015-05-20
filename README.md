@@ -134,7 +134,7 @@ Roadmap
 - ~~cross-collection transaction support (done)~~
 - ~~Indexing (ID)~~
 - ~~iOS/Android (Xamarin) support (done)~~
-- Polymorphic collections with Polymorphic children
+- ~~Polymorphic collections with Polymorphic children~~
 - Windows 8.1 Support
 - Windows Phone 8.1 Support
 - Windows 10 Support
