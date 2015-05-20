@@ -5,32 +5,13 @@ using Newtonsoft.Json.Bson;
 
 namespace MarcelloDB.Serialization
 {
-    public class BsonSerializer 
+    public class ObjectWrapper<T>
     {
-        public byte[] Serialize(object o)
-        {
-            var serializer = new JsonSerializer();
-            serializer.TypeNameHandling = TypeNameHandling.All;
-            var memoryStream = new MemoryStream();
-            var bsonWriter = new BsonWriter(memoryStream);
-
-            serializer.Serialize(bsonWriter, o);
-            bsonWriter.Flush();
-            return memoryStream.ToArray();
-        }    
-
-        public object Deserialize(byte[] bytes)
-        {
-            var serializer = new JsonSerializer();
-            serializer.TypeNameHandling = TypeNameHandling.All;
-            var memoryStream = new MemoryStream(bytes);
-            var reader = new BsonReader(memoryStream);
-
-            return serializer.Deserialize(reader);
-        }
+        public T O { get; set; }
     }
 
-    public class BsonSerializer<T> : BsonSerializer, IObjectSerializer<T>
+
+    public class BsonSerializer<T> : IObjectSerializer<T>
     {
         public BsonSerializer ()
         {
@@ -38,16 +19,33 @@ namespace MarcelloDB.Serialization
 
         #region IObjectSerializer implementation
 
-        public byte[] Serialize(T obj)
+        public byte[] Serialize(T o)
         {
-            return base.Serialize(obj);           
+            var serializer = GetSerializer();
+
+            var memoryStream = new MemoryStream();
+            var bsonWriter = new BsonWriter(memoryStream);
+
+            serializer.Serialize(bsonWriter, new ObjectWrapper<T>{O=o});
+            bsonWriter.Flush();
+
+            return memoryStream.ToArray();
         }
        
-        public new T Deserialize (byte[] bytes)
-        {
-            return (T)base.Deserialize(bytes);
+        public T Deserialize (byte[] bytes)
+        {            
+            var serializer = GetSerializer();
+            var reader = new BsonReader(
+                new MemoryStream(bytes)
+            );
+
+            return serializer.Deserialize<ObjectWrapper<T>>(reader).O;
         }
         #endregion
+
+        JsonSerializer GetSerializer(){
+            return new JsonSerializer {TypeNameHandling = TypeNameHandling.Auto};
+        }
     }
 }
 

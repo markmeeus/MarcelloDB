@@ -116,8 +116,12 @@ namespace MarcelloDB.Transactions
             var length = new BufferReader(
                 this.JournalReader.Read(0, sizeof(int)), BitConverter.IsLittleEndian
             ).ReadInt32();
-            var bytes = this.JournalReader.Read(sizeof(int), length);
-            return new BsonSerializer<TransactionJournal>().Deserialize(bytes);
+            if (length > 0)
+            {
+                var bytes = this.JournalReader.Read(sizeof(int), length);
+                return new BsonSerializer<TransactionJournal>().Deserialize(bytes);
+            }
+            return null;
         }
 
         void ClearJournal(){
