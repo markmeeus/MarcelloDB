@@ -24,14 +24,16 @@ namespace MarcelloDB.BenchmarkTool.Benchmarks
             var w = Stopwatch.StartNew();
 
             EnsureFolder("data");
-            var fileStreamProvider =  new FileStorageStreamProvider("./data/");
-            this.Session = new Marcello(fileStreamProvider);
-            this.Collection = this.Session.Collection<Person>();
+            using(var fileStreamProvider =  new FileStorageStreamProvider("./data/"))
+            {
+                this.Session = new Marcello(fileStreamProvider);
+                this.Collection = this.Session.Collection<Person>();
 
-            OnRun();
-
+                OnRun();  
+            }
+            
             w.Stop();
-            return new TimeSpan(w.ElapsedTicks);
+            return w.Elapsed;
         }
 
         private void EnsureFolder(string path)

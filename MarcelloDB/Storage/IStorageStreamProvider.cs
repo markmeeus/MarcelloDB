@@ -2,7 +2,7 @@
 
 namespace MarcelloDB.Storage
 {
-    public interface IStorageStreamProvider
+    public interface IStorageStreamProvider: IDisposable
     {
         IStorageStream GetStream(string streamName);
     }

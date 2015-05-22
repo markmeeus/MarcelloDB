@@ -50,9 +50,9 @@ namespace MarcelloDB
                     CurrentTransaction.Enlist ();
                     action ();
                     CurrentTransaction.Leave ();            
-                } catch (Exception exc) {
+                } catch (Exception) {
                     CurrentTransaction.Rollback ();
-                    throw exc;
+                    throw;
                 } finally {
                     if (!CurrentTransaction.Running) {
                         CurrentTransaction = null;
