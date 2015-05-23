@@ -119,24 +119,24 @@ marcello.Transaction(() => {
 ```
 
 
-Indexing
+Indexes
 =
-Will be implemented in 0.2.x and 0.3.x
+Will be implemented in 0.3.x and 0.4.x
 
 Roadmap
 =
 0.1.0
 -
-- ~~Persisting objects (done)~~
-- ~~Deleting objects (done)~~
-- ~~enumerating objects (done)~~
-- ~~reusing storage of deleted objects (done)~~
-- ~~cross-collection transaction support (done)~~
-- ~~Indexing (ID)~~
-- ~~iOS/Android (Xamarin) support (done)~~
+- ~~Persisting objects~~
+- ~~Deleting objects~~
+- ~~enumerating objects~~
+- ~~reusing storage of deleted objects~~
+- ~~cross-collection transaction support~~
+- ~~Indexing~~
+- ~~iOS/Android (Xamarin) support~~
 - ~~Polymorphic collections with Polymorphic children~~
-- Windows 8.1 Support
-- Windows Phone 8.1 Support
+- ~~Windows 8.1 Support~~
+- ~~Windows Phone 8.1 Support~~
 - Windows 10 Support
 
 0.2.0
