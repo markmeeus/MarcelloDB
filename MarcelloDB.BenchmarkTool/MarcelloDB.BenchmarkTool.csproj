@@ -39,6 +39,7 @@
     <Compile Include="DataClasses\Person.cs" />
     <Compile Include="DataClasses\Address.cs" />
     <Compile Include="DataClasses\Base.cs" />
+    <Compile Include="Benchmarks\RandomRead.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

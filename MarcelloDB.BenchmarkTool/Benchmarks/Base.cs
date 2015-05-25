@@ -16,19 +16,24 @@ namespace MarcelloDB.BenchmarkTool.Benchmarks
 
         }
 
+        protected virtual void OnSetup(){}
+
         protected virtual void OnRun()
         {
-        }
+        }            
 
-        public TimeSpan Run(){
-            var w = Stopwatch.StartNew();
+        public TimeSpan Run()
+        {           
+            Stopwatch w;
 
             EnsureFolder("data");
             using(var fileStreamProvider =  new FileStorageStreamProvider("./data/"))
             {
                 this.Session = new Marcello(fileStreamProvider);
                 this.Collection = this.Session.Collection<Person>();
+                OnSetup();
 
+                w = Stopwatch.StartNew();
                 OnRun();  
             }
             
