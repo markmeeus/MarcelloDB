@@ -71,6 +71,7 @@
     <Compile Include="Index\BTree\BTreeWalker.cs" />
     <Compile Include="Index\BTree\IBtreeDataProvider.cs" />
     <Compile Include="Index\BTree\RecordBTreeDataProvider.cs" />
+    <Compile Include="Exceptions\IDMissingException.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
@@ -81,4 +82,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Exceptions\" />
+  </ItemGroup>
 </Project>

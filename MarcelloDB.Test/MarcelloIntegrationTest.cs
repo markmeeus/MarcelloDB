@@ -7,6 +7,7 @@ using MarcelloDB;
 using MarcelloDB.Test.Classes;
 using MarcelloDB.Collections;
 using MarcelloDB.Storage;
+using MarcelloDB.Exceptions;
 
 namespace MarcelloDB.Test
 {
@@ -362,6 +363,15 @@ namespace MarcelloDB.Test
                 var a = articles.Find(i);
                 Assert.AreEqual(i, a.ID, "Article " + i.ToString() + " should have been found.");
             }      
+        }
+
+        [Test]
+        public void Throw_IDMissingException_When_Object_Has_No_ID_Property()
+        {
+            Assert.Throws(typeof(IDMissingException), () =>
+                {
+                    _marcello.Collection<object>().Persist(new {Name = "Object Without ID"});
+                });
         }
             
         private void EnsureFolder(string path)

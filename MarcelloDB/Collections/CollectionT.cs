@@ -8,6 +8,7 @@ using MarcelloDB.Records;
 using MarcelloDB.Storage;
 using MarcelloDB.Index;
 using MarcelloDB.Transactions.__;
+using MarcelloDB.Exceptions;
 
 namespace MarcelloDB.Collections
 {
@@ -75,16 +76,7 @@ namespace MarcelloDB.Collections
             Transacted(() => {
                 DestroyInternal(obj);
             });
-        }
-
-        internal void DestroyAll()
-        {
-            var toDestroy = All.ToList();
-            foreach(var o in toDestroy)
-            {
-                DestroyInternal(o);
-            }        
-        }            
+        }     
             
         void Transacted(Action action)
         {
@@ -109,7 +101,8 @@ namespace MarcelloDB.Collections
             
         void PersistInternal(T obj)
         {
-            var objectID = new ObjectProxy(obj).ID;
+            var objectID = GetObjectIDOrThrow(obj);                
+
             //Try to load the record with object ID
             Record record = GetRecordForObjectID(objectID);
             if (record != null) {
@@ -139,7 +132,7 @@ namespace MarcelloDB.Collections
 
         void DestroyInternal (T obj)
         {
-            var objectID = new ObjectProxy(obj).ID;
+            var objectID = GetObjectIDOrThrow(obj);
             //Try to load the record with object ID
             Record record = GetRecordForObjectID(objectID);
             if (record != null)
@@ -150,6 +143,15 @@ namespace MarcelloDB.Collections
 
                 this.RecordManager.Recycle(record.Header.Address);
             }
+        }
+
+        object GetObjectIDOrThrow(T obj){
+            var objectID = new ObjectProxy(obj).ID;
+            if(objectID == null){
+                throw new IDMissingException(obj.GetType().Name + 
+                    " either has no ID property, or the property returned null");                        
+            }
+            return objectID;
         }
     }
 }
