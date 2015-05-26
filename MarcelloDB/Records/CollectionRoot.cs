@@ -7,15 +7,48 @@ namespace MarcelloDB.Records
 	{		
         const int CURRENT_FORMAT_VERSION = 1;
 
-        internal Int32 FormatVersion { get; set;}
-        internal Int64 NamedRecordIndexAddress { get; set;}
-        internal Int64 Head { get; set;}
+        #region properties
+        Int32 _formatVersion;
+        internal Int32 FormatVersion 
+        { 
+            get {return _formatVersion;} 
+            set
+            {
+                _formatVersion = value;
+                _dirty = true;
+            }
+        }
 
+        Int64 _namedRecordIndexAddress; 
+        internal Int64 NamedRecordIndexAddress {
+            get { return _namedRecordIndexAddress; } 
+            set {
+                _namedRecordIndexAddress = value;
+                _dirty = true;
+            }
+        }
+
+        Int64 _head;
+        internal Int64 Head {
+            get { return _head; } 
+            set {
+                _head = value;
+                _dirty = true;
+            }
+        }
+        #endregion
         internal CollectionRoot()
 		{
             this.Head = MaxByteSize;
             this.FormatVersion = CURRENT_FORMAT_VERSION;
+            this.Clean();
 		}
+
+        #region dirty state
+        bool _dirty = false;
+        internal bool Dirty { get {return _dirty;} }
+        internal void Clean(){ _dirty = false; }
+        #endregion
 
         internal static int MaxByteSize
         {

@@ -211,7 +211,11 @@ namespace MarcelloDB.Records
 
         void SaveCollectionRoot()
         {
-            StorageEngine.Write(0, TransactionState.CollectionRoot.AsBytes());
+            if (TransactionState.CollectionRoot.Dirty)
+            {
+                StorageEngine.Write(0, TransactionState.CollectionRoot.AsBytes());
+                TransactionState.CollectionRoot.Clean();
+            }           
         }
         
         void ResetTransactionState()

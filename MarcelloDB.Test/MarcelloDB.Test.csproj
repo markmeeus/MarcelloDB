@@ -54,6 +54,7 @@
     <Compile Include="Index\Mocks\MockBTreeDataProvider.cs" />
     <Compile Include="Index\Mocks\MockBTree.cs" />
     <Compile Include="Serialization\BsonSerializerTest.cs" />
+    <Compile Include="Records\CollectionRootTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
