@@ -4,7 +4,7 @@ namespace MarcelloDB.Storage.StreamActors
 {
     internal class Writer : StreamActor
     {
-        internal Writer(Marcello session, string collectionName) 
+        internal Writer(Session session, string collectionName) 
             : base(session, collectionName)
         {
         }

@@ -6,7 +6,7 @@ namespace MarcelloDB.Transactions
 {
     internal class Transaction
     {
-        Marcello Session { get; set; }
+        Session Session { get; set; }
 
         internal bool Running { get; set; }
 
@@ -16,7 +16,7 @@ namespace MarcelloDB.Transactions
 
         int Enlisted { get; set; }
 
-        internal Transaction(Marcello session)
+        internal Transaction(Session session)
         {
             this.Session = session;
             Transactors = new List<ITransactor>();

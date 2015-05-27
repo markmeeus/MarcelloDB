@@ -31,7 +31,7 @@ namespace MarcelloDB.Records
 
     internal class RecordManager : IRecordManager, ITransactor
     {   
-        Marcello Session { get; set; }
+        Session Session { get; set; }
 
         StorageEngine StorageEngine { get;set; }
 

@@ -34,7 +34,7 @@ Creating the session
 var fileStreamProvider =  new FileStorageStreamProvider("path/to/storage_folder");
 
 //Create a Marcello session, this can be done in PCL code
-var marcello = new Marcello(fileStreamProvider);
+var session = new MarcelloDB.Session(fileStreamProvider);
 ```
 
 Persisting objects
@@ -43,7 +43,7 @@ Persisting objects
 var myObject = new WhateverObject(){ Name = "Value" };
 
 //get the corresponding collection
-var collection = marcello.Collection<WhateverObject>();
+var collection = session.Collection<WhateverObject>();
 
 //and persist the object
 collection.Persist(myObject);
@@ -52,7 +52,7 @@ collection.Persist(myObject);
 Find and enumerate your objects
 ```cs
 //get the corresponding collection
-var collection = marcello.Collection<WhateverObject>();
+var collection = session.Collection<WhateverObject>();
 
 //and enumerate
 foreach(var obj in collection.All)
@@ -68,7 +68,7 @@ Deleting objects
 
 ```cs
 //Delete the object
-_articles.Destroy(myObject);
+collection.Destroy(myObject);
 ```
 
 How Objects are Identified
@@ -101,7 +101,7 @@ Transactions
 =
 Marcello supports transactions spanning multiple operations over multiple collections
 ```cs
-marcello.Transaction(() => {
+session.Transaction(() => {
     marcello.Collection<Article>().Persist(article);
     marcello.Collection<Clients>().Persist(client);
     marcello.Collection<Project>().Destroy(project);
@@ -110,7 +110,7 @@ marcello.Transaction(() => {
 
 Transactions roll back when an exception occurs within the block.
 ```cs
-marcello.Transaction(() => {
+session.Transaction(() => {
     marcello.Collection<Article>().Persist(article);
     marcello.Collection<Clients>().Persist(client);
     marcello.Collection<Project>().Destroy(project);

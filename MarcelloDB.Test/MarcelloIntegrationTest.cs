@@ -14,7 +14,7 @@ namespace MarcelloDB.Test
     [TestFixture]
     public class MarcelloIntegrationTest
     {
-        Marcello _marcello;
+        Session _session;
         Collection<Article> _articles;
         InMemoryStreamProvider _provider;
 
@@ -22,8 +22,8 @@ namespace MarcelloDB.Test
         public void Setup()
         {
             _provider = new InMemoryStreamProvider();
-            _marcello = new Marcello(_provider);
-            _articles = _marcello.Collection<Article>();
+            _session = new Session(_provider);
+            _articles = _session.Collection<Article>();
         }
             
         [Test]
@@ -36,7 +36,7 @@ namespace MarcelloDB.Test
         [Test]
         public void Collections_Are_Reused_Per_Session()
         {
-            Assert.AreSame(_marcello.Collection<Article>(), _marcello.Collection<Article>());
+            Assert.AreSame(_session.Collection<Article>(), _session.Collection<Article>());
         }
 
         [Test]
@@ -274,13 +274,13 @@ namespace MarcelloDB.Test
             _articles.Persist(barbieDoll);
             _articles.Persist(spinalTapDvd);
 
-            _marcello.Journal.Apply (); //make sure the journal is applied to the backing stream
+            _session.Journal.Apply (); //make sure the journal is applied to the backing stream
 
             var storageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
             _articles.Destroy(barbieDoll);
             _articles.Persist(barbieDoll);
 
-            _marcello.Journal.Apply (); //make sure the journal is applied to the backing stream
+            _session.Journal.Apply (); //make sure the journal is applied to the backing stream
 
             var newStorageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
             Assert.AreEqual(storageSize, newStorageSize);
@@ -297,7 +297,7 @@ namespace MarcelloDB.Test
             _articles.Persist(spinalTapDvd);
             _articles.Persist(toiletPaper);
 
-            _marcello.Journal.Apply (); //make sure the journal is applied to the backing stream
+            _session.Journal.Apply (); //make sure the journal is applied to the backing stream
 
             var storageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
             _articles.Destroy(barbieDoll);
@@ -305,7 +305,7 @@ namespace MarcelloDB.Test
 
             _articles.Persist(barbieDoll);
             _articles.Persist(toiletPaper);
-            _marcello.Journal.Apply (); //make sure the journal is applied to the backing stream
+            _session.Journal.Apply (); //make sure the journal is applied to the backing stream
 
             var newStorageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
             Assert.AreEqual(storageSize, newStorageSize);
@@ -327,9 +327,9 @@ namespace MarcelloDB.Test
         {
             EnsureFolder("data");
             var fileStreamProvider =  new FileStorageStreamProvider("./data/");
-            var marcello = new Marcello(fileStreamProvider);
+            var session = new Session(fileStreamProvider);
 
-            var articles = marcello.Collection<Article>();
+            var articles = session.Collection<Article>();
 
             var toiletPaper = Article.ToiletPaper;
             var spinalTapDvd = Article.SpinalTapDvd;
@@ -348,9 +348,9 @@ namespace MarcelloDB.Test
         public void Add1000()
         {
             EnsureFolder("data");
-            var fileStreamProvider =  new FileStorageStreamProvider("./data/");
-            var marcello = new Marcello(fileStreamProvider);
-            var articles = marcello.Collection<Article>();
+            var fileStreamProvider =  new FileStorageStreamProvider("./data/");            
+            var session = new Session(fileStreamProvider);
+            var articles = session.Collection<Article>();
 
             for (int i = 1; i < 1000; i++)
             {
@@ -370,7 +370,7 @@ namespace MarcelloDB.Test
         {
             Assert.Throws(typeof(IDMissingException), () =>
                 {
-                    _marcello.Collection<object>().Persist(new {Name = "Object Without ID"});
+                    _session.Collection<object>().Persist(new {Name = "Object Without ID"});
                 });
         }
             

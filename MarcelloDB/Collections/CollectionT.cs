@@ -16,7 +16,7 @@ namespace MarcelloDB.Collections
 
     public class Collection<T> : Collection
     {
-        Marcello Session { get; set; }
+        Session Session { get; set; }
 
         IObjectSerializer<T> Serializer { get; set; }
 
@@ -26,7 +26,7 @@ namespace MarcelloDB.Collections
 
         RecordManager RecordManager { get; set; }        		
 
-        internal Collection (Marcello session, 
+        internal Collection (Session session, 
             IObjectSerializer<T> serializer,
             IAllocationStrategy allocationStrategy,
             StorageEngine storageEngine)

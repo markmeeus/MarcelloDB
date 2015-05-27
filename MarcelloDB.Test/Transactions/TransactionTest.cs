@@ -9,20 +9,20 @@ namespace MarcelloDB.Test.Transactions
     [TestFixture]
     public class TransactionTest
     {
-        Marcello _marcello;
+        Session _session;
         Collection<Article> _articles;
 
         [SetUp]
         public void Setup()
         {
-            _marcello = new Marcello(new InMemoryStreamProvider());
-            _articles = _marcello.Collection<Article>();
+            _session = new Session(new InMemoryStreamProvider());
+            _articles = _session.Collection<Article>();
         }
 
         [Test]
         public void Insert()
         {
-            _marcello.Transaction(() => {
+            _session.Transaction(() => {
                 _articles.Persist(Article.BarbieDoll);
             });
 
@@ -31,7 +31,7 @@ namespace MarcelloDB.Test.Transactions
 
         [Test]
         public void Insert_Visibility(){
-            _marcello.Transaction(() => {
+            _session.Transaction(() => {
                 _articles.Persist(Article.BarbieDoll);
                 Assert.AreEqual(Article.BarbieDoll.ID, _articles.All.First().ID);
             });                
@@ -43,7 +43,7 @@ namespace MarcelloDB.Test.Transactions
             var barbieDoll = Article.BarbieDoll;
             _articles.Persist(Article.BarbieDoll);
 
-            _marcello.Transaction(() => {
+            _session.Transaction(() => {
                 barbieDoll.Name = "UPDATED";
                 _articles.Persist(Article.BarbieDoll);
             });
@@ -57,7 +57,7 @@ namespace MarcelloDB.Test.Transactions
             var barbieDoll = Article.BarbieDoll;
             _articles.Persist(Article.BarbieDoll);
 
-            _marcello.Transaction(() => {
+            _session.Transaction(() => {
                 barbieDoll.Name = "UPDATED";
                 _articles.Persist(Article.BarbieDoll);
                 Assert.AreEqual(Article.BarbieDoll.Name, _articles.All.First().Name);
@@ -70,7 +70,7 @@ namespace MarcelloDB.Test.Transactions
             var barbieDoll = Article.BarbieDoll;
             _articles.Persist(Article.BarbieDoll);
 
-            _marcello.Transaction(() => {
+            _session.Transaction(() => {
                 _articles.Destroy(Article.BarbieDoll);
             });
 
@@ -83,7 +83,7 @@ namespace MarcelloDB.Test.Transactions
             var barbieDoll = Article.BarbieDoll;
             _articles.Persist(Article.BarbieDoll);
 
-            _marcello.Transaction(() => {
+            _session.Transaction(() => {
                 _articles.Destroy(Article.BarbieDoll);
                 Assert.AreEqual(0, _articles.All.Count());
             });
@@ -93,7 +93,7 @@ namespace MarcelloDB.Test.Transactions
         public void Insert_Rollback()
         {
             try{
-                _marcello.Transaction (() => {
+                _session.Transaction (() => {
                     _articles.Persist(Article.BarbieDoll);
                     throw new Exception ("Rollback");
                 });
@@ -109,7 +109,7 @@ namespace MarcelloDB.Test.Transactions
             _articles.Persist(article);
 
             try{
-                _marcello.Transaction (() => {
+                _session.Transaction (() => {
                     article.Name = "UPDATED";
                     _articles.Persist(article);
                     throw new Exception ("Rollback");
@@ -126,7 +126,7 @@ namespace MarcelloDB.Test.Transactions
             _articles.Persist(article);
 
             try{
-                _marcello.Transaction (() => {
+                _session.Transaction (() => {
                     _articles.Destroy(article);
                     throw new Exception ("Rollback");
                 });

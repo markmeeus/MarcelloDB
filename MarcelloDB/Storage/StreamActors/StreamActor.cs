@@ -4,11 +4,11 @@ namespace MarcelloDB.Storage.StreamActors
 {
     internal class StreamActor
     {
-        protected Marcello Session { get; set; }
+        protected Session Session { get; set; }
 
         protected string CollectionName {get;set;}
 
-        internal StreamActor(Marcello session, string collectionName)
+        internal StreamActor(Session session, string collectionName)
         {
             this.Session = session;
             this.CollectionName = collectionName;

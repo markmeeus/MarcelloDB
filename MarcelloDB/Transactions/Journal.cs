@@ -15,7 +15,7 @@ namespace MarcelloDB.Transactions
     {
         const string JOURNAL_COLLECTION_NAME = "journal";
 
-        Marcello Session { get; set; }
+        Session Session { get; set; }
 
         List<JournalEntry> UncommittedEntries { get;set; }
 
@@ -24,7 +24,7 @@ namespace MarcelloDB.Transactions
         Writer JournalWriter { get; set; }
         Reader JournalReader { get; set; }
 
-        internal Journal (Marcello session)
+        internal Journal (Session session)
         {
             this.Session = session;
             this.Writers = new Dictionary<string, Writer>();

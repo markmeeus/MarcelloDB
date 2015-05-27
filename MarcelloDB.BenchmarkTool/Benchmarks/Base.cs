@@ -8,7 +8,7 @@ namespace MarcelloDB.BenchmarkTool.Benchmarks
     public class Base
     {
     
-        protected Marcello Session{get;set;}
+        protected Session Session{get;set;}
         protected MarcelloDB.Collections.Collection<Person> Collection {get; set;}
 
         public Base()
@@ -29,7 +29,7 @@ namespace MarcelloDB.BenchmarkTool.Benchmarks
             EnsureFolder("data");
             using(var fileStreamProvider =  new FileStorageStreamProvider("./data/"))
             {
-                this.Session = new Marcello(fileStreamProvider);
+                this.Session = new Session(fileStreamProvider);
                 this.Collection = this.Session.Collection<Person>();
                 OnSetup();
 

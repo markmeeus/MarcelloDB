@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace MarcelloDB
 {
-    public class Marcello
+    public class Session
     {
         internal Dictionary<Type, Collection> Collections { get; set; }
 
@@ -21,7 +21,7 @@ namespace MarcelloDB
 
         internal object SyncLock { get; set; }
             
-        public Marcello (IStorageStreamProvider streamProvider)
+        public Session (IStorageStreamProvider streamProvider)
         {
             Collections = new Dictionary<Type, Collection>();
             StreamProvider = streamProvider;

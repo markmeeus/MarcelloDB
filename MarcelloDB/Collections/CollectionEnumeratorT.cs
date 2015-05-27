@@ -13,10 +13,10 @@ namespace MarcelloDB.Collections
 
         IObjectSerializer<T> Serializer { get; set; }
 
-        Marcello Session { get; set; }
+        Session Session { get; set; }
 
         public CollectionEnumerator(
-            Marcello session,
+            Session session,
             RecordManager recordManager, 
             IObjectSerializer<T> serializer)
         {   

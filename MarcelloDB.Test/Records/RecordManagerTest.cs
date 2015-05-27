@@ -12,17 +12,17 @@ namespace MarcelloDB.Test.Records
     {
         InMemoryStreamProvider _streamProvider;
         RecordManager _recordManager;
-        Marcello _marcello;
+        Session _session;
 
         [SetUp]
         public void Initialize()
         {
             _streamProvider = new InMemoryStreamProvider();
-            _marcello = new Marcello(_streamProvider);
+            _session = new Session(_streamProvider);
 
             _recordManager = new RecordManager(
                 new DoubleSizeAllocationStrategy(),
-                new StorageEngine(_marcello, "article"));            
+                new StorageEngine(_session, "article"));            
         }
 
         [Test]

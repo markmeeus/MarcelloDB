@@ -42,7 +42,7 @@
     <Compile Include="Serialization\ObjectProxy.cs" />
     <Compile Include="Storage\IStorageStream.cs" />
     <Compile Include="Storage\IStorageStreamProvider.cs" />
-    <Compile Include="Marcello.cs" />
+    <Compile Include="Session.cs" />
     <Compile Include="Serialization\BsonSerializer.cs" />
     <Compile Include="AllocationStrategies\IAllocationStrategy.cs" />
     <Compile Include="AllocationStrategies\DoubleSizeAllocationStrategy.cs" />
@@ -82,7 +82,5 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Exceptions\" />
-  </ItemGroup>
+  <ItemGroup />
 </Project>

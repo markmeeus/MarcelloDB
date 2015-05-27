@@ -7,11 +7,11 @@ namespace MarcelloDB.Storage
 {
     internal class StorageEngine
     {
-        internal Marcello Session { get; set; }
+        internal Session Session { get; set; }
 
         string CollectionName { get; set; }
 
-        public StorageEngine(Marcello session,string collectionName)
+        public StorageEngine(Session session,string collectionName)
         {
             this.Session = session;
             this.CollectionName = collectionName;

@@ -39,7 +39,7 @@ namespace UniversalTest
             this.Suspending += this.OnSuspending;
 
             var dataFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
-            var session = new MarcelloDB.Marcello(new MarcelloDB.FileStorageStreamProvider(dataFolder));
+            var session = new MarcelloDB.Session(new MarcelloDB.FileStorageStreamProvider(dataFolder));
             var collection = session.Collection<Article>();
             
             for(int i =0; i < 1000; i++)
