@@ -327,42 +327,48 @@ namespace MarcelloDB.Test
         {
             EnsureFolder("data");
             var fileStreamProvider =  new FileStorageStreamProvider("./data/");
-            var session = new Session(fileStreamProvider);
+            using(fileStreamProvider)
+            {
+                var session = new Session(fileStreamProvider);
 
-            var articles = session.Collection<Article>();
+                var articles = session.Collection<Article>();
 
-            var toiletPaper = Article.ToiletPaper;
-            var spinalTapDvd = Article.SpinalTapDvd;
-            var barbieDoll = Article.BarbieDoll;
+                var toiletPaper = Article.ToiletPaper;
+                var spinalTapDvd = Article.SpinalTapDvd;
+                var barbieDoll = Article.BarbieDoll;
 
-            articles.Persist(toiletPaper);
-            articles.Persist(spinalTapDvd);
-            articles.Persist(barbieDoll);
+                articles.Persist(toiletPaper);
+                articles.Persist(spinalTapDvd);
+                articles.Persist(barbieDoll);
 
-            var articleNames = articles.All.Select(a => a.Name).ToList();
+                var articleNames = articles.All.Select(a => a.Name).ToList();
 
-            Assert.AreEqual(new List<string>{toiletPaper.Name, spinalTapDvd.Name, barbieDoll.Name }, articleNames);
+                Assert.AreEqual(new List<string> { toiletPaper.Name, spinalTapDvd.Name, barbieDoll.Name }, articleNames);
+            }            
         }
 
         [Test]
         public void Add1000()
         {
             EnsureFolder("data");
-            var fileStreamProvider =  new FileStorageStreamProvider("./data/");            
-            var session = new Session(fileStreamProvider);
-            var articles = session.Collection<Article>();
-
-            for (int i = 1; i < 1000; i++)
+            var fileStreamProvider =  new FileStorageStreamProvider("./data/");
+            using (fileStreamProvider)
             {
-                var a = new Article{ID = i, Name = "Article " + i.ToString()};
-                articles.Persist(a);
-            }
+                var session = new Session(fileStreamProvider);
+                var articles = session.Collection<Article>();
 
-            for (int i = 1; i < 1000; i++)
-            {
-                var a = articles.Find(i);
-                Assert.AreEqual(i, a.ID, "Article " + i.ToString() + " should have been found.");
-            }      
+                for (int i = 1; i < 1000; i++)
+                {
+                    var a = new Article { ID = i, Name = "Article " + i.ToString() };
+                    articles.Persist(a);
+                }
+
+                for (int i = 1; i < 1000; i++)
+                {
+                    var a = articles.Find(i);
+                    Assert.AreEqual(i, a.ID, "Article " + i.ToString() + " should have been found.");
+                }
+            }                  
         }
 
         [Test]
