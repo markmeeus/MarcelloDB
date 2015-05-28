@@ -30,7 +30,7 @@ namespace MarcelloDB.BenchmarkTool.Benchmarks
             using(var fileStreamProvider =  new FileStorageStreamProvider("./data/"))
             {
                 this.Session = new Session(fileStreamProvider);
-                this.Collection = this.Session.Collection<Person>();
+                this.Collection = this.Session["persons"].Collection<Person>();
                 OnSetup();
 
                 w = Stopwatch.StartNew();

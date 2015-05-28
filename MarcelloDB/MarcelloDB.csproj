@@ -72,6 +72,7 @@
     <Compile Include="Index\BTree\IBtreeDataProvider.cs" />
     <Compile Include="Index\BTree\RecordBTreeDataProvider.cs" />
     <Compile Include="Exceptions\IDMissingException.cs" />
+    <Compile Include="Collections\CollectionFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

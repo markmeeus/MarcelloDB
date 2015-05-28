@@ -11,7 +11,7 @@ namespace MarcelloDB
 {
     public class Session
     {
-        internal Dictionary<Type, Collection> Collections { get; set; }
+        Dictionary<string, CollectionFile> CollectionFiles { get; set; }
 
         internal IStorageStreamProvider StreamProvider { get; set; }
 
@@ -23,25 +23,23 @@ namespace MarcelloDB
             
         public Session (IStorageStreamProvider streamProvider)
         {
-            Collections = new Dictionary<Type, Collection>();
-            StreamProvider = streamProvider;
-            Journal = new Journal(this);
+            this.CollectionFiles = new Dictionary<string, CollectionFile>();
+            this.StreamProvider = streamProvider;
+            this.Journal = new Journal(this);
             SyncLock = new object();
         }
 
-        public Collection<T> Collection<T>()
+        public CollectionFile this[string fileName]
         {
-            if(!Collections.ContainsKey(typeof(T))){
-                Collections.Add (typeof(T), 
-                    new Collection<T> (this, 
-                        new BsonSerializer<T> (), 
-                        new DoubleSizeAllocationStrategy (),
-                        new StorageEngine(this, typeof(T).Name)
-                    ));
+            get
+            {
+                if(!this.CollectionFiles.ContainsKey(fileName))
+                {
+                    this.CollectionFiles[fileName] = new CollectionFile(this, fileName);
+                }
+                return this.CollectionFiles[fileName];
             }
-            return (Collection<T>)Collections[typeof(T)];
         }
-
         public void Transaction(Action action)
         {
             lock (this.SyncLock) {

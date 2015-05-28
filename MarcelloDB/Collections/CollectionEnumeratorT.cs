@@ -28,7 +28,7 @@ namespace MarcelloDB.Collections
         public IEnumerator<T> GetEnumerator()
         {
             lock(this.Session.SyncLock){
-                var index = RecordIndex.Create(this.RecordManager, RecordIndex.ID_INDEX_NAME);
+                var index = RecordIndex.Create(this.RecordManager, RecordIndex.GetIDIndexName<T>());
                 var walker = index.GetWalker();
                 var node = walker.Next();
                 while (node != null)

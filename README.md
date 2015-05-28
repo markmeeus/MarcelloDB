@@ -6,8 +6,8 @@ MarcelloDB
 MarcelloDB is a mobile NoSql database.
 It is very light-weight with minimal memory footprint.
 
-MarcelloDB saves plain C# objects, including child objects, lists and collections. 
-Not having to map your objects to the relational model can save you hundreds of lines of code. 
+MarcelloDB saves plain C# objects, including child objects, lists and collections.
+Not having to map your objects to the relational model can save you hundreds of lines of code.
 
 MarcelloDB is a pure C# implementation, so there is no need to package other binaries.
 
@@ -25,12 +25,12 @@ MarcelloDB is a Portable Class Library, but you need to create and inject a Stre
 This is because there isn't a platform independent way to interact with the FileSystem.
 
 For iOS and Android you need to use the FileStorageStreamProvider included in the MarcelloDB.netfx assembly.
-Currently there is no implementation for Windows 8 and Windows Phone. 
-Feel free to contribute... 
+Currently there is no implementation for Windows 8 and Windows Phone.
+Feel free to contribute...
 
 Creating the session
 ```cs
-//Create a steam provider for the specific platform
+//Create a stream provider for the specific platform
 var fileStreamProvider =  new FileStorageStreamProvider("path/to/storage_folder");
 
 //Create a Marcello session, this can be done in PCL code
@@ -42,8 +42,8 @@ Persisting objects
 //Create your objects however you please
 var myObject = new WhateverObject(){ Name = "Value" };
 
-//get the corresponding collection
-var collection = session.Collection<WhateverObject>();
+//get the corresponding collection in a specific file
+var collection = session["data_file"].Collection<WhateverObject>();
 
 //and persist the object
 collection.Persist(myObject);
@@ -52,7 +52,7 @@ collection.Persist(myObject);
 Find and enumerate your objects
 ```cs
 //get the corresponding collection
-var collection = session.Collection<WhateverObject>();
+var collection = session["data_file"].Collection<WhateverObject>();
 
 //and enumerate
 foreach(var obj in collection.All)
@@ -102,18 +102,18 @@ Transactions
 Marcello supports transactions spanning multiple operations over multiple collections
 ```cs
 session.Transaction(() => {
-    marcello.Collection<Article>().Persist(article);
-    marcello.Collection<Clients>().Persist(client);
-    marcello.Collection<Project>().Destroy(project);
+    session["articles.dat"].Collection<Article>().Persist(article);
+    session["project_management.dat"].Collection<Clients>().Persist(client);
+    session["project_management.dat"].Collection<Project>().Destroy(project);
 });
 ```
 
 Transactions roll back when an exception occurs within the block.
 ```cs
 session.Transaction(() => {
-    marcello.Collection<Article>().Persist(article);
-    marcello.Collection<Clients>().Persist(client);
-    marcello.Collection<Project>().Destroy(project);
+    session["articles.dat"].Collection<Article>().Persist(article);
+    session["project_management.dat"].Collection<Clients>().Persist(client);
+    session["project_management.dat"].Collection<Project>().Destroy(project);
     throw new Exception("Nothing happened");
 });
 ```
@@ -152,7 +152,7 @@ Roadmap
 - Indexed Properties of nested objects
 
 1.0.0
-- 
+-
 - Stable file format, to be supported in all future 1.x versions
 
 

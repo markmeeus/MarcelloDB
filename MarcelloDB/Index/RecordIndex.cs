@@ -13,7 +13,7 @@ namespace MarcelloDB.Index
 
         IBTreeDataProvider<object, Int64> DataProvider { get; set; }
 
-        internal const string ID_INDEX_NAME = "__ID_INDEX__";
+        internal const string ID_INDEX_PREFIX = "__ID_INDEX__";
         internal const string EMPTY_RECORDS_BY_SIZE = "__EMPTY_RECORDS_BY_SIZE__";
 
         internal RecordIndex(IBTree<object, Int64> btree,
@@ -64,6 +64,11 @@ namespace MarcelloDB.Index
             FlushProvider();
         }
 
+
+        internal static string GetIDIndexName<T>()
+        {
+            return ID_INDEX_PREFIX + typeof(T).Name;
+        }
         internal static RecordIndex Create(
             IRecordManager recordManager, 
             string indexName, 

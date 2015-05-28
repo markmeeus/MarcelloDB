@@ -15,6 +15,7 @@ namespace MarcelloDB.Test
     public class MarcelloIntegrationTest
     {
         Session _session;
+        CollectionFile _collectionFile;
         Collection<Article> _articles;
         InMemoryStreamProvider _provider;
 
@@ -23,9 +24,16 @@ namespace MarcelloDB.Test
         {
             _provider = new InMemoryStreamProvider();
             _session = new Session(_provider);
-            _articles = _session.Collection<Article>();
+            _collectionFile = _session["articles"];
+            _articles = _collectionFile.Collection<Article>();
         }
             
+        [Test]
+        public void Indexer_Returns_CollectionFile()
+        {
+            Assert.NotNull(_collectionFile, "CollectionFile should not be null");
+        }
+
         [Test]
         public void Collection_Returns_A_Collection()
         {
@@ -34,9 +42,15 @@ namespace MarcelloDB.Test
         }
 
         [Test]
-        public void Collections_Are_Reused_Per_Session()
+        public void Collections_Are_Reused_Per_File()
         {
-            Assert.AreSame(_session.Collection<Article>(), _session.Collection<Article>());
+            Assert.AreSame(_session["articles"].Collection<Article>(), _session["articles"].Collection<Article>());
+        }
+
+        [Test]
+        public void Collections_Are_Not_Reused_Over_Different_Files()
+        {
+            Assert.AreNotSame(_session["articles"].Collection<Article>(), _session["articles_copy"].Collection<Article>());
         }
 
         [Test]
@@ -331,7 +345,7 @@ namespace MarcelloDB.Test
             {
                 var session = new Session(fileStreamProvider);
 
-                var articles = session.Collection<Article>();
+                var articles = session["articles"].Collection<Article>();
 
                 var toiletPaper = Article.ToiletPaper;
                 var spinalTapDvd = Article.SpinalTapDvd;
@@ -355,7 +369,7 @@ namespace MarcelloDB.Test
             using (fileStreamProvider)
             {
                 var session = new Session(fileStreamProvider);
-                var articles = session.Collection<Article>();
+                var articles = session["articles"].Collection<Article>();
 
                 for (int i = 1; i < 1000; i++)
                 {
@@ -372,11 +386,35 @@ namespace MarcelloDB.Test
         }
 
         [Test]
+        public void Can_Use_Multiple_Collections()
+        {
+            var locations = _collectionFile.Collection<Location>();
+            _articles.Persist(Article.SpinalTapDvd);
+            locations.Persist(Location.Harrods);
+            _articles.Persist(Article.BarbieDoll);
+            locations.Persist(Location.MandS);
+
+            Assert.AreEqual(Article.SpinalTapDvd.Name, _articles.All.First().Name);
+            Assert.AreEqual(Article.BarbieDoll.Name, _articles.All.Last().Name);
+
+            Assert.AreEqual(Location.Harrods.Name, locations.All.First().Name);
+            Assert.AreEqual(Location.MandS.Name, locations.All.Last().Name);
+
+            _articles.Destroy(Article.SpinalTapDvd);
+            locations.Destroy(Location.Harrods);
+
+            Assert.AreEqual(1, _articles.All.Count());
+            Assert.AreEqual(1, locations.All.Count());
+            Assert.AreEqual(Article.BarbieDoll.Name, _articles.All.Last().Name);
+            Assert.AreEqual(Location.MandS.Name, locations.All.Last().Name);
+        }
+
+        [Test]
         public void Throw_IDMissingException_When_Object_Has_No_ID_Property()
         {
             Assert.Throws(typeof(IDMissingException), () =>
                 {
-                    _session.Collection<object>().Persist(new {Name = "Object Without ID"});
+                    _session["articles"].Collection<object>().Persist(new {Name = "Object Without ID"});
                 });
         }
             

@@ -22,24 +22,17 @@ namespace MarcelloDB.Collections
 
         IAllocationStrategy AllocationStrategy { get; set;}
 
-        StorageEngine StorageEngine {get;set;}
-
         RecordManager RecordManager { get; set; }        		
 
         internal Collection (Session session, 
             IObjectSerializer<T> serializer,
             IAllocationStrategy allocationStrategy,
-            StorageEngine storageEngine)
+            RecordManager recordManager)
         {
             Session = session;
             AllocationStrategy = allocationStrategy; 
             Serializer = serializer;
-            StorageEngine = storageEngine;
-
-            RecordManager = new RecordManager(
-                new DoubleSizeAllocationStrategy(),
-                StorageEngine
-            );                        
+            RecordManager = recordManager;
         }
 
         public IEnumerable<T> All
@@ -90,7 +83,7 @@ namespace MarcelloDB.Collections
         Record GetRecordForObjectID(object objectID)
         {                
             var index = RecordIndex.Create(this.RecordManager, 
-                RecordIndex.ID_INDEX_NAME);
+                RecordIndex.GetIDIndexName<T>());
             var address = index.Search(objectID);
             if (address > 0)
             {
@@ -113,7 +106,7 @@ namespace MarcelloDB.Collections
             }
                 
             var index = RecordIndex.Create(
-                this.RecordManager, RecordIndex.ID_INDEX_NAME);
+                this.RecordManager, RecordIndex.GetIDIndexName<T>());
             index.Register(objectID, record.Header.Address);
         }
 
@@ -138,7 +131,7 @@ namespace MarcelloDB.Collections
             if (record != null)
             {
                 var index = RecordIndex.Create(
-                    this.RecordManager, RecordIndex.ID_INDEX_NAME);
+                    this.RecordManager, RecordIndex.GetIDIndexName<T>());
                 index.UnRegister(objectID);
 
                 this.RecordManager.Recycle(record.Header.Address);

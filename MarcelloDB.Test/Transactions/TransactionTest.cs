@@ -11,12 +11,14 @@ namespace MarcelloDB.Test.Transactions
     {
         Session _session;
         Collection<Article> _articles;
+        Collection<Location> _locations;
 
         [SetUp]
         public void Setup()
         {
             _session = new Session(new InMemoryStreamProvider());
-            _articles = _session.Collection<Article>();
+            _articles = _session["articles"].Collection<Article>();
+            _locations = _session["locations"].Collection<Location>();
         }
 
         [Test]
@@ -24,9 +26,11 @@ namespace MarcelloDB.Test.Transactions
         {
             _session.Transaction(() => {
                 _articles.Persist(Article.BarbieDoll);
+                _locations.Persist(Location.Harrods);
             });
 
             Assert.AreEqual(Article.BarbieDoll.ID, _articles.All.First().ID);
+            Assert.AreEqual(Location.Harrods.ID, _locations.All.First().ID);
         }
 
         [Test]
@@ -34,6 +38,8 @@ namespace MarcelloDB.Test.Transactions
             _session.Transaction(() => {
                 _articles.Persist(Article.BarbieDoll);
                 Assert.AreEqual(Article.BarbieDoll.ID, _articles.All.First().ID);
+                _locations.Persist(Location.Harrods);
+                Assert.AreEqual(Location.Harrods.ID, _locations.All.First().ID);
             });                
         }
 
@@ -42,13 +48,18 @@ namespace MarcelloDB.Test.Transactions
         {
             var barbieDoll = Article.BarbieDoll;
             _articles.Persist(Article.BarbieDoll);
+            var harrods = Location.Harrods;
+            _locations.Persist(harrods);
 
             _session.Transaction(() => {
-                barbieDoll.Name = "UPDATED";
-                _articles.Persist(Article.BarbieDoll);
+                barbieDoll.Name += "UPDATED";
+                harrods.Name += "UPDATED";
+                _articles.Persist(barbieDoll);
+                _locations.Persist(harrods);
             });
 
-            Assert.AreEqual(Article.BarbieDoll.Name, _articles.All.First().Name);
+            Assert.AreEqual(barbieDoll.Name, _articles.All.First().Name);
+            Assert.AreEqual(harrods.Name, _locations.All.First().Name);
         }
 
         [Test]
@@ -56,11 +67,16 @@ namespace MarcelloDB.Test.Transactions
         {
             var barbieDoll = Article.BarbieDoll;
             _articles.Persist(Article.BarbieDoll);
+            var harrods = Location.Harrods;
+            _locations.Persist(harrods);
 
             _session.Transaction(() => {
                 barbieDoll.Name = "UPDATED";
-                _articles.Persist(Article.BarbieDoll);
-                Assert.AreEqual(Article.BarbieDoll.Name, _articles.All.First().Name);
+                harrods.Name += "UPDATED";
+                _articles.Persist(barbieDoll);
+                Assert.AreEqual(barbieDoll.Name, _articles.All.First().Name);
+                _locations.Persist(harrods);
+                Assert.AreEqual(harrods.Name, _locations.All.First().Name);
             });                
         }
 
@@ -69,12 +85,16 @@ namespace MarcelloDB.Test.Transactions
         {
             var barbieDoll = Article.BarbieDoll;
             _articles.Persist(Article.BarbieDoll);
+            var harrods = Location.Harrods;
+            _locations.Persist(harrods);
 
             _session.Transaction(() => {
-                _articles.Destroy(Article.BarbieDoll);
+                _articles.Destroy(barbieDoll);
+                _locations.Destroy(harrods);
             });
 
             Assert.AreEqual(0, _articles.All.Count());
+            Assert.AreEqual(0, _locations.All.Count());
         }
 
         [Test]
@@ -82,10 +102,14 @@ namespace MarcelloDB.Test.Transactions
         {
             var barbieDoll = Article.BarbieDoll;
             _articles.Persist(Article.BarbieDoll);
+            var harrods = Location.Harrods;
+            _locations.Persist(harrods);
 
             _session.Transaction(() => {
-                _articles.Destroy(Article.BarbieDoll);
+                _articles.Destroy(barbieDoll);
                 Assert.AreEqual(0, _articles.All.Count());
+                _locations.Destroy(harrods);
+                Assert.AreEqual(0, _locations.All.Count());
             });
         }
 
@@ -95,11 +119,13 @@ namespace MarcelloDB.Test.Transactions
             try{
                 _session.Transaction (() => {
                     _articles.Persist(Article.BarbieDoll);
+                    _locations.Persist(Location.Harrods);
                     throw new Exception ("Rollback");
                 });
             }catch(Exception){
             }
             Assert.AreEqual(0, _articles.All.Count());
+            Assert.AreEqual(0, _locations.All.Count());
         }
 
         [Test]
@@ -107,16 +133,21 @@ namespace MarcelloDB.Test.Transactions
         {
             var article = Article.BarbieDoll;
             _articles.Persist(article);
+            var harrods = Location.Harrods;
+            _locations.Persist(harrods);
 
             try{
                 _session.Transaction (() => {
-                    article.Name = "UPDATED";
+                    article.Name += "UPDATED";
                     _articles.Persist(article);
+                    harrods.Name += "UPDATED";
+                    _locations.Persist(harrods);
                     throw new Exception ("Rollback");
                 });
             }catch(Exception){}
 
             Assert.AreEqual(Article.BarbieDoll.Name, _articles.All.First().Name, "Update should be rolled back");
+            Assert.AreEqual(Location.Harrods.Name, _locations.All.First().Name, "Update should be rolled back");
         }
 
         [Test]
@@ -125,15 +156,19 @@ namespace MarcelloDB.Test.Transactions
             var article = Article.BarbieDoll;
             _articles.Persist(article);
 
+            var harrods = Location.Harrods;
+            _locations.Persist(harrods);
+
             try{
                 _session.Transaction (() => {
                     _articles.Destroy(article);
+                    _locations.Destroy(harrods);
                     throw new Exception ("Rollback");
                 });
             }catch(Exception){}
 
-            Assert.AreEqual(Article.BarbieDoll.Name, _articles.All.First().Name, "Destroy should be rolled back");
-           
+            Assert.AreEqual(Article.BarbieDoll.Name, _articles.All.First().Name, "Destroy should be rolled back");           
+            Assert.AreEqual(Location.Harrods.Name, _locations.All.First().Name, "Destroy should be rolled back");
         }
     }
 }
