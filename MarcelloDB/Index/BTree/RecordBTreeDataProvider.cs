@@ -12,19 +12,19 @@ namespace MarcelloDB.Index.BTree
         Dictionary<Int64, Node<object, Int64>> NodeCache { get; set; }
         Node<object, Int64> RootNode { get; set; }
         string RootRecordName { get; set; }
-        bool CanReuseRecycledRecords { get; set; }
+        bool ReuseRecycledRecords { get; set; }
 
         internal RecordBTreeDataProvider(
             IRecordManager recordManager, 
             IObjectSerializer<Node<object, Int64>> serializer,
             string rootRecordName,
-            bool canReuseRecycledRecords)
+            bool reuseRecycledRecords)
         {
             this.RecordManager = recordManager;
             this.Serializer = serializer;
             this.NodeCache = new Dictionary<long, Node<object, long>>();
             this.RootRecordName = rootRecordName;
-            this.CanReuseRecycledRecords = canReuseRecycledRecords;
+            this.ReuseRecycledRecords = reuseRecycledRecords;
         }
 
         #region IBTreeDataProvider implementation
@@ -38,7 +38,10 @@ namespace MarcelloDB.Index.BTree
             else
             {
                 this.RootNode = CreateNode(degree);
-                this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, this.RootNode.Address, CanReuseRecycledRecords);
+                this.RecordManager.RegisterNamedRecordAddress(
+                    this.RootRecordName, 
+                    this.RootNode.Address, 
+                    this.ReuseRecycledRecords);
             }
             return this.RootNode;
         }            
@@ -69,7 +72,8 @@ namespace MarcelloDB.Index.BTree
             var node = new Node<object, long>(degree);
             var data = Serializer.Serialize(node);
 
-            var record = RecordManager.AppendRecord(data, reuseRecycledRecord:this.CanReuseRecycledRecords);
+            var record = RecordManager.AppendRecord(data, 
+                reuseRecycledRecord:this.ReuseRecycledRecords);
 
             node.Address = record.Header.Address;
 
@@ -94,7 +98,7 @@ namespace MarcelloDB.Index.BTree
 
                 foreach (var nodeAddress in NodeCache.Keys)
                 {                    
-                    if (!nodesToKeep.ContainsKey(nodeAddress) && CanReuseRecycledRecords)
+                    if (!nodesToKeep.ContainsKey(nodeAddress) && this.ReuseRecycledRecords)
                     {
                         RecordManager.Recycle(nodeAddress);
                     }
@@ -108,7 +112,7 @@ namespace MarcelloDB.Index.BTree
                     var record = RecordManager.GetRecord(node.Address);
                     var updateData = Serializer.Serialize(node);
                     var oldAddress = record.Header.Address;
-                    var updatedRecord = RecordManager.UpdateRecord(record, updateData, CanReuseRecycledRecords);
+                    var updatedRecord = RecordManager.UpdateRecord(record, updateData, this.ReuseRecycledRecords);
                     if (oldAddress != updatedRecord.Header.Address)
                     {
                         node.Address = updatedRecord.Header.Address;
@@ -130,7 +134,8 @@ namespace MarcelloDB.Index.BTree
                     var node = updateNodes[oldAddress];
                     NodeCache[node.Address] = node;
                 }
-                this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, this.RootNode.Address, CanReuseRecycledRecords);
+                this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName, 
+                    this.RootNode.Address, this.ReuseRecycledRecords);
             }                
         }            
         #endregion

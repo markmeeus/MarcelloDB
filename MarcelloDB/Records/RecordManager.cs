@@ -11,7 +11,7 @@ namespace MarcelloDB.Records
     {
         Record GetRecord(Int64 address);
 
-        Record AppendRecord(byte[] data, bool hasObject = false, bool reuseRecycledRecord = true);
+        Record AppendRecord(byte[] data, bool reuseRecycledRecord = true);
 
         Record UpdateRecord(Record record, byte[] data, bool reuseRecycledRecord = true);
 
@@ -62,7 +62,7 @@ namespace MarcelloDB.Records
             return record;
         }
 
-        public Record AppendRecord(byte[] data, bool hasObject = false, bool reuseRecycledRecord = true)
+        public Record AppendRecord(byte[] data, bool reuseRecycledRecord = true)
         {
             Record record = null;
             if (reuseRecycledRecord)
@@ -79,7 +79,6 @@ namespace MarcelloDB.Records
                     {
                         record.Header.AllocatedDataSize = AllocationStrategy.CalculateSize(data.Length);
                         record.Data = data;
-                        record.Header.HasObject = hasObject;
 
                         WriteRecordAtHead(record);                                       
                     });
@@ -99,7 +98,7 @@ namespace MarcelloDB.Records
                 {
                     if (data.Length > record.Header.AllocatedDataSize )
                     {
-                        result = AppendRecord(data, record.Header.HasObject, reuseRecycledRecord); 
+                        result = AppendRecord(data, reuseRecycledRecord); 
                         if(reuseRecycledRecord){
                             Recycle(record.Header.Address);
                         }

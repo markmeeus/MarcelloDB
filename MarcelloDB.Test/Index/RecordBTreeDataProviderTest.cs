@@ -26,13 +26,12 @@ namespace MarcelloDB.Test.Index
             return Records[address];
         }
 
-        public Record AppendRecord(byte[] data, bool hasObject = false, bool reuseRecycledRecord = true)
+        public Record AppendRecord(byte[] data, bool reuseRecycledRecord = true)
         {
             var record = new Record();
             record.Header.AllocatedDataSize = data.Length;
             record.Data = data;
             record.Header.Address = Records.Count + 1;
-            record.Header.HasObject = hasObject;
             Records.Add(record.Header.Address, record);
 
             return record;
