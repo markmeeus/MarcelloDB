@@ -19,64 +19,86 @@ Marcello is still in an experimental phase.
 
 Be carefull. Backwards compatibility with existing data will not be guaranteed untill v1.
 
-Usage
+Sessions
 =
-MarcelloDB is a Portable Class Library, but you need to create and inject a StreamProvider on the specific platform.
-This is because there isn't a platform independent way to interact with the FileSystem.
+Using MarcelloDB starts with the creation of a session.
+The session makes sure you have access to the actual files where the data is stored. 
 
-For iOS and Android you need to use the FileStorageStreamProvider included in the MarcelloDB.netfx assembly.
-Currently there is no implementation for Windows 8 and Windows Phone.
-Feel free to contribute...
+But before you can create the session, you'll have to create a FileStorageStreamProvider.
+MarcelloDB is a portable class library, but the actual interaction with file system is not the same on every platform.
 
-Creating the session
+So first: create the FileStorageStreamProvider in your platform specific project.
+
 ```cs
 //Create a stream provider for the specific platform
 var fileStreamProvider =  new FileStorageStreamProvider("path/to/storage_folder");
+```
 
+Then create the actual session. 
+(You can do this in a portable class library)
+```cs
 //Create a Marcello session, this can be done in PCL code
 var session = new MarcelloDB.Session(fileStreamProvider);
 ```
 
-Persisting objects
+CollectionFiles and Collections
+=
+MarcelloDB organizes it's data in collections and collection files. A session can handle multiple collection files and a collection file can handle multiple collections.
+
+(This way you can have all read-only data in a single file which you can download straight from your servers. A second file could be used to write data.)
+
+You access collection files like this:
 ```cs
-//Create your objects however you please
-var myObject = new WhateverObject(){ Name = "Value" };
-
-//get the corresponding collection in a specific file
-var collection = session["data_file"].Collection<WhateverObject>();
-
-//and persist the object
-collection.Persist(myObject);
+var productsFile = session["products"];
 ```
 
-Find and enumerate your objects
+With this file, you can start accessing collections.
+Collections are a bit like tables, the main difference is that they contain entire objects, not just rows with colums.
+A collection can only handle objects of a specific type (including subclasses);
+
+To start working with a collection, simple access it like this:
 ```cs
-//get the corresponding collection
-var collection = session["data_file"].Collection<WhateverObject>();
+var bookCollection = productsFile.Collection<Book>(); //Deals with instances of Book or subclasses of Book
+var dvdCollection = productsFile.Collection<Dvd>();
+```
 
-//and enumerate
-foreach(var obj in collection.All)
-{
-  DoSomethingWithTheObject(obj);
-}
+Persisting objects
+=
+This is where it gets really easy. Once you have this collection, just throw an instance at it:
+```cs
+var book = new Book(){ ID = "123",  Title = "The Girl With The Dragon Tattoo" };
+bookCollection.Persist(book);
+```
 
-//or find by the ID property
-var o = collection.Find(1234);
+Enumerating a collection
+=
+A collection exposes an All property which implements IEnumerable.
+You can use it iterate all objects in the collection, and ofcourse use Linq on it.
+(Note that when using Linq, it is still enumerating the collection)
+```cs
+foreach(var book in bookCollection.All){}
+```
+
+Finding objects
+=
+You can find a specific object by it's ID (more on ID's below) like this:
+```cs
+var book = bookCollection.find(123)
 ```
 
 Deleting objects
-
+=
+Delete your objects like this:
 ```cs
-//Delete the object
-collection.Destroy(myObject);
+bookCollection.Destroy(book);
 ```
 
 How Objects are Identified
 =
-Marcello needs a single property which uniquely identifies an object.
+MarcelloDB needs a single property which uniquely identifies an object.
 This value is needed to distinguish an insert from an update, and identify objects to delete.
 
-You can use any of the following naming conventions, or add the Marcello.Attributes.ID attribute.
+You can use any of the following naming conventions, or add the MarcelloDB.Attributes.ID attribute.
 ```cs
 class Article
 {
@@ -92,14 +114,19 @@ class Article
 
   public string Articleid { get; set; }
 
-  [Marcello.Attributes.ID]
+  [MarcelloDB.Attributes.ID]
   public string CustomIDProp { get; set; }
 }
 ```
 
 Transactions
 =
-Marcello supports transactions spanning multiple operations over multiple collections
+To avoid data corruption, all changes are written to a write ahead yournal and processed at once.
+MarcelloDB does this for calls to Persist and Destroy, but you can extend the transaction to make is span multiple data mutations.
+
+A transaction runs on a session and can include changes in multiple collections from multiple collection files.
+
+(Warning: only collections obtained from that session will be included in the transaction. If you start to mix multiple sessions, you're on your own.)
 ```cs
 session.Transaction(() => {
     session["articles.dat"].Collection<Article>().Persist(article);
@@ -137,7 +164,6 @@ Roadmap
 - ~~Polymorphic collections with Polymorphic children~~
 - ~~Windows 8.1 Support~~
 - ~~Windows Phone 8.1 Support~~
-- Windows 10 Support
 
 0.2.0
 -
