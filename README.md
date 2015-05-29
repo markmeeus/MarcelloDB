@@ -73,7 +73,7 @@ bookCollection.Persist(book);
 Enumerating a collection
 =
 A collection exposes an All property which implements IEnumerable.
-You can use it iterate all objects in the collection, and ofcourse use Linq on it.
+You can use it iterate all objects in the collection, and of course use Linq on it.
 (Note that when using Linq, it is still enumerating the collection)
 ```cs
 foreach(var book in bookCollection.All){}
@@ -82,9 +82,11 @@ foreach(var book in bookCollection.All){}
 Finding objects
 =
 You can find a specific object by it's ID (more on ID's below) like this:
+Find uses an index to search for the object. Depending on the size of your collection, a Find will be way faster than iterating the collection to find it.
 ```cs
-var book = bookCollection.find(123)
+var book = bookCollection.Find(123)
 ```
+(In later versions, you'll be able to search for other properties using the index mechanism as well)
 
 Deleting objects
 =
@@ -121,8 +123,8 @@ class Article
 
 Transactions
 =
-To avoid data corruption, all changes are written to a write ahead yournal and processed at once.
-MarcelloDB does this for calls to Persist and Destroy, but you can extend the transaction to make is span multiple data mutations.
+To avoid data corruption, all changes are written to a write ahead journal and applied as a single atomic and durable action.  
+MarcelloDB does this for calls to Persist and Destroy, but you can extend the transaction to make it span multiple data mutations.
 
 A transaction runs on a session and can include changes in multiple collections from multiple collection files.
 
@@ -145,6 +147,9 @@ session.Transaction(() => {
 });
 ```
 
+Encryption
+=
+Data is stored in an unencrypted format. An encryption engine is available as a pro extension. Please contact mark.meeus at gmail.com for more info. 
 
 Indexes
 =
