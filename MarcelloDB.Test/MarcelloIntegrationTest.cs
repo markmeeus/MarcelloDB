@@ -17,13 +17,15 @@ namespace MarcelloDB.Test
         Session _session;
         CollectionFile _collectionFile;
         Collection<Article> _articles;
+        TestPlatform _platform;
         InMemoryStreamProvider _provider;
 
         [SetUp]
         public void Setup()
         {
-            _provider = new InMemoryStreamProvider();
-            _session = new Session(_provider);
+            _platform = new TestPlatform();
+            _provider = (InMemoryStreamProvider)_platform.GetStorageStreamProvider("/");
+            _session = new Session(_platform, "/");
             _collectionFile = _session["articles"];
             _articles = _collectionFile.Collection<Article>();
         }
@@ -338,12 +340,13 @@ namespace MarcelloDB.Test
 
         [Test]
         public void Save_To_File_Stream()
-        {
+        {            
             EnsureFolder("data");
-            var fileStreamProvider =  new FileStorageStreamProvider("./data/");
-            using(fileStreamProvider)
+            var platform = new MarcelloDB.netfx.Platform();
+
+            using(platform)
             {
-                var session = new Session(fileStreamProvider);
+                var session = new Session(platform, "./data/");
 
                 var articles = session["articles"].Collection<Article>();
 
@@ -365,10 +368,10 @@ namespace MarcelloDB.Test
         public void Add1000()
         {
             EnsureFolder("data");
-            var fileStreamProvider =  new FileStorageStreamProvider("./data/");
-            using (fileStreamProvider)
+            var platform =  new MarcelloDB.netfx.Platform();
+            using (platform)
             {
-                var session = new Session(fileStreamProvider);
+                var session = new Session(platform, "./data/");
                 var articles = session["articles"].Collection<Article>();
 
                 for (int i = 1; i < 1000; i++)

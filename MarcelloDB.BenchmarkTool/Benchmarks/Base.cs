@@ -27,9 +27,10 @@ namespace MarcelloDB.BenchmarkTool.Benchmarks
             Stopwatch w;
 
             EnsureFolder("data");
-            using(var fileStreamProvider =  new FileStorageStreamProvider("./data/"))
+            var platform = new MarcelloDB.netfx.Platform();
+            using(platform)
             {
-                this.Session = new Session(fileStreamProvider);
+                this.Session = new Session(platform, "./data/");
                 this.Collection = this.Session["persons"].Collection<Person>();
                 OnSetup();
 

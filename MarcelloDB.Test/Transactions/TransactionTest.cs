@@ -16,7 +16,7 @@ namespace MarcelloDB.Test.Transactions
         [SetUp]
         public void Setup()
         {
-            _session = new Session(new InMemoryStreamProvider());
+            _session = new Session(new TestPlatform(), "/");
             _articles = _session["articles"].Collection<Article>();
             _locations = _session["locations"].Collection<Location>();
         }

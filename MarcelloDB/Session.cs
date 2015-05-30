@@ -6,6 +6,7 @@ using MarcelloDB.Transactions;
 using MarcelloDB.Storage;
 using System.Collections.Generic;
 using System.Threading;
+using MarcelloDB.Platform;
 
 namespace MarcelloDB
 {
@@ -21,10 +22,10 @@ namespace MarcelloDB
 
         internal object SyncLock { get; set; }
             
-        public Session (IStorageStreamProvider streamProvider)
+        public Session (IPlatform platform, string rootPath)
         {
             this.CollectionFiles = new Dictionary<string, CollectionFile>();
-            this.StreamProvider = streamProvider;
+            this.StreamProvider = platform.GetStorageStreamProvider(rootPath);
             this.Journal = new Journal(this);
             SyncLock = new object();
         }
