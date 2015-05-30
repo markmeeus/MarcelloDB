@@ -32,7 +32,7 @@ namespace MarcelloDB.Records
         internal byte[] AsBytes()
         {
             var bytes = new byte[ByteSize];
-            var writer = new BufferWriter(bytes, BitConverter.IsLittleEndian);
+            var writer = new BufferWriter(bytes);
             writer.WriteInt32(this.DataSize);
             writer.WriteInt32(this.AllocatedDataSize);
             return writer.GetTrimmedBuffer();
@@ -44,7 +44,7 @@ namespace MarcelloDB.Records
 
         internal static RecordHeader FromBytes(Int64 address, byte[] bytes)
         {   
-            var reader = new BufferReader(bytes, BitConverter.IsLittleEndian);
+            var reader = new BufferReader(bytes);
             var recordHeader = new RecordHeader();
             recordHeader.Address = address;
             recordHeader.DataSize = reader.ReadInt32();

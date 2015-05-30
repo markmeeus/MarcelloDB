@@ -10,26 +10,29 @@ namespace MarcelloDB.Serialization
 
         internal int Position { get; set; }
 
-        public BufferWriter(byte[] buffer, bool isLittleEndian)
+        internal BufferWriter(byte[] buffer)
         {
-            this.Buffer = buffer;
-            this.IsLittleEndian = isLittleEndian;
-            this.Position = 0;
+            Initialize(buffer, BitConverter.IsLittleEndian);
         }
 
-        public BufferWriter WriteInt32(Int32 value)
+        internal BufferWriter(byte[] buffer, bool isLittleEndian)
+        {
+            Initialize(buffer, isLittleEndian);
+        }
+
+        internal BufferWriter WriteInt32(Int32 value)
         {
             WriteBytes(LittleEndian(BitConverter.GetBytes(value)));
             return this;
         }
 
-        public BufferWriter WriteInt64(Int64 value)
+        internal BufferWriter WriteInt64(Int64 value)
         {
             WriteBytes(LittleEndian(BitConverter.GetBytes(value)));
             return this;
         }
             
-        public byte[] GetTrimmedBuffer()
+        internal byte[] GetTrimmedBuffer()
         {
             if (this.Buffer.Length == this.Position)
             {
@@ -43,6 +46,13 @@ namespace MarcelloDB.Serialization
             }
         }
             
+        void Initialize(byte[] buffer, bool isLittleEndian)
+        {
+            this.Buffer = buffer;
+            this.Position = 0;
+            this.IsLittleEndian = isLittleEndian;
+        }
+
         byte[] LittleEndian(byte[] bytes)
         {
             if (!this.IsLittleEndian)

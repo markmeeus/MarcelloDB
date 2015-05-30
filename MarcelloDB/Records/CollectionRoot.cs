@@ -58,7 +58,7 @@ namespace MarcelloDB.Records
         internal byte[] AsBytes()
         {
             var bytes = new byte[MaxByteSize];
-            var bufferWriter = new BufferWriter(bytes, BitConverter.IsLittleEndian);
+            var bufferWriter = new BufferWriter(bytes);
 
             bufferWriter.WriteInt32(this.FormatVersion);
             bufferWriter.WriteInt64(this.NamedRecordIndexAddress);
@@ -69,7 +69,7 @@ namespace MarcelloDB.Records
 
         internal static CollectionRoot FromBytes(byte[] bytes)
         {        
-            var bufferReader = new BufferReader(bytes, BitConverter.IsLittleEndian);
+            var bufferReader = new BufferReader(bytes);
             var formatVersion = bufferReader.ReadInt32();
             var namedRecordIndexAddress = bufferReader.ReadInt64();
             var head = bufferReader.ReadInt64();
