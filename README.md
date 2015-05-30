@@ -23,22 +23,31 @@ Sessions
 =
 Using MarcelloDB starts with the creation of a session.
 The session makes sure you have access to the actual files where the data is stored. 
+A session handles a set of data files in a specific folder.
 
-But before you can create the session, you'll have to create a FileStorageStreamProvider.
-MarcelloDB is a portable class library, but the actual interaction with file system is not the same on every platform.
+But before you can create the session, you'll have to create a platform specific object.
 
-So first: create the FileStorageStreamProvider in your platform specific project.
+MarcelloDB is a portable class library, but there are some platform specific things that simply cannot be written in portable code. Currently, MarcelloDB relies on a platform specific implementation for interacting with the file system. 
+
+All of this is hidden from you as it is wrapped inside the Platform object.
+
+There is currently a Platform implementation for .net (MarcelloDB.netfx.Platform in MarcelloDB.netfx.Platform.dll).
+This one can be used on Xamarin for iOS and Xamarin.
+
+Implementation for WintRT is beeing developed.
+
+So first: create the Platform object in your platform specific project.
 
 ```cs
-//Create a stream provider for the specific platform
-var fileStreamProvider =  new FileStorageStreamProvider("path/to/storage_folder");
+//Create a platform on the specific platform
+var platform =  new Platform();
 ```
 
 Then create the actual session. 
 (You can do this in a portable class library)
 ```cs
 //Create a Marcello session, this can be done in PCL code
-var session = new MarcelloDB.Session(fileStreamProvider);
+var session = new MarcelloDB.Session(platform, "/path/to/data/folder/");
 ```
 
 CollectionFiles and Collections
@@ -132,7 +141,7 @@ A transaction runs on a session and can include changes in multiple collections 
 ```cs
 session.Transaction(() => {
     session["articles.dat"].Collection<Article>().Persist(article);
-    session["project_management.dat"].Collection<Clients>().Persist(client);
+    session["project_management.dat"].Collection<Client>().Persist(client);
     session["project_management.dat"].Collection<Project>().Destroy(project);
 });
 ```
@@ -141,7 +150,7 @@ Transactions roll back when an exception occurs within the block.
 ```cs
 session.Transaction(() => {
     session["articles.dat"].Collection<Article>().Persist(article);
-    session["project_management.dat"].Collection<Clients>().Persist(client);
+    session["project_management.dat"].Collection<Client>().Persist(client);
     session["project_management.dat"].Collection<Project>().Destroy(project);
     throw new Exception("Nothing happened");
 });
