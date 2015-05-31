@@ -25,16 +25,13 @@ Using MarcelloDB starts with the creation of a session.
 The session makes sure you have access to the actual files where the data is stored. 
 A session handles a set of data files in a specific folder.
 
-But before you can create the session, you'll have to create a platform specific object.
-
 MarcelloDB is a portable class library, but there are some platform specific things that simply cannot be written in portable code. Currently, MarcelloDB relies on a platform specific implementation for interacting with the file system. 
 
 All of this is hidden from you as it is wrapped inside the Platform object.
 
-There is currently a Platform implementation for .net (MarcelloDB.netfx.Platform in MarcelloDB.netfx.Platform.dll).
-This one can be used on Xamarin for iOS and Xamarin.
+The Platform implementation for mono/.net which can be used for Xamarin iOS and Android can be found in the Marcello.netfx assembly.
 
-Implementation for WintRT is beeing developed.
+The implementation for Windows Phone 8.1 and Windows 8.1 (not tested in Windows 10 yet) can be found in the Marcello.uwp assembly.
 
 So first: create the Platform object in your platform specific project.
 
