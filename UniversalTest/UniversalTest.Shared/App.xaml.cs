@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MarcelloDB.uwp;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -38,8 +39,8 @@ namespace UniversalTest
             this.InitializeComponent();
             this.Suspending += this.OnSuspending;
 
-            var dataFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
-            var session = new MarcelloDB.Session(new MarcelloDB.FileStorageStreamProvider(dataFolder));
+            var dataFolderPath = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+            var session = new MarcelloDB.Session(new Platform(), dataFolderPath);
             var collection = session["articles"].Collection<Article>();
             
             for(int i =0; i < 1000; i++)

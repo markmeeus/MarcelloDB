@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using Windows.Storage;
 
-namespace MarcelloDB
+namespace MarcelloDB.uwp
 {
     public class FileStorageStreamProvider : IStorageStreamProvider
     {
