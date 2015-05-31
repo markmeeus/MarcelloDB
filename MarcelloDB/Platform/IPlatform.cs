@@ -3,9 +3,9 @@ using MarcelloDB.Storage;
 
 namespace MarcelloDB.Platform
 {
-    public interface IPlatform : IDisposable
+    public interface IPlatform
     {
-        IStorageStreamProvider GetStorageStreamProvider(string rootPath);
+        IStorageStreamProvider CreateStorageStreamProvider(string rootPath);
     }
 }
 

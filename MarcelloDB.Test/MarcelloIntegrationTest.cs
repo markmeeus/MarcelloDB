@@ -24,7 +24,7 @@ namespace MarcelloDB.Test
         public void Setup()
         {
             _platform = new TestPlatform();
-            _provider = (InMemoryStreamProvider)_platform.GetStorageStreamProvider("/");
+            _provider = (InMemoryStreamProvider)_platform.CreateStorageStreamProvider("/");
             _session = new Session(_platform, "/");
             _collectionFile = _session["articles"];
             _articles = _collectionFile.Collection<Article>();
@@ -344,10 +344,8 @@ namespace MarcelloDB.Test
             EnsureFolder("data");
             var platform = new MarcelloDB.netfx.Platform();
 
-            using(platform)
+            using(var session = new Session(platform, "./data/"))
             {
-                var session = new Session(platform, "./data/");
-
                 var articles = session["articles"].Collection<Article>();
 
                 var toiletPaper = Article.ToiletPaper;
@@ -369,9 +367,8 @@ namespace MarcelloDB.Test
         {
             EnsureFolder("data");
             var platform =  new MarcelloDB.netfx.Platform();
-            using (platform)
+            using (var session = new Session(platform, "./data/"))
             {
-                var session = new Session(platform, "./data/");
                 var articles = session["articles"].Collection<Article>();
 
                 for (int i = 1; i < 1000; i++)

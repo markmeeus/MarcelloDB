@@ -5,17 +5,9 @@ namespace MarcelloDB.Test
 {
     public class TestPlatform : IPlatform
     {
-        #region IPlatform implementation
-
-        public MarcelloDB.Storage.IStorageStreamProvider GetStorageStreamProvider(string rootPath)
+        public MarcelloDB.Storage.IStorageStreamProvider CreateStorageStreamProvider(string rootPath)
         {
             return new InMemoryStreamProvider();
-        }
-
-        #endregion
-
-        public void Dispose()
-        {            
         }
     }
 }

@@ -11,28 +11,9 @@ namespace MarcelloDB.uwp
 {
     public class Platform : IPlatform
     {
-        Dictionary<string, FileStorageStreamProvider> _fileStorageStreamProviders;
-
-        public Platform()
+        public Storage.IStorageStreamProvider CreateStorageStreamProvider(string rootPath)
         {
-            _fileStorageStreamProviders = new Dictionary<string, FileStorageStreamProvider>();
-        }
-        public Storage.IStorageStreamProvider GetStorageStreamProvider(string rootPath)
-        {
-            if (!_fileStorageStreamProviders.ContainsKey(rootPath))
-            {
-                StorageFolder folder = GetFolderForPath(rootPath);
-                _fileStorageStreamProviders[rootPath] = new FileStorageStreamProvider(folder);
-            }
-            return _fileStorageStreamProviders[rootPath];
-        }
-
-        public void Dispose()
-        {
-            foreach (var streamProvider in _fileStorageStreamProviders.Values)
-            {
-                streamProvider.Dispose();
-            }
+            return new FileStorageStreamProvider(GetFolderForPath(rootPath));        
         }
 
         StorageFolder GetFolderForPath(string path)

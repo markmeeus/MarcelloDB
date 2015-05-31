@@ -2,13 +2,12 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 using MarcelloDB.BenchmarkTool.DataClasses;
+using System.IO;
 
 namespace MarcelloDB.BenchmarkTool.Benchmarks
 {
     public class Base
     {
-    
-        protected Session Session{get;set;}
         protected MarcelloDB.Collections.Collection<Person> Collection {get; set;}
 
         public Base()
@@ -25,13 +24,12 @@ namespace MarcelloDB.BenchmarkTool.Benchmarks
         public TimeSpan Run()
         {           
             Stopwatch w;
-
-            EnsureFolder("data");
+            var dataPath = Path.Combine(Environment.CurrentDirectory, "data");
+            EnsureFolder(dataPath);
             var platform = new MarcelloDB.netfx.Platform();
-            using(platform)
+            using (var session = new Session(platform, dataPath))
             {
-                this.Session = new Session(platform, "./data/");
-                this.Collection = this.Session["persons"].Collection<Person>();
+                this.Collection = session["persons"].Collection<Person>();
                 OnSetup();
 
                 w = Stopwatch.StartNew();
@@ -44,10 +42,17 @@ namespace MarcelloDB.BenchmarkTool.Benchmarks
 
         private void EnsureFolder(string path)
         {
-            if(System.IO.Directory.Exists("data")){
-                System.IO.Directory.Delete("data", true);
+            if(System.IO.Directory.Exists(path))
+            {
+                foreach( var file in System.IO.Directory.EnumerateFiles(path))
+                {
+                    System.IO.File.Delete(file);
+                }
             }
-            System.IO.Directory.CreateDirectory("data");
+            else
+            {
+                System.IO.Directory.CreateDirectory(path);
+            }
         }
     }
 }

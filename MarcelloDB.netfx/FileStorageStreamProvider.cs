@@ -38,6 +38,11 @@ namespace MarcelloDB
             }
 
         }
+
+        ~FileStorageStreamProvider()
+        {
+            Dispose();
+        }
     }
 
     internal class FileStorageStream : IStorageStream, IDisposable

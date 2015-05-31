@@ -10,7 +10,7 @@ using MarcelloDB.Platform;
 
 namespace MarcelloDB
 {
-    public class Session
+    public class Session : IDisposable
     {
         Dictionary<string, CollectionFile> CollectionFiles { get; set; }
 
@@ -25,7 +25,7 @@ namespace MarcelloDB
         public Session (IPlatform platform, string rootPath)
         {
             this.CollectionFiles = new Dictionary<string, CollectionFile>();
-            this.StreamProvider = platform.GetStorageStreamProvider(rootPath);
+            this.StreamProvider = platform.CreateStorageStreamProvider(rootPath);
             this.Journal = new Journal(this);
             SyncLock = new object();
         }
@@ -58,11 +58,16 @@ namespace MarcelloDB
                     }
                 }
             }
-        }            
+        }
+
+        public void Dispose()
+        {
+            this.StreamProvider.Dispose();
+        }
 
         void EnsureTransaction()
         {
-            if (CurrentTransaction == null) 
+            if (CurrentTransaction == null)
             {
                 CurrentTransaction = new Transaction(this);
             }

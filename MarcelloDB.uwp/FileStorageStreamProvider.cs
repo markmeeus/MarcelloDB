@@ -39,6 +39,11 @@ namespace MarcelloDB.uwp
             }
 
         }
+
+        ~FileStorageStreamProvider()
+        {
+            Dispose();
+        }
     }
 
     internal class FileStorageStream : IStorageStream, IDisposable
