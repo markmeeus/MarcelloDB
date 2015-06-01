@@ -6,6 +6,12 @@ using MarcelloDB.Buffers;
 
 namespace MarcelloDB.Serialization
 {
+    public class ObjectWrapper<T>
+    {
+        public T O { get; set; }
+    }
+
+
     public class BsonSerializer<T> : IObjectSerializer<T>
     {
         public BsonSerializer ()
@@ -13,14 +19,17 @@ namespace MarcelloDB.Serialization
         }
 
         #region IObjectSerializer implementation
-        public byte[] Serialize (T obj)
+
+        public byte[] Serialize(T o)
         {
-            var serializer = new JsonSerializer();
+            var serializer = GetSerializer();
+
             var memoryStream = new MemoryStream();
             var bsonWriter = new BsonWriter(memoryStream);
 
-            serializer.Serialize(bsonWriter, obj);
+            serializer.Serialize(bsonWriter, new ObjectWrapper<T>{O=o});
             bsonWriter.Flush();
+
             return memoryStream.ToArray();
         }
 
@@ -30,9 +39,14 @@ namespace MarcelloDB.Serialization
             var memoryStream = new MemoryStream(buffer.Bytes, 0, buffer.Length);
             var reader = new BsonReader(memoryStream);
 
-            return serializer.Deserialize<T>(reader);
+            return serializer.Deserialize<ObjectWrapper<T>>(reader).O;
         }
         #endregion
+
+        JsonSerializer GetSerializer()
+        {
+            return new JsonSerializer { TypeNameHandling = TypeNameHandling.Auto };
+        }
     }
 }
 

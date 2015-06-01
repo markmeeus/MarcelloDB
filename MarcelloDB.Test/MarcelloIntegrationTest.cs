@@ -7,24 +7,36 @@ using MarcelloDB;
 using MarcelloDB.Test.Classes;
 using MarcelloDB.Collections;
 using MarcelloDB.Storage;
+using MarcelloDB.Exceptions;
+using MarcelloDB.Transactions;
 
 namespace MarcelloDB.Test
 {
     [TestFixture]
     public class MarcelloIntegrationTest
     {
-        Marcello _marcello;
+        Session _session;
+        CollectionFile _collectionFile;
         Collection<Article> _articles;
+        TestPlatform _platform;
         InMemoryStreamProvider _provider;
 
         [SetUp]
         public void Setup()
         {
-            _provider = new InMemoryStreamProvider();
-            _marcello = new Marcello(_provider);
-            _articles = _marcello.Collection<Article>();
+            _platform = new TestPlatform();
+            _provider = (InMemoryStreamProvider)_platform.CreateStorageStreamProvider("/");
+            _session = new Session(_platform, "/");
+            _collectionFile = _session["articles"];
+            _articles = _collectionFile.Collection<Article>();
         }
             
+        [Test]
+        public void Indexer_Returns_CollectionFile()
+        {
+            Assert.NotNull(_collectionFile, "CollectionFile should not be null");
+        }
+
         [Test]
         public void Collection_Returns_A_Collection()
         {
@@ -33,9 +45,15 @@ namespace MarcelloDB.Test
         }
 
         [Test]
-        public void Collections_Are_Reused_Per_Session()
+        public void Collections_Are_Reused_Per_File()
         {
-            Assert.AreSame(_marcello.Collection<Article>(), _marcello.Collection<Article>());
+            Assert.AreSame(_session["articles"].Collection<Article>(), _session["articles"].Collection<Article>());
+        }
+
+        [Test]
+        public void Collections_Are_Not_Reused_Over_Different_Files()
+        {
+            Assert.AreNotSame(_session["articles"].Collection<Article>(), _session["articles_copy"].Collection<Article>());
         }
 
         [Test]
@@ -273,13 +291,13 @@ namespace MarcelloDB.Test
             _articles.Persist(barbieDoll);
             _articles.Persist(spinalTapDvd);
 
-            _marcello.Journal.Apply (); //make sure the journal is applied to the backing stream
+            _session.Journal.Apply (); //make sure the journal is applied to the backing stream
 
             var storageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
             _articles.Destroy(barbieDoll);
             _articles.Persist(barbieDoll);
 
-            _marcello.Journal.Apply (); //make sure the journal is applied to the backing stream
+            _session.Journal.Apply (); //make sure the journal is applied to the backing stream
 
             var newStorageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
             Assert.AreEqual(storageSize, newStorageSize);
@@ -296,7 +314,7 @@ namespace MarcelloDB.Test
             _articles.Persist(spinalTapDvd);
             _articles.Persist(toiletPaper);
 
-            _marcello.Journal.Apply (); //make sure the journal is applied to the backing stream
+            _session.Journal.Apply (); //make sure the journal is applied to the backing stream
 
             var storageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
             _articles.Destroy(barbieDoll);
@@ -304,53 +322,120 @@ namespace MarcelloDB.Test
 
             _articles.Persist(barbieDoll);
             _articles.Persist(toiletPaper);
-            _marcello.Journal.Apply (); //make sure the journal is applied to the backing stream
+            _session.Journal.Apply (); //make sure the journal is applied to the backing stream
 
             var newStorageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
             Assert.AreEqual(storageSize, newStorageSize);
         }
-            
+
+        [Test]
+        public void Can_Handle_Subclasses()
+        {            
+            var bread = Food.Bread;
+            _articles.Persist(bread);
+            var breadFromDB = (Food) _articles.All.First();
+            Assert.NotNull(breadFromDB);
+            Assert.AreEqual(bread.Expires.ToString(), breadFromDB.Expires.ToString());
+            Assert.AreEqual(bread.Name, breadFromDB.Name );
+        }
+
         [Test]
         public void Save_To_File_Stream()
-        {
+        {            
             EnsureFolder("data");
-            var fileStreamProvider =  new FileStorageStreamProvider("./data/");
-            var marcello = new Marcello(fileStreamProvider);
+            var platform = new MarcelloDB.netfx.Platform();
 
-            var articles = marcello.Collection<Article>();
+            using(var session = new Session(platform, "./data/"))
+            {
+                var articles = session["articles"].Collection<Article>();
 
-            var toiletPaper = Article.ToiletPaper;
-            var spinalTapDvd = Article.SpinalTapDvd;
-            var barbieDoll = Article.BarbieDoll;
+                var toiletPaper = Article.ToiletPaper;
+                var spinalTapDvd = Article.SpinalTapDvd;
+                var barbieDoll = Article.BarbieDoll;
 
-            articles.Persist(toiletPaper);
-            articles.Persist(spinalTapDvd);
-            articles.Persist(barbieDoll);
+                articles.Persist(toiletPaper);
+                articles.Persist(spinalTapDvd);
+                articles.Persist(barbieDoll);
 
-            var articleNames = articles.All.Select(a => a.Name).ToList();
+                var articleNames = articles.All.Select(a => a.Name).ToList();
 
-            Assert.AreEqual(new List<string>{toiletPaper.Name, spinalTapDvd.Name, barbieDoll.Name }, articleNames);
-        }  
+                Assert.AreEqual(new List<string> { toiletPaper.Name, spinalTapDvd.Name, barbieDoll.Name }, articleNames);
+            }            
+        }
 
         [Test]
         public void Add1000()
         {
             EnsureFolder("data");
-            var fileStreamProvider =  new FileStorageStreamProvider("./data/");
-            var marcello = new Marcello(fileStreamProvider);
-            var articles = marcello.Collection<Article>();
-
-            for (int i = 1; i < 1000; i++)
+            var platform =  new MarcelloDB.netfx.Platform();
+            using (var session = new Session(platform, "./data/"))
             {
-                var a = new Article{ID = i, Name = "Article " + i.ToString()};
-                articles.Persist(a);
-            }
+                var articles = session["articles"].Collection<Article>();
 
-            for (int i = 1; i < 1000; i++)
+                for (int i = 1; i < 1000; i++)
+                {
+                    var a = new Article { ID = i, Name = "Article " + i.ToString() };
+                    articles.Persist(a);
+                }
+
+                for (int i = 1; i < 1000; i++)
+                {
+                    var a = articles.Find(i);
+                    Assert.AreEqual(i, a.ID, "Article " + i.ToString() + " should have been found.");
+                }
+            }                  
+        }
+
+        [Test]
+        public void Can_Use_Multiple_Collections()
+        {
+            var locations = _collectionFile.Collection<Location>();
+            _articles.Persist(Article.SpinalTapDvd);
+            locations.Persist(Location.Harrods);
+            _articles.Persist(Article.BarbieDoll);
+            locations.Persist(Location.MandS);
+
+            Assert.AreEqual(Article.SpinalTapDvd.Name, _articles.All.First().Name);
+            Assert.AreEqual(Article.BarbieDoll.Name, _articles.All.Last().Name);
+
+            Assert.AreEqual(Location.Harrods.Name, locations.All.First().Name);
+            Assert.AreEqual(Location.MandS.Name, locations.All.Last().Name);
+
+            _articles.Destroy(Article.SpinalTapDvd);
+            locations.Destroy(Location.Harrods);
+
+            Assert.AreEqual(1, _articles.All.Count());
+            Assert.AreEqual(1, locations.All.Count());
+            Assert.AreEqual(Article.BarbieDoll.Name, _articles.All.Last().Name);
+            Assert.AreEqual(Location.MandS.Name, locations.All.Last().Name);
+        }
+
+        [Test]
+        public void Throw_IDMissingException_When_Object_Has_No_ID_Property()
+        {
+            Assert.Throws(typeof(IDMissingException), () =>
+                {
+                    _session["articles"].Collection<object>().Persist(new {Name = "Object Without ID"});
+                });
+        }
+
+        [Test]
+        public void Thows_ArgumentException_When_Trying_To_Open_Journal_File()
+        {
+            Assert.Throws(typeof(ArgumentException), () =>
             {
-                var a = articles.Find(i);
-                Assert.AreEqual(i, a.ID, "Article " + i.ToString() + " should have been found.");
-            }      
+                _session[Journal.JOURNAL_COLLECTION_NAME].Collection<object>();
+            });
+            
+            Assert.Throws(typeof(ArgumentException), () =>
+            {
+                _session[Journal.JOURNAL_COLLECTION_NAME.ToLower()].Collection<object>();
+            });
+
+            Assert.Throws(typeof(ArgumentException), () =>
+            {
+                _session[Journal.JOURNAL_COLLECTION_NAME.ToUpper()].Collection<object>();
+            });
         }
             
         private void EnsureFolder(string path)

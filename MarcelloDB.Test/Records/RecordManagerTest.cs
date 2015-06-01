@@ -4,19 +4,27 @@ using MarcelloDB.Records;
 using MarcelloDB.Test.Classes;
 using MarcelloDB.Storage;
 using MarcelloDB.AllocationStrategies;
+using MarcelloDB.Platform;
 
 namespace MarcelloDB.Test.Records
 {
     [TestFixture]
     public class RecordManagerTest
     {
+        IPlatform _platform;
         InMemoryStreamProvider _streamProvider;
+<<<<<<< HEAD
         RecordManager<Article> _recordManager;
         Marcello _session;
+=======
+        RecordManager _recordManager;
+        Session _session;
+>>>>>>> origin/master
 
         [SetUp]
         public void Initialize()
         {
+<<<<<<< HEAD
             _streamProvider = new InMemoryStreamProvider();
             _session = new Marcello(_streamProvider);
 
@@ -25,6 +33,15 @@ namespace MarcelloDB.Test.Records
                 new DoubleSizeAllocationStrategy(),
                 new StorageEngine<Article>(_session));
             _recordManager.DisableJournal();
+=======
+            _platform = new TestPlatform();
+            _streamProvider = (InMemoryStreamProvider)_platform.CreateStorageStreamProvider("/");
+            _session = new Session(_platform, "/");
+
+            _recordManager = new RecordManager(
+                new DoubleSizeAllocationStrategy(),
+                new StorageEngine(_session, "article"));            
+>>>>>>> origin/master
         }
 
         [Test]

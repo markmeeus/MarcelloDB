@@ -1,48 +1,58 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Collections.Generic;
+using MarcelloDB.BenchmarkTool.DataClasses;
+using System.IO;
 
 namespace MarcelloDB.BenchmarkTool.Benchmarks
 {
     public class Base
     {
-        public class TestClass
-        {
-            public int ID { get; set; }
-            public string Name { get; set;}
-        }
-
-        protected Marcello Session{get;set;}
-        protected MarcelloDB.Collections.Collection<TestClass> Collection {get; set;}
+        protected MarcelloDB.Collections.Collection<Person> Collection {get; set;}
 
         public Base()
         {
 
         }
 
+        protected virtual void OnSetup(){}
+
         protected virtual void OnRun()
         {
-        }
+        }            
 
-        public TimeSpan Run(){
-            var w = Stopwatch.StartNew();
+        public TimeSpan Run()
+        {           
+            Stopwatch w;
+            var dataPath = Path.Combine(Environment.CurrentDirectory, "data");
+            EnsureFolder(dataPath);
+            var platform = new MarcelloDB.netfx.Platform();
+            using (var session = new Session(platform, dataPath))
+            {
+                this.Collection = session["persons"].Collection<Person>();
+                OnSetup();
 
-            EnsureFolder("data");
-            var fileStreamProvider =  new FileStorageStreamProvider("./data/");
-            this.Session = new Marcello(fileStreamProvider);
-            this.Collection = this.Session.Collection<TestClass>();
-
-            OnRun();
-
+                w = Stopwatch.StartNew();
+                OnRun();  
+            }
+            
             w.Stop();
-            return new TimeSpan(w.ElapsedTicks);
+            return w.Elapsed;
         }
 
         private void EnsureFolder(string path)
         {
-            if(System.IO.Directory.Exists("data")){
-                System.IO.Directory.Delete("data", true);
+            if(System.IO.Directory.Exists(path))
+            {
+                foreach( var file in System.IO.Directory.EnumerateFiles(path))
+                {
+                    System.IO.File.Delete(file);
+                }
             }
-            System.IO.Directory.CreateDirectory("data");
+            else
+            {
+                System.IO.Directory.CreateDirectory(path);
+            }
         }
     }
 }

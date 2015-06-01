@@ -32,7 +32,7 @@ namespace MarcelloDB.Transactions.__
     {
         public long Stamp { get; set; }
 
-        public string ObjectTypeName { get; set; }
+        public string CollectionName { get; set; }
 
         public Int64 Address { get; set; }
 

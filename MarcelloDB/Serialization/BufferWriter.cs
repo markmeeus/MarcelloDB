@@ -5,7 +5,7 @@ namespace MarcelloDB.Serialization
 {
     internal class BufferWriter
     {
-        internal Marcello Session { get; set; }
+        Session Session { get; set; }
 
         internal ByteBuffer Buffer { get; set; }
 
@@ -13,21 +13,23 @@ namespace MarcelloDB.Serialization
 
         internal int Position { get; set; }
 
-        public BufferWriter(Marcello session, ByteBuffer buffer, bool isLittleEndian)
+        internal BufferWriter(Session session, ByteBuffer buffer)
         {
-            this.Session = session;
-            this.Buffer = buffer;
-            this.IsLittleEndian = isLittleEndian;
-            this.Position = 0;
+            Initialize(session, buffer, BitConverter.IsLittleEndian);
         }
 
-        public BufferWriter WriteInt32(Int32 value)
+        internal BufferWriter(Session session, ByteBuffer buffer, bool isLittleEndian)
+        {
+            Initialize(session, buffer, isLittleEndian);
+        }
+
+        internal BufferWriter WriteInt32(Int32 value)
         {
             WriteBytes(LittleEndian(BitConverter.GetBytes(value)));
             return this;
         }
 
-        public BufferWriter WriteInt64(Int64 value)
+        internal BufferWriter WriteInt64(Int64 value)
         {
             WriteBytes(LittleEndian(BitConverter.GetBytes(value)));
             return this;
@@ -47,6 +49,14 @@ namespace MarcelloDB.Serialization
             }
         }
             
+        void Initialize(Session session, ByteBuffer buffer, bool isLittleEndian)
+        {
+            this.Session = session;
+            this.Buffer = buffer;
+            this.Position = 0;
+            this.IsLittleEndian = isLittleEndian;
+        }
+
         byte[] LittleEndian(byte[] bytes)
         {
             if (!this.IsLittleEndian)

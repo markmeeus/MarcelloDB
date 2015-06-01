@@ -8,6 +8,7 @@ using MarcelloDB.Records;
 using MarcelloDB.Storage;
 using MarcelloDB.Index;
 using MarcelloDB.Transactions.__;
+using MarcelloDB.Exceptions;
 
 namespace MarcelloDB.Collections
 {
@@ -15,31 +16,23 @@ namespace MarcelloDB.Collections
 
     public class Collection<T> : Collection
     {
-        Marcello Session { get; set; }
+        Session Session { get; set; }
 
         IObjectSerializer<T> Serializer { get; set; }
 
         IAllocationStrategy AllocationStrategy { get; set;}
 
-        StorageEngine<T> StorageEngine {get;set;}
+        RecordManager RecordManager { get; set; }        		
 
-        RecordManager<T> RecordManager { get; set; }        		
-
-        internal Collection (Marcello session, 
+        internal Collection (Session session, 
             IObjectSerializer<T> serializer,
             IAllocationStrategy allocationStrategy,
-            StorageEngine<T> storageEngine)
+            RecordManager recordManager)
         {
             Session = session;
             AllocationStrategy = allocationStrategy; 
             Serializer = serializer;
-            StorageEngine = storageEngine;
-
-            RecordManager = new RecordManager<T>(
-                this.Session,
-                new DoubleSizeAllocationStrategy(),
-                StorageEngine
-            );                        
+            RecordManager = recordManager;
         }
 
         public IEnumerable<T> All
@@ -76,21 +69,7 @@ namespace MarcelloDB.Collections
             Transacted(() => {
                 DestroyInternal(obj);
             });
-        }
-
-        internal void DestroyAll()
-        {
-            var toDestroy = All.ToList();
-            foreach(var o in toDestroy)
-            {
-                DestroyInternal(o);
-            }        
-        }
-
-        internal void DisableJournal()
-        {
-            this.RecordManager.DisableJournal();
-        }
+        }     
             
         void Transacted(Action action)
         {
@@ -106,7 +85,7 @@ namespace MarcelloDB.Collections
             var index = RecordIndex.Create(
                 this.Session,
                 this.RecordManager, 
-                RecordIndex.ID_INDEX_NAME);
+                RecordIndex.GetIDIndexName<T>());
 
             var address = index.Search(objectID);
             if (address > 0)
@@ -118,7 +97,8 @@ namespace MarcelloDB.Collections
             
         void PersistInternal(T obj)
         {
-            var objectID = new ObjectProxy(obj).ID;
+            var objectID = GetObjectIDOrThrow(obj);                
+
             //Try to load the record with object ID
             Record record = GetRecordForObjectID(objectID);
             if (record != null) {
@@ -131,7 +111,7 @@ namespace MarcelloDB.Collections
             var index = RecordIndex.Create(
                 this.Session,
                 this.RecordManager, 
-                RecordIndex.ID_INDEX_NAME);
+                RecordIndex.GetIDIndexName<T>());
 
             index.Register(objectID, record.Header.Address);
         }
@@ -152,7 +132,7 @@ namespace MarcelloDB.Collections
 
         void DestroyInternal (T obj)
         {
-            var objectID = new ObjectProxy(obj).ID;
+            var objectID = GetObjectIDOrThrow(obj);
             //Try to load the record with object ID
             Record record = GetRecordForObjectID(objectID);
             if (record != null)
@@ -160,12 +140,21 @@ namespace MarcelloDB.Collections
                 var index = RecordIndex.Create(
                     this.Session,
                     this.RecordManager, 
-                    RecordIndex.ID_INDEX_NAME);
+                    RecordIndex.GetIDIndexName<T>());
 
                 index.UnRegister(objectID);
 
                 this.RecordManager.Recycle(record.Header.Address);
             }
+        }
+
+        object GetObjectIDOrThrow(T obj){
+            var objectID = new ObjectProxy(obj).ID;
+            if(objectID == null){
+                throw new IDMissingException(obj.GetType().Name + 
+                    " either has no ID property, or the property returned null");                        
+            }
+            return objectID;
         }
     }
 }

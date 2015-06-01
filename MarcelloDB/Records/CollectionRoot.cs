@@ -8,44 +8,76 @@ namespace MarcelloDB.Records
 	{		
         const int CURRENT_FORMAT_VERSION = 1;
 
-        internal Int32 FormatVersion { get; set;}
-        internal Int64 NamedRecordIndexAddress { get; set;}
-        internal Int64 Head { get; set;}
+        #region properties
+        Int32 _formatVersion;
+        internal Int32 FormatVersion 
+        { 
+            get {return _formatVersion;} 
+            set
+            {
+                _formatVersion = value;
+                _dirty = true;
+            }
+        }
 
+        Int64 _namedRecordIndexAddress; 
+        internal Int64 NamedRecordIndexAddress {
+            get { return _namedRecordIndexAddress; } 
+            set {
+                _namedRecordIndexAddress = value;
+                _dirty = true;
+            }
+        }
+
+        Int64 _head;
+        internal Int64 Head {
+            get { return _head; } 
+            set {
+                _head = value;
+                _dirty = true;
+            }
+        }
+        #endregion
         internal CollectionRoot()
 		{
-            this.Head = ByteSize;
+            this.Head = MaxByteSize;
             this.FormatVersion = CURRENT_FORMAT_VERSION;
+            this.Clean();
 		}
 
-        internal static int ByteSize
+        #region dirty state
+        bool _dirty = false;
+        internal bool Dirty { get {return _dirty;} }
+        internal void Clean(){ _dirty = false; }
+        #endregion
+
+        internal static int MaxByteSize
         {
             get { return 1024; } //some padding for future use 
         }
 
-        internal ByteBuffer AsBuffer(Marcello session)
+        internal ByteBuffer AsBuffer(Session session)
         {
-            var buffer = session.ByteBufferManager.Create(ByteSize);
+            var buffer = session.ByteBufferManager.Create(MaxByteSize);
             var bufferWriter = new BufferWriter(session, buffer, BitConverter.IsLittleEndian);
 
             bufferWriter.WriteInt32(this.FormatVersion);
             bufferWriter.WriteInt64(this.NamedRecordIndexAddress);
             bufferWriter.WriteInt64(Head);
 
-            //do no use the trimmed buffer as we want some padding for future use
-            return bufferWriter.Buffer; 
+            return bufferWriter.GetTrimmedBuffer(); 
         }
 
-        internal static CollectionRoot FromBuffer(Marcello session, ByteBuffer buffer)
+        internal static CollectionRoot FromBuffer(Session session, ByteBuffer buffer)
         {        
-            var bufferReader = new BufferReader(session, buffer, BitConverter.IsLittleEndian);
+            var bufferReader = new BufferReader(buffer);
             var formatVersion = bufferReader.ReadInt32();
             var namedRecordIndexAddress = bufferReader.ReadInt64();
             var head = bufferReader.ReadInt64();
 
             if (head == 0)
             {
-                head = ByteSize; //when reading from empty data
+                head = MaxByteSize; //when reading from empty data
             }
 
             return new CollectionRoot(){                    

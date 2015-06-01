@@ -58,6 +58,8 @@ namespace MarcelloDB.Test
         }
 
         #endregion
+
+        public void Dispose() {}
     }
 }
 

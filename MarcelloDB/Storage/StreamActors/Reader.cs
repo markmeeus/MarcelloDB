@@ -2,9 +2,10 @@
 
 namespace MarcelloDB.Storage.StreamActors
 {
-    internal class Reader<T> : StreamActor<T>
+    internal class Reader : StreamActor
     {
-        internal Reader(Marcello session) : base(session)
+        internal Reader(Session session, string collectionName) 
+            :base(session, collectionName)
         {
         }
             

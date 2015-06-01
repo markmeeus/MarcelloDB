@@ -26,5 +26,15 @@ namespace MarcelloDB.Test.Classes
             get{ return new Article(){ ID=3, Name = "Barbie Doll" }; }  
         }
     }
+
+    public class Food : Article
+    {
+        public DateTime Expires {get;set;}
+
+        public static Food Bread
+        {
+            get{ return new Food{ ID = 4, Expires = DateTime.Now.AddDays(2), Name = "Bread" };}
+        }
+    }
 }
 

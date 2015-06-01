@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MarcelloDB.Index
+namespace MarcelloDB.Index.BTree
 {
     public interface IBTreeDataProvider<TK, TP>
     {
@@ -13,7 +13,7 @@ namespace MarcelloDB.Index
 
         void Flush();
 
-        void SetRootNodeAddress(Int64 rootNodeAddress);
+        void SetRootNode(Node<TK, TP> node);
     }
 }
 

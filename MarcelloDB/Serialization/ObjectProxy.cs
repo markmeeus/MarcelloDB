@@ -10,25 +10,18 @@ namespace MarcelloDB.Serialization
     {
         object Obj { get; set; }
 
-        static Dictionary<Type, TypeInfo> _typeInfoCache = new Dictionary<Type, TypeInfo>();
+        static Dictionary<Type, PropertyInfo> _idPropertyInfoCache = new Dictionary<Type, PropertyInfo>();
 
-        TypeInfo _typeInfo;
-        TypeInfo TypeInfo
+        IEnumerable<PropertyInfo> _properties;
+        IEnumerable<PropertyInfo> Properties
         {
-            get{
-                if(_typeInfo == null)
+            get
+            { 
+                if (_properties == null)
                 {
-                    var type = Obj.GetType();
-                    if (_typeInfoCache.ContainsKey(type))
-                    {
-                        _typeInfo = _typeInfoCache[type];
-                    }
-                    else
-                    {
-                        _typeInfoCache[type] = _typeInfo = Obj.GetType().GetTypeInfo();
-                    }
+                    _properties = Obj.GetType().GetRuntimeProperties();
                 }
-                return _typeInfo;
+                return _properties;
             }
         }
 
@@ -42,16 +35,26 @@ namespace MarcelloDB.Serialization
             get
             {
                 object id = null;
-
-                foreach (var propertyName in IDProperties) 
+                var type = Obj.GetType();
+                if(!_idPropertyInfoCache.ContainsKey(type))
                 {
-                    if(GetPropertyValue(propertyName, ref id))
+                    foreach (var propertyName in IDProperties) 
                     {
-                        return id;
-                    }
+                        if(HasProperty(propertyName))
+                        {                            
+                            _idPropertyInfoCache[type] = GetPropertyInfo(propertyName);
+                        }
+                    }    
                 }
-                    
-                GetAttributedId (ref id);                   
+                if (_idPropertyInfoCache.ContainsKey(type))
+                {                    
+                    id = ReadProperty(_idPropertyInfoCache[type]);
+                }
+                else
+                {
+                    GetAttributedId (ref id);                   
+                }
+
                 return id;
             }
         }
@@ -83,13 +86,9 @@ namespace MarcelloDB.Serialization
         }
 
         bool GetPropertyValue(string propertyName, ref object id)
-        {
-            if(HasProperty(propertyName))
-            {
-                id = ReadProperty(propertyName);
-                return true;
-            }                       
-            return false;
+        {            
+            id = ReadProperty(propertyName);
+            return true;        
         }
 
         #region reflection
@@ -101,13 +100,13 @@ namespace MarcelloDB.Serialization
 
         PropertyInfo GetPropertyInfo(string propertyName)
         {
-            return TypeInfo.DeclaredProperties
+            return this.Properties
                 .Where(p => p.Name == propertyName).FirstOrDefault();
         }
 
         PropertyInfo GetPropertyWithAttribute(Type attributeType)
         {
-            return TypeInfo.DeclaredProperties
+            return this.Properties
                 .Where(p => p.GetCustomAttribute(attributeType) != null)
                 .FirstOrDefault();
         }

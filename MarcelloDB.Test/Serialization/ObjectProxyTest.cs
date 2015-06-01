@@ -20,6 +20,13 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void Returns_ID_From_Subclass()
+        {
+            Assert.AreEqual(1, new ObjectProxy(new SubclassWithID(){ID = 1}).ID, "Should return null when no ID");
+        }
+
+
+        [Test]
         public void Returns_Id()
         {
             Assert.AreEqual(1, new ObjectProxy(new ClassWithId(){Id = 1}).ID, "Should return null when no ID");

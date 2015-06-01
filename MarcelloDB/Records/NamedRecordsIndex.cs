@@ -14,7 +14,7 @@ namespace MarcelloDB.Records.__
             this.NamedRecordIndexes = new Dictionary<string, long>();
         }
 
-        public ByteBuffer ToBuffer(Marcello session)
+        public ByteBuffer ToBuffer(Session session)
         {
             var bytes = GetSerializer().Serialize(this);
             return session.ByteBufferManager.FromBytes(bytes);

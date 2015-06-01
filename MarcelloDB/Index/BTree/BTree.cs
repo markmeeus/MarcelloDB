@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 
-namespace MarcelloDB.Index
+namespace MarcelloDB.Index.BTree
 {
     public interface IBTree<TK, TP>
     {

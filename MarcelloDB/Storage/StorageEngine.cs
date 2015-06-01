@@ -6,63 +6,37 @@ using MarcelloDB.Buffers;
 
 namespace MarcelloDB.Storage
 {
-    public abstract class StorageEngine
+    internal class StorageEngine
     {
-        internal abstract byte[] Read (long address, int length);
+        internal Session Session { get; set; }
 
-        internal abstract void Write (long address, ByteBuffer buffer);
+        string CollectionName { get; set; }
 
-        protected bool JournalEnabled { get; set; }
-
-        internal void DisableJournal()
+        public StorageEngine(Session session,string collectionName)
         {
-            JournalEnabled = false;
-        }       
-    }
-
-    public class StorageEngine<T> : StorageEngine
-    {
-        internal Marcello Session { get; set; }
-
-        public StorageEngine(Marcello session)
-        {
-            Session = session;
-            JournalEnabled = typeof(T) != typeof(TransactionJournal);
+            this.Session = session;
+            this.CollectionName = collectionName;
         }
 
-        internal override byte[] Read(long address, int length)
+        internal byte[] Read(long address, int length)
         {
             return Reader().Read(address, length);
         }
                    
-        internal override void Write(long address, ByteBuffer buffer)
+        internal void Write(long address, ByteBuffer buffer)
         {
             Writer().Write(address, buffer);
         }                   
             
         #region reader/writer factories
-        Writer<T> Writer()
-        {
-            if (JournalEnabled) 
-            {    
-                return new JournalledWriter<T>(this.Session);
-            }
-            else 
-            {
-                return new Writer<T>(this.Session);
-            }
+        Writer Writer()
+        {            
+            return new JournalledWriter(this.Session, this.CollectionName);
         }
 
-        Reader<T> Reader()
-        {
-            if (JournalEnabled) 
-            {    
-                return new JournalledReader<T>(this.Session);
-            }
-            else 
-            {
-                return new Reader<T>(this.Session);
-            }
+        Reader Reader()
+        {            
+            return new JournalledReader(this.Session, this.CollectionName);
         }
         #endregion 
     }

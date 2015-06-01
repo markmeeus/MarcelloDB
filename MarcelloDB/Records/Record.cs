@@ -38,7 +38,7 @@ namespace MarcelloDB.Records
             }
         }
 
-        internal ByteBuffer AsBuffer(Marcello session)
+        internal ByteBuffer AsBuffer(Session session)
         {
             var buffer = session.ByteBufferManager.Create(this.ByteSize);
             var headerBuffer = Header.AsBuffer(session);
@@ -49,9 +49,9 @@ namespace MarcelloDB.Records
             return buffer;
         }
 
-        internal static Record FromBuffer(Marcello session, Int64 address, ByteBuffer buffer)
+        internal static Record FromBuffer(Session session, Int64 address, ByteBuffer buffer)
         {
-            var header = RecordHeader.FromBuffer(session, address, buffer);
+            var header = RecordHeader.FromBuffer(address, buffer);
 
             var data = session.ByteBufferManager.Create(header.DataSize);
                      

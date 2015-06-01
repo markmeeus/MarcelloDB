@@ -1,4 +1,5 @@
 ﻿using System;
+using MarcelloDB.BenchmarkTool.DataClasses;
 
 namespace MarcelloDB.BenchmarkTool.Benchmarks
 {
@@ -16,8 +17,9 @@ namespace MarcelloDB.BenchmarkTool.Benchmarks
             var r = new Random();
             for (int i = 1; i < _objectCount; i++)
             {
-                var a = new TestClass{ID = r.Next(), Name = "Object " + i.ToString()};
-                this.Collection.Persist(a);
+                var person = Person.BuildRandom();
+                person.ID = r.Next();
+                this.Collection.Persist(person);
             }
         }
     }

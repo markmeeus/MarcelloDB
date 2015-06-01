@@ -5,23 +5,24 @@ namespace MarcelloDB.Serialization
 {
     public class BufferReader
     {
-        Marcello Session { get; set; }
-
         ByteBuffer Buffer { get; set; }
 
         int Position {get;set;}
 
         bool IsLittleEndian {get;set;}
 
-        public BufferReader(Marcello session, ByteBuffer buffer, bool isLittleEndian)
+
+        public BufferReader(ByteBuffer buffer)        
         {
-            this.Session = session;
-            this.Buffer = buffer;
-            this.Position = 0;
-            this.IsLittleEndian = isLittleEndian;
+            Initialize(buffer, BitConverter.IsLittleEndian);
         }
 
-        public Int32 ReadInt32()
+        internal BufferReader(ByteBuffer buffer, bool isLittleEndian)
+        {
+            Initialize(buffer, isLittleEndian);
+        }
+
+        internal Int32 ReadInt32()
         {
             var bytes = GetBytesInLittleEndianOrder(sizeof(Int32));
                 
@@ -30,7 +31,7 @@ namespace MarcelloDB.Serialization
             return value;
         }
 
-        public Int64 ReadInt64()
+        internal Int64 ReadInt64()
         {
             var bytes = GetBytesInLittleEndianOrder(sizeof(Int64));
 
@@ -38,6 +39,12 @@ namespace MarcelloDB.Serialization
             this.Position += sizeof(Int64);
             return value;
         }            
+
+        void Initialize(ByteBuffer buffer, bool isLittleEndian){
+            this.Buffer = buffer;
+            this.Position = 0;
+            this.IsLittleEndian = isLittleEndian;
+        }
 
         byte[] GetBytesInLittleEndianOrder(int size)
         {
@@ -51,4 +58,3 @@ namespace MarcelloDB.Serialization
         }
     }
 }
-

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using MarcelloDB.Index;
+using MarcelloDB.Index.BTree;
 
 namespace MarcelloDB.Test
 {

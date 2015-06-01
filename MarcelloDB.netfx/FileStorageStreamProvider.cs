@@ -21,7 +21,7 @@ namespace MarcelloDB
         #region IStorageStreamProvider implementation
         public IStorageStream GetStream (string streamName)
         {
-            if (!this.Streams.ContainsKey (streamName)) 
+            if (!this.Streams.ContainsKey(streamName)) 
             {
                 this.Streams.Add(
                     streamName,
@@ -30,9 +30,23 @@ namespace MarcelloDB
             return this.Streams[streamName];
         }
         #endregion
+
+        public void Dispose()
+        {
+            foreach(var stream in this.Streams.Values)
+            {
+                ((FileStorageStream)stream).Dispose();
+            }
+
+        }
+
+        ~FileStorageStreamProvider()
+        {
+            Dispose();
+        }
     }
 
-    internal class FileStorageStream : IStorageStream
+    internal class FileStorageStream : IStorageStream, IDisposable
     {
         FileStream _backingStream;
 
@@ -59,6 +73,12 @@ namespace MarcelloDB
             _backingStream.Write(buffer.Bytes, 0, buffer.Length);
         }
         #endregion
+
+        public void Dispose()
+        {
+            _backingStream.Close();
+            _backingStream.Dispose();
+        }
     }
 }
 

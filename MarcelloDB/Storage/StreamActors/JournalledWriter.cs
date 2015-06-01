@@ -3,15 +3,16 @@ using MarcelloDB.Buffers;
 
 namespace MarcelloDB.Storage.StreamActors
 {
-    internal class JournalledWriter<T> : Writer<T>
+    internal class JournalledWriter : Writer
     {
-        internal JournalledWriter(Marcello session) : base(session)
+        internal JournalledWriter(Session session, string collectionName) 
+            : base(session, collectionName)
         {
         }
 
         internal override void Write (long address, ByteBuffer buffer)
         {
-            Session.Journal.Write(typeof(T), address, buffer);
+            Session.Journal.Write(this.CollectionName, address, buffer);
         }
     }
 }

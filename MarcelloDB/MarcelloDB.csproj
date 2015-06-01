@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -8,8 +8,9 @@
     <OutputType>Library</OutputType>
     <RootNamespace>MarcelloDB</RootNamespace>
     <AssemblyName>MarcelloDB</AssemblyName>
-    <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
+    <TargetFrameworkProfile>Profile259</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,7 +42,7 @@
     <Compile Include="Serialization\ObjectProxy.cs" />
     <Compile Include="Storage\IStorageStream.cs" />
     <Compile Include="Storage\IStorageStreamProvider.cs" />
-    <Compile Include="Marcello.cs" />
+    <Compile Include="Session.cs" />
     <Compile Include="Serialization\BsonSerializer.cs" />
     <Compile Include="AllocationStrategies\IAllocationStrategy.cs" />
     <Compile Include="AllocationStrategies\DoubleSizeAllocationStrategy.cs" />
@@ -56,44 +57,35 @@
     <Compile Include="Storage\StreamActors\JournalledReader.cs" />
     <Compile Include="Storage\StreamActors\JournalledWriter.cs" />
     <Compile Include="Helpers\DataHelper.cs" />
-    <Compile Include="Records\ListEndPoints.cs" />
     <Compile Include="Serialization\BufferWriter.cs" />
     <Compile Include="Serialization\BufferReader.cs" />
-    <Compile Include="Index\BTree.cs" />
     <Compile Include="Index\Node.cs" />
     <Compile Include="Index\Entry.cs" />
-    <Compile Include="Index\IBtreeDataProvider.cs" />
-    <Compile Include="Index\RecordBTreeDataProvider.cs" />
     <Compile Include="Records\NamedRecordsIndex.cs" />
     <Compile Include="Index\ObjectComparer.cs" />
     <Compile Include="Serialization\JsonSerializer.cs" />
     <Compile Include="Records\CollectionRoot.cs" />
     <Compile Include="Index\RecordIndex.cs" />
-    <Compile Include="Index\BTreeWalker.cs" />
     <Compile Include="Transactions\ITransactor.cs" />
     <Compile Include="Buffers\ByteBuffer.cs" />
     <Compile Include="Buffers\ByteBufferManager.cs" />
+    <Compile Include="Index\BTree\BTree.cs" />
+    <Compile Include="Index\BTree\BTreeWalker.cs" />
+    <Compile Include="Index\BTree\IBtreeDataProvider.cs" />
+    <Compile Include="Index\BTree\RecordBTreeDataProvider.cs" />
+    <Compile Include="Exceptions\IDMissingException.cs" />
+    <Compile Include="Collections\CollectionFile.cs" />
+    <Compile Include="Platform\IPlatform.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Collections\" />
-    <Folder Include="Records\" />
-    <Folder Include="Serialization\" />
-    <Folder Include="Storage\" />
-    <Folder Include="AllocationStrategies\" />
-    <Folder Include="Attributes\" />
-    <Folder Include="Transactions\" />
-    <Folder Include="Storage\StreamActors\" />
-    <Folder Include="Helpers\" />
-    <Folder Include="Index\" />
-    <Folder Include="Buffers\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+  <ItemGroup />
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.6.0.5\lib\portable-net45+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\portable-net45+wp80+win8+wpa81+aspnetcore50\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
 </Project>

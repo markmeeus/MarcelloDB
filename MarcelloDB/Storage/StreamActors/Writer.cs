@@ -3,9 +3,10 @@ using MarcelloDB.Buffers;
 
 namespace MarcelloDB.Storage.StreamActors
 {
-    internal class Writer<T> : StreamActor<T>
+    internal class Writer : StreamActor
     {
-        internal Writer(Marcello session) : base(session)
+        internal Writer(Session session, string collectionName) 
+            : base(session, collectionName)
         {
         }
 

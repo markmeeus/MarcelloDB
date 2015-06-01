@@ -13,7 +13,7 @@ namespace MarcelloDB.Records
     {
         Record GetRecord(Int64 address);
 
-        Record AppendRecord(ByteBuffer buffer, bool hasObject = false, bool reuseRecycledRecord = true);
+        Record AppendRecord(ByteBuffer buffer, bool reuseRecycledRecord = true);
 
         Record UpdateRecord(Record record, ByteBuffer buffer, bool reuseRecycledRecord = true);
 
@@ -31,28 +31,25 @@ namespace MarcelloDB.Records
         internal RecordIndex EmptyRecordIndex{ get; set;}
     }
 
-    internal class RecordManager<T> : IRecordManager, ITransactor
+    internal class RecordManager : IRecordManager, ITransactor
     {   
-        Marcello Session { get; set; }
+        Session Session { get; set; }
 
-        StorageEngine<T> StorageEngine { get;set; }
+        StorageEngine StorageEngine { get;set; }
 
         IAllocationStrategy AllocationStrategy { get; set; }
-
-        bool JournalEnabled { get; set; }
 
         TransactionState TransactionState { get; set; }
 
         internal RecordManager(
-            Marcello session,
+            Session session,
             IAllocationStrategy allocationStrategy,
-            StorageEngine<T> storageEngine
+            StorageEngine storageEngine
         )
         {         
             this.Session = session;
             StorageEngine = storageEngine;
             AllocationStrategy = allocationStrategy;
-            JournalEnabled = true; //journal by default
             ResetTransactionState();
         }
 
@@ -69,7 +66,7 @@ namespace MarcelloDB.Records
             return record;
         }
 
-        public Record AppendRecord(ByteBuffer buffer, bool hasObject = false, bool reuseRecycledRecord = true)
+        public Record AppendRecord(ByteBuffer buffer, bool reuseRecycledRecord = true)
         {
             Record record = null;
             if (reuseRecycledRecord)
@@ -86,9 +83,7 @@ namespace MarcelloDB.Records
                     {
                         record.Header.AllocatedDataSize = AllocationStrategy.CalculateSize(buffer.Length);
                         record.Data = buffer;
-                        record.Header.HasObject = hasObject;
-
-                        AppendRecordToList(record);                                       
+                        WriteRecordAtHead(record);                                       
                     });
             }
             else //reuse
@@ -106,7 +101,7 @@ namespace MarcelloDB.Records
                 {
                     if (buffer.Length > record.Header.AllocatedDataSize )
                     {
-                        result = AppendRecord(buffer, record.Header.HasObject, reuseRecycledRecord); 
+                        result = AppendRecord(buffer, reuseRecycledRecord); 
                         if(reuseRecycledRecord){
                             Recycle(record.Header.Address);
                         }
@@ -185,13 +180,7 @@ namespace MarcelloDB.Records
         {
         }
         #endregion
-            
-        internal void DisableJournal()
-        {
-            JournalEnabled = false;
-            StorageEngine.DisableJournal();
-        }
-            
+                   
         void WriteHeader(Record record)
         {
             var bytes = record.Header.AsBuffer(this.Session);
@@ -212,7 +201,7 @@ namespace MarcelloDB.Records
         {
             var bytes = StorageEngine.Read(address, RecordHeader.ByteSize);
             var buffer = this.Session.ByteBufferManager.FromBytes(bytes);
-            return RecordHeader.FromBuffer(this.Session, address, buffer);
+            return RecordHeader.FromBuffer(address, buffer);
         }
 
         void WithCollectionRoot(Action action)
@@ -226,7 +215,7 @@ namespace MarcelloDB.Records
         {        
             if (TransactionState.CollectionRoot == null)
             {
-                var bytes = StorageEngine.Read(0, CollectionRoot.ByteSize);
+                var bytes = StorageEngine.Read(0, CollectionRoot.MaxByteSize);
                 var buffer = this.Session.ByteBufferManager.FromBytes(bytes);
                 TransactionState.CollectionRoot = CollectionRoot.FromBuffer(this.Session, buffer);                 
             }
@@ -235,7 +224,11 @@ namespace MarcelloDB.Records
 
         void SaveCollectionRoot()
         {
-            StorageEngine.Write(0, TransactionState.CollectionRoot.AsBuffer(this.Session));
+            if (TransactionState.CollectionRoot.Dirty)
+            {
+                StorageEngine.Write(0, TransactionState.CollectionRoot.AsBuffer(this.Session));
+                TransactionState.CollectionRoot.Clean();
+            }           
         }
         
         void ResetTransactionState()
@@ -243,7 +236,7 @@ namespace MarcelloDB.Records
             this.TransactionState = new TransactionState();
         }
 
-        void AppendRecordToList (Record record)
+        void WriteRecordAtHead (Record record)
         {
             record.Header.Address = TransactionState.CollectionRoot.Head;
             TransactionState.CollectionRoot.Head += record.Header.TotalRecordSize;
@@ -276,7 +269,6 @@ namespace MarcelloDB.Records
                 TransactionState.CollectionRoot.NamedRecordIndexAddress = 
                     namedRecordIndexRecord.Header.Address;
             }
-
         }
 
         RecordIndex GetEmptyRecordIndex()

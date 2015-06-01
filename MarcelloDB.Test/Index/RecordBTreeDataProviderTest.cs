@@ -5,7 +5,11 @@ using System.Collections.Generic;
 using MarcelloDB.Serialization;
 using System.Linq;
 using MarcelloDB.Index;
+<<<<<<< HEAD
 using MarcelloDB.Buffers;
+=======
+using MarcelloDB.Index.BTree;
+>>>>>>> origin/master
 
 namespace MarcelloDB.Test.Index
 {
@@ -26,13 +30,16 @@ namespace MarcelloDB.Test.Index
             return Records[address];
         }
 
+<<<<<<< HEAD
         public Record AppendRecord(ByteBuffer buffer, bool hasObject = false, bool reuseRecycledRecord = true)
+=======
+        public Record AppendRecord(byte[] data, bool reuseRecycledRecord = true)
+>>>>>>> origin/master
         {
             var record = new Record();
             record.Header.AllocatedDataSize = buffer.Length;
             record.Data = buffer;
             record.Header.Address = Records.Count + 1;
-            record.Header.HasObject = hasObject;
             Records.Add(record.Header.Address, record);
 
             return record;
