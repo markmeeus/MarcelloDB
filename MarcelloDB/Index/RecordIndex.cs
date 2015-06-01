@@ -69,6 +69,7 @@ namespace MarcelloDB.Index
         {
             return ID_INDEX_PREFIX + typeof(T).Name.ToUpper();
         }
+
         internal static RecordIndex Create(
             IRecordManager recordManager, 
             string indexName, 

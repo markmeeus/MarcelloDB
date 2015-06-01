@@ -34,6 +34,10 @@ namespace MarcelloDB
         {
             get
             {
+                if (!IsValidCollectionFileName(fileName))
+                {
+                    throw new ArgumentException(string.Format("{0} cannot be used as collection file.", fileName));
+                }
                 if(!this.CollectionFiles.ContainsKey(fileName))
                 {
                     this.CollectionFiles[fileName] = new CollectionFile(this, fileName);
@@ -41,6 +45,7 @@ namespace MarcelloDB
                 return this.CollectionFiles[fileName];
             }
         }
+        
         public void Transaction(Action action)
         {
             lock (this.SyncLock) {
@@ -71,6 +76,11 @@ namespace MarcelloDB
             {
                 CurrentTransaction = new Transaction(this);
             }
+        }
+
+        private bool IsValidCollectionFileName(string fileName)
+        {
+            return fileName.ToLower() != Journal.JOURNAL_COLLECTION_NAME.ToLower();
         }
     }
 }

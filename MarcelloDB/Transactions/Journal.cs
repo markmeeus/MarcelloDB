@@ -13,7 +13,7 @@ namespace MarcelloDB.Transactions
 {
     internal class Journal
     {
-        const string JOURNAL_COLLECTION_NAME = "journal";
+        internal const string JOURNAL_COLLECTION_NAME = "journal";
 
         Session Session { get; set; }
 

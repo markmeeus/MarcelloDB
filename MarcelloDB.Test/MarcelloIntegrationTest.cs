@@ -8,6 +8,7 @@ using MarcelloDB.Test.Classes;
 using MarcelloDB.Collections;
 using MarcelloDB.Storage;
 using MarcelloDB.Exceptions;
+using MarcelloDB.Transactions;
 
 namespace MarcelloDB.Test
 {
@@ -416,6 +417,25 @@ namespace MarcelloDB.Test
                 {
                     _session["articles"].Collection<object>().Persist(new {Name = "Object Without ID"});
                 });
+        }
+
+        [Test]
+        public void Thows_ArgumentException_When_Trying_To_Open_Journal_File()
+        {
+            Assert.Throws(typeof(ArgumentException), () =>
+            {
+                _session[Journal.JOURNAL_COLLECTION_NAME].Collection<object>();
+            });
+            
+            Assert.Throws(typeof(ArgumentException), () =>
+            {
+                _session[Journal.JOURNAL_COLLECTION_NAME.ToLower()].Collection<object>();
+            });
+
+            Assert.Throws(typeof(ArgumentException), () =>
+            {
+                _session[Journal.JOURNAL_COLLECTION_NAME.ToUpper()].Collection<object>();
+            });
         }
             
         private void EnsureFolder(string path)
