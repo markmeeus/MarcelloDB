@@ -11,7 +11,7 @@ Not having to map your objects to the relational model can save you hundreds of 
 
 MarcelloDB is a pure C# implementation, so there is no need to package other binaries.
 
-MarcelloDB is mostly portable code, and will support Xamarin (iOS and Android), Windows 8.1 and Windows Phone 8.1 and Windows 10
+MarcelloDB is portable code: Xamarin (iOS and Android), Windows 8.1 and Windows Phone 8.1 and Windows 10
 
 Current Status
 =
