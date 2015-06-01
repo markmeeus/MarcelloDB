@@ -248,7 +248,8 @@ namespace MarcelloDB.Records
             
         NamedRecordsIndex GetNamedRecordIndex()
         {
-            return NamedRecordsIndex.FromBuffer(GetNamedRecordIndexRecord().Data);
+            var namedRecordIndexRecord = GetNamedRecordIndexRecord();
+            return NamedRecordsIndex.FromBuffer(namedRecordIndexRecord.Data);
         }
 
         Record GetNamedRecordIndexRecord()

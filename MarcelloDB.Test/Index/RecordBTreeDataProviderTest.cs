@@ -5,11 +5,8 @@ using System.Collections.Generic;
 using MarcelloDB.Serialization;
 using System.Linq;
 using MarcelloDB.Index;
-<<<<<<< HEAD
 using MarcelloDB.Buffers;
-=======
 using MarcelloDB.Index.BTree;
->>>>>>> origin/master
 
 namespace MarcelloDB.Test.Index
 {
@@ -29,12 +26,8 @@ namespace MarcelloDB.Test.Index
         {
             return Records[address];
         }
-
-<<<<<<< HEAD
-        public Record AppendRecord(ByteBuffer buffer, bool hasObject = false, bool reuseRecycledRecord = true)
-=======
-        public Record AppendRecord(byte[] data, bool reuseRecycledRecord = true)
->>>>>>> origin/master
+            
+        public Record AppendRecord(ByteBuffer buffer, bool reuseRecycledRecord = true)
         {
             var record = new Record();
             record.Header.AllocatedDataSize = buffer.Length;
@@ -80,7 +73,7 @@ namespace MarcelloDB.Test.Index
     [TestFixture]
     public class RecordBTreeDataProviderTest
     {
-        Marcello session;
+        Session session;
 
         RecordBTreeDataProvider provider;
 
@@ -89,7 +82,7 @@ namespace MarcelloDB.Test.Index
         [SetUp]
         public void Initialize()
         {
-            session = new Marcello(new InMemoryStreamProvider());
+            session = new Session(new TestPlatform(), "/");
             manager = new TestRecordManager();
             provider = new RecordBTreeDataProvider(
                 session,

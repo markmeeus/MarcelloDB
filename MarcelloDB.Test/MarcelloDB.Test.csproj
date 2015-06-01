@@ -53,14 +53,11 @@
     <Compile Include="Index\IndexTest.cs" />
     <Compile Include="Index\Mocks\MockBTreeDataProvider.cs" />
     <Compile Include="Index\Mocks\MockBTree.cs" />
-<<<<<<< HEAD
     <Compile Include="Buffers\ByteBufferManagerTest.cs" />
-=======
     <Compile Include="Serialization\BsonSerializerTest.cs" />
     <Compile Include="Records\CollectionRootTest.cs" />
     <Compile Include="Classes\Location.cs" />
     <Compile Include="TestStream\TestPlatform.cs" />
->>>>>>> origin/master
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

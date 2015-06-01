@@ -7,19 +7,19 @@ namespace MarcelloDB.Test.Serialization
     [TestFixture]
     public class BufferReaderTest
     {
-        Marcello Session { get; set; }
+        Session Session { get; set; }
 
         [SetUp]
         public void Initialize()
         { 
-            this.Session = new Marcello(new InMemoryStreamProvider());
+            this.Session = new Session(new TestPlatform(), "/");
         }
 
         [Test]
         public void ReadInt32_Little_Endian()
         {
             var buffer = this.Session.ByteBufferManager.FromBytes(new byte[]{ 0x11, 0x22, 0x33, 0x44 });
-            var reader = new BufferReader(this.Session, buffer , true);
+            var reader = new BufferReader(buffer , true);
             Int32 readInt = reader.ReadInt32();
             Assert.AreEqual(0x44332211, readInt);
         }
@@ -33,7 +33,7 @@ namespace MarcelloDB.Test.Serialization
                     0x11, 0x22, 0x33, 0x44,
                     0x22, 0x33, 0x44, 0x55,
                 });
-            var reader = new BufferReader(this.Session, buffer, true);
+            var reader = new BufferReader(buffer, true);
             reader.ReadInt32();
             Int32 readInt = reader.ReadInt32();
             Assert.AreEqual(0x55443322, readInt);
@@ -48,7 +48,7 @@ namespace MarcelloDB.Test.Serialization
                     0x11, 0x11, 0x22, 0x22,
                     0x33, 0x33, 0x44, 0x55,
                 });
-            var reader = new BufferReader(this.Session, buffer, true);
+            var reader = new BufferReader(buffer, true);
             Int64 readInt = reader.ReadInt64();
             Assert.AreEqual(0x5544333322221111, readInt);
         }
@@ -57,7 +57,7 @@ namespace MarcelloDB.Test.Serialization
         public void ReadInt32_Little_Endian_On_Big_Endian_System()
         {
             var buffer = this.Session.ByteBufferManager.FromBytes(new byte[]{ 0x11, 0x22, 0x33, 0x44 });
-            var reader = new BufferReader(this.Session, buffer , false);
+            var reader = new BufferReader(buffer , false);
             var readInt = reader.ReadInt32();
             Assert.AreEqual(0x11223344, readInt);
         }
@@ -67,7 +67,7 @@ namespace MarcelloDB.Test.Serialization
         {
             var buffer = this.Session.ByteBufferManager.FromBytes(
                 new byte[]{ 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18});
-            var reader = new BufferReader(this.Session, buffer , false);
+            var reader = new BufferReader(buffer , false);
 
             var readInt = reader.ReadInt64();
             Assert.AreEqual(0x1112131415161718, readInt);

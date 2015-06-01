@@ -13,35 +13,21 @@ namespace MarcelloDB.Test.Records
     {
         IPlatform _platform;
         InMemoryStreamProvider _streamProvider;
-<<<<<<< HEAD
-        RecordManager<Article> _recordManager;
-        Marcello _session;
-=======
+
         RecordManager _recordManager;
         Session _session;
->>>>>>> origin/master
 
         [SetUp]
         public void Initialize()
         {
-<<<<<<< HEAD
-            _streamProvider = new InMemoryStreamProvider();
-            _session = new Marcello(_streamProvider);
-
-            _recordManager = new RecordManager<Article>(
-                _session,
-                new DoubleSizeAllocationStrategy(),
-                new StorageEngine<Article>(_session));
-            _recordManager.DisableJournal();
-=======
             _platform = new TestPlatform();
             _streamProvider = (InMemoryStreamProvider)_platform.CreateStorageStreamProvider("/");
             _session = new Session(_platform, "/");
 
             _recordManager = new RecordManager(
+                _session,
                 new DoubleSizeAllocationStrategy(),
                 new StorageEngine(_session, "article"));            
->>>>>>> origin/master
         }
 
         [Test]

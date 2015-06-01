@@ -6,7 +6,7 @@ namespace MarcelloDB.Records
 {
     internal class RecordHeader
     {
-        const int BYTE_SIZE = 3 * sizeof(Int32);
+        const int BYTE_SIZE = 2 * sizeof(Int32);
 
         //Address is not stored
         internal long Address { get; set; }

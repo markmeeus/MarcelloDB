@@ -7,11 +7,11 @@ namespace MarcelloDB.Test.Records
     [TestFixture]
     public class RecordHeaderTest
     {
-        Marcello Session { get; set; }
+        Session Session { get; set; }
         [SetUp]
         public void Initialize()
         {
-            Session = new Marcello(new InMemoryStreamProvider());
+            Session = new Session(new TestPlatform(), "/");
         }
 
         [Test]
@@ -24,7 +24,7 @@ namespace MarcelloDB.Test.Records
             Int64 address = 5;
 
             var buffer = header.AsBuffer(this.Session);
-            var loadedHeader = RecordHeader.FromBuffer(this.Session, address, buffer);
+            var loadedHeader = RecordHeader.FromBuffer(address, buffer);
 
             Assert.AreEqual(header.DataSize, loadedHeader.DataSize, "DataSize");
             Assert.AreEqual(header.AllocatedDataSize, loadedHeader.AllocatedDataSize, "AllocatedSize");

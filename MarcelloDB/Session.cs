@@ -12,7 +12,7 @@ using MarcelloDB.Buffers;
 namespace MarcelloDB
 {
     public class Session : IDisposable
-    {
+    {        
         Dictionary<string, CollectionFile> CollectionFiles { get; set; }
 
         internal IStorageStreamProvider StreamProvider { get; set; }

@@ -35,7 +35,7 @@ namespace MarcelloDB.Serialization
 
         public T Deserialize (ByteBuffer buffer)
         {
-            var serializer = new JsonSerializer();
+            var serializer = GetSerializer();
             var memoryStream = new MemoryStream(buffer.Bytes, 0, buffer.Length);
             var reader = new BsonReader(memoryStream);
 

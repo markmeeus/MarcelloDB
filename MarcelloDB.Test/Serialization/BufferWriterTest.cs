@@ -7,14 +7,14 @@ namespace MarcelloDB.Test.Serialization
     [TestFixture]
     public class BufferWriterTest
     {
-        Marcello Session { get; set; }
+        Session Session { get; set; }
 
         BufferWriter _writer;
 
         [SetUp]
         public void Initialize()
         {
-            this.Session = new Marcello(new InMemoryStreamProvider());
+            this.Session = new Session(new TestPlatform(), "/");
 
             _writer = new BufferWriter(this.Session, this.Session.ByteBufferManager.Create(1024), true);
         }
