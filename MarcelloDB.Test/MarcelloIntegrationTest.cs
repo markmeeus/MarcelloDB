@@ -264,6 +264,8 @@ namespace MarcelloDB.Test
             {
                 _articles.Destroy(a);
             }
+
+            Assert.AreEqual(0, _articles.All.Count());
         }
 
         [Test]
