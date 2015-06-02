@@ -16,7 +16,6 @@ namespace MarcelloDB.Test.Index
         private readonly int[] testKeyData = new int[] { 10, 20, 30, 50 };
         private readonly int[] testPointerData = new int[] { 50, 60, 40, 20 };
 
-
         [SetUp]
         public void Initialize()
         {
@@ -56,6 +55,30 @@ namespace MarcelloDB.Test.Index
 
             Assert.AreEqual(2, btree.Height);
         }
+
+        [Test]
+        public void Insert_Identical_Nodes_Throw_ArgumentException()
+        {
+            var btree = new BTree<int, int>(_mockDataProvider, Degree);
+            for (int i = 0; i < this.testKeyData.Length; i++)
+            {
+                this.InsertTestDataAndValidateTree(btree, i);
+            }
+
+            Assert.Throws(typeof(ArgumentException), () =>
+                {
+                    btree.Insert(this.testKeyData[0], 0);
+                });
+            
+            Assert.Throws(typeof(ArgumentException), () =>
+                {
+                    btree.Insert(this.testKeyData[this.testKeyData.Length / 2], 0);
+                });
+            Assert.Throws(typeof(ArgumentException), () =>
+                {
+                    btree.Insert(this.testKeyData[this.testKeyData.Length - 1], 0);
+                });
+        }    
 
         [Test]
         public void Delete_Nodes()

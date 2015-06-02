@@ -46,15 +46,7 @@ namespace MarcelloDB.Test
         {
             _index.Register(1, 2);
             Assert.AreEqual(2, _mockTree.Inserted[1]);
-        }
-
-        [Test]
-        public void Register_Deletes_Original_Value()
-        {
-            _mockTree.Insert(1, 2);
-            _index.Register(1, 3);
-            Assert.AreEqual(1, _mockTree.Deleted[0]);
-        }
+        }            
 
         [Test]
         public void Register_Inserts_New_Value_On_Update()

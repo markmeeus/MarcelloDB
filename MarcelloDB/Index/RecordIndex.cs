@@ -42,13 +42,8 @@ namespace MarcelloDB.Index
         {
             var entry = this.Tree.Search(keyValue);
             if (entry != null)
-            {
-                if (entry.Pointer != recordAddress)
-                {
-                    //keyvalue found, but record moved to other adress
-                    this.Tree.Delete(keyValue);
-                    this.Tree.Insert(keyValue, recordAddress);
-                }
+            {                
+                this.Tree.Insert(keyValue, recordAddress);
             }
             else
             {

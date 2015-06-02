@@ -65,6 +65,11 @@ namespace MarcelloDB.Index.BTree
         /// <param name="newPointer">Pointer to be associated with inserted key.</param>
         public void Insert(TK newKey, TP newPointer)
         {
+            if (this.Search(newKey) != null)
+            {
+                throw new ArgumentException("Cannot insert duplicate keys in the tree.");
+            }
+
             // there is space in the root node
             if (!this.Root.HasReachedMaxEntries)
             {

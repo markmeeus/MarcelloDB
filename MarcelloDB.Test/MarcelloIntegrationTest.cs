@@ -249,6 +249,24 @@ namespace MarcelloDB.Test
         }
 
         [Test]
+        public void Destroy_All_Same_Size()
+        {
+            foreach (var a in new Article[]{
+                new Article{ Name = "Article", ID = 1 },
+                new Article{ Name = "Article", ID = 2 },
+                new Article{ Name = "Article", ID = 3 }
+            })
+            {
+                _articles.Persist(a);
+            }
+
+            foreach (var a in _articles.All.ToArray())
+            {
+                _articles.Destroy(a);
+            }
+        }
+
+        [Test]
         public void Destroy_Last_Insert_New()
         {
             var toiletPaper = Article.ToiletPaper;

@@ -96,18 +96,26 @@ namespace MarcelloDB.Collections
         {
             var objectID = GetObjectIDOrThrow(obj);                
 
-            //Try to load the record with object ID
-            Record record = GetRecordForObjectID(objectID);
-            if (record != null) {
-                record = UpdateObject(record, obj);
-            }
-            else {
-                record = AppendObject(obj);
-            }
-                
             var index = RecordIndex.Create(
                 this.RecordManager, RecordIndex.GetIDIndexName<T>());
-            index.Register(objectID, record.Header.Address);
+            
+            Record record = GetRecordForObjectID(objectID);
+            if (record != null) 
+            {
+                var originalAddress = record.Header.Address;
+                record = UpdateObject(record, obj);
+                if (record.Header.Address != originalAddress)
+                {
+                    //object moved, register it's adress in the index
+                    index.UnRegister(objectID);
+                    index.Register(objectID, record.Header.Address);
+                }
+            }
+            else 
+            {
+                record = AppendObject(obj);
+                index.Register(objectID, record.Header.Address);
+            }               
         }
 
         Record AppendObject(T obj)

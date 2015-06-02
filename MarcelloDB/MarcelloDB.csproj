@@ -74,6 +74,7 @@
     <Compile Include="Exceptions\IDMissingException.cs" />
     <Compile Include="Collections\CollectionFile.cs" />
     <Compile Include="Platform\IPlatform.cs" />
+    <Compile Include="Records\EmptyRecordIndexKey.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

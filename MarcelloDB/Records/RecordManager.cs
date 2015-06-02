@@ -121,8 +121,12 @@ namespace MarcelloDB.Records
         {
             var recordHeader = ReadRecordHeader(address);
             var emptyRecordIndex = GetEmptyRecordIndex();
+            var emptyRecordIndexKey = new EmptyRecordIndexKey
+            {
+                A = recordHeader.Address, S = recordHeader.AllocatedDataSize
+            }; 
             emptyRecordIndex.Register(
-                recordHeader.AllocatedDataSize, 
+                emptyRecordIndexKey, 
                 recordHeader.Address);
         }
 
@@ -275,7 +279,7 @@ namespace MarcelloDB.Records
 
             var entry = walker.Next();
             while (entry != null && 
-                new ObjectComparer().Compare(entry.Key, minimumLength) <= 0)
+                ((EmptyRecordIndexKey)entry.Key).S < minimumLength)
             {
                 entry = walker.Next();
             }
