@@ -11,14 +11,14 @@ namespace MarcelloDB.Test
         MockBTree<object, Int64> _mockTree;
         MockBTreeDataProvider<object, Int64> _mockProvider;
 
-        RecordIndex _index;
+        RecordIndex<object> _index;
 
         [SetUp]
         public void Initialize()
         {
             _mockTree = new MockBTree<object, Int64>();
             _mockProvider = new MockBTreeDataProvider<object, Int64>();
-            _index = new RecordIndex(_mockTree, _mockProvider);
+            _index = new RecordIndex<object>(_mockTree, _mockProvider);
         }       
 
         [Test]

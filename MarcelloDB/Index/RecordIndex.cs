@@ -7,28 +7,52 @@ namespace MarcelloDB.Index
 {
     internal class RecordIndex
     {
-        const int BTREE_DEGREE = 12;
-
-        IBTree<object, Int64> Tree { get; set; }
-
-        IBTreeDataProvider<object, Int64> DataProvider { get; set; }
-
         internal const string ID_INDEX_PREFIX = "__ID_INDEX__";
         internal const string EMPTY_RECORDS_BY_SIZE = "__EMPTY_RECORDS_BY_SIZE__";
+        internal const int BTREE_DEGREE = 12;
 
-        internal RecordIndex(IBTree<object, Int64> btree,
-            IBTreeDataProvider<object, Int64> dataProvider)
+        internal static string GetIDIndexName<T>()
+        {
+            return ID_INDEX_PREFIX + typeof(T).Name.ToUpper();
+        }
+
+        internal static RecordIndex<TNodeKey> Create<TNodeKey>(
+            IRecordManager recordManager, 
+            string indexName, 
+            bool canReuseRecycledRecords = true)
+        {
+            var dataProvider = new RecordBTreeDataProvider<TNodeKey>(
+                recordManager, 
+                new BsonSerializer<Node<TNodeKey, Int64>>(),
+                indexName,
+                canReuseRecycledRecords);
+
+            var btree = new BTree<TNodeKey, Int64>(dataProvider, BTREE_DEGREE);
+
+            return new RecordIndex<TNodeKey>(btree, dataProvider);
+        }
+    }
+
+    internal class RecordIndex<TNodeKey>
+    {     
+
+        IBTree<TNodeKey, Int64> Tree { get; set; }
+
+        IBTreeDataProvider<TNodeKey, Int64> DataProvider { get; set; }
+
+        internal RecordIndex(IBTree<TNodeKey, Int64> btree,
+            IBTreeDataProvider<TNodeKey, Int64> dataProvider)
         {
             this.Tree = btree;
             this.DataProvider = dataProvider;
         }
 
-        internal BTreeWalker<object, Int64> GetWalker()
+        internal BTreeWalker<TNodeKey, Int64> GetWalker()
         {
-            return new BTreeWalker<object, long>(BTREE_DEGREE, this.DataProvider);
+            return new BTreeWalker<TNodeKey, long>(RecordIndex.BTREE_DEGREE, this.DataProvider);
         }
 
-        internal Int64 Search(object keyValue)
+        internal Int64 Search(TNodeKey keyValue)
         {
             var node = this.Tree.Search(keyValue);
             if (node != null)
@@ -38,7 +62,7 @@ namespace MarcelloDB.Index
             return 0;
         }
 
-        internal void Register(object keyValue, Int64 recordAddress)
+        internal void Register(TNodeKey keyValue, Int64 recordAddress)
         {
             var entry = this.Tree.Search(keyValue);
             if (entry != null)
@@ -53,34 +77,12 @@ namespace MarcelloDB.Index
             FlushProvider();                
         }
 
-        internal void UnRegister(object keyValue)
+        internal void UnRegister(TNodeKey keyValue)
         {
             this.Tree.Delete(keyValue);
             FlushProvider();
-        }
-
-
-        internal static string GetIDIndexName<T>()
-        {
-            return ID_INDEX_PREFIX + typeof(T).Name.ToUpper();
-        }
-
-        internal static RecordIndex Create(
-            IRecordManager recordManager, 
-            string indexName, 
-            bool canReuseRecycledRecords = true)
-        {
-            var dataProvider = new RecordBTreeDataProvider(
-                recordManager, 
-                new BsonSerializer<Node<object, Int64>>(),
-                indexName,
-                canReuseRecycledRecords);
-
-            var btree = new BTree<object, Int64>(dataProvider, BTREE_DEGREE);
-
-            return new RecordIndex(btree, dataProvider);
-        }
-            
+        }                  
+                               
         void FlushProvider()
         {
             this.DataProvider.SetRootNode(this.Tree.Root);

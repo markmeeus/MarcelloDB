@@ -5,30 +5,30 @@ using System.Collections.Generic;
 
 namespace MarcelloDB.Index.BTree
 {
-    internal class RecordBTreeDataProvider :  IBTreeDataProvider<object, Int64>
+    internal class RecordBTreeDataProvider<TNodeKey> :  IBTreeDataProvider<TNodeKey, Int64>
     {
         IRecordManager RecordManager { get; set; }
-        IObjectSerializer<Node<object, Int64>> Serializer { get; set; }
-        Dictionary<Int64, Node<object, Int64>> NodeCache { get; set; }
-        Node<object, Int64> RootNode { get; set; }
+        IObjectSerializer<Node<TNodeKey, Int64>> Serializer { get; set; }
+        Dictionary<Int64, Node<TNodeKey, Int64>> NodeCache { get; set; }
+        Node<TNodeKey, Int64> RootNode { get; set; }
         string RootRecordName { get; set; }
         bool ReuseRecycledRecords { get; set; }
 
         internal RecordBTreeDataProvider(
             IRecordManager recordManager, 
-            IObjectSerializer<Node<object, Int64>> serializer,
+            IObjectSerializer<Node<TNodeKey, Int64>> serializer,
             string rootRecordName,
             bool reuseRecycledRecords)
         {
             this.RecordManager = recordManager;
             this.Serializer = serializer;
-            this.NodeCache = new Dictionary<long, Node<object, long>>();
+            this.NodeCache = new Dictionary<long, Node<TNodeKey, long>>();
             this.RootRecordName = rootRecordName;
             this.ReuseRecycledRecords = reuseRecycledRecords;
         }
 
         #region IBTreeDataProvider implementation
-        public Node<object, long> GetRootNode(int degree)
+        public Node<TNodeKey, long> GetRootNode(int degree)
         {
             var rootRecordAddress = this.RecordManager.GetNamedRecordAddress(this.RootRecordName);
             if (rootRecordAddress > 0)
@@ -46,12 +46,12 @@ namespace MarcelloDB.Index.BTree
             return this.RootNode;
         }            
 
-        public void SetRootNode(Node<object, long> rootNode)
+        public void SetRootNode(Node<TNodeKey, long> rootNode)
         {
             this.RootNode = rootNode;
         }
 
-        public Node<object, long> GetNode(long address)
+        public Node<TNodeKey, long> GetNode(long address)
         {
             if (this.NodeCache.ContainsKey(address))
             {
@@ -67,9 +67,9 @@ namespace MarcelloDB.Index.BTree
             return node;
         }
 
-        public Node<object, long> CreateNode(int degree)
+        public Node<TNodeKey, long> CreateNode(int degree)
         {
-            var node = new Node<object, long>(degree);
+            var node = new Node<TNodeKey, long>(degree);
             var data = Serializer.Serialize(node);
 
             var record = RecordManager.AppendRecord(data, 
@@ -88,7 +88,7 @@ namespace MarcelloDB.Index.BTree
             while (retry)
             {
                 retry = false;
-                var nodesToKeep = new Dictionary<Int64, Node<Object,Int64>>();
+                var nodesToKeep = new Dictionary<Int64, Node<TNodeKey,Int64>>();
 
                 if (this.RootNode != null)
                 {                    
@@ -106,7 +106,7 @@ namespace MarcelloDB.Index.BTree
                 }
 
                 NodeCache = nodesToKeep;
-                Dictionary<Int64, Node<object, Int64>> updateNodes = new Dictionary<Int64, Node<object, Int64>>() ;
+                var updateNodes = new Dictionary<Int64, Node<TNodeKey, Int64>>() ;
                 foreach (var node in NodeCache.Values)
                 {
                     var record = RecordManager.GetRecord(node.Address);
@@ -139,7 +139,7 @@ namespace MarcelloDB.Index.BTree
             }                
         }            
         #endregion
-        private void FindAllNodes(Node<object, Int64> node, Dictionary<Int64, Node<object, Int64>> acc, int depth = 0)
+        private void FindAllNodes(Node<TNodeKey, Int64> node, Dictionary<Int64, Node<TNodeKey, Int64>> acc, int depth = 0)
         {           
             if (depth > 64)
             {
@@ -156,7 +156,7 @@ namespace MarcelloDB.Index.BTree
             }
         }
 
-        private void CacheNode(Node<object, long> node)
+        private void CacheNode(Node<TNodeKey, long> node)
         {         
             this.NodeCache.Add(node.Address, node);
         }

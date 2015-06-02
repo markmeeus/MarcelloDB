@@ -82,7 +82,7 @@ namespace MarcelloDB.Collections
 
         Record GetRecordForObjectID(object objectID)
         {                
-            var index = RecordIndex.Create(this.RecordManager, 
+            var index = RecordIndex.Create<object>(this.RecordManager, 
                 RecordIndex.GetIDIndexName<T>());
             var address = index.Search(objectID);
             if (address > 0)
@@ -96,7 +96,7 @@ namespace MarcelloDB.Collections
         {
             var objectID = GetObjectIDOrThrow(obj);                
 
-            var index = RecordIndex.Create(
+            var index = RecordIndex.Create<object>(
                 this.RecordManager, RecordIndex.GetIDIndexName<T>());
             
             Record record = GetRecordForObjectID(objectID);
@@ -138,7 +138,7 @@ namespace MarcelloDB.Collections
             Record record = GetRecordForObjectID(objectID);
             if (record != null)
             {
-                var index = RecordIndex.Create(
+                var index = RecordIndex.Create<object>(
                     this.RecordManager, RecordIndex.GetIDIndexName<T>());
                 index.UnRegister(objectID);
 

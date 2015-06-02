@@ -72,14 +72,14 @@ namespace MarcelloDB.Test.Index
     [TestFixture]
     public class RecordBTreeDataProviderTest
     {
-        RecordBTreeDataProvider provider;
+        RecordBTreeDataProvider<object> provider;
         TestRecordManager manager;
 
         [SetUp]
         public void Initialize()
         {
             manager = new TestRecordManager();
-            provider = new RecordBTreeDataProvider(
+            provider = new RecordBTreeDataProvider<object>(
                 manager,
                 new BsonSerializer<Node<object,Int64>>(),
                 "Root", true);
@@ -103,7 +103,7 @@ namespace MarcelloDB.Test.Index
         public void Get_Node_Loads_From_Record()
         {
             var node = provider.CreateNode(2);
-            var loadedNode = new RecordBTreeDataProvider(
+            var loadedNode = new RecordBTreeDataProvider<object>(
                                  manager,
                 new BsonSerializer<Node<object,Int64>>(),
                                 "Root", true).GetNode(node.Address);
@@ -114,7 +114,7 @@ namespace MarcelloDB.Test.Index
         public void Get_Node_Caches_Node()
         {
             var node = provider.CreateNode(2);
-            var newProvider = new RecordBTreeDataProvider(
+            var newProvider = new RecordBTreeDataProvider<object>(
                 manager,
                 new BsonSerializer<Node<object,Int64>>(),
                 "Root", 
@@ -145,7 +145,7 @@ namespace MarcelloDB.Test.Index
         public void Get_RootNode_Returns_Same_Node()
         {
             provider.GetRootNode(2);
-            var newProvider = new RecordBTreeDataProvider(
+            var newProvider = new RecordBTreeDataProvider<object>(
                 manager,
                 new BsonSerializer<Node<object,Int64>>(),
                 "Root",

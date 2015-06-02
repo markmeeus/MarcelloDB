@@ -26,7 +26,7 @@ namespace MarcelloDB.Records
     {
         internal CollectionRoot CollectionRoot { get; set; }
 
-        internal RecordIndex EmptyRecordIndex{ get; set;}
+        internal RecordIndex<EmptyRecordIndexKey> EmptyRecordIndex{ get; set;}
     }
 
     internal class RecordManager : IRecordManager, ITransactor
@@ -260,11 +260,11 @@ namespace MarcelloDB.Records
             }
         }
 
-        RecordIndex GetEmptyRecordIndex()
+        RecordIndex<EmptyRecordIndexKey> GetEmptyRecordIndex()
         {
             if (TransactionState.EmptyRecordIndex == null)
             {
-                TransactionState.EmptyRecordIndex = RecordIndex.Create(
+                TransactionState.EmptyRecordIndex = RecordIndex.Create<EmptyRecordIndexKey>(
                     this, 
                     RecordIndex.EMPTY_RECORDS_BY_SIZE, 
                     canReuseRecycledRecords:false); //do not reuse records for this index. It will try to reuse for building itself.
