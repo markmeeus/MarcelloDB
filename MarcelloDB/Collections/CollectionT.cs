@@ -16,6 +16,8 @@ namespace MarcelloDB.Collections
 
     public class Collection<T> : Collection
     {
+        internal bool BlockModification { get; set; }
+
         Session Session { get; set; }
 
         IObjectSerializer<T> Serializer { get; set; }
@@ -39,7 +41,7 @@ namespace MarcelloDB.Collections
         {
             get{
                 return new CollectionEnumerator<T>(
-                    this.Session, RecordManager, Serializer);
+                    this, this.Session, RecordManager, Serializer);
             }
         }            
 
@@ -59,6 +61,7 @@ namespace MarcelloDB.Collections
 
         public void Persist(T obj)
         {
+            EnsureModificationIsAllowed();
             Transacted(() => {
                 PersistInternal(obj);                
             });               
@@ -66,6 +69,7 @@ namespace MarcelloDB.Collections
 
         public void Destroy(T obj)
         {
+            EnsureModificationIsAllowed();
             Transacted(() => {
                 DestroyInternal(obj);
             });
@@ -153,6 +157,14 @@ namespace MarcelloDB.Collections
                     " either has no ID property, or the property returned null");                        
             }
             return objectID;
+        }
+
+        void EnsureModificationIsAllowed()
+        {
+            if (this.BlockModification)
+            {
+                throw new InvalidOperationException("Cannot modify a collection while it is being enumerated");
+            }
         }
     }
 }

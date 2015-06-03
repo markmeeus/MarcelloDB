@@ -457,6 +457,43 @@ namespace MarcelloDB.Test
                 _session[Journal.JOURNAL_COLLECTION_NAME.ToUpper()].Collection<object>();
             });
         }
+
+        [Test]
+        public void Throwd_InvalidOperation_When_Interacting_With_Collection_While_Enumerating()
+        {
+            _articles.Persist(Article.BarbieDoll);
+            _articles.Persist(Article.SpinalTapDvd);
+            _articles.Persist(Article.ToiletPaper);
+            Assert.Throws(typeof(InvalidOperationException), () =>
+                {
+                    foreach(var a in _articles.All){
+                        _articles.Persist(a);
+                    }
+                });
+            Assert.Throws(typeof(InvalidOperationException), () =>
+                {
+                    foreach(var a in _articles.All){
+                        _articles.Destroy(a);
+                    }
+                });
+        }
+
+        [Test]
+        public void Recovers_After_Exception_Inside_Enumeration()
+        {
+            _articles.Persist(Article.BarbieDoll);
+            _articles.Persist(Article.SpinalTapDvd);
+            _articles.Persist(Article.ToiletPaper);
+            try{
+                foreach(var a in _articles.All){
+                    _articles.Persist(a);
+                }
+            }catch(Exception){}
+
+            Assert.DoesNotThrow(()=>{
+                _articles.Persist(Article.BarbieDoll);
+            });
+        }
             
         private void EnsureFolder(string path)
         {
