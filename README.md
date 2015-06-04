@@ -126,6 +126,34 @@ class Article
   public string CustomIDProp { get; set; }
 }
 ```
+The ID, Id and id property can be defined anywhere in the class hierarchy, but the ClassID, ClassId and Classid attributes will only be used if they are defined on the class which is used as the collection class.
+
+```cs
+class Product
+{
+  public string ID { get; set; }
+}
+class Chair : Product{}
+
+//This will work
+session["articles"].Collection<Product>().Persist(chair);
+
+//This will also work because an ID (or Id or id) property is found in the class hiërachy.
+session["articles"].Collection<Chair>().Persist(chair);
+
+
+class Article
+{
+  public string ArticleID { get; set; }
+}
+class Book : Article{}
+
+//This will work
+session["articles"].Collection<Article>().Persist(book);
+
+//This will not work because Book doesn't define an ID and ArticleID on the parent isn't considered.
+session["articles"].Collection<Book>().Persist(book);
+```
 
 Transactions
 =
