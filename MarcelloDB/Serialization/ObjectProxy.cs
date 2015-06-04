@@ -6,9 +6,9 @@ using MarcelloDB.Attributes;
 
 namespace MarcelloDB.Serialization
 {
-    internal class ObjectProxy
+    internal class ObjectProxy<T>
     {
-        object Obj { get; set; }
+        T Obj { get; set; }
 
         static Dictionary<Type, PropertyInfo> _idPropertyInfoCache = new Dictionary<Type, PropertyInfo>();
 
@@ -25,7 +25,7 @@ namespace MarcelloDB.Serialization
             }
         }
 
-        public ObjectProxy(object obj)
+        public ObjectProxy(T obj)
         {
             Obj = obj;
         }
@@ -35,7 +35,7 @@ namespace MarcelloDB.Serialization
             get
             {
                 object id = null;
-                var type = Obj.GetType();
+                var type = typeof(T);
                 if(!_idPropertyInfoCache.ContainsKey(type))
                 {
                     foreach (var propertyName in IDProperties) 

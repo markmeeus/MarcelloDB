@@ -151,7 +151,7 @@ namespace MarcelloDB.Collections
         }
 
         object GetObjectIDOrThrow(T obj){
-            var objectID = new ObjectProxy(obj).ID;
+            var objectID = new ObjectProxy<T>(obj).ID;
             if(objectID == null){
                 throw new IDMissingException(obj.GetType().Name + 
                     " either has no ID property, or the property returned null");                        
