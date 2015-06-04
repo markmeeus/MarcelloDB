@@ -148,10 +148,10 @@ class Product
 class Chair : Product{}
 
 //This will work
-session["articles"].Collection<Product>().Persist(chair);
+session["data"].Collection<Product>("products").Persist(chair);
 
 //This will also work because an ID (or Id or id) property is found in the class hiërachy.
-session["articles"].Collection<Chair>().Persist(chair);
+session["data"].Collection<Chair>("chairs").Persist(chair);
 
 
 class Article
@@ -161,10 +161,10 @@ class Article
 class Book : Article{}
 
 //This will work
-session["articles"].Collection<Article>().Persist(book);
+session["data"].Collection<Article>("articles").Persist(book);
 
 //This will not work because Book doesn't define an ID and ArticleID on the parent isn't considered.
-session["articles"].Collection<Book>().Persist(book);
+session["data"].Collection<Book>("books").Persist(book);
 ```
 
 Transactions
@@ -177,18 +177,18 @@ A transaction runs on a session and can include changes in multiple collections 
 (Warning: only collections obtained from that session will be included in the transaction. If you start to mix multiple sessions, you're on your own.)
 ```cs
 session.Transaction(() => {
-    session["articles.dat"].Collection<Article>().Persist(article);
-    session["project_management.dat"].Collection<Client>().Persist(client);
-    session["project_management.dat"].Collection<Project>().Destroy(project);
+    session["articles.dat"].Collection<Article>("articles").Persist(article);
+    session["project_management.dat"].Collection<Client>("clients").Persist(client);
+    session["project_management.dat"].Collection<Project>("projects").Destroy(project);
 });
 ```
 
 Transactions roll back when an exception occurs within the block.
 ```cs
 session.Transaction(() => {
-    session["articles.dat"].Collection<Article>().Persist(article);
-    session["project_management.dat"].Collection<Client>().Persist(client);
-    session["project_management.dat"].Collection<Project>().Destroy(project);
+    session["articles.dat"].Collection<Article>("articles").Persist(article);
+    session["project_management.dat"].Collection<Client>("clients").Persist(client);
+    session["project_management.dat"].Collection<Project>("projects").Destroy(project);
     throw new Exception("Nothing happened");
 });
 ```
