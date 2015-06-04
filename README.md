@@ -49,23 +49,30 @@ var session = new MarcelloDB.Session(platform, "/path/to/data/folder/");
 
 CollectionFiles and Collections
 =
-MarcelloDB organizes it's data in collections and collection files. A session can handle multiple collection files and a collection file can handle multiple collections.
+MarcelloDB organizes it's data in collection-files and collections. A single session can handle multiple collection-files and a collection-file can handle multiple collections.
 
-(This way you can have all read-only data in a single file which you can download straight from your servers. A second file could be used to write data.)
+(This way you can have all read-only data in a single file which you can download straight from your servers. Another file could be used to write data f.i.)
 
-You access collection files like this:
+You user collection-files like this:
 ```cs
 var productsFile = session["products"];
 ```
 
-With this file, you can start accessing collections.
+With this collection-file, you can start accessing collections.
 Collections are a bit like tables, the main difference is that they contain entire objects, not just rows with colums.
 A collection can only handle objects of a specific type (including subclasses);
 
 To start working with a collection, simple access it like this:
 ```cs
-var bookCollection = productsFile.Collection<Book>(); //Deals with instances of Book or subclasses of Book
-var dvdCollection = productsFile.Collection<Dvd>();
+//Deals with instances of Book or subclasses of Book
+var bookCollection = productsFile.Collection<Book>("books"); 
+var dvdCollection = productsFile.Collection<Dvd>("dvd");
+```
+If you use different collection-names you can even have multiple collections for the same type within one collection-file. 
+```cs
+//Deals with instances of Book or subclasses of Book
+var bookCollection = productsFile.Collection<Dvd>("dvds"); 
+var bookCollection = productsFile.Collection<Dvd>("upcomming-dvds"); 
 ```
 
 Persisting objects
@@ -87,12 +94,17 @@ foreach(var book in bookCollection.All){}
 
 Finding objects
 =
-You can find a specific object by it's ID (more on ID's below) like this:
-Find uses an index to search for the object. Depending on the size of your collection, a Find will be way faster than iterating the collection to find it.
+You can find a specific object by it's ID (more on ID's below)
+
+Find uses a btree index to search for objects. Depending on the size of your collection, a Find will be way faster than iterating the collection to find it.
+Sub-milliseconds lookups should be expected, even for large collections.
+
+Usage:
+
 ```cs
 var book = bookCollection.Find(123)
 ```
-(In later versions, you'll be able to search for other properties using the index mechanism as well)
+(In later versions, you'll be able to search and enumerate for other properties using the same index mechanism)
 
 Deleting objects
 =

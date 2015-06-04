@@ -16,6 +16,8 @@ namespace MarcelloDB.Collections
 
     public class Collection<T> : Collection
     {
+        public string Name { get; set; }
+
         internal bool BlockModification { get; set; }
 
         Session Session { get; set; }
@@ -27,11 +29,13 @@ namespace MarcelloDB.Collections
         RecordManager RecordManager { get; set; }        		
 
         internal Collection (Session session, 
+            string name,
             IObjectSerializer<T> serializer,
             IAllocationStrategy allocationStrategy,
             RecordManager recordManager)
         {
             Session = session;
+            this.Name = name;
             AllocationStrategy = allocationStrategy; 
             Serializer = serializer;
             RecordManager = recordManager;
@@ -41,7 +45,7 @@ namespace MarcelloDB.Collections
         {
             get{
                 return new CollectionEnumerator<T>(
-                    this, this.Session, RecordManager, Serializer);
+                    this, Session, RecordManager, Serializer);
             }
         }            
 
@@ -87,7 +91,7 @@ namespace MarcelloDB.Collections
         Record GetRecordForObjectID(object objectID)
         {                
             var index = RecordIndex.Create<object>(this.RecordManager, 
-                RecordIndex.GetIDIndexName<T>());
+                RecordIndex.GetIDIndexName<T>(this.Name));
             var address = index.Search(objectID);
             if (address > 0)
             {
@@ -101,7 +105,7 @@ namespace MarcelloDB.Collections
             var objectID = GetObjectIDOrThrow(obj);                
 
             var index = RecordIndex.Create<object>(
-                this.RecordManager, RecordIndex.GetIDIndexName<T>());
+                this.RecordManager, RecordIndex.GetIDIndexName<T>(this.Name));
             
             Record record = GetRecordForObjectID(objectID);
             if (record != null) 
@@ -143,7 +147,7 @@ namespace MarcelloDB.Collections
             if (record != null)
             {
                 var index = RecordIndex.Create<object>(
-                    this.RecordManager, RecordIndex.GetIDIndexName<T>());
+                    this.RecordManager, RecordIndex.GetIDIndexName<T>(this.Name));
                 index.UnRegister(objectID);
 
                 this.RecordManager.Recycle(record.Header.Address);

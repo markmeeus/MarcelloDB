@@ -11,9 +11,9 @@ namespace MarcelloDB.Index
         internal const string EMPTY_RECORDS_BY_SIZE = "__EMPTY_RECORDS_BY_SIZE__";
         internal const int BTREE_DEGREE = 12;
 
-        internal static string GetIDIndexName<T>()
+        internal static string GetIDIndexName<T>(string collectionName)
         {
-            return ID_INDEX_PREFIX + typeof(T).Name.ToUpper();
+            return ID_INDEX_PREFIX + collectionName.ToUpper() + "_" + typeof(T).Name.ToUpper();
         }
 
         internal static RecordIndex<TNodeKey> Create<TNodeKey>(

@@ -41,7 +41,7 @@ namespace UniversalTest
 
             var dataFolderPath = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
             var session = new MarcelloDB.Session(new Platform(), dataFolderPath);
-            var collection = session["articles"].Collection<Article>();
+            var collection = session["data"].Collection<Article>("articles");
             
             for(int i =0; i < 1000; i++)
             {

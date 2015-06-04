@@ -34,7 +34,9 @@ namespace MarcelloDB.Collections
             lock(Session.SyncLock){
                 try{
                     this.Collection.BlockModification = true;
-                    var index = RecordIndex.Create<object>(this.RecordManager, RecordIndex.GetIDIndexName<T>());
+                    var index = RecordIndex.Create<object>(
+                        this.RecordManager, RecordIndex.GetIDIndexName<T>(Collection.Name)
+                    );
                     var walker = index.GetWalker();
                     var node = walker.Next();
                     while (node != null)

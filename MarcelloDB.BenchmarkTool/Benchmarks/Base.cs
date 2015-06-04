@@ -29,7 +29,7 @@ namespace MarcelloDB.BenchmarkTool.Benchmarks
             var platform = new MarcelloDB.netfx.Platform();
             using (var session = new Session(platform, dataPath))
             {
-                this.Collection = session["persons"].Collection<Person>();
+                this.Collection = session["data"].Collection<Person>("persons");
                 OnSetup();
 
                 w = Stopwatch.StartNew();

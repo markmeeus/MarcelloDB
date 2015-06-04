@@ -28,7 +28,7 @@ namespace MarcelloDB.Test
             _provider = (InMemoryStreamProvider)_platform.CreateStorageStreamProvider("/");
             _session = new Session(_platform, "/");
             _collectionFile = _session["articles"];
-            _articles = _collectionFile.Collection<Article>();
+            _articles = _collectionFile.Collection<Article>("articles");
         }
             
         [Test]
@@ -47,13 +47,13 @@ namespace MarcelloDB.Test
         [Test]
         public void Collections_Are_Reused_Per_File()
         {
-            Assert.AreSame(_session["articles"].Collection<Article>(), _session["articles"].Collection<Article>());
+            Assert.AreSame(_session["data"].Collection<Article>("articles"), _session["data"].Collection<Article>("articles"));
         }
 
         [Test]
         public void Collections_Are_Not_Reused_Over_Different_Files()
         {
-            Assert.AreNotSame(_session["articles"].Collection<Article>(), _session["articles_copy"].Collection<Article>());
+            Assert.AreNotSame(_session["data"].Collection<Article>("articles"), _session["data_copy"].Collection<Article>("articles"));
         }
 
         [Test]
@@ -367,7 +367,7 @@ namespace MarcelloDB.Test
 
             using(var session = new Session(platform, "./data/"))
             {
-                var articles = session["articles"].Collection<Article>();
+                var articles = session["data"].Collection<Article>("articles");
 
                 var toiletPaper = Article.ToiletPaper;
                 var spinalTapDvd = Article.SpinalTapDvd;
@@ -390,7 +390,7 @@ namespace MarcelloDB.Test
             var platform =  new MarcelloDB.netfx.Platform();
             using (var session = new Session(platform, "./data/"))
             {
-                var articles = session["articles"].Collection<Article>();
+                var articles = session["data"].Collection<Article>("articles");
 
                 for (int i = 1; i < 1000; i++)
                 {
@@ -409,7 +409,7 @@ namespace MarcelloDB.Test
         [Test]
         public void Can_Use_Multiple_Collections()
         {
-            var locations = _collectionFile.Collection<Location>();
+            var locations = _collectionFile.Collection<Location>("locations");
             _articles.Persist(Article.SpinalTapDvd);
             locations.Persist(Location.Harrods);
             _articles.Persist(Article.BarbieDoll);
@@ -431,11 +431,38 @@ namespace MarcelloDB.Test
         }
 
         [Test]
+        public void Can_Use_Multiple_Collections_Of_Same_Type()
+        {
+            var _articles1 = _collectionFile.Collection<Article>("articles1");
+            var _articles2 = _collectionFile.Collection<Article>("articles2");
+            _articles1.Persist(Article.BarbieDoll);
+            _articles1.Persist(Article.ToiletPaper);
+            _articles2.Persist(Article.SpinalTapDvd);
+
+            Assert.AreEqual(2, _articles1.All.Count());
+            Assert.AreEqual(1, _articles2.All.Count());
+
+            Assert.NotNull(_articles1.All.FirstOrDefault(a => a.ID == Article.BarbieDoll.ID));
+            Assert.NotNull(_articles1.Find(Article.BarbieDoll.ID));
+            Assert.NotNull(_articles1.All.FirstOrDefault(a => a.ID == Article.ToiletPaper.ID));
+            Assert.NotNull(_articles1.Find(Article.ToiletPaper.ID));
+            Assert.Null(_articles1.All.FirstOrDefault(a => a.ID == Article.SpinalTapDvd.ID));
+            Assert.Null(_articles1.Find(Article.SpinalTapDvd.ID));
+
+            Assert.NotNull(_articles2.All.FirstOrDefault(a => a.ID == Article.SpinalTapDvd.ID));
+            Assert.NotNull(_articles2.Find(Article.SpinalTapDvd.ID));
+            Assert.Null(_articles2.All.FirstOrDefault(a => a.ID == Article.BarbieDoll.ID));
+            Assert.Null(_articles2.Find(Article.BarbieDoll.ID));
+            Assert.Null(_articles2.All.FirstOrDefault(a => a.ID == Article.ToiletPaper.ID));
+            Assert.Null(_articles2.Find(Article.ToiletPaper.ID));
+        }
+
+        [Test]
         public void Throw_IDMissingException_When_Object_Has_No_ID_Property()
         {
             Assert.Throws(typeof(IDMissingException), () =>
                 {
-                    _session["articles"].Collection<object>().Persist(new {Name = "Object Without ID"});
+                    _session["data"].Collection<object>("objects").Persist(new {Name = "Object Without ID"});
                 });
         }
 
@@ -444,17 +471,17 @@ namespace MarcelloDB.Test
         {
             Assert.Throws(typeof(ArgumentException), () =>
             {
-                _session[Journal.JOURNAL_COLLECTION_NAME].Collection<object>();
+                _session[Journal.JOURNAL_COLLECTION_NAME].Collection<object>("objects");
             });
             
             Assert.Throws(typeof(ArgumentException), () =>
             {
-                _session[Journal.JOURNAL_COLLECTION_NAME.ToLower()].Collection<object>();
+                _session[Journal.JOURNAL_COLLECTION_NAME.ToLower()].Collection<object>("objects");
             });
 
             Assert.Throws(typeof(ArgumentException), () =>
             {
-                _session[Journal.JOURNAL_COLLECTION_NAME.ToUpper()].Collection<object>();
+                _session[Journal.JOURNAL_COLLECTION_NAME.ToUpper()].Collection<object>("objects");
             });
         }
 
