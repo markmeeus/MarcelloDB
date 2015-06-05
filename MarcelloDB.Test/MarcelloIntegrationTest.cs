@@ -506,6 +506,16 @@ namespace MarcelloDB.Test
         }
 
         [Test]
+        public void Throws_InvalidOperation_When_A_Collection_Exists_For_Another_Type()
+        {
+            var collectionA = _collectionFile.Collection<Article>("articles");
+            Assert.Throws(typeof(InvalidOperationException), () =>
+                {
+                    var collectionB = _collectionFile.Collection<object>("articles");
+                });
+        }
+
+        [Test]
         public void Recovers_After_Exception_Inside_Enumeration()
         {
             _articles.Persist(Article.BarbieDoll);

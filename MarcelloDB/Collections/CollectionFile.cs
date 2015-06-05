@@ -44,9 +44,27 @@ namespace MarcelloDB.Collections
                         this.RecordManager)                                       
                     );
             }
+
+            var retVal = Collections[collectionName] as Collection<T>;
+            if (retVal == null)
+            {
+                ThrowCollectionDefinedForOtherType<T>(collectionName);
+            }
             return (Collection<T>)Collections[collectionName];
+
         }
 
+        void ThrowCollectionDefinedForOtherType<T>(string collectionName)
+        {
+            throw new InvalidOperationException(
+                string.Format("Collection with name \"{0}\" is allready defined as Collection<{1}>" +
+                    " and cannot be used as a Collection<{2}>.", 
+                    collectionName, 
+                    Collections[collectionName].GetType().GenericTypeArguments[0].Name,
+                    typeof(T).Name
+                )
+            );
+        }
     }
 }
 
