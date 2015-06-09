@@ -508,10 +508,10 @@ namespace MarcelloDB.Test
         [Test]
         public void Throws_InvalidOperation_When_A_Collection_Exists_For_Another_Type()
         {
-            var collectionA = _collectionFile.Collection<Article>("articles");
+            _collectionFile.Collection<Article>("articles");
             Assert.Throws(typeof(InvalidOperationException), () =>
                 {
-                    var collectionB = _collectionFile.Collection<object>("articles");
+                    _collectionFile.Collection<object>("articles");
                 });
         }
 
