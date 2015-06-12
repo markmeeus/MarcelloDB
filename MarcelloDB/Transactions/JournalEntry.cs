@@ -11,7 +11,7 @@ namespace MarcelloDB.Transactions
             return ++_lastStamp;
         }
     }
-        
+
     internal class TransactionJournal
     {
         public String ID { get; set;}
@@ -32,7 +32,7 @@ namespace MarcelloDB.Transactions
     {
         public long Stamp { get; set; }
 
-        public string CollectionName { get; set; }
+        public string StreamName { get; set; }
 
         public Int64 Address { get; set; }
 

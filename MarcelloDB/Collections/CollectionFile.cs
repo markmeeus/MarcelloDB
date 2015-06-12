@@ -26,13 +26,13 @@ namespace MarcelloDB.Collections
         Record RootRecord { get; set; }
 
         internal CollectionFile(Session session, string name)
-        {                        
+        {
             this.Session = session;
             this.Name = name;
             Collections = new Dictionary<string, Collection>();
             this.StorageEngine = new StorageEngine(this.Session, this.Name);
             this.RecordManager = new RecordManager(
-                this,                
+                this,
                 new DoubleSizeAllocationStrategy(),
                 this.StorageEngine
             );

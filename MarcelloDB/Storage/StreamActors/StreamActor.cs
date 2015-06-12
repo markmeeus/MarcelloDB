@@ -6,17 +6,17 @@ namespace MarcelloDB.Storage.StreamActors
     {
         protected Session Session { get; set; }
 
-        protected string CollectionName {get;set;}
+        protected string StreamName {get;set;}
 
-        internal StreamActor(Session session, string collectionName)
+        internal StreamActor(Session session, string streamName)
         {
             this.Session = session;
-            this.CollectionName = collectionName;
-        }     
-            
+            this.StreamName = streamName;
+        }
+
         protected IStorageStream GetStream()
         {
-            return this.Session.StreamProvider.GetStream(this.CollectionName);
+            return this.Session.StreamProvider.GetStream(this.StreamName);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace MarcelloDB.Test.Records
         }
 
 
-        [Test] 
+        [Test]
         public void Is_Clean_After_Construction()
         {
             Assert.IsFalse(_collectionRoot.Dirty);
@@ -27,7 +27,7 @@ namespace MarcelloDB.Test.Records
         {
             _collectionRoot.FormatVersion = 2;
             Assert.IsTrue(_collectionRoot.Dirty);
-        }            
+        }
 
         [Test]
         public void Is_Not_Dirty_When_Set_Clean_Called()

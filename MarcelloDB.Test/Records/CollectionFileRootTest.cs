@@ -36,7 +36,7 @@ namespace MarcelloDB.Test.Records
             collectionFileRoot.SetCollectionRootAddress("collection", 123);
             collectionFileRoot.SetCollectionRootAddress("collection", 456);
             Assert.AreEqual(456, collectionFileRoot.CollectionRootAddress("collection"));
-        }            
+        }
 
         [Test]
         public void Is_Dirty_When_New()
@@ -67,7 +67,7 @@ namespace MarcelloDB.Test.Records
 
         [Test]
         public void Is_Clean_When_NamedRecordIndex_Set_To_Same_Value()
-        {            
+        {
             var collectionFileRoot = CollectionFileRoot.Create();
             collectionFileRoot.NamedRecordIndexAddress = 3;
             collectionFileRoot.Clean();
@@ -78,7 +78,7 @@ namespace MarcelloDB.Test.Records
 
         [Test]
         public void Is_Dirty_When_NamedRecordIndexAddress_Changed()
-        {            
+        {
             var collectionFileRoot = CollectionFileRoot.Create();
             collectionFileRoot.NamedRecordIndexAddress = 2;
             collectionFileRoot.Clean();

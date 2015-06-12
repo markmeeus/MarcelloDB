@@ -25,7 +25,7 @@ namespace MarcelloDB
 
         Int64 _head;
         public Int64 Head {
-            get { return _head; } 
+            get { return _head; }
             set {
                 if (_head != value)
                 {
@@ -35,9 +35,9 @@ namespace MarcelloDB
             }
         }
 
-        Int64 _namedRecordIndexAddress; 
+        Int64 _namedRecordIndexAddress;
         public Int64 NamedRecordIndexAddress {
-            get { return _namedRecordIndexAddress; } 
+            get { return _namedRecordIndexAddress; }
             set {
                 if (_namedRecordIndexAddress != value)
                 {

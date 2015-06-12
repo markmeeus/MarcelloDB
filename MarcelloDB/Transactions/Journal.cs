@@ -33,13 +33,13 @@ namespace MarcelloDB.Transactions
             this.UncommittedEntries = new List<JournalEntry> ();
         }
 
-        internal void Write (string collectionName, long address, byte[] data)
+        internal void Write (string streamName, long address, byte[] data)
         {
             var entry = new JournalEntry()
             {
-                CollectionName = collectionName,
-                Address = address, 
-                Data = data 
+                StreamName = streamName,
+                Address = address,
+                Data = data
             };
             this.UncommittedEntries.Add(entry);
         }
@@ -50,7 +50,7 @@ namespace MarcelloDB.Transactions
                 return;
 
             var transactionJournal = new TransactionJournal();
-            foreach (var entry in this.UncommittedEntries) 
+            foreach (var entry in this.UncommittedEntries)
             {
                 transactionJournal.Entries.Add(entry);
             }
@@ -59,7 +59,7 @@ namespace MarcelloDB.Transactions
         }
 
         internal void Apply()
-        {           
+        {
             var journal = LoadJournal();
             if (journal == null)
             {
@@ -75,8 +75,8 @@ namespace MarcelloDB.Transactions
 
         internal void ApplyToData(string collectionName, Int64 address, byte[] data)
         {
-            var entries = this.AllEntriesForCollectionName(collectionName);          
-            foreach (var entry in entries) 
+            var entries = this.AllEntriesForStreamName(collectionName);
+            foreach (var entry in entries)
             {
                 DataHelper.CopyData(entry.Address, entry.Data, address, data);
             }
@@ -85,31 +85,31 @@ namespace MarcelloDB.Transactions
         internal void ClearUncommitted()
         {
             this.UncommittedEntries.Clear();
-        }           
+        }
 
         Writer GetWriterForEntry(JournalEntry entry)
         {
-            if(!this.Writers.ContainsKey(entry.CollectionName))
+            if(!this.Writers.ContainsKey(entry.StreamName))
             {
-                var writer = new Writer(this.Session, entry.CollectionName);
-                this.Writers[entry.CollectionName] = writer;
+                var writer = new Writer(this.Session, entry.StreamName);
+                this.Writers[entry.StreamName] = writer;
             }
-            return this.Writers[entry.CollectionName];
+            return this.Writers[entry.StreamName];
         }
-            
-        IEnumerable<JournalEntry> AllEntriesForCollectionName(string collectionName)
+
+        IEnumerable<JournalEntry> AllEntriesForStreamName(string streamName)
         {
-            return this.UncommittedEntries.Where(e => e.CollectionName == collectionName);         
-        }                  
-            
+            return this.UncommittedEntries.Where(e => e.StreamName == streamName);
+        }
+
         void PersistJournal(TransactionJournal transactionJournal){
             var bson = new BsonSerializer<TransactionJournal>().Serialize(transactionJournal);
 
-            this.JournalWriter.Write(0, 
+            this.JournalWriter.Write(0,
                 new BufferWriter(new byte[sizeof(int)])
                     .WriteInt32(bson.Length).GetTrimmedBuffer()
             );
-            this.JournalWriter.Write(sizeof(int), bson); 
+            this.JournalWriter.Write(sizeof(int), bson);
         }
 
         TransactionJournal LoadJournal(){
@@ -125,7 +125,7 @@ namespace MarcelloDB.Transactions
         }
 
         void ClearJournal(){
-            this.JournalWriter.Write(0, 
+            this.JournalWriter.Write(0,
                 //add 0 as length, ignore all after
                 new BufferWriter(new byte[sizeof(int)])
                 .WriteInt32(0).GetTrimmedBuffer()

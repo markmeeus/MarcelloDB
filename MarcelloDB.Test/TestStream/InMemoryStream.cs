@@ -39,7 +39,7 @@ namespace MarcelloDB.Test
 
     public class InMemoryStreamProvider : IStorageStreamProvider
     {
-        Dictionary<string, IStorageStream> Streams { get; set;} 
+        Dictionary<string, IStorageStream> Streams { get; set;}
 
         public InMemoryStreamProvider(){
             Streams = new Dictionary<string, IStorageStream> ();

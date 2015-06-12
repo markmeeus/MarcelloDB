@@ -4,14 +4,14 @@ using MarcelloDB.Serialization;
 namespace MarcelloDB.Records
 {
 	internal class CollectionRoot
-	{		
+	{
         const int CURRENT_FORMAT_VERSION = 1;
 
         #region properties
         Int32 _formatVersion;
-        internal Int32 FormatVersion 
-        { 
-            get {return _formatVersion;} 
+        internal Int32 FormatVersion
+        {
+            get {return _formatVersion;}
             set
             {
                 _formatVersion = value;
@@ -19,10 +19,10 @@ namespace MarcelloDB.Records
             }
         }
 
-         
+
         #endregion
         internal CollectionRoot()
-		{         
+		{
             this.FormatVersion = CURRENT_FORMAT_VERSION;
             this.Clean();
 		}
@@ -35,7 +35,7 @@ namespace MarcelloDB.Records
 
         internal static int MaxByteSize
         {
-            get { return 1024; } //some padding for future use 
+            get { return 1024; } //some padding for future use
         }
 
         internal byte[] AsBytes()
@@ -45,18 +45,18 @@ namespace MarcelloDB.Records
 
             bufferWriter.WriteInt32(this.FormatVersion);
 
-            return bufferWriter.GetTrimmedBuffer(); 
+            return bufferWriter.GetTrimmedBuffer();
         }
 
         internal static CollectionRoot FromBytes(byte[] bytes)
-        {        
+        {
             var bufferReader = new BufferReader(bytes);
             var formatVersion = bufferReader.ReadInt32();
 
-            return new CollectionRoot(){                    
+            return new CollectionRoot(){
                 FormatVersion = formatVersion
             };
-        }           
+        }
 	}
 }
 

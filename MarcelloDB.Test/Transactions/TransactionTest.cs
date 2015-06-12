@@ -17,8 +17,8 @@ namespace MarcelloDB.Test.Transactions
         public void Setup()
         {
             _session = new Session(new TestPlatform(), "/");
-            _articles = _session["data"].Collection<Article>("articles");
-            _locations = _session["data"].Collection<Location>("locations");
+            _articles = _session["articles_data"].Collection<Article>("articles");
+            _locations = _session["locations_data"].Collection<Location>("locations");
         }
 
         [Test]
@@ -40,7 +40,7 @@ namespace MarcelloDB.Test.Transactions
                 Assert.AreEqual(Article.BarbieDoll.ID, _articles.All.First().ID);
                 _locations.Persist(Location.Harrods);
                 Assert.AreEqual(Location.Harrods.ID, _locations.All.First().ID);
-            });                
+            });
         }
 
         [Test]
@@ -77,7 +77,7 @@ namespace MarcelloDB.Test.Transactions
                 Assert.AreEqual(barbieDoll.Name, _articles.All.First().Name);
                 _locations.Persist(harrods);
                 Assert.AreEqual(harrods.Name, _locations.All.First().Name);
-            });                
+            });
         }
 
         [Test]
@@ -152,7 +152,7 @@ namespace MarcelloDB.Test.Transactions
 
         [Test]
         public void Destroy_Rollback()
-        {           
+        {
             var article = Article.BarbieDoll;
             _articles.Persist(article);
 
@@ -167,7 +167,7 @@ namespace MarcelloDB.Test.Transactions
                 });
             }catch(Exception){}
 
-            Assert.AreEqual(Article.BarbieDoll.Name, _articles.All.First().Name, "Destroy should be rolled back");           
+            Assert.AreEqual(Article.BarbieDoll.Name, _articles.All.First().Name, "Destroy should be rolled back");
             Assert.AreEqual(Location.Harrods.Name, _locations.All.First().Name, "Destroy should be rolled back");
         }
     }
