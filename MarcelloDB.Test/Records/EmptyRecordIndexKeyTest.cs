@@ -1,8 +1,9 @@
 ﻿using System;
 using NUnit.Framework;
 using MarcelloDB.Serialization;
+using MarcelloDB.Records;
 
-namespace MarcelloDB.Test
+namespace MarcelloDB.Test.Records
 {
     [TestFixture]
     public class EmptyRecordIndexKeyTest

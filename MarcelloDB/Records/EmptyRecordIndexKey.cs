@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MarcelloDB
+namespace MarcelloDB.Records
 {
     public class EmptyRecordIndexKey : IComparable
     {

@@ -19,27 +19,10 @@ namespace MarcelloDB.Records
             }
         }
 
-        Int64 _namedRecordIndexAddress; 
-        internal Int64 NamedRecordIndexAddress {
-            get { return _namedRecordIndexAddress; } 
-            set {
-                _namedRecordIndexAddress = value;
-                _dirty = true;
-            }
-        }
-
-        Int64 _head;
-        internal Int64 Head {
-            get { return _head; } 
-            set {
-                _head = value;
-                _dirty = true;
-            }
-        }
+         
         #endregion
         internal CollectionRoot()
-		{
-            this.Head = MaxByteSize;
+		{         
             this.FormatVersion = CURRENT_FORMAT_VERSION;
             this.Clean();
 		}
@@ -61,8 +44,6 @@ namespace MarcelloDB.Records
             var bufferWriter = new BufferWriter(bytes);
 
             bufferWriter.WriteInt32(this.FormatVersion);
-            bufferWriter.WriteInt64(this.NamedRecordIndexAddress);
-            bufferWriter.WriteInt64(Head);
 
             return bufferWriter.GetTrimmedBuffer(); 
         }
@@ -71,17 +52,8 @@ namespace MarcelloDB.Records
         {        
             var bufferReader = new BufferReader(bytes);
             var formatVersion = bufferReader.ReadInt32();
-            var namedRecordIndexAddress = bufferReader.ReadInt64();
-            var head = bufferReader.ReadInt64();
-
-            if (head == 0)
-            {
-                head = MaxByteSize; //when reading from empty data
-            }
 
             return new CollectionRoot(){                    
-                NamedRecordIndexAddress = namedRecordIndexAddress,
-                Head = head,
                 FormatVersion = formatVersion
             };
         }           

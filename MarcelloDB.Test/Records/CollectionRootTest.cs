@@ -27,21 +27,7 @@ namespace MarcelloDB.Test.Records
         {
             _collectionRoot.FormatVersion = 2;
             Assert.IsTrue(_collectionRoot.Dirty);
-        }
-
-        [Test]
-        public void Is_Dirty_When_Head_Changed()
-        {            
-            _collectionRoot.Head = 2;
-            Assert.IsTrue(_collectionRoot.Dirty);
-        }
-
-        [Test]
-        public void Is_Dirty_When_NamedRecordIndexAddress_Changed()
-        {            
-            _collectionRoot.NamedRecordIndexAddress = 3;
-            Assert.IsTrue(_collectionRoot.Dirty);
-        }
+        }            
 
         [Test]
         public void Is_Not_Dirty_When_Set_Clean_Called()

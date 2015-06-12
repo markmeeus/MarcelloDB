@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MarcelloDB.Transactions.__
+namespace MarcelloDB.Transactions
 {
     internal static class TimeStamp
     {
@@ -12,7 +12,7 @@ namespace MarcelloDB.Transactions.__
         }
     }
         
-    public class TransactionJournal
+    internal class TransactionJournal
     {
         public String ID { get; set;}
 

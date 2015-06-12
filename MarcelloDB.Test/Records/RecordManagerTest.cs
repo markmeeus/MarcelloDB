@@ -5,6 +5,7 @@ using MarcelloDB.Test.Classes;
 using MarcelloDB.Storage;
 using MarcelloDB.AllocationStrategies;
 using MarcelloDB.Platform;
+using MarcelloDB.Collections;
 
 namespace MarcelloDB.Test.Records
 {
@@ -15,15 +16,18 @@ namespace MarcelloDB.Test.Records
         InMemoryStreamProvider _streamProvider;
         RecordManager _recordManager;
         Session _session;
-
+        CollectionFile _file;
         [SetUp]
         public void Initialize()
         {
             _platform = new TestPlatform();
             _streamProvider = (InMemoryStreamProvider)_platform.CreateStorageStreamProvider("/");
             _session = new Session(_platform, "/");
+            _file = new CollectionFile(_session, "file");
+            _file.Root = new CollectionFileRoot();
 
             _recordManager = new RecordManager(
+                _file,
                 new DoubleSizeAllocationStrategy(),
                 new StorageEngine(_session, "article"));            
         }

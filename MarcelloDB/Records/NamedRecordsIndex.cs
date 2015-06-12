@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using MarcelloDB.Serialization;
 
-namespace MarcelloDB.Records.__
+namespace MarcelloDB.Records
 {
-    public class NamedRecordsIndex
+    internal class NamedRecordsIndex
     {
         public Dictionary<string, Int64> NamedRecordIndexes { get; set;}
 
-        public NamedRecordsIndex()
+        internal NamedRecordsIndex()
         {
             this.NamedRecordIndexes = new Dictionary<string, long>();
         }

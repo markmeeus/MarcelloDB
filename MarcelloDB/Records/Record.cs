@@ -24,7 +24,7 @@ namespace MarcelloDB.Records
         }
 
 
-        internal Record()
+        public Record()
         {
             Header = RecordHeader.New();
         }
@@ -37,7 +37,7 @@ namespace MarcelloDB.Records
             }
         }
 
-        internal byte[] AsBytes()
+        internal virtual byte[] AsBytes()
         {
             var bytes = new byte[RecordHeader.ByteSize + Data.Length];
 
@@ -51,10 +51,11 @@ namespace MarcelloDB.Records
         {
             var header = RecordHeader.FromBytes(address, bytes);
             var data = new byte[header.DataSize];
-                     
-            Array.Copy(bytes, RecordHeader.ByteSize, data, 0, header.DataSize);                
-                
-            return new Record(){
+
+            Array.Copy(bytes, RecordHeader.ByteSize, data, 0, header.DataSize);
+
+            return new Record()
+            {
                 Header = header,
                 Data = data
             };

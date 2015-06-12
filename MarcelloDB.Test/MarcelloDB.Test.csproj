@@ -58,6 +58,8 @@
     <Compile Include="Classes\Location.cs" />
     <Compile Include="TestStream\TestPlatform.cs" />
     <Compile Include="Records\EmptyRecordIndexKeyTest.cs" />
+    <Compile Include="Records\CollectionFileRootTest.cs" />
+    <Compile Include="Records\InMemoryRecordManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

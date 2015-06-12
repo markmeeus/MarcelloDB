@@ -30,7 +30,7 @@ namespace MarcelloDB.Test
             _collectionFile = _session["articles"];
             _articles = _collectionFile.Collection<Article>("articles");
         }
-            
+
         [Test]
         public void Indexer_Returns_CollectionFile()
         {
@@ -64,7 +64,7 @@ namespace MarcelloDB.Test
             var article = _articles.Find(toiletPaper.ID);
 
             Assert.AreEqual(toiletPaper.Name, article.Name, "First article");
-        }            
+        }
 
         [Test]
         public void Insert_2_Objects()
@@ -91,7 +91,7 @@ namespace MarcelloDB.Test
             _articles.Persist(toiletPaper);
             _articles.Persist(spinalTapDvd);
             _articles.Persist(barbieDoll);
-        
+
             var articleNames = _articles.All.Select(a => a.Name).ToList();
             Assert.AreEqual(new List<string>{toiletPaper.Name, spinalTapDvd.Name, barbieDoll.Name}, articleNames, "Should return multiple article names");
         }
@@ -108,7 +108,7 @@ namespace MarcelloDB.Test
             toiletPaper.Name += "Extra Strong ToiletPaper";
 
             _articles.Persist(toiletPaper);
-        
+
             var reloadedArticle = _articles.All.Where (a => a.ID == Article.ToiletPaper.ID).FirstOrDefault ();
 
             Assert.AreEqual(toiletPaper.Name, reloadedArticle.Name, "Should return updated article name");
@@ -169,7 +169,7 @@ namespace MarcelloDB.Test
 
             Assert.AreEqual(new List<string>{spinalTapDvd.Name, toiletPaper.Name}, articleNames, "Should return updated article names");
         }
-            
+
         [Test]
         public void Destroy_Only_Object()
         {
@@ -178,7 +178,7 @@ namespace MarcelloDB.Test
             _articles.Persist(toiletPaper);
 
             _articles.Destroy(toiletPaper);
-        
+
             Assert.AreEqual (0, _articles.All.Count());
         }
 
@@ -288,7 +288,7 @@ namespace MarcelloDB.Test
 
         [Test]
         public void Destroy_Only_Insert_New()
-        {        
+        {
             var spinalTapDvd = Article.SpinalTapDvd;
 
             _articles.Persist(spinalTapDvd);
@@ -350,7 +350,7 @@ namespace MarcelloDB.Test
 
         [Test]
         public void Can_Handle_Subclasses()
-        {            
+        {
             var bread = Food.Bread;
             _articles.Persist(bread);
             var breadFromDB = (Food) _articles.All.First();
@@ -361,7 +361,7 @@ namespace MarcelloDB.Test
 
         [Test]
         public void Save_To_File_Stream()
-        {            
+        {
             EnsureFolder("data");
             var platform = new MarcelloDB.netfx.Platform();
 
@@ -380,7 +380,7 @@ namespace MarcelloDB.Test
                 var articleNames = articles.All.Select(a => a.Name).ToList();
 
                 Assert.AreEqual(new List<string> { toiletPaper.Name, spinalTapDvd.Name, barbieDoll.Name }, articleNames);
-            }            
+            }
         }
 
         [Test]
@@ -403,7 +403,7 @@ namespace MarcelloDB.Test
                     var a = articles.Find(i);
                     Assert.AreEqual(i, a.ID, "Article " + i.ToString() + " should have been found.");
                 }
-            }                  
+            }
         }
 
         [Test]
@@ -473,7 +473,7 @@ namespace MarcelloDB.Test
             {
                 _session[Journal.JOURNAL_COLLECTION_NAME].Collection<object>("objects");
             });
-            
+
             Assert.Throws(typeof(ArgumentException), () =>
             {
                 _session[Journal.JOURNAL_COLLECTION_NAME.ToLower()].Collection<object>("objects");
@@ -531,13 +531,13 @@ namespace MarcelloDB.Test
                 _articles.Persist(Article.BarbieDoll);
             });
         }
-            
+
         private void EnsureFolder(string path)
         {
             if(System.IO.Directory.Exists("data")){
                 System.IO.Directory.Delete("data", true);
             }
-            System.IO.Directory.CreateDirectory("data");                       
+            System.IO.Directory.CreateDirectory("data");
         }
     }
 }

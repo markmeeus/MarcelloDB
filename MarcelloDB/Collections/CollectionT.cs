@@ -7,7 +7,7 @@ using MarcelloDB.AllocationStrategies;
 using MarcelloDB.Records;
 using MarcelloDB.Storage;
 using MarcelloDB.Index;
-using MarcelloDB.Transactions.__;
+using MarcelloDB.Transactions;
 using MarcelloDB.Exceptions;
 
 namespace MarcelloDB.Collections
@@ -22,23 +22,27 @@ namespace MarcelloDB.Collections
 
         Session Session { get; set; }
 
+        CollectionFile File { get; set; }
+
         IObjectSerializer<T> Serializer { get; set; }
 
         IAllocationStrategy AllocationStrategy { get; set;}
 
-        RecordManager RecordManager { get; set; }        		
+        RecordManager RecordManager { get; set; }
 
-        internal Collection (Session session, 
+        internal Collection (Session session,
+            CollectionFile file,
             string name,
             IObjectSerializer<T> serializer,
             IAllocationStrategy allocationStrategy,
             RecordManager recordManager)
         {
-            Session = session;
+            this.Session = session;
+            this.File = file;
             this.Name = name;
-            AllocationStrategy = allocationStrategy; 
-            Serializer = serializer;
-            RecordManager = recordManager;
+            this.AllocationStrategy = allocationStrategy;
+            this.Serializer = serializer;
+            this.RecordManager = recordManager;
         }
 
         public IEnumerable<T> All
@@ -47,7 +51,7 @@ namespace MarcelloDB.Collections
                 return new CollectionEnumerator<T>(
                     this, Session, RecordManager, Serializer);
             }
-        }            
+        }
 
         public T Find(object id)
         {
@@ -67,9 +71,9 @@ namespace MarcelloDB.Collections
         {
             EnsureModificationIsAllowed();
             Transacted(() => {
-                PersistInternal(obj);                
-            });               
-        }            
+                PersistInternal(obj);
+            });
+        }
 
         public void Destroy(T obj)
         {
@@ -77,20 +81,20 @@ namespace MarcelloDB.Collections
             Transacted(() => {
                 DestroyInternal(obj);
             });
-        }     
-            
+        }
+
         void Transacted(Action action)
         {
             this.Session.Transaction(() =>
                 {
-                    this.Session.CurrentTransaction.AddTransactor(this.RecordManager);
+                    AddTransactors();
                     action();
                 });
         }
 
         Record GetRecordForObjectID(object objectID)
-        {                
-            var index = RecordIndex.Create<object>(this.RecordManager, 
+        {
+            var index = RecordIndex.Create<object>(this.RecordManager,
                 RecordIndex.GetIDIndexName<T>(this.Name));
             var address = index.Search(objectID);
             if (address > 0)
@@ -99,16 +103,16 @@ namespace MarcelloDB.Collections
             }
             return null;
         }
-            
+
         void PersistInternal(T obj)
         {
-            var objectID = GetObjectIDOrThrow(obj);                
+            var objectID = GetObjectIDOrThrow(obj);
 
             var index = RecordIndex.Create<object>(
                 this.RecordManager, RecordIndex.GetIDIndexName<T>(this.Name));
-            
+
             Record record = GetRecordForObjectID(objectID);
-            if (record != null) 
+            if (record != null)
             {
                 var originalAddress = record.Header.Address;
                 record = UpdateObject(record, obj);
@@ -119,11 +123,11 @@ namespace MarcelloDB.Collections
                     index.Register(objectID, record.Header.Address);
                 }
             }
-            else 
+            else
             {
                 record = AppendObject(obj);
                 index.Register(objectID, record.Header.Address);
-            }               
+            }
         }
 
         Record AppendObject(T obj)
@@ -131,7 +135,7 @@ namespace MarcelloDB.Collections
             var data = Serializer.Serialize(obj);
 
             return RecordManager.AppendRecord(data, true);
-        }            
+        }
 
         Record UpdateObject(Record record, T obj)
         {
@@ -157,8 +161,8 @@ namespace MarcelloDB.Collections
         object GetObjectIDOrThrow(T obj){
             var objectID = new ObjectProxy<T>(obj).ID;
             if(objectID == null){
-                throw new IDMissingException(obj.GetType().Name + 
-                    " either has no ID property, or the property returned null");                        
+                throw new IDMissingException(obj.GetType().Name +
+                    " either has no ID property, or the property returned null");
             }
             return objectID;
         }
@@ -169,6 +173,12 @@ namespace MarcelloDB.Collections
             {
                 throw new InvalidOperationException("Cannot modify a collection while it is being enumerated");
             }
+        }
+
+        void AddTransactors()
+        {
+            this.Session.CurrentTransaction.AddTransactor(this.File);
+            this.Session.CurrentTransaction.AddTransactor(this.RecordManager);
         }
     }
 }

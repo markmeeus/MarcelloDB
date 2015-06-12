@@ -21,7 +21,7 @@ namespace MarcelloDB
         internal Journal Journal { get; set; }
 
         internal object SyncLock { get; set; }
-            
+
         public Session (IPlatform platform, string rootPath)
         {
             this.CollectionFiles = new Dictionary<string, CollectionFile>();
@@ -45,7 +45,7 @@ namespace MarcelloDB
                 return this.CollectionFiles[fileName];
             }
         }
-        
+
         public void Transaction(Action action)
         {
             lock (this.SyncLock) {
@@ -53,7 +53,7 @@ namespace MarcelloDB
                 try {
                     CurrentTransaction.Enlist ();
                     action ();
-                    CurrentTransaction.Leave ();            
+                    CurrentTransaction.Leave ();
                 } catch (Exception) {
                     CurrentTransaction.Rollback ();
                     throw;

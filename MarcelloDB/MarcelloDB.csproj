@@ -75,6 +75,7 @@
     <Compile Include="Collections\CollectionFile.cs" />
     <Compile Include="Platform\IPlatform.cs" />
     <Compile Include="Records\EmptyRecordIndexKey.cs" />
+    <Compile Include="Records\CollectionFileRoot.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

@@ -20,17 +20,17 @@ namespace MarcelloDB.Collections
         public CollectionEnumerator(
             Collection<T> collection,
             Session session,
-            RecordManager recordManager, 
+            RecordManager recordManager,
             IObjectSerializer<T> serializer)
-        {   
+        {
             this.Collection = collection;
             this.Session = session;
             this.RecordManager = recordManager;
             this.Serializer = serializer;
         }
-            
+
         public IEnumerator<T> GetEnumerator()
-        {            
+        {
             lock(Session.SyncLock){
                 try{
                     this.Collection.BlockModification = true;
@@ -45,10 +45,10 @@ namespace MarcelloDB.Collections
                         var obj = Serializer.Deserialize(record.Data);
                         yield return obj;
                         node = walker.Next();
-                    }                 
+                    }
                 }
                 finally
-                {                        
+                {
                     this.Collection.BlockModification = false;
                 }
             }

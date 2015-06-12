@@ -10,7 +10,7 @@ namespace MarcelloDB.Transactions
 
         internal bool Running { get; set; }
 
-        internal bool IsCommitting { get; set; }  
+        internal bool IsCommitting { get; set; }
 
         List<ITransactor> Transactors { get; set; }
 
@@ -45,7 +45,7 @@ namespace MarcelloDB.Transactions
 
             this.Enlisted--;
 
-            if (this.Enlisted == 0) 
+            if (this.Enlisted == 0)
             {
                 this.Commit();
                 this.Running = false;
@@ -73,13 +73,13 @@ namespace MarcelloDB.Transactions
 
             Session.Journal.Commit();
 
-            this.IsCommitting = false;  
+            this.IsCommitting = false;
             this.TryApply();
         }
 
         void Apply()
         {
-            lock (this.Session.SyncLock) 
+            lock (this.Session.SyncLock)
             {
                 Session.Journal.Apply();
             }
@@ -88,7 +88,7 @@ namespace MarcelloDB.Transactions
         void TryApply()
         {
             try{
-                Apply(); 
+                Apply();
             }catch(Exception){}
         }
     }

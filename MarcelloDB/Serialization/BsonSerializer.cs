@@ -31,9 +31,9 @@ namespace MarcelloDB.Serialization
 
             return memoryStream.ToArray();
         }
-       
+
         public T Deserialize (byte[] bytes)
-        {            
+        {
             var serializer = GetSerializer();
             var reader = new BsonReader(
                 new MemoryStream(bytes)
