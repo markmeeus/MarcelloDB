@@ -109,16 +109,20 @@ namespace MarcelloDB.Collections
 
         public void SaveState()
         {
-            byte[] data = this.Root.Serialize();
-            if (this.RootRecord == null)
+            if (this.Root.IsDirty)
             {
-                this.RootRecord = this.RecordManager.AppendRecord(data, true);
+                byte[] data = this.Root.Serialize();
+                if (this.RootRecord == null)
+                {
+                    this.RootRecord = this.RecordManager.AppendRecord(data, true);
+                }
+                else
+                {
+                    this.RootRecord = this.RecordManager.UpdateRecord(this.RootRecord, data, true);
+                }
+
+                WriteRootAddress(this.RootRecord.Header.Address);
             }
-            else
-            {
-                this.RootRecord = this.RecordManager.UpdateRecord(this.RootRecord, data, true);
-            }
-            WriteRootAddress(this.RootRecord.Header.Address);
         }
 
         public void RollbackState()
