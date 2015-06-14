@@ -24,12 +24,11 @@ namespace MarcelloDB.Test.Records
             _streamProvider = (InMemoryStreamProvider)_platform.CreateStorageStreamProvider("/");
             _session = new Session(_platform, "/");
             _file = new CollectionFile(_session, "file");
-            _file.Root = new CollectionFileRoot();
 
             _recordManager = new RecordManager(
                 _file,
                 new DoubleSizeAllocationStrategy(),
-                new StorageEngine(_session, "article"));            
+                new StorageEngine(_session, "article"));
         }
 
         [Test]
@@ -71,15 +70,15 @@ namespace MarcelloDB.Test.Records
             Assert.AreEqual(new byte[3]{ 4, 5, 6}, readRecord.Data);
         }
 
-        [Test] 
+        [Test]
         public void Update_Record_Doesnt_Increase_StorageSize()
         {
             var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 });
             var streamLength =  GetStreamLength();
             _recordManager.UpdateRecord(record, new byte[3] { 4, 5, 6 });
             var newStreamLength =  GetStreamLength();
-            Assert.AreEqual(streamLength, newStreamLength);           
-        }                        
+            Assert.AreEqual(streamLength, newStreamLength);
+        }
 
         [Test]
         public void Get_Named_Record_Address_Returns_Null_When_Not_Registered()
@@ -101,7 +100,7 @@ namespace MarcelloDB.Test.Records
             _recordManager.RegisterNamedRecordAddress("Test2", 456);
             Assert.AreEqual(123, _recordManager.GetNamedRecordAddress("Test1"));
             Assert.AreEqual(456, _recordManager.GetNamedRecordAddress("Test2"));
-        }            
+        }
 
         [Test]
         public void Append_Record_Reuses_Empty_Record()

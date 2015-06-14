@@ -48,7 +48,7 @@ namespace MarcelloDB.Records
             IAllocationStrategy allocationStrategy,
             StorageEngine storageEngine
         )
-        {            
+        {
             this.CollectionFile = collectionFile;
             this.StorageEngine = storageEngine;
             this.AllocationStrategy = allocationStrategy;
@@ -149,7 +149,7 @@ namespace MarcelloDB.Records
 
                     var updateRecord = UpdateRecord(namedRecordIndexRecord, namedRecordIndex.ToBytes(), reuseRecycledRecord);
 
-                    this.CollectionFile.Root.NamedRecordIndexAddress = updateRecord.Header.Address;
+                    this.CollectionFile.GetRoot().NamedRecordIndexAddress = updateRecord.Header.Address;
                 });
         }
 
@@ -227,8 +227,8 @@ namespace MarcelloDB.Records
 
         void WriteRecordAtHead (Record record)
         {
-            record.Header.Address = this.CollectionFile.Root.Head;
-            this.CollectionFile.Root.Head += record.Header.TotalRecordSize;
+            record.Header.Address = this.CollectionFile.GetRoot().Head;
+            this.CollectionFile.GetRoot().Head += record.Header.TotalRecordSize;
 
             var bytes = record.AsBytes();
 
@@ -243,18 +243,18 @@ namespace MarcelloDB.Records
         Record GetNamedRecordIndexRecord()
         {
             EnsureNamedRecordIndex();
-            return GetRecord(this.CollectionFile.Root.NamedRecordIndexAddress);
+            return GetRecord(this.CollectionFile.GetRoot().NamedRecordIndexAddress);
         }
 
         void EnsureNamedRecordIndex()
         {
-            if (this.CollectionFile.Root.NamedRecordIndexAddress == 0)
+            if (this.CollectionFile.GetRoot().NamedRecordIndexAddress == 0)
             {
                 var namedRecordIndex = new NamedRecordsIndex();
                 var namedRecordIndexRecord = AppendRecord(
                     namedRecordIndex.ToBytes(), reuseRecycledRecord:false);
 
-                this.CollectionFile.Root.NamedRecordIndexAddress =
+                this.CollectionFile.GetRoot().NamedRecordIndexAddress =
                     namedRecordIndexRecord.Header.Address;
             }
         }

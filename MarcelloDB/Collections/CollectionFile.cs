@@ -21,7 +21,7 @@ namespace MarcelloDB.Collections
 
         Dictionary<string, Collection> Collections { get; set; }
 
-        internal CollectionFileRoot Root { get; set; }
+        CollectionFileRoot Root { get; set; }
 
         Record RootRecord { get; set; }
 
@@ -36,7 +36,6 @@ namespace MarcelloDB.Collections
                 new DoubleSizeAllocationStrategy(),
                 this.StorageEngine
             );
-            LoadCollectionFileRoot();
         }
 
         public Collection<T> Collection<T>(string collectionName)
@@ -65,16 +64,13 @@ namespace MarcelloDB.Collections
 
         }
 
-        void ThrowCollectionDefinedForOtherType<T>(string collectionName)
+        internal CollectionFileRoot GetRoot()
         {
-            throw new InvalidOperationException(
-                string.Format("Collection with name \"{0}\" is allready defined as Collection<{1}>" +
-                    " and cannot be used as a Collection<{2}>.",
-                    collectionName,
-                    Collections[collectionName].GetType().GenericTypeArguments[0].Name,
-                    typeof(T).Name
-                )
-            );
+            if (this.Root == null)
+            {
+                LoadCollectionFileRoot();
+            }
+            return this.Root;
         }
 
         void LoadCollectionFileRoot(){
@@ -105,6 +101,17 @@ namespace MarcelloDB.Collections
             );
         }
 
+        void ThrowCollectionDefinedForOtherType<T>(string collectionName)
+        {
+            throw new InvalidOperationException(
+                string.Format("Collection with name \"{0}\" is allready defined as Collection<{1}>" +
+                    " and cannot be used as a Collection<{2}>.",
+                    collectionName,
+                    Collections[collectionName].GetType().GenericTypeArguments[0].Name,
+                    typeof(T).Name
+                )
+            );
+        }
         #region ITransactor implementation
 
         public void SaveState()
@@ -127,7 +134,8 @@ namespace MarcelloDB.Collections
 
         public void RollbackState()
         {
-            LoadCollectionFileRoot();
+            this.Root = null;
+            this.RootRecord = null;
         }
 
         #endregion
