@@ -54,7 +54,6 @@
     <Compile Include="Index\Mocks\MockBTreeDataProvider.cs" />
     <Compile Include="Index\Mocks\MockBTree.cs" />
     <Compile Include="Serialization\BsonSerializerTest.cs" />
-    <Compile Include="Records\CollectionRootTest.cs" />
     <Compile Include="Classes\Location.cs" />
     <Compile Include="TestStream\TestPlatform.cs" />
     <Compile Include="Records\EmptyRecordIndexKeyTest.cs" />

@@ -9,7 +9,7 @@ using MarcelloDB.Transactions;
 
 namespace MarcelloDB.Collections
 {
-    public class CollectionFile : ITransactor
+    public class CollectionFile
     {
         Session Session { get; set; }
 
@@ -21,10 +21,6 @@ namespace MarcelloDB.Collections
 
         Dictionary<string, Collection> Collections { get; set; }
 
-        CollectionFileRoot Root { get; set; }
-
-        Record RootRecord { get; set; }
-
         internal CollectionFile(Session session, string name)
         {
             this.Session = session;
@@ -32,7 +28,6 @@ namespace MarcelloDB.Collections
             Collections = new Dictionary<string, Collection>();
             this.StorageEngine = new StorageEngine(this.Session, this.Name);
             this.RecordManager = new RecordManager(
-                this,
                 new DoubleSizeAllocationStrategy(),
                 this.StorageEngine
             );
@@ -64,43 +59,6 @@ namespace MarcelloDB.Collections
 
         }
 
-        internal CollectionFileRoot GetRoot()
-        {
-            if (this.Root == null)
-            {
-                LoadCollectionFileRoot();
-            }
-            return this.Root;
-        }
-
-        void LoadCollectionFileRoot(){
-            var rootAddress = ReadRootAddress();
-            if (rootAddress > 0)
-            {
-                this.RootRecord = RecordManager.GetRecord(rootAddress);
-                this.Root = CollectionFileRoot.Deserialize(this.RootRecord.Data);
-            }
-            else
-            {
-                this.Root = new CollectionFileRoot();
-            }
-        }
-
-        Int64 ReadRootAddress()
-        {
-            return new BufferReader(
-                this.StorageEngine.Read(0, sizeof(Int64))
-            ).ReadInt64();
-        }
-
-        void WriteRootAddress(Int64 address)
-        {
-            this.StorageEngine.Write(
-                0,
-                new BufferWriter(new byte[sizeof(Int64)]).WriteInt64(address).GetTrimmedBuffer()
-            );
-        }
-
         void ThrowCollectionDefinedForOtherType<T>(string collectionName)
         {
             throw new InvalidOperationException(
@@ -112,33 +70,6 @@ namespace MarcelloDB.Collections
                 )
             );
         }
-        #region ITransactor implementation
-
-        public void SaveState()
-        {
-            if (this.Root.IsDirty)
-            {
-                byte[] data = this.Root.Serialize();
-                if (this.RootRecord == null)
-                {
-                    this.RootRecord = this.RecordManager.AppendRecord(data, true);
-                }
-                else
-                {
-                    this.RootRecord = this.RecordManager.UpdateRecord(this.RootRecord, data, true);
-                }
-
-                WriteRootAddress(this.RootRecord.Header.Address);
-            }
-        }
-
-        public void RollbackState()
-        {
-            this.Root = null;
-            this.RootRecord = null;
-        }
-
-        #endregion
     }
 }
 

@@ -64,7 +64,6 @@
     <Compile Include="Records\NamedRecordsIndex.cs" />
     <Compile Include="Index\ObjectComparer.cs" />
     <Compile Include="Serialization\JsonSerializer.cs" />
-    <Compile Include="Records\CollectionRoot.cs" />
     <Compile Include="Index\RecordIndex.cs" />
     <Compile Include="Transactions\ITransactor.cs" />
     <Compile Include="Index\BTree\BTree.cs" />

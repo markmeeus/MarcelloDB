@@ -177,7 +177,6 @@ namespace MarcelloDB.Collections
 
         void AddTransactors()
         {
-            this.Session.CurrentTransaction.AddTransactor(this.File);
             this.Session.CurrentTransaction.AddTransactor(this.RecordManager);
         }
     }

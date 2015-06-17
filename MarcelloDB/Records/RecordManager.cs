@@ -24,48 +24,61 @@ namespace MarcelloDB.Records
         Int64 GetNamedRecordAddress(string name);
     }
 
-    internal class TransactionState
-    {
-        internal CollectionRoot CollectionRoot { get; set; }
-
-        internal RecordIndex<EmptyRecordIndexKey> EmptyRecordIndex{ get; set;}
-    }
-
     internal class RecordManager : IRecordManager, ITransactor
     {
+        RecordIndex<EmptyRecordIndexKey> _emptyRecordIndex;
+
+        CollectionFileRoot _root;
+
+        Record _rootRecord;
+
         Session Session { get; set; }
 
         StorageEngine StorageEngine { get;set; }
 
         IAllocationStrategy AllocationStrategy { get; set; }
 
-        TransactionState TransactionState { get; set; }
-
-        CollectionFile CollectionFile { get; set; }
-
         internal RecordManager(
-            CollectionFile collectionFile,
             IAllocationStrategy allocationStrategy,
             StorageEngine storageEngine
         )
         {
-            this.CollectionFile = collectionFile;
             this.StorageEngine = storageEngine;
             this.AllocationStrategy = allocationStrategy;
-            this.ResetTransactionState();
+        }
+
+        RecordIndex<EmptyRecordIndexKey> EmptyRecordIndex
+        {
+            get
+            {
+                if (_emptyRecordIndex == null)
+                {
+                    _emptyRecordIndex = RecordIndex.Create<EmptyRecordIndexKey>(
+                        this,
+                        RecordIndex.EMPTY_RECORDS_BY_SIZE,
+                        canReuseRecycledRecords:false); //do not reuse records for this index. It will try to reuse for building itself.
+                }
+                return _emptyRecordIndex;
+            }
+        }
+
+        CollectionFileRoot Root
+        {
+            get
+            {
+                if (_root == null)
+                {
+                    LoadCollectionFileRoot();
+                }
+                return _root;
+            }
+
         }
 
         #region IRecordManager implementation
-        public Record GetRecord(Int64 address){
-
-            Record record = null;
-
-            WithCollectionRoot(() =>
-                {
-                    record = ReadEntireRecord(address);
-                });
-
-            return record;
+        public Record GetRecord(Int64 address)
+        {
+            return ReadEntireRecord(address);
         }
 
         public Record AppendRecord(byte[] data, bool reuseRecycledRecord = true)
@@ -80,14 +93,10 @@ namespace MarcelloDB.Records
             {
                 //append
                 record = new Record();
+                record.Header.AllocatedDataSize = AllocationStrategy.CalculateSize(data.Length);
+                record.Data = data;
+                WriteRecordAtHead(record);
 
-                WithCollectionRoot(() =>
-                    {
-                        record.Header.AllocatedDataSize = AllocationStrategy.CalculateSize(data.Length);
-                        record.Data = data;
-
-                        WriteRecordAtHead(record);
-                    });
             }
             else //reuse
             {
@@ -100,25 +109,21 @@ namespace MarcelloDB.Records
         {
             Record result = null;
 
-            WithCollectionRoot(() =>
-                {
-                    if (data.Length > record.Header.AllocatedDataSize )
-                    {
-                        result = AppendRecord(data, reuseRecycledRecord);
-                        if(reuseRecycledRecord){
-                            Recycle(record.Header.Address);
-                        }
-                    }
-                    else
-                    {
-                        record.Data = data;
+            if (data.Length > record.Header.AllocatedDataSize )
+            {
+                result = AppendRecord(data, reuseRecycledRecord);
+                if(reuseRecycledRecord){
+                    Recycle(record.Header.Address);
+                }
+            }
+            else
+            {
+                record.Data = data;
 
-                        var bytes = record.AsBytes();
-                        StorageEngine.Write(record.Header.Address, bytes);
-                        result = record;
-                    }
-
-                });
+                var bytes = record.AsBytes();
+                StorageEngine.Write(record.Header.Address, bytes);
+                result = record;
+            }
 
             return result;
         }
@@ -126,45 +131,39 @@ namespace MarcelloDB.Records
         public void Recycle(Int64 address)
         {
             var recordHeader = ReadRecordHeader(address);
-            var emptyRecordIndex = GetEmptyRecordIndex();
+
             var emptyRecordIndexKey = new EmptyRecordIndexKey
             {
                 A = recordHeader.Address, S = recordHeader.AllocatedDataSize
             };
-            emptyRecordIndex.Register(
+            this.EmptyRecordIndex.Register(
                 emptyRecordIndexKey,
                 recordHeader.Address);
         }
 
         public void RegisterNamedRecordAddress(string name, Int64 recordAddress, bool reuseRecycledRecord = true)
         {
-            WithCollectionRoot(() =>
-                {
-                    var namedRecordIndexRecord = GetNamedRecordIndexRecord();
+            var namedRecordIndexRecord = GetNamedRecordIndexRecord();
 
-                    var namedRecordIndex = NamedRecordsIndex.FromBytes(namedRecordIndexRecord.Data);
+            var namedRecordIndex = NamedRecordsIndex.FromBytes(namedRecordIndexRecord.Data);
 
-                    namedRecordIndex.NamedRecordIndexes.Remove(name);
-                    namedRecordIndex.NamedRecordIndexes.Add(name, recordAddress);
+            namedRecordIndex.NamedRecordIndexes.Remove(name);
+            namedRecordIndex.NamedRecordIndexes.Add(name, recordAddress);
 
-                    var updateRecord = UpdateRecord(namedRecordIndexRecord, namedRecordIndex.ToBytes(), reuseRecycledRecord);
+            var updateRecord = UpdateRecord(namedRecordIndexRecord, namedRecordIndex.ToBytes(), reuseRecycledRecord);
 
-                    this.CollectionFile.GetRoot().NamedRecordIndexAddress = updateRecord.Header.Address;
-                });
+            this.Root.NamedRecordIndexAddress = updateRecord.Header.Address;
         }
 
         public Int64 GetNamedRecordAddress(string name)
         {
-            Int64 result = 0;
-            WithCollectionRoot(() =>
-                {
-                    var namedRecordIndex = GetNamedRecordIndex();
-                    if (namedRecordIndex.NamedRecordIndexes.ContainsKey(name))
-                    {
-                        result = namedRecordIndex.NamedRecordIndexes[name];
-                    }
-                });
-            return result;
+            var namedRecordIndex = GetNamedRecordIndex();
+            if (namedRecordIndex.NamedRecordIndexes.ContainsKey(name))
+            {
+                return  namedRecordIndex.NamedRecordIndexes[name];
+            }
+
+            return 0;
         }
         #endregion //IRecordManager implementation
 
@@ -177,7 +176,9 @@ namespace MarcelloDB.Records
 
         public void RollbackState()
         {
-            ResetTransactionState();
+            _root = null;
+            _rootRecord = null;
+            _emptyRecordIndex = null;
         }
         #endregion
 
@@ -194,41 +195,10 @@ namespace MarcelloDB.Records
            return RecordHeader.FromBytes(address, StorageEngine.Read(address, RecordHeader.ByteSize));
         }
 
-        void WithCollectionRoot(Action action)
-        {
-            //makes sure the collection root is loaded into the transaction state
-            LoadCollectionRoot();
-            action();
-        }
-
-        void LoadCollectionRoot()
-        {
-            if (TransactionState.CollectionRoot == null)
-            {
-                var bytes = StorageEngine.Read(0, CollectionRoot.MaxByteSize);
-                TransactionState.CollectionRoot = CollectionRoot.FromBytes(bytes);
-            }
-
-        }
-
-        void SaveCollectionRoot()
-        {
-            if (TransactionState.CollectionRoot.Dirty)
-            {
-                //StorageEngine.Write(0, TransactionState.CollectionRoot.AsBytes());
-                TransactionState.CollectionRoot.Clean();
-            }
-        }
-
-        void ResetTransactionState()
-        {
-            this.TransactionState = new TransactionState();
-        }
-
         void WriteRecordAtHead (Record record)
         {
-            record.Header.Address = this.CollectionFile.GetRoot().Head;
-            this.CollectionFile.GetRoot().Head += record.Header.TotalRecordSize;
+            record.Header.Address = this.Root.Head;
+            this.Root.Head += record.Header.TotalRecordSize;
 
             var bytes = record.AsBytes();
 
@@ -243,38 +213,25 @@ namespace MarcelloDB.Records
         Record GetNamedRecordIndexRecord()
         {
             EnsureNamedRecordIndex();
-            return GetRecord(this.CollectionFile.GetRoot().NamedRecordIndexAddress);
+            return GetRecord(this.Root.NamedRecordIndexAddress);
         }
 
         void EnsureNamedRecordIndex()
         {
-            if (this.CollectionFile.GetRoot().NamedRecordIndexAddress == 0)
+            if (this.Root.NamedRecordIndexAddress == 0)
             {
                 var namedRecordIndex = new NamedRecordsIndex();
                 var namedRecordIndexRecord = AppendRecord(
                     namedRecordIndex.ToBytes(), reuseRecycledRecord:false);
 
-                this.CollectionFile.GetRoot().NamedRecordIndexAddress =
+                this.Root.NamedRecordIndexAddress =
                     namedRecordIndexRecord.Header.Address;
             }
         }
 
-        RecordIndex<EmptyRecordIndexKey> GetEmptyRecordIndex()
-        {
-            if (TransactionState.EmptyRecordIndex == null)
-            {
-                TransactionState.EmptyRecordIndex = RecordIndex.Create<EmptyRecordIndexKey>(
-                    this,
-                    RecordIndex.EMPTY_RECORDS_BY_SIZE,
-                    canReuseRecycledRecords:false); //do not reuse records for this index. It will try to reuse for building itself.
-            }
-            return TransactionState.EmptyRecordIndex;
-        }
-
         Record ReuseRecycledRecord(int minimumLength)
         {
-            var emptyRecordIndex = GetEmptyRecordIndex();
-            var walker = emptyRecordIndex.GetWalker();
+            var walker = this.EmptyRecordIndex.GetWalker();
 
             var entry = walker.Next();
             while (entry != null &&
@@ -284,11 +241,60 @@ namespace MarcelloDB.Records
             }
             if (entry != null)
             {
-                emptyRecordIndex.UnRegister(entry.Key);
+                this.EmptyRecordIndex.UnRegister(entry.Key);
                 return GetRecord(entry.Pointer);
             }
             return null;
         }
+
+        void LoadCollectionFileRoot(){
+            var rootAddress = ReadRootAddress();
+            if (rootAddress > 0)
+            {
+                _rootRecord = this.GetRecord(rootAddress);
+                _root = CollectionFileRoot.Deserialize(_rootRecord.Data);
+            }
+            else
+            {
+                _root = new CollectionFileRoot();
+            }
+        }
+
+        void SaveCollectionRoot()
+        {
+            if (this.Root.IsDirty)
+            {
+                byte[] data = this.Root.Serialize();
+                if (_rootRecord == null)
+                {
+                    _rootRecord = this.AppendRecord(data, true);
+                }
+                else
+                {
+                    _rootRecord = this.UpdateRecord(_rootRecord, data, true);
+                }
+
+                WriteRootAddress(_rootRecord.Header.Address);
+            }
+            this.Root.Clean();
+        }
+
+        Int64 ReadRootAddress()
+        {
+            return new BufferReader(
+                this.StorageEngine.Read(0, sizeof(Int64))
+            ).ReadInt64();
+        }
+
+        void WriteRootAddress(Int64 address)
+        {
+            this.StorageEngine.Write(
+                0,
+                new BufferWriter(new byte[sizeof(Int64)]).WriteInt64(address).GetTrimmedBuffer()
+            );
+        }
+
+
     }
 }
 
