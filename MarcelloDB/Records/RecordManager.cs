@@ -107,25 +107,19 @@ namespace MarcelloDB.Records
 
         public Record UpdateRecord(Record record, byte[] data, bool reuseRecycledRecord = true)
         {
-            Record result = null;
-
             if (data.Length > record.Header.AllocatedDataSize )
             {
-                result = AppendRecord(data, reuseRecycledRecord);
                 if(reuseRecycledRecord){
                     Recycle(record.Header.Address);
                 }
+                return AppendRecord(data, reuseRecycledRecord);
             }
             else
             {
                 record.Data = data;
-
-                var bytes = record.AsBytes();
-                StorageEngine.Write(record.Header.Address, bytes);
-                result = record;
+                StorageEngine.Write(record.Header.Address, record.AsBytes());
+                return record;
             }
-
-            return result;
         }
 
         public void Recycle(Int64 address)
