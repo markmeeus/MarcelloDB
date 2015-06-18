@@ -129,7 +129,7 @@ namespace MarcelloDB.Test.Records
             var smallRecord = _recordManager.AppendRecord(new byte[1]{ 1 });
             var giantRecord = _recordManager.AppendRecord(new byte[100]);
             _recordManager.Recycle(giantRecord.Header.Address);
-
+            _recordManager.SaveState();
             var expectedLength = GetStreamLength();
             var updatedRecord = _recordManager.UpdateRecord(smallRecord, new byte[20]);
             var newLength = GetStreamLength();

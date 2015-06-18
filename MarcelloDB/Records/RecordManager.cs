@@ -6,6 +6,7 @@ using MarcelloDB.Records;
 using MarcelloDB.Index;
 using MarcelloDB.Transactions;
 using MarcelloDB.Collections;
+using System.Collections.Generic;
 
 namespace MarcelloDB.Records
 {
@@ -28,6 +29,8 @@ namespace MarcelloDB.Records
     {
         RecordIndex<EmptyRecordIndexKey> _emptyRecordIndex;
 
+        List<Int64> _recordsToRecycle;
+
         CollectionFileRoot _root;
 
         Record _rootRecord;
@@ -45,6 +48,7 @@ namespace MarcelloDB.Records
         {
             this.StorageEngine = storageEngine;
             this.AllocationStrategy = allocationStrategy;
+            _recordsToRecycle = new List<Int64>();
         }
 
         RecordIndex<EmptyRecordIndexKey> EmptyRecordIndex
@@ -124,15 +128,7 @@ namespace MarcelloDB.Records
 
         public void Recycle(Int64 address)
         {
-            var recordHeader = ReadRecordHeader(address);
-
-            var emptyRecordIndexKey = new EmptyRecordIndexKey
-            {
-                A = recordHeader.Address, S = recordHeader.AllocatedDataSize
-            };
-            this.EmptyRecordIndex.Register(
-                emptyRecordIndexKey,
-                recordHeader.Address);
+            _recordsToRecycle.Add(address);
         }
 
         public void RegisterNamedRecordAddress(string name, Int64 recordAddress, bool reuseRecycledRecord = true)
@@ -166,6 +162,8 @@ namespace MarcelloDB.Records
         public void SaveState()
         {
             SaveCollectionRoot();
+            RegisterRecycledRecordsInEmptyRecordIndex();
+            _recordsToRecycle.Clear();
         }
 
         public void RollbackState()
@@ -173,6 +171,7 @@ namespace MarcelloDB.Records
             _root = null;
             _rootRecord = null;
             _emptyRecordIndex = null;
+            _recordsToRecycle.Clear();
         }
         #endregion
 
@@ -239,6 +238,22 @@ namespace MarcelloDB.Records
                 return GetRecord(entry.Pointer);
             }
             return null;
+        }
+
+        void RegisterRecycledRecordsInEmptyRecordIndex()
+        {
+            foreach (var address in _recordsToRecycle)
+            {
+                var recordHeader = ReadRecordHeader(address);
+
+                var emptyRecordIndexKey = new EmptyRecordIndexKey
+                    {
+                        A = recordHeader.Address, S = recordHeader.AllocatedDataSize
+                    };
+                this.EmptyRecordIndex.Register(
+                    emptyRecordIndexKey,
+                    recordHeader.Address);
+            }
         }
 
         void LoadCollectionFileRoot(){
