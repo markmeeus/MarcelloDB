@@ -384,7 +384,7 @@ namespace MarcelloDB.Test
         }
 
         [Test]
-        public void Add1000()
+        public void Add_1000_ToFile()
         {
             EnsureFolder("data");
             var platform =  new MarcelloDB.netfx.Platform();
@@ -404,6 +404,42 @@ namespace MarcelloDB.Test
                     Assert.AreEqual(i, a.ID, "Article " + i.ToString() + " should have been found.");
                 }
             }
+        }
+
+        [Test]
+        public void Add_And_Remove_1000()
+        {
+
+            var articles = _session["data"].Collection<Article>("articles");
+
+            for (int i = 1; i < 1000; i++)
+            {
+                var a = new Article { ID = i, Name = "Article " + i.ToString() };
+                articles.Persist(a);
+            }
+
+            for (int i = 1; i < 1000; i++)
+            {
+                var a = articles.Find(i);
+                articles.Destroy(a);
+            }
+
+            Assert.AreEqual(0, articles.All.Count());
+
+            for (int i = 1; i < 1000; i++)
+            {
+                var a = new Article { ID = i, Name = "Article " + i.ToString() };
+                articles.Persist(a);
+            }
+
+            Assert.AreEqual(999, articles.All.Count());
+
+            for (int i = 1; i < 1000; i++)
+            {
+                var a = new Article { ID = i, Name = "Article " + i.ToString() };
+                articles.Destroy(a);
+            }
+                Assert.AreEqual(0, articles.All.Count());
         }
 
         [Test]
