@@ -41,6 +41,9 @@
     <Compile Include="DataClasses\Base.cs" />
     <Compile Include="Benchmarks\RandomRead.cs" />
     <Compile Include="Benchmarks\EnumerateAll.cs" />
+    <Compile Include="Benchmarks\SequentialDestroy.cs" />
+    <Compile Include="Benchmarks\RandomDestroy.cs" />
+    <Compile Include="Extensions\ListExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -56,6 +59,7 @@
   <ItemGroup>
     <Folder Include="Benchmarks\" />
     <Folder Include="DataClasses\" />
+    <Folder Include="Extensions\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

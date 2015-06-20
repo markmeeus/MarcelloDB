@@ -6,7 +6,7 @@ namespace MarcelloDB.BenchmarkTool
     class MainClass
     {
         public static void Main(string[] args)
-        {              
+        {
             TimeSpan elapsed;
             foreach (var objectCount in new int[]{500, 1000, 2000, 4000, 8000})
             {
@@ -30,6 +30,18 @@ namespace MarcelloDB.BenchmarkTool
             {
                 elapsed = new EnumerateAll(objectCount).Run();
                 Console.WriteLine(string.Format("EnumerateAll {0} took: {1} ms", objectCount, elapsed.TotalMilliseconds));
+            }
+
+            foreach (var objectCount in new int[]{500, 1000, 2000, 4000, 8000})
+            {
+                elapsed = new SequentialDestroy(objectCount).Run();
+                Console.WriteLine(string.Format("Sequential Destroy {0} took: {1} ms", objectCount, elapsed.TotalMilliseconds));
+            }
+
+            foreach (var objectCount in new int[]{500, 1000, 2000, 4000, 8000})
+            {
+                elapsed = new RandomDestroy(objectCount).Run();
+                Console.WriteLine(string.Format("Random Destroy {0} took: {1} ms", objectCount, elapsed.TotalMilliseconds));
             }
 
             int large = 100 * 1000;
