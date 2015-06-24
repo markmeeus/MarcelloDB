@@ -20,6 +20,13 @@ namespace MarcelloDB.Serialization
             Initialize(buffer, isLittleEndian);
         }
 
+        internal byte ReadByte()
+        {
+            var value = this.Buffer[this.Position];
+            this.Position++;
+            return value;
+        }
+
         internal Int32 ReadInt32()
         {
             var bytes = GetBytesInLittleEndianOrder(sizeof(Int32));

@@ -16,6 +16,13 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void Write_Byte()
+        {
+            _writer.WriteByte(1);
+            Assert.AreEqual(0x01, _writer.Buffer[0]);
+        }
+
+        [Test]
         public void Write_Int32_Little_Endian()
         {
             _writer.WriteInt32((Int32)0x11223344);
@@ -67,7 +74,7 @@ namespace MarcelloDB.Test.Serialization
         {
             var writer = new BufferWriter(new byte[12], true);
             writer.WriteInt64((Int64)123); //position at 8
-            writer.WriteInt64((Int64)456); 
+            writer.WriteInt64((Int64)456);
             Assert.AreEqual(16, writer.Buffer.Length);
         }
 
@@ -76,7 +83,7 @@ namespace MarcelloDB.Test.Serialization
         {
             var writer = new BufferWriter(new byte[8], true);
             writer.WriteInt64((Int64)123); //position at 8
-            writer.WriteInt64((Int64)456); 
+            writer.WriteInt64((Int64)456);
             Assert.AreEqual(16, writer.Buffer.Length);
         }
 

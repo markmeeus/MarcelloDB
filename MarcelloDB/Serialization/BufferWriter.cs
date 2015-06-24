@@ -20,6 +20,12 @@ namespace MarcelloDB.Serialization
             Initialize(buffer, isLittleEndian);
         }
 
+        internal BufferWriter WriteByte(byte value)
+        {
+            WriteBytes(new byte[]{ value });
+            return this;
+        }
+
         internal BufferWriter WriteInt32(Int32 value)
         {
             WriteBytes(LittleEndian(BitConverter.GetBytes(value)));

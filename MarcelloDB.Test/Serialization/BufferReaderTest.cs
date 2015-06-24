@@ -13,6 +13,22 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void Read_Byte()
+        {
+            var reader = new BufferReader(new byte[]{0x01}, true);
+            Assert.AreEqual(1, reader.ReadByte());
+        }
+
+        [Test]
+        public void Read_Byte_Twice()
+        {
+            var reader = new BufferReader(new byte[]{0x01, 0x02}, true);
+            Assert.AreEqual(1, reader.ReadByte());
+            Assert.AreEqual(2, reader.ReadByte());
+        }
+
+
+        [Test]
         public void ReadInt32_Little_Endian()
         {
             var reader = new BufferReader(new byte[]{0x11, 0x22, 0x33, 0x44}, true);

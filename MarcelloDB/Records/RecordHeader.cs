@@ -5,11 +5,11 @@ namespace MarcelloDB.Records
 {
     internal class RecordHeader
     {
-        const int BYTE_SIZE = 3 * sizeof(Int32);
+        const int BYTE_SIZE = sizeof(byte) + (3 * sizeof(Int32));
 
         //Address is not stored
+        internal byte Type { get; set; }
         internal long Address { get; set; }
-
         internal Int32 DataSize { get; set; }
         internal Int32 AllocatedDataSize { get; set; }
 
@@ -33,8 +33,10 @@ namespace MarcelloDB.Records
         {
             var bytes = new byte[ByteSize];
             var writer = new BufferWriter(bytes);
-            writer.WriteInt32(this.DataSize);
-            writer.WriteInt32(this.AllocatedDataSize);
+            writer
+                .WriteByte(this.Type)
+                .WriteInt32(this.DataSize)
+                .WriteInt32(this.AllocatedDataSize);
             return writer.GetTrimmedBuffer();
         }
 
@@ -47,6 +49,7 @@ namespace MarcelloDB.Records
             var reader = new BufferReader(bytes);
             var recordHeader = new RecordHeader();
             recordHeader.Address = address;
+            recordHeader.Type = reader.ReadByte();
             recordHeader.DataSize = reader.ReadInt32();
             recordHeader.AllocatedDataSize = reader.ReadInt32();
             return recordHeader;
