@@ -163,6 +163,7 @@ namespace MarcelloDB.Records
         {
             SaveCollectionRoot();
             RegisterRecycledRecordsInEmptyRecordIndex();
+            _emptyRecordIndex = null;
             _recordsToRecycle.Clear();
         }
 

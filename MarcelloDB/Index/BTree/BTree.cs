@@ -299,7 +299,7 @@ namespace MarcelloDB.Index.BTree
                 return result;
             }
 
-            return this.DeletePredecessor(
+            return this.DeleteSuccessor(
                 this.DataProvider.GetNode(node.ChildrenAddresses.First())
             );
         }
