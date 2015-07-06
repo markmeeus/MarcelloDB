@@ -39,7 +39,7 @@ namespace MarcelloDB.Test.Records
             var key1 = new EmptyRecordIndexKey{S = 1, A = 1 };
             var key2 = new EmptyRecordIndexKey{S = 1, A = 2 };
             Assert.IsTrue(key1.CompareTo(key2) < 0);
-        }
+        }            
     }
 }
 

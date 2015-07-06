@@ -2,7 +2,7 @@
 
 namespace MarcelloDB.Records
 {
-    public class EmptyRecordIndexKey : IComparable
+    public class EmptyRecordIndexKey : IComparable, IEquatable<EmptyRecordIndexKey>
     {
         public Int64 A { get; set; } //Address, abbreviated to save storage
         public Int32 S { get; set; } //Size
@@ -18,6 +18,15 @@ namespace MarcelloDB.Records
                 return A.CompareTo(other.A);
             }
             return sizeCompared;
+        }
+
+        #endregion
+
+        #region IEquatable implementation
+
+        public bool Equals(EmptyRecordIndexKey other)
+        {
+            return this.A.Equals(other.A) && this.S.Equals(other.S);
         }
 
         #endregion
