@@ -60,6 +60,7 @@ namespace MarcelloDB.Records
                     _emptyRecordIndex = RecordIndex.Create<EmptyRecordIndexKey>(
                         this,
                         RecordIndex.EMPTY_RECORDS_BY_SIZE,
+                        new EmptyRecordIndexNodeSerializer(),
                         canReuseRecycledRecords:false); //do not reuse records for this index. It will try to reuse for building itself.
                 }
                 return _emptyRecordIndex;

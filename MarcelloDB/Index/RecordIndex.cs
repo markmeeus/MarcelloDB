@@ -19,11 +19,12 @@ namespace MarcelloDB.Index
         internal static RecordIndex<TNodeKey> Create<TNodeKey>(
             IRecordManager recordManager, 
             string indexName, 
+            IObjectSerializer<Node<TNodeKey, Int64>> serializer,
             bool canReuseRecycledRecords = true)
         {
             var dataProvider = new RecordBTreeDataProvider<TNodeKey>(
                 recordManager, 
-                new BsonSerializer<Node<TNodeKey, Int64>>(),
+                serializer,
                 indexName,
                 canReuseRecycledRecords);
 
