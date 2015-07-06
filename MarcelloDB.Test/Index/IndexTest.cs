@@ -19,7 +19,7 @@ namespace MarcelloDB.Test
             _mockTree = new MockBTree<object, Int64>();
             _mockProvider = new MockBTreeDataProvider<object, Int64>();
             _index = new RecordIndex<object>(_mockTree, _mockProvider);
-        }       
+        }                   
 
         [Test]
         public void Search_Returns_Zero_When_Index_Empty()

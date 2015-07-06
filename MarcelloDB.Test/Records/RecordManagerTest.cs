@@ -8,10 +8,21 @@ using MarcelloDB.Platform;
 using MarcelloDB.Collections;
 
 namespace MarcelloDB.Test.Records
-{
+{    
     [TestFixture]
     public class RecordManagerTest
     {
+        public class TestAllocationStrategy : IAllocationStrategy
+        {
+            public int Size {get;set;}
+            #region IAllocationStrategy implementation
+            public int CalculateSize(int dataSize)
+            {
+                return this.Size;
+            }
+            #endregion
+        }
+
         IPlatform _platform;
         InMemoryStreamProvider _streamProvider;
         RecordManager _recordManager;
@@ -56,6 +67,24 @@ namespace MarcelloDB.Test.Records
         {
             var record = _recordManager.AppendRecord(new byte[0]);
             Assert.Greater(record.Header.Address, 0);
+        }
+
+        [Test]
+        public void Uses_Overridden_AllocationStrategy()
+        {
+            var allocationStrategy = new TestAllocationStrategy { Size = 200 };
+            var record = _recordManager.AppendRecord(new byte[10], allocationStrategy:  allocationStrategy);
+            Assert.AreEqual(allocationStrategy.Size, record.Header.AllocatedDataSize);
+        }
+
+        [Test]
+        public void Update_Record_Uses_Overridden_Allocation_Strategy()
+        {
+            var allocationStrategy = new TestAllocationStrategy { Size = 10 };
+            var record = _recordManager.AppendRecord(new byte[10], allocationStrategy:  allocationStrategy);
+            allocationStrategy.Size = 200;
+            var updatedRecord = _recordManager.UpdateRecord(record, new byte[40], allocationStrategy: allocationStrategy);
+            Assert.AreEqual(allocationStrategy.Size, updatedRecord.Header.AllocatedDataSize);
         }
 
         [Test]

@@ -10,7 +10,7 @@ namespace MarcelloDB.Serialization
         {
         }
 
-        int MaxSizeForDegree(int degree)
+        static internal int MaxSizeForDegree(int degree)
         {           
             var sizeOfDegree = sizeof(Int32);
             var maxSizeOfEntry = sizeof(Int64) + sizeof(Int64) + sizeof(Int32);

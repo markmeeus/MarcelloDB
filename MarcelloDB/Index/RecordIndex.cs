@@ -2,6 +2,7 @@
 using MarcelloDB.Records;
 using MarcelloDB.Serialization;
 using MarcelloDB.Index.BTree;
+using MarcelloDB.AllocationStrategies;
 
 namespace MarcelloDB.Index
 {
@@ -20,13 +21,15 @@ namespace MarcelloDB.Index
             IRecordManager recordManager, 
             string indexName, 
             IObjectSerializer<Node<TNodeKey, Int64>> serializer,
-            bool canReuseRecycledRecords = true)
+            bool canReuseRecycledRecords = true,
+            IAllocationStrategy allocationStrategy = null)
         {
             var dataProvider = new RecordBTreeDataProvider<TNodeKey>(
                 recordManager, 
                 serializer,
                 indexName,
-                canReuseRecycledRecords);
+                canReuseRecycledRecords,
+                allocationStrategy);
 
             var btree = new BTree<TNodeKey, Int64>(dataProvider, BTREE_DEGREE);
 

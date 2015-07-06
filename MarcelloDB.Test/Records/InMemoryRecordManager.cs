@@ -1,6 +1,7 @@
 ﻿using System;
 using MarcelloDB.Records;
 using System.Collections.Generic;
+using MarcelloDB.AllocationStrategies;
 
 namespace MarcelloDB.Test
 {
@@ -21,7 +22,10 @@ namespace MarcelloDB.Test
                 throw new ArgumentException("No record here: " + address.ToString());
             }
         }
-        public Record AppendRecord(byte[] data, bool reuseRecycledRecord = true)
+        public Record AppendRecord(
+            byte[] data, 
+            bool reuseRecycledRecord = true, 
+            IAllocationStrategy allocationStrategy = null)
         {
             var record = new Record();
             record.Header.Address = _records.Values.Count + 1;
@@ -31,7 +35,11 @@ namespace MarcelloDB.Test
             _records[record.Header.Address] = record;
             return record;
         }
-        public Record UpdateRecord(Record record, byte[] data, bool reuseRecycledRecord = true)
+        public Record UpdateRecord(
+            Record record, 
+            byte[] data, 
+            bool reuseRecycledRecord = true, 
+            IAllocationStrategy allocationStrategy = null)
         {
             if (_records.ContainsKey(record.Header.Address))
             {

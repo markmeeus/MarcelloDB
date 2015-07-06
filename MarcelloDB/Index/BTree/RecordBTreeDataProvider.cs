@@ -2,29 +2,39 @@
 using MarcelloDB.Records;
 using MarcelloDB.Serialization;
 using System.Collections.Generic;
+using MarcelloDB.AllocationStrategies;
 
 namespace MarcelloDB.Index.BTree
 {
     internal class RecordBTreeDataProvider<TNodeKey> :  IBTreeDataProvider<TNodeKey, Int64>
     {
         IRecordManager RecordManager { get; set; }
+
         IObjectSerializer<Node<TNodeKey, Int64>> Serializer { get; set; }
+
         Dictionary<Int64, Node<TNodeKey, Int64>> NodeCache { get; set; }
+
         Node<TNodeKey, Int64> RootNode { get; set; }
+
         string RootRecordName { get; set; }
+
         bool ReuseRecycledRecords { get; set; }
+
+        IAllocationStrategy AllocationStrategy { get; set; }
 
         internal RecordBTreeDataProvider(
             IRecordManager recordManager,
             IObjectSerializer<Node<TNodeKey, Int64>> serializer,
             string rootRecordName,
-            bool reuseRecycledRecords)
+            bool reuseRecycledRecords,
+            IAllocationStrategy allocationStrategy)
         {
             this.RecordManager = recordManager;
             this.Serializer = serializer;
             this.NodeCache = new Dictionary<long, Node<TNodeKey, long>>();
             this.RootRecordName = rootRecordName;
             this.ReuseRecycledRecords = reuseRecycledRecords;
+            this.AllocationStrategy = allocationStrategy;
         }
 
         #region IBTreeDataProvider implementation
@@ -72,8 +82,10 @@ namespace MarcelloDB.Index.BTree
             var node = new Node<TNodeKey, long>(degree);
             var data = Serializer.Serialize(node);
 
-            var record = RecordManager.AppendRecord(data,
-                reuseRecycledRecord:this.ReuseRecycledRecords);
+            var record = RecordManager.AppendRecord(
+                data,
+                reuseRecycledRecord:this.ReuseRecycledRecords,
+                allocationStrategy: this.AllocationStrategy);
 
             node.Address = record.Header.Address;
 
@@ -102,7 +114,6 @@ namespace MarcelloDB.Index.BTree
                     {
                         RecordManager.Recycle(nodeAddress);
                     }
-
                 }
 
                 NodeCache = nodesToKeep;
@@ -112,7 +123,12 @@ namespace MarcelloDB.Index.BTree
                     var record = RecordManager.GetRecord(node.Address);
                     var updateData = Serializer.Serialize(node);
                     var oldAddress = record.Header.Address;
-                    var updatedRecord = RecordManager.UpdateRecord(record, updateData, this.ReuseRecycledRecords);
+                    var updatedRecord = RecordManager.UpdateRecord(
+                        record, 
+                        updateData, 
+                        reuseRecycledRecord: this.ReuseRecycledRecords,
+                        allocationStrategy: this.AllocationStrategy
+                    );
                     if (oldAddress != updatedRecord.Header.Address)
                     {
                         node.Address = updatedRecord.Header.Address;
