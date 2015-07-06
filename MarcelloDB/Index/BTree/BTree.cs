@@ -249,7 +249,7 @@ namespace MarcelloDB.Index.BTree
                 Node<TK, TP> successorChild = this.DataProvider.GetNode(node.ChildrenAddresses[keyIndexInNode + 1]);
                 if (successorChild.Entries.Count >= this.Degree)
                 {
-                    Entry<TK, TP> successor = this.DeleteSuccessor(predecessorChild);
+                    Entry<TK, TP> successor = this.DeleteSuccessor(successorChild);
                     node.Entries[keyIndexInNode] = successor;
                 }
                 else
@@ -292,16 +292,21 @@ namespace MarcelloDB.Index.BTree
         /// <returns>Successor entry that got deleted.</returns>
         private Entry<TK, TP> DeleteSuccessor(Node<TK, TP> node)
         {
-            if (node.IsLeaf)
-            {
-                var result = node.Entries[0];
-                node.Entries.RemoveAt(0);
-                return result;
-            }
+            try
+            {                
+                if (node.IsLeaf)
+                {
+                    var result = node.Entries[0];
+                    node.Entries.RemoveAt(0);
+                    return result;
+                }
 
-            return this.DeleteSuccessor(
-                this.DataProvider.GetNode(node.ChildrenAddresses.First())
-            );
+                return this.DeleteSuccessor(
+                    this.DataProvider.GetNode(node.ChildrenAddresses.First())
+                );
+            }catch(Exception e){
+                throw;
+            }
         }
 
         /// <summary>
