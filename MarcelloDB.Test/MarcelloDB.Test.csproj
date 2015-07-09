@@ -60,6 +60,7 @@
     <Compile Include="Records\CollectionFileRootTest.cs" />
     <Compile Include="Records\InMemoryRecordManager.cs" />
     <Compile Include="Serialization\EmptyRecordIndexNodeSerializerTest.cs" />
+    <Compile Include="Serialization\IndexMetaRecordSerializerTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
