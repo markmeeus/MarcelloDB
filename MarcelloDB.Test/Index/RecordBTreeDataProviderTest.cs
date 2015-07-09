@@ -81,36 +81,23 @@ namespace MarcelloDB.Test.Index
 
         }
         #endregion
-    }
-
-    internal class DummyAllocationStrategy : IAllocationStrategy 
-    {
-        #region IAllocationStrategy implementation
-        public int CalculateSize(int dataSize)
-        {
-            return dataSize;
-        }
-        #endregion            
-    }
+    }        
 
     [TestFixture]
     public class RecordBTreeDataProviderTest
     {
         RecordBTreeDataProvider<object> _provider;
         TestRecordManager _manager;
-        DummyAllocationStrategy _allocationStrategy;
 
         [SetUp]
         public void Initialize()
         {
             _manager = new TestRecordManager();
-            _allocationStrategy = new DummyAllocationStrategy();
             _provider = new RecordBTreeDataProvider<object>(
                 _manager,
                 new BsonSerializer<Node<object,Int64>>(),
                 "Root", 
-                true,
-                _allocationStrategy);
+                true);
         }
 
         [Test]
@@ -125,14 +112,7 @@ namespace MarcelloDB.Test.Index
         {
             var node = _provider.CreateNode(2);
             Assert.AreEqual(1, node.Address);
-        }
-
-        [Test]
-        public void Create_Node_Uses_AllocationStrategy()
-        {
-            var node = _provider.CreateNode(2);
-            Assert.AreSame(_allocationStrategy, _manager.UsedAllocationStrategy);
-        }
+        }            
 
         [Test]
         public void Get_Node_Loads_From_Record()
@@ -140,8 +120,8 @@ namespace MarcelloDB.Test.Index
             var node = _provider.CreateNode(2);
             var loadedNode = new RecordBTreeDataProvider<object>(
                                  _manager,
-                new BsonSerializer<Node<object,Int64>>(),
-                                "Root", true, null).GetNode(node.Address);
+                                new BsonSerializer<Node<object,Int64>>(),
+                                "Root", true).GetNode(node.Address);
             Assert.AreEqual(node.Address, loadedNode.Address);
         }
 
@@ -153,8 +133,7 @@ namespace MarcelloDB.Test.Index
                 _manager,
                 new BsonSerializer<Node<object,Int64>>(),
                 "Root", 
-                true,
-                null);
+                true);
             node = newProvider.GetNode(node.Address); // get with new provider
             node.ChildrenAddresses.Add(12);
             node = newProvider.GetNode(node.Address); //get it again
@@ -185,8 +164,7 @@ namespace MarcelloDB.Test.Index
                 _manager,
                 new BsonSerializer<Node<object,Int64>>(),
                 "Root",
-                true,
-                null);
+                true);
             newProvider.GetRootNode(2);
 
             Assert.AreEqual(1, _manager.Records.Values.Count());

@@ -26,15 +26,14 @@ namespace MarcelloDB.Index.BTree
             IRecordManager recordManager,
             IObjectSerializer<Node<TNodeKey, Int64>> serializer,
             string rootRecordName,
-            bool reuseRecycledRecords,
-            IAllocationStrategy allocationStrategy)
+            bool reuseRecycledRecords
+            )
         {
             this.RecordManager = recordManager;
             this.Serializer = serializer;
             this.NodeCache = new Dictionary<long, Node<TNodeKey, long>>();
             this.RootRecordName = rootRecordName;
             this.ReuseRecycledRecords = reuseRecycledRecords;
-            this.AllocationStrategy = allocationStrategy;
         }
 
         #region IBTreeDataProvider implementation

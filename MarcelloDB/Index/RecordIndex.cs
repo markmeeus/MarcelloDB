@@ -21,15 +21,14 @@ namespace MarcelloDB.Index
             IRecordManager recordManager, 
             string indexName, 
             IObjectSerializer<Node<TNodeKey, Int64>> serializer,
-            bool canReuseRecycledRecords = true,
-            IAllocationStrategy allocationStrategy = null)
+            bool canReuseRecycledRecords = true            )
         {
             var dataProvider = new RecordBTreeDataProvider<TNodeKey>(
                 recordManager, 
                 serializer,
                 indexName,
-                canReuseRecycledRecords,
-                allocationStrategy);
+                canReuseRecycledRecords
+            );
 
             var btree = new BTree<TNodeKey, Int64>(dataProvider, BTREE_DEGREE);
 
