@@ -38,7 +38,7 @@ namespace MarcelloDB.Test.Index
             this.UsedAllocationStrategy = allocationStrategy;
 
             var record = new Record();
-            record.Header.AllocatedDataSize = data.Length;
+            record.Header.AllocatedDataSize = data.Length * 10; //To be sure
             record.Data = data;
             record.Header.Address = Records.Count + 1;
             Records.Add(record.Header.Address, record);
@@ -137,6 +137,53 @@ namespace MarcelloDB.Test.Index
         {
             var node = _provider.CreateNode(2);
             Assert.AreEqual(2, node.Address); //metarecord is 1, node is 2
+        }
+
+        [Test]
+        public void Flush_Updates_MetaRecord_NumberOfEntries()
+        {
+            var rootNode = _provider.GetRootNode(2);
+            var node1 = _provider.CreateNode(2);
+            var node2 = _provider.CreateNode(2);
+            rootNode.ChildrenAddresses.Add(node1.Address);
+            rootNode.ChildrenAddresses.Add(node2.Address);
+            _provider.Flush();
+            var newProvider = new RecordBTreeDataProvider<object>(
+                _manager,
+                new BsonSerializer<Node<object,Int64>>(),
+                "Root",
+                true);
+            Assert.AreEqual(3, newProvider.MetaRecord.NumberOfNodes);
+        }
+
+        [Test]
+        public void Unlinked_Nodes_Are_Removed_From_Total()
+        {
+            var rootNode = _provider.GetRootNode(2);
+            var node1 = _provider.CreateNode(2);
+            var node2 = _provider.CreateNode(2);
+            rootNode.ChildrenAddresses.Add(node1.Address);
+            rootNode.ChildrenAddresses.Add(node2.Address);
+            _provider.Flush();
+
+            var newProvider = new RecordBTreeDataProvider<object>(
+                _manager,
+                new BsonSerializer<Node<object,Int64>>(),
+                "Root",
+                true);
+
+            rootNode = newProvider.GetRootNode(2);
+            newProvider.GetNode(node2.Address);
+            rootNode.ChildrenAddresses.Remove(node2.Address);
+            newProvider.Flush();
+
+            newProvider = new RecordBTreeDataProvider<object>(
+                _manager,
+                new BsonSerializer<Node<object,Int64>>(),
+                "Root",
+                true);
+
+            Assert.AreEqual(2, newProvider.MetaRecord.NumberOfNodes);
         }
 
         [Test]

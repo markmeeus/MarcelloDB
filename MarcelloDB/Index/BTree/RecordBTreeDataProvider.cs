@@ -109,6 +109,8 @@ namespace MarcelloDB.Index.BTree
 
             node.Address = record.Header.Address;
 
+            this.MetaRecord.NumberOfNodes++;
+
             CacheNode(node);
 
             return node;
@@ -133,6 +135,7 @@ namespace MarcelloDB.Index.BTree
                     if (!nodesToKeep.ContainsKey(nodeAddress) && this.ReuseRecycledRecords)
                     {
                         RecordManager.Recycle(nodeAddress);
+                        this.MetaRecord.NumberOfNodes--;
                     }
                 }
 
@@ -201,7 +204,7 @@ namespace MarcelloDB.Index.BTree
         {
             var serializer = new IndexMetaRecordSerializer();
             var bytes = serializer.Serialize(this.MetaRecord);
-            this.RecordManager.UpdateRecord(this.MetaRecord.Record,bytes,true, null);
+            this.RecordManager.UpdateRecord(this.MetaRecord.Record,bytes,this.ReuseRecycledRecords, null);
             this.RecordManager.RegisterNamedRecordAddress(
                 this.RootRecordName,
                 this.MetaRecord.Record.Header.Address,
