@@ -3,7 +3,7 @@ using NUnit.Framework;
 using MarcelloDB.Index;
 using System.Collections.Generic;
 
-namespace MarcelloDB.Test
+namespace MarcelloDB.Test.Index
 {
     [TestFixture]
     public class IndexTest
@@ -19,7 +19,7 @@ namespace MarcelloDB.Test
             _mockTree = new MockBTree<object, Int64>();
             _mockProvider = new MockBTreeDataProvider<object, Int64>();
             _index = new RecordIndex<object>(_mockTree, _mockProvider);
-        }                   
+        }
 
         [Test]
         public void Search_Returns_Zero_When_Index_Empty()
@@ -46,7 +46,7 @@ namespace MarcelloDB.Test
         {
             _index.Register(1, 2);
             Assert.AreEqual(2, _mockTree.Inserted[1]);
-        }            
+        }
 
         [Test]
         public void Register_Inserts_New_Value_On_Update()
@@ -55,7 +55,7 @@ namespace MarcelloDB.Test
             _index.Register(1, 3);
             Assert.AreEqual(3, _mockTree.Inserted[1]);
             Assert.AreEqual("Insert", _mockTree.LastAction);
-        }            
+        }
 
         [Test]
         public void Register_Flushes_DataProvider()
@@ -79,7 +79,7 @@ namespace MarcelloDB.Test
             _mockTree.Insert(1, 2);
             _index.UnRegister(1);
             Assert.AreEqual(1, _mockTree.Deleted[0]);
-        }            
+        }
 
         [Test]
         public void UnRegister_Flushes_DataProvider()

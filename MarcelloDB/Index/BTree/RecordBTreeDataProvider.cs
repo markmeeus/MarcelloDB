@@ -8,6 +8,8 @@ namespace MarcelloDB.Index.BTree
 {
     internal class RecordBTreeDataProvider<TNodeKey> :  IBTreeDataProvider<TNodeKey, Int64>
     {
+        internal IndexMetaRecord MetaRecord{ get; private set; }
+
         IRecordManager RecordManager { get; set; }
 
         IObjectSerializer<Node<TNodeKey, Int64>> Serializer { get; set; }
@@ -34,12 +36,35 @@ namespace MarcelloDB.Index.BTree
             this.NodeCache = new Dictionary<long, Node<TNodeKey, long>>();
             this.RootRecordName = rootRecordName;
             this.ReuseRecycledRecords = reuseRecycledRecords;
+            this.Initialize();
+        }
+
+        void Initialize()
+        {
+            var serializer = new IndexMetaRecordSerializer();
+            var rootRecordAddress = this.RecordManager.GetNamedRecordAddress(this.RootRecordName);
+            if (rootRecordAddress <= 0)
+            {
+                var metaRecord = new IndexMetaRecord();
+                var bytes = serializer.Serialize(metaRecord);
+                metaRecord.Record = this.RecordManager.AppendRecord(bytes, this.ReuseRecycledRecords, null);
+                this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName,
+                    metaRecord.Record.Header.Address, this.ReuseRecycledRecords);
+                this.MetaRecord = metaRecord;
+            }
+            else
+            {
+                var record = this.RecordManager.GetRecord(rootRecordAddress);
+                this.MetaRecord = serializer.Deserialize(record.Data);
+                this.MetaRecord.Record = record;
+            }
+
         }
 
         #region IBTreeDataProvider implementation
         public Node<TNodeKey, long> GetRootNode(int degree)
         {
-            var rootRecordAddress = this.RecordManager.GetNamedRecordAddress(this.RootRecordName);
+            var rootRecordAddress = this.MetaRecord.RootNodeAddress;
             if (rootRecordAddress > 0)
             {
                 this.RootNode = GetNode(rootRecordAddress);
@@ -47,10 +72,6 @@ namespace MarcelloDB.Index.BTree
             else
             {
                 this.RootNode = CreateNode(degree);
-                this.RecordManager.RegisterNamedRecordAddress(
-                    this.RootRecordName,
-                    this.RootNode.Address,
-                    this.ReuseRecycledRecords);
             }
             return this.RootNode;
         }
@@ -123,8 +144,8 @@ namespace MarcelloDB.Index.BTree
                     var updateData = Serializer.Serialize(node);
                     var oldAddress = record.Header.Address;
                     var updatedRecord = RecordManager.UpdateRecord(
-                        record, 
-                        updateData, 
+                        record,
+                        updateData,
                         reuseRecycledRecord: this.ReuseRecycledRecords,
                         allocationStrategy: this.AllocationStrategy
                     );
@@ -149,8 +170,8 @@ namespace MarcelloDB.Index.BTree
                     var node = updateNodes[oldAddress];
                     NodeCache[node.Address] = node;
                 }
-                this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName,
-                    this.RootNode.Address, this.ReuseRecycledRecords);
+                this.MetaRecord.RootNodeAddress = this.RootNode.Address;
+                SaveMetaRecord();
             }
         }
         #endregion
@@ -174,6 +195,17 @@ namespace MarcelloDB.Index.BTree
         private void CacheNode(Node<TNodeKey, long> node)
         {
             this.NodeCache.Add(node.Address, node);
+        }
+
+        private void SaveMetaRecord()
+        {
+            var serializer = new IndexMetaRecordSerializer();
+            var bytes = serializer.Serialize(this.MetaRecord);
+            this.RecordManager.UpdateRecord(this.MetaRecord.Record,bytes,true, null);
+            this.RecordManager.RegisterNamedRecordAddress(
+                this.RootRecordName,
+                this.MetaRecord.Record.Header.Address,
+                this.ReuseRecycledRecords);
         }
     }
 }
