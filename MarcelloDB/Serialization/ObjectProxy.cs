@@ -16,7 +16,7 @@ namespace MarcelloDB.Serialization
         IEnumerable<PropertyInfo> Properties
         {
             get
-            { 
+            {
                 if (_properties == null)
                 {
                     _properties = Obj.GetType().GetRuntimeProperties();
@@ -38,34 +38,34 @@ namespace MarcelloDB.Serialization
                 var type = typeof(T);
                 if(!_idPropertyInfoCache.ContainsKey(type))
                 {
-                    foreach (var propertyName in IDProperties) 
+                    foreach (var propertyName in IDProperties)
                     {
                         if(HasProperty(propertyName))
-                        {                            
+                        {
                             _idPropertyInfoCache[type] = GetPropertyInfo(propertyName);
                         }
-                    }    
+                    }
                 }
                 if (_idPropertyInfoCache.ContainsKey(type))
-                {                    
+                {
                     id = ReadProperty(_idPropertyInfoCache[type]);
                 }
                 else
                 {
-                    GetAttributedId (ref id);                   
+                    GetAttributedId (ref id);
                 }
 
                 return id;
             }
         }
-          
+
         string[] IDProperties
         {
             get
             {
                 return new String[] {
-                    "ID", 
-                    "Id", 
+                    "ID",
+                    "Id",
                     "id",
                     ClassName () + "ID",
                     ClassName () + "Id",
@@ -77,7 +77,7 @@ namespace MarcelloDB.Serialization
         bool GetAttributedId(ref object id)
         {
             var attributedProperty = GetPropertyWithAttribute(typeof(IDAttribute));
-            if (attributedProperty != null) 
+            if (attributedProperty != null)
             {
                 id = ReadProperty(attributedProperty);
                 return true;
@@ -86,9 +86,9 @@ namespace MarcelloDB.Serialization
         }
 
         bool GetPropertyValue(string propertyName, ref object id)
-        {            
+        {
             id = ReadProperty(propertyName);
-            return true;        
+            return true;
         }
 
         #region reflection
@@ -96,7 +96,7 @@ namespace MarcelloDB.Serialization
         string ClassName()
         {
             return Obj.GetType ().Name;
-        }            
+        }
 
         PropertyInfo GetPropertyInfo(string propertyName)
         {

@@ -78,6 +78,7 @@
     <Compile Include="Serialization\EmptyRecordIndexNodeSerializer.cs" />
     <Compile Include="Records\IndexMetaRecord.cs" />
     <Compile Include="Serialization\IndexMetaRecordSerializer.cs" />
+    <Compile Include="Index\AddressList.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

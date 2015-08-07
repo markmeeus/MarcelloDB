@@ -140,7 +140,7 @@ namespace MarcelloDB.Test.Index
         }
 
         [Test]
-        public void Flush_Updates_MetaRecord_NumberOfEntries()
+        public void Flush_Updates_MetaRecord_NumberOfNodes()
         {
             var rootNode = _provider.GetRootNode(2);
             var node1 = _provider.CreateNode(2);
@@ -174,7 +174,7 @@ namespace MarcelloDB.Test.Index
 
             rootNode = newProvider.GetRootNode(2);
             newProvider.GetNode(node2.Address);
-            rootNode.ChildrenAddresses.Remove(node2.Address);
+            rootNode.ChildrenAddresses.RemoveRange(1,1);
             newProvider.Flush();
 
             newProvider = new RecordBTreeDataProvider<object>(

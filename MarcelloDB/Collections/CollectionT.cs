@@ -111,7 +111,7 @@ namespace MarcelloDB.Collections
             var objectID = GetObjectIDOrThrow(obj);
 
             var index = RecordIndex.Create<object>(
-                this.RecordManager, 
+                this.RecordManager,
                 RecordIndex.GetIDIndexName<T>(this.Name),
                 new BsonSerializer<Node<object, Int64>>());
 
@@ -155,7 +155,7 @@ namespace MarcelloDB.Collections
             if (record != null)
             {
                 var index = RecordIndex.Create<object>(
-                    this.RecordManager, 
+                    this.RecordManager,
                     RecordIndex.GetIDIndexName<T>(this.Name),
                     new BsonSerializer<Node<object, Int64>>());
                 index.UnRegister(objectID);

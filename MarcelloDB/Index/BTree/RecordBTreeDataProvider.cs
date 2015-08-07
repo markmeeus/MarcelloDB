@@ -184,7 +184,7 @@ namespace MarcelloDB.Index.BTree
             {
                 throw new InvalidOperationException("Panic, a btree node is linked self or one of its parents");
             }
-            foreach(var childNodeAddress in node.ChildrenAddresses)
+            foreach(var childNodeAddress in node.ChildrenAddresses.Addresses)
             {
                 if (NodeCache.ContainsKey(childNodeAddress))
                 {

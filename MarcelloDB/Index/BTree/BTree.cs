@@ -193,7 +193,7 @@ namespace MarcelloDB.Index.BTree
                         {
                             var oldChildren = childNode.ChildrenAddresses;
                             childNode.ChildrenAddresses = leftSibling.ChildrenAddresses;
-                            childNode.ChildrenAddresses.AddRange(oldChildren);
+                            childNode.ChildrenAddresses.AddRange(oldChildren.Addresses);
                         }
 
                         parentNode.ChildrenAddresses.RemoveAt(leftIndex);
@@ -206,7 +206,7 @@ namespace MarcelloDB.Index.BTree
                         childNode.Entries.AddRange(rightSibling.Entries);
                         if (!rightSibling.IsLeaf)
                         {
-                            childNode.ChildrenAddresses.AddRange(rightSibling.ChildrenAddresses);
+                            childNode.ChildrenAddresses.AddRange(rightSibling.ChildrenAddresses.Addresses);
                         }
 
                         parentNode.ChildrenAddresses.RemoveAt(rightIndex);
@@ -256,7 +256,7 @@ namespace MarcelloDB.Index.BTree
                 {
                     predecessorChild.Entries.Add(node.Entries[keyIndexInNode]);
                     predecessorChild.Entries.AddRange(successorChild.Entries);
-                    predecessorChild.ChildrenAddresses.AddRange(successorChild.ChildrenAddresses);
+                    predecessorChild.ChildrenAddresses.AddRange(successorChild.ChildrenAddresses.Addresses);
 
                     node.Entries.RemoveAt(keyIndexInNode);
                     node.ChildrenAddresses.RemoveAt(keyIndexInNode + 1);
@@ -293,7 +293,7 @@ namespace MarcelloDB.Index.BTree
         private Entry<TK, TP> DeleteSuccessor(Node<TK, TP> node)
         {
             try
-            {                
+            {
                 if (node.IsLeaf)
                 {
                     var result = node.Entries[0];

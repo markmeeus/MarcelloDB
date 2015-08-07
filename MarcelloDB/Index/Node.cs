@@ -8,16 +8,16 @@ namespace MarcelloDB.Index
         public int Degree { get; set; }
         public Int64 Address{ get; set; }
 
+        public AddressList ChildrenAddresses { get; set; }
+
+        public List<Entry<TK, TP>> Entries { get; set; }
+
         public Node(int degree)
         {
             this.Degree = degree;
-            this.ChildrenAddresses = new List<Int64>(degree);
+            this.ChildrenAddresses = new AddressList();
             this.Entries = new List<Entry<TK, TP>>(degree);
         }
-
-        public List<Int64> ChildrenAddresses { get; set; }
-
-        public List<Entry<TK, TP>> Entries { get; set; }
 
         public bool IsLeaf
         {
