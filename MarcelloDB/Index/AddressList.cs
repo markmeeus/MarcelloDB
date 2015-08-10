@@ -9,7 +9,6 @@ namespace MarcelloDB.Index
         internal AddressList()
         {
             _addresses = new List<Int64>();
-            this.Dirty = true;
         }
 
         List<Int64> _addresses;
@@ -28,19 +27,12 @@ namespace MarcelloDB.Index
             }
         }
 
-        internal int Count{
-            get{
+        internal int Count
+        {
+            get
+            {
                 return _addresses.Count;
             }
-        }
-
-        internal void Add(Int64 address){
-            _addresses.Add(address);
-        }
-
-        internal Int64 Single()
-        {
-            return _addresses.Single();
         }
 
         internal Int64 First()
@@ -48,9 +40,37 @@ namespace MarcelloDB.Index
             return _addresses.First();
         }
 
+        internal Int64 Single()
+        {
+            return _addresses.Single();
+        }
+
         internal Int64 Last()
         {
             return _addresses.Last();
+        }
+
+        internal int IndexOf(Int64 address)
+        {
+            return _addresses.IndexOf(address);
+        }
+
+        internal IEnumerable<Int64> GetRange(int index, int count)
+        {
+            return _addresses.GetRange(index, count);
+        }
+
+        #region mutating methods
+        internal void Add(Int64 address)
+        {
+            _addresses.Add(address);
+            this.Dirty = true;
+        }
+
+        internal void Insert(int index, Int64 address)
+        {
+            _addresses.Insert(index, address);
+            this.Dirty = true;
         }
 
         internal Int64 this [int index]
@@ -62,39 +82,28 @@ namespace MarcelloDB.Index
             set
             {
                 _addresses[index] = value;
+                this.Dirty = true;
             }
-        }
-
-        internal int IndexOf(Int64 address)
-        {
-            return _addresses.IndexOf(address);
-        }
-
-        internal void Insert(int index, Int64 address)
-        {
-            _addresses.Insert(index, address);
-        }
-
-
-        internal IEnumerable<Int64> GetRange(int index, int count)
-        {
-            return _addresses.GetRange(index, count);
         }
 
         internal void AddRange(IEnumerable<Int64> range)
         {
             _addresses.AddRange(range);
+            this.Dirty = true;
         }
 
         internal void RemoveRange(int index, int count)
         {
             _addresses.RemoveRange(index, count);
+            this.Dirty = true;
         }
 
         internal void RemoveAt(int index)
         {
             _addresses.RemoveAt(index);
+            this.Dirty = true;
         }
+        #endregion mutating methods
     }
 }
 
