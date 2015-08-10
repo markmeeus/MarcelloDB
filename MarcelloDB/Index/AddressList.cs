@@ -9,11 +9,29 @@ namespace MarcelloDB.Index
         internal AddressList()
         {
             _addresses = new List<Int64>();
+            this.Added = new List<Int64>();
+            this.Removed = new List<Int64>();
         }
 
         List<Int64> _addresses;
 
-        public bool Dirty { get; set; }
+        public bool Dirty
+        {
+            get
+            {
+                return this.Added.Count() > 0 || this.Removed.Count() > 0;
+            }
+        }
+
+        public void ClearChanges()
+        {
+            this.Added.Clear();
+            this.Removed.Clear();
+        }
+
+        public List<Int64> Added {get; private set;}
+        public List<Int64> Removed {get; private set;}
+
 
         public Int64[] Addresses
         {
@@ -23,6 +41,7 @@ namespace MarcelloDB.Index
             }
             set
             {
+                //Currently here for deserialization purposes only
                 _addresses = new List<long>(value);
             }
         }
@@ -64,13 +83,13 @@ namespace MarcelloDB.Index
         internal void Add(Int64 address)
         {
             _addresses.Add(address);
-            this.Dirty = true;
+            this.Added.Add(address);
         }
 
         internal void Insert(int index, Int64 address)
         {
             _addresses.Insert(index, address);
-            this.Dirty = true;
+            this.Added.Add(address);
         }
 
         internal Int64 this [int index]
@@ -81,27 +100,33 @@ namespace MarcelloDB.Index
             }
             set
             {
-                _addresses[index] = value;
-                this.Dirty = true;
+                if (_addresses[index] != value)
+                {
+                    this.Removed.Add(_addresses[index]);
+                    _addresses[index] = value;
+                    this.Added.Add(value);
+                }
             }
         }
 
         internal void AddRange(IEnumerable<Int64> range)
         {
             _addresses.AddRange(range);
-            this.Dirty = true;
+            this.Added.AddRange(range);
         }
 
         internal void RemoveRange(int index, int count)
         {
+            this.Removed.AddRange(_addresses.GetRange(index, count));
             _addresses.RemoveRange(index, count);
-            this.Dirty = true;
+
         }
 
         internal void RemoveAt(int index)
         {
+            this.Removed.Add(_addresses[index]);
             _addresses.RemoveAt(index);
-            this.Dirty = true;
+
         }
         #endregion mutating methods
     }
