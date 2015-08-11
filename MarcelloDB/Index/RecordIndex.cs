@@ -18,13 +18,13 @@ namespace MarcelloDB.Index
         }
 
         internal static RecordIndex<TNodeKey> Create<TNodeKey>(
-            IRecordManager recordManager, 
-            string indexName, 
+            IRecordManager recordManager,
+            string indexName,
             IObjectSerializer<Node<TNodeKey, Int64>> serializer,
             bool canReuseRecycledRecords = true            )
         {
             var dataProvider = new RecordBTreeDataProvider<TNodeKey>(
-                recordManager, 
+                recordManager,
                 serializer,
                 indexName,
                 canReuseRecycledRecords
@@ -37,7 +37,7 @@ namespace MarcelloDB.Index
     }
 
     internal class RecordIndex<TNodeKey>
-    {     
+    {
 
         IBTree<TNodeKey, Int64> Tree { get; set; }
 
@@ -69,7 +69,7 @@ namespace MarcelloDB.Index
         {
             var entry = this.Tree.Search(keyValue);
             if (entry != null)
-            {                
+            {
                 this.Tree.Insert(keyValue, recordAddress);
             }
             else
@@ -77,15 +77,15 @@ namespace MarcelloDB.Index
                 //keyvalue not yet in index
                 this.Tree.Insert(keyValue, recordAddress);
             }
-            FlushProvider();                
+            FlushProvider();
         }
 
         internal void UnRegister(TNodeKey keyValue)
         {
             this.Tree.Delete(keyValue);
             FlushProvider();
-        }                  
-                               
+        }
+
         void FlushProvider()
         {
             this.DataProvider.SetRootNode(this.Tree.Root);

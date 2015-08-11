@@ -15,21 +15,21 @@ namespace MarcelloDB.Records
         Record GetRecord(Int64 address);
 
         Record AppendRecord(
-            byte[] data, 
-            bool reuseRecycledRecord = true, 
+            byte[] data,
+            bool reuseRecycledRecord = true,
             IAllocationStrategy allocationStrategy = null);
 
         Record UpdateRecord(
-            Record record, 
-            byte[] data, 
-            bool reuseRecycledRecord = true, 
+            Record record,
+            byte[] data,
+            bool reuseRecycledRecord = true,
             IAllocationStrategy allocationStrategy  = null);
 
         void Recycle(Int64 address);
 
         void RegisterNamedRecordAddress(
-            string name, 
-            Int64 recordAddress, 
+            string name,
+            Int64 recordAddress,
             bool reuseRecycledRecord = true);
 
         Int64 GetNamedRecordAddress(string name);
@@ -97,8 +97,8 @@ namespace MarcelloDB.Records
         }
 
         public Record AppendRecord(
-            byte[] data, 
-            bool reuseRecycledRecord = true, 
+            byte[] data,
+            bool reuseRecycledRecord = true,
             IAllocationStrategy allocationStrategy = null)
         {
             Record record = null;
@@ -124,9 +124,9 @@ namespace MarcelloDB.Records
         }
 
         public Record UpdateRecord(
-            Record record, 
-            byte[] data, 
-            bool reuseRecycledRecord = true, 
+            Record record,
+            byte[] data,
+            bool reuseRecycledRecord = true,
             IAllocationStrategy allocationStrategy = null)
         {
             if (data.Length > record.Header.AllocatedDataSize )

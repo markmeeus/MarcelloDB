@@ -61,7 +61,7 @@
     <Compile Include="Records\InMemoryRecordManager.cs" />
     <Compile Include="Serialization\EmptyRecordIndexNodeSerializerTest.cs" />
     <Compile Include="Serialization\IndexMetaRecordSerializerTest.cs" />
-    <Compile Include="Index\AddressListTest.cs" />
+    <Compile Include="Helpers\ChangeTrackingListTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
