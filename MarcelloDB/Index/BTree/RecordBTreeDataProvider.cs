@@ -159,7 +159,7 @@ namespace MarcelloDB.Index.BTree
                         //update any children linking to this node
                         foreach(var n in NodeCache.Values){
                             var indexOfOldAddress = n.ChildrenAddresses.IndexOf(oldAddress);
-                            if (indexOfOldAddress > 0)
+                            if (indexOfOldAddress > -1)
                             {
                                 n.ChildrenAddresses[indexOfOldAddress] = updatedRecord.Header.Address;
                                 retry = true;
