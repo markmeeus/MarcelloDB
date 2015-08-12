@@ -19,7 +19,7 @@ namespace MarcelloDB.Index
             this.EntryList = new EntryList<TK, TP>();
         }
 
-        public bool IsLeaf
+        internal bool IsLeaf
         {
             get
             {
@@ -27,7 +27,7 @@ namespace MarcelloDB.Index
             }
         }
 
-        public bool HasReachedMaxEntries
+        internal bool HasReachedMaxEntries
         {
             get
             {
@@ -35,12 +35,26 @@ namespace MarcelloDB.Index
             }
         }
 
-        public bool HasReachedMinEntries
+        internal bool HasReachedMinEntries
         {
             get
             {
                 return this.EntryList.Count == this.Degree - 1;
             }
+        }
+
+        internal bool Dirty
+        {
+            get
+            {
+                return ChildrenAddresses.Dirty || EntryList.Dirty;
+            }
+        }
+
+        internal void ClearChanges()
+        {
+            ChildrenAddresses.ClearChanges();
+            EntryList.ClearChanges();
         }
     }
 }
