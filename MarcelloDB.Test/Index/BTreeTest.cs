@@ -29,9 +29,9 @@ namespace MarcelloDB.Test.Index
 
             Node<int, int> root = btree.Root;
             Assert.IsNotNull(root);
-            Assert.IsNotNull(root.Entries);
+            Assert.IsNotNull(root.EntryList);
             Assert.IsNotNull(root.ChildrenAddresses);
-            Assert.AreEqual(0, root.Entries.Count);
+            Assert.AreEqual(0, root.EntryList.Count);
             Assert.AreEqual(0, root.ChildrenAddresses.Count);
         }
 
@@ -142,10 +142,10 @@ namespace MarcelloDB.Test.Index
             btree.Root.ChildrenAddresses.Add(leftNode.Address);
             btree.Root.ChildrenAddresses.Add(rightNode.Address);
 
-            leftNode.Entries.Add(new Entry<int, int> (){ Key = 1, Pointer = 1 });
-            leftNode.Entries.Add(new Entry<int, int> (){ Key = 2, Pointer = 2 });
-            btree.Root.Entries.Add(new Entry<int, int> (){ Key = 3, Pointer = 3 });
-            rightNode.Entries.Add(new Entry<int, int> (){ Key = 4, Pointer = 4 });
+            leftNode.EntryList.Add(new Entry<int, int> (){ Key = 1, Pointer = 1 });
+            leftNode.EntryList.Add(new Entry<int, int> (){ Key = 2, Pointer = 2 });
+            btree.Root.EntryList.Add(new Entry<int, int> (){ Key = 3, Pointer = 3 });
+            rightNode.EntryList.Add(new Entry<int, int> (){ Key = 4, Pointer = 4 });
 
             btree.Delete(4);
         }
@@ -234,18 +234,18 @@ namespace MarcelloDB.Test.Index
         {
             if (root != node)
             {
-                Assert.IsTrue(node.Entries.Count >= degree - 1);
-                Assert.IsTrue(node.Entries.Count <= (2 * degree) - 1);
+                Assert.IsTrue(node.EntryList.Count >= degree - 1);
+                Assert.IsTrue(node.EntryList.Count <= (2 * degree) - 1);
             }
 
-            for (int i = 0; i <= node.Entries.Count; i++)
+            for (int i = 0; i <= node.EntryList.Count; i++)
             {
                 int subtreeMin = nodeMin;
                 int subtreeMax = nodeMax;
 
-                if (i < node.Entries.Count)
+                if (i < node.EntryList.Count)
                 {
-                    var entry = node.Entries[i];
+                    var entry = node.EntryList[i];
                     UpdateFoundKeys(foundKeys, entry);
                     Assert.IsTrue(entry.Key >= nodeMin && entry.Key <= nodeMax);
 
@@ -254,7 +254,7 @@ namespace MarcelloDB.Test.Index
 
                 if (i > 0)
                 {
-                    subtreeMin = node.Entries[i - 1].Key;
+                    subtreeMin = node.EntryList[i - 1].Key;
                 }
 
                 if (!node.IsLeaf)

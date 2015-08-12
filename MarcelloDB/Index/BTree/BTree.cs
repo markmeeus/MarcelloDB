@@ -98,7 +98,7 @@ namespace MarcelloDB.Index.BTree
             this.DeleteInternal(this.Root, keyToDelete);
 
             // if root's last entry was moved to a child node, remove it
-            if (this.Root.Entries.Count == 0 && !this.Root.IsLeaf)
+            if (this.Root.EntryList.Count == 0 && !this.Root.IsLeaf)
             {
                 this.Root = this.DataProvider.GetNode(this.Root.ChildrenAddresses.Single());
                 this.Height--;
@@ -112,10 +112,10 @@ namespace MarcelloDB.Index.BTree
         /// <param name="keyToDelete">Key to be deleted.</param>
         private void DeleteInternal(Node<TK, TP> node, TK keyToDelete)
         {
-            int i = node.Entries.TakeWhile(entry => Comparer.Compare(keyToDelete, entry.Key) > 0).Count();
+            int i = node.EntryList.Entries.TakeWhile(entry => Comparer.Compare(keyToDelete, entry.Key) > 0).Count();
 
             // found key in node, so delete if from it
-            if (i < node.Entries.Count && Comparer.Compare(node.Entries[i].Key, keyToDelete) == 0)
+            if (i < node.EntryList.Count && Comparer.Compare(node.EntryList[i].Key, keyToDelete) == 0)
             {
                 this.DeleteKeyFromNode(node, keyToDelete, i);
                 return;
@@ -152,13 +152,13 @@ namespace MarcelloDB.Index.BTree
                     ? this.DataProvider.GetNode(parentNode.ChildrenAddresses[rightIndex])
                     : null;
 
-                if (leftSibling != null && leftSibling.Entries.Count > this.Degree - 1)
+                if (leftSibling != null && leftSibling.EntryList.Count > this.Degree - 1)
                 {
                     // left sibling has a node to spare, so this moves one node from left sibling
                     // into parent's node and one node from parent into this current node ("child")
-                    childNode.Entries.Insert(0, parentNode.Entries[subtreeIndexInNode - 1]);
-                    parentNode.Entries[subtreeIndexInNode - 1] = leftSibling.Entries.Last();
-                    leftSibling.Entries.RemoveAt(leftSibling.Entries.Count - 1);
+                    childNode.EntryList.Insert(0, parentNode.EntryList[subtreeIndexInNode - 1]);
+                    parentNode.EntryList[subtreeIndexInNode - 1] = leftSibling.EntryList.Last();
+                    leftSibling.EntryList.RemoveAt(leftSibling.EntryList.Count - 1);
 
                     if (!leftSibling.IsLeaf)
                     {
@@ -166,13 +166,13 @@ namespace MarcelloDB.Index.BTree
                         leftSibling.ChildrenAddresses.RemoveAt(leftSibling.ChildrenAddresses.Count - 1);
                     }
                 }
-                else if (rightSibling != null && rightSibling.Entries.Count > this.Degree - 1)
+                else if (rightSibling != null && rightSibling.EntryList.Count > this.Degree - 1)
                 {
                     // right sibling has a node to spare, so this moves one node from right sibling
                     // into parent's node and one node from parent into this current node ("child")
-                    childNode.Entries.Add(parentNode.Entries[subtreeIndexInNode]);
-                    parentNode.Entries[subtreeIndexInNode] = rightSibling.Entries.First();
-                    rightSibling.Entries.RemoveAt(0);
+                    childNode.EntryList.Add(parentNode.EntryList[subtreeIndexInNode]);
+                    parentNode.EntryList[subtreeIndexInNode] = rightSibling.EntryList.First();
+                    rightSibling.EntryList.RemoveAt(0);
 
                     if (!rightSibling.IsLeaf)
                     {
@@ -185,10 +185,10 @@ namespace MarcelloDB.Index.BTree
                     // this block merges either left or right sibling into the current node "child"
                     if (leftSibling != null)
                     {
-                        childNode.Entries.Insert(0, parentNode.Entries[subtreeIndexInNode - 1]);
-                        var oldEntries = childNode.Entries;
-                        childNode.Entries = leftSibling.Entries;
-                        childNode.Entries.AddRange(oldEntries);
+                        childNode.EntryList.Insert(0, parentNode.EntryList[subtreeIndexInNode - 1]);
+                        var oldEntries = childNode.EntryList;
+                        childNode.EntryList = leftSibling.EntryList;
+                        childNode.EntryList.AddRange(oldEntries.Entries);
                         if (!leftSibling.IsLeaf)
                         {
                             var oldChildren = childNode.ChildrenAddresses;
@@ -197,20 +197,20 @@ namespace MarcelloDB.Index.BTree
                         }
 
                         parentNode.ChildrenAddresses.RemoveAt(leftIndex);
-                        parentNode.Entries.RemoveAt(subtreeIndexInNode - 1);
+                        parentNode.EntryList.RemoveAt(subtreeIndexInNode - 1);
                     }
                     else
                     {
                         Debug.Assert(rightSibling != null, "Node should have at least one sibling");
-                        childNode.Entries.Add(parentNode.Entries[subtreeIndexInNode]);
-                        childNode.Entries.AddRange(rightSibling.Entries);
+                        childNode.EntryList.Add(parentNode.EntryList[subtreeIndexInNode]);
+                        childNode.EntryList.AddRange(rightSibling.EntryList.Entries);
                         if (!rightSibling.IsLeaf)
                         {
                             childNode.ChildrenAddresses.AddRange(rightSibling.ChildrenAddresses.Addresses);
                         }
 
                         parentNode.ChildrenAddresses.RemoveAt(rightIndex);
-                        parentNode.Entries.RemoveAt(subtreeIndexInNode);
+                        parentNode.EntryList.RemoveAt(subtreeIndexInNode);
                     }
                 }
             }
@@ -234,31 +234,31 @@ namespace MarcelloDB.Index.BTree
             // at least "degree" # of entries, to BTree property is maintained
             if (node.IsLeaf)
             {
-                node.Entries.RemoveAt(keyIndexInNode);
+                node.EntryList.RemoveAt(keyIndexInNode);
                 return;
             }
 
             Node<TK, TP> predecessorChild = this.DataProvider.GetNode(node.ChildrenAddresses[keyIndexInNode]);
-            if (predecessorChild.Entries.Count >= this.Degree)
+            if (predecessorChild.EntryList.Count >= this.Degree)
             {
                 Entry<TK, TP> predecessor = this.DeletePredecessor(predecessorChild);
-                node.Entries[keyIndexInNode] = predecessor;
+                node.EntryList[keyIndexInNode] = predecessor;
             }
             else
             {
                 Node<TK, TP> successorChild = this.DataProvider.GetNode(node.ChildrenAddresses[keyIndexInNode + 1]);
-                if (successorChild.Entries.Count >= this.Degree)
+                if (successorChild.EntryList.Count >= this.Degree)
                 {
                     Entry<TK, TP> successor = this.DeleteSuccessor(successorChild);
-                    node.Entries[keyIndexInNode] = successor;
+                    node.EntryList[keyIndexInNode] = successor;
                 }
                 else
                 {
-                    predecessorChild.Entries.Add(node.Entries[keyIndexInNode]);
-                    predecessorChild.Entries.AddRange(successorChild.Entries);
+                    predecessorChild.EntryList.Add(node.EntryList[keyIndexInNode]);
+                    predecessorChild.EntryList.AddRange(successorChild.EntryList.Entries);
                     predecessorChild.ChildrenAddresses.AddRange(successorChild.ChildrenAddresses.Addresses);
 
-                    node.Entries.RemoveAt(keyIndexInNode);
+                    node.EntryList.RemoveAt(keyIndexInNode);
                     node.ChildrenAddresses.RemoveAt(keyIndexInNode + 1);
 
                     this.DeleteInternal(predecessorChild, keyToDelete);
@@ -275,8 +275,8 @@ namespace MarcelloDB.Index.BTree
         {
             if (node.IsLeaf)
             {
-                var result = node.Entries[node.Entries.Count - 1];
-                node.Entries.RemoveAt(node.Entries.Count - 1);
+                var result = node.EntryList[node.EntryList.Count - 1];
+                node.EntryList.RemoveAt(node.EntryList.Count - 1);
                 return result;
             }
 
@@ -296,8 +296,8 @@ namespace MarcelloDB.Index.BTree
             {
                 if (node.IsLeaf)
                 {
-                    var result = node.Entries[0];
-                    node.Entries.RemoveAt(0);
+                    var result = node.EntryList[0];
+                    node.EntryList.RemoveAt(0);
                     return result;
                 }
 
@@ -317,11 +317,11 @@ namespace MarcelloDB.Index.BTree
         /// <returns>Entry object with key information if found, null otherwise.</returns>
         private Entry<TK, TP> SearchInternal(Node<TK, TP> node, TK key)
         {
-            int i = node.Entries.TakeWhile(entry => Comparer.Compare(key, entry.Key) > 0).Count();
+            int i = node.EntryList.Entries.TakeWhile(entry => Comparer.Compare(key, entry.Key) > 0).Count();
 
-            if (i < node.Entries.Count && Comparer.Compare(node.Entries[i].Key, key) == 0)
+            if (i < node.EntryList.Count && Comparer.Compare(node.EntryList[i].Key, key) == 0)
             {
-                return node.Entries[i];
+                return node.EntryList[i];
             }
 
             return node.IsLeaf ? null : this.SearchInternal(
@@ -340,13 +340,13 @@ namespace MarcelloDB.Index.BTree
         {
             var newNode = this.DataProvider.CreateNode(this.Degree);;
 
-            parentNode.Entries.Insert(nodeToBeSplitIndex, nodeToBeSplit.Entries[this.Degree - 1]);
+            parentNode.EntryList.Insert(nodeToBeSplitIndex, nodeToBeSplit.EntryList[this.Degree - 1]);
             parentNode.ChildrenAddresses.Insert(nodeToBeSplitIndex + 1, newNode.Address);
 
-            newNode.Entries.AddRange(nodeToBeSplit.Entries.GetRange(this.Degree, this.Degree - 1));
+            newNode.EntryList.AddRange(nodeToBeSplit.EntryList.GetRange(this.Degree, this.Degree - 1));
 
             // remove also Entries[this.Degree - 1], which is the one to move up to the parent
-            nodeToBeSplit.Entries.RemoveRange(this.Degree - 1, this.Degree);
+            nodeToBeSplit.EntryList.RemoveRange(this.Degree - 1, this.Degree);
 
             if (!nodeToBeSplit.IsLeaf)
             {
@@ -357,12 +357,12 @@ namespace MarcelloDB.Index.BTree
 
         private void InsertNonFull(Node<TK, TP> node, TK newKey, TP newPointer)
         {
-            int positionToInsert = node.Entries.TakeWhile(entry => Comparer.Compare(newKey, entry.Key) >= 0).Count();
+            int positionToInsert = node.EntryList.Entries.TakeWhile(entry => Comparer.Compare(newKey, entry.Key) >= 0).Count();
 
             // leaf node
             if (node.IsLeaf)
             {
-                node.Entries.Insert(positionToInsert, new Entry<TK, TP>() { Key = newKey, Pointer = newPointer });
+                node.EntryList.Insert(positionToInsert, new Entry<TK, TP>() { Key = newKey, Pointer = newPointer });
                 return;
             }
 
@@ -371,7 +371,7 @@ namespace MarcelloDB.Index.BTree
             if (child.HasReachedMaxEntries)
             {
                 this.SplitChild(node, positionToInsert, child);
-                if (Comparer.Compare(newKey, node.Entries[positionToInsert].Key) > 0)
+                if (Comparer.Compare(newKey, node.EntryList[positionToInsert].Key) > 0)
                 {
                     positionToInsert++;
                 }

@@ -34,7 +34,7 @@ namespace MarcelloDB.Test.Index
         {
             var rootNode = _mockDataProvider.GetRootNode(_degree);
             var entry = new Entry<int, int>{ Key = 1, Pointer = 2 };
-            rootNode.Entries.Add(entry);
+            rootNode.EntryList.Add(entry);
 
             var result = _walker.Next();
 
@@ -48,13 +48,13 @@ namespace MarcelloDB.Test.Index
             for (int i = 0; i <= 2; i++)
             {
                 var entry = new Entry<int, int>(){Key = i, Pointer = i};
-                rootNode.Entries.Add(entry);
+                rootNode.EntryList.Add(entry);
             }
 
             for (int i = 0; i <= 2; i++)
             {
                 var entry = _walker.Next();
-                Assert.AreSame(rootNode.Entries[i], entry);
+                Assert.AreSame(rootNode.EntryList[i], entry);
             }
         }
 
@@ -76,9 +76,9 @@ namespace MarcelloDB.Test.Index
                 entries.Add(entry);
             }
 
-            rootNode.Entries.Add(entries[2]);
-            node1.Entries.Add(entries[1]);
-            node2.Entries.Add(entries[0]);
+            rootNode.EntryList.Add(entries[2]);
+            node1.EntryList.Add(entries[1]);
+            node2.EntryList.Add(entries[0]);
 
             for (int i = 0; i <= 2; i++)
             {
@@ -121,7 +121,7 @@ namespace MarcelloDB.Test.Index
             {
                 var entry = new Entry<int, int>(){Key = i, Pointer = i};
                 entries.Add(entry);
-                nodes[i].Entries.Add(entry);
+                nodes[i].EntryList.Add(entry);
             }
 
             for (int i = 0; i <= 5; i++)
@@ -141,28 +141,28 @@ namespace MarcelloDB.Test.Index
 
 
             var rootNode = _mockDataProvider.GetRootNode(_degree);
-            rootNode.Entries.Add(new Entry<int,int>{Key =9, Pointer = 9});
+            rootNode.EntryList.Add(new Entry<int,int>{Key =9, Pointer = 9});
 
             var node36 = _mockDataProvider.CreateNode(_degree);
             rootNode.ChildrenAddresses.Add(node36.Address);
-            node36.Entries.Add(new Entry<int,int>{Key = 3, Pointer = 3});
-            node36.Entries.Add(new Entry<int,int>{Key = 6, Pointer = 6});
+            node36.EntryList.Add(new Entry<int,int>{Key = 3, Pointer = 3});
+            node36.EntryList.Add(new Entry<int,int>{Key = 6, Pointer = 6});
 
             var node012 = _mockDataProvider.CreateNode(_degree);
             node36.ChildrenAddresses.Add(node012.Address);
-            node012.Entries.Add(new Entry<int,int>{Key = 0, Pointer = 0});
-            node012.Entries.Add(new Entry<int,int>{Key = 1, Pointer = 1});
-            node012.Entries.Add(new Entry<int,int>{Key = 2, Pointer = 2});
+            node012.EntryList.Add(new Entry<int,int>{Key = 0, Pointer = 0});
+            node012.EntryList.Add(new Entry<int,int>{Key = 1, Pointer = 1});
+            node012.EntryList.Add(new Entry<int,int>{Key = 2, Pointer = 2});
 
             var node45 = _mockDataProvider.CreateNode(_degree);
             node36.ChildrenAddresses.Add(node45.Address);
-            node45.Entries.Add(new Entry<int,int>{Key = 4, Pointer = 4});
-            node45.Entries.Add(new Entry<int,int>{Key = 5, Pointer = 5});
+            node45.EntryList.Add(new Entry<int,int>{Key = 4, Pointer = 4});
+            node45.EntryList.Add(new Entry<int,int>{Key = 5, Pointer = 5});
 
             var node78 = _mockDataProvider.CreateNode(_degree);
             node36.ChildrenAddresses.Add(node78.Address);
-            node78.Entries.Add(new Entry<int,int>{Key = 7, Pointer = 7});
-            node78.Entries.Add(new Entry<int,int>{Key = 8, Pointer = 8});
+            node78.EntryList.Add(new Entry<int,int>{Key = 7, Pointer = 7});
+            node78.EntryList.Add(new Entry<int,int>{Key = 8, Pointer = 8});
 
 
             var walkedKeys = new List<int>();

@@ -22,11 +22,11 @@ namespace MarcelloDB.Test.Serialization
             node.ChildrenAddresses.Add(123);
             node.ChildrenAddresses.Add(456);
             node.ChildrenAddresses.Add(678);
-            node.Entries.Add(new Entry<EmptyRecordIndexKey, Int64>{
+            node.EntryList.Add(new Entry<EmptyRecordIndexKey, Int64>{
                 Key = new EmptyRecordIndexKey{S = 123, A = 456 },
                 Pointer = 678
             });
-            node.Entries.Add(new Entry<EmptyRecordIndexKey, Int64>{
+            node.EntryList.Add(new Entry<EmptyRecordIndexKey, Int64>{
                 Key = new EmptyRecordIndexKey{S = 321, A = 654 },
                 Pointer = 876
             });
@@ -36,12 +36,12 @@ namespace MarcelloDB.Test.Serialization
 
             Assert.AreEqual(node.Degree, deserialized.Degree);
             Assert.AreEqual(node.ChildrenAddresses.Addresses, deserialized.ChildrenAddresses.Addresses);
-            Assert.AreEqual(node.Entries.Count, deserialized.Entries.Count);
+            Assert.AreEqual(node.EntryList.Count, deserialized.EntryList.Count);
 
-            Assert.AreEqual(node.Entries[0].Pointer, deserialized.Entries[0].Pointer);
-            Assert.AreEqual(node.Entries[0].Key, deserialized.Entries[0].Key);
-            Assert.AreEqual(node.Entries[1].Pointer, deserialized.Entries[1].Pointer);
-            Assert.AreEqual(node.Entries[1].Key, deserialized.Entries[1].Key);
+            Assert.AreEqual(node.EntryList[0].Pointer, deserialized.EntryList[0].Pointer);
+            Assert.AreEqual(node.EntryList[0].Key, deserialized.EntryList[0].Key);
+            Assert.AreEqual(node.EntryList[1].Pointer, deserialized.EntryList[1].Pointer);
+            Assert.AreEqual(node.EntryList[1].Key, deserialized.EntryList[1].Key);
 
         }
     }

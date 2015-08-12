@@ -80,6 +80,7 @@
     <Compile Include="Serialization\IndexMetaRecordSerializer.cs" />
     <Compile Include="Index\AddressList.cs" />
     <Compile Include="Helpers\ChangeTrackingListT.cs" />
+    <Compile Include="Index\EntryList.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

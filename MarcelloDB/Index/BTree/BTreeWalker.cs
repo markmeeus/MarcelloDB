@@ -35,9 +35,9 @@ namespace MarcelloDB.Index.BTree
         {
 
             MoveNext();
-            if (this.CurrentEntryIndex < CurrentNode.Entries.Count)
+            if (this.CurrentEntryIndex < CurrentNode.EntryList.Count)
             {
-                return CurrentNode.Entries[this.CurrentEntryIndex];
+                return CurrentNode.EntryList[this.CurrentEntryIndex];
             }        
             return null;
         }
@@ -61,7 +61,7 @@ namespace MarcelloDB.Index.BTree
             this.CurrentEntryIndex += 1;
 
             //walk up untill an entry is found
-            while (this.CurrentEntryIndex >= this.CurrentNode.Entries.Count && 
+            while (this.CurrentEntryIndex >= this.CurrentNode.EntryList.Count && 
                 this.BreadCrumbs.Count > 0)
             {
                 var breadCrumb = this.BreadCrumbs.Pop();

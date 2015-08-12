@@ -29,8 +29,8 @@ namespace MarcelloDB.Serialization
             var writer = new BufferWriter(bytes);
             writer.WriteInt32(node.Degree);                 //Degree
 
-            writer.WriteInt32(node.Entries.Count);          //Nr of entries
-            foreach (var entry in node.Entries)
+            writer.WriteInt32(node.EntryList.Count);          //Nr of entries
+            foreach (var entry in node.EntryList.Entries)
             {
                 WriteEntry(writer, entry);                  //every entry
             }
@@ -53,7 +53,7 @@ namespace MarcelloDB.Serialization
             var nrOfEntries = reader.ReadInt32();
             for(int i = 0; i< nrOfEntries; i++)
             {
-                node.Entries.Add(ReadEntry(reader));
+                node.EntryList.Add(ReadEntry(reader));
 
             }
             var nrOfChildAddresses = reader.ReadInt32();

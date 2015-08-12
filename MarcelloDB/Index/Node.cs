@@ -10,13 +10,13 @@ namespace MarcelloDB.Index
 
         public AddressList ChildrenAddresses { get; set; }
 
-        public List<Entry<TK, TP>> Entries { get; set; }
+        public EntryList<TK, TP> EntryList { get; set; }
 
         public Node(int degree)
         {
             this.Degree = degree;
             this.ChildrenAddresses = new AddressList();
-            this.Entries = new List<Entry<TK, TP>>(degree);
+            this.EntryList = new EntryList<TK, TP>();
         }
 
         public bool IsLeaf
@@ -31,7 +31,7 @@ namespace MarcelloDB.Index
         {
             get
             {
-                return this.Entries.Count == (2 * this.Degree) - 1;
+                return this.EntryList.Count == (2 * this.Degree) - 1;
             }
         }
 
@@ -39,7 +39,7 @@ namespace MarcelloDB.Index
         {
             get
             {
-                return this.Entries.Count == this.Degree - 1;
+                return this.EntryList.Count == this.Degree - 1;
             }
         }
     }
