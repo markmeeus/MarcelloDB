@@ -32,7 +32,7 @@ namespace MarcelloDB.Helpers
             this.Removed.Clear();
         }
 
-        public T[] Items
+        public IReadOnlyList<T> Items
         {
             get
             {

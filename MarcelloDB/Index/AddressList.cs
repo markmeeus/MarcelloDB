@@ -7,7 +7,7 @@ namespace MarcelloDB.Index
 {
     public class AddressList : ChangeTrackingList<Int64>
     {
-        internal Int64[] Addresses
+        internal IReadOnlyList<Int64> Addresses
         {
             get
             {

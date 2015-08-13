@@ -1,11 +1,12 @@
 ﻿using System;
 using MarcelloDB.Helpers;
+using System.Collections.Generic;
 
 namespace MarcelloDB.Index
 {
     public class EntryList<TKey, TAddress> : ChangeTrackingList<Entry<TKey, TAddress>>
     {
-        public  Entry<TKey, TAddress>[] Entries
+        public  IReadOnlyList<Entry<TKey, TAddress>> Entries
         {
             get
             {
