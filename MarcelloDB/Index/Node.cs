@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 
 namespace MarcelloDB.Index
-{
+{    
     public class Node<TK, TP>
     {
         public int Degree { get; set; }
+
         public Int64 Address{ get; set; }
 
         public AddressList ChildrenAddresses { get; set; }

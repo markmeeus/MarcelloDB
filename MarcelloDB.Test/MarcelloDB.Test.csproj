@@ -63,6 +63,7 @@
     <Compile Include="Serialization\IndexMetaRecordSerializerTest.cs" />
     <Compile Include="Helpers\ChangeTrackingListTest.cs" />
     <Compile Include="Index\NodeTest.cs" />
+    <Compile Include="Index\NodePersistenceTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

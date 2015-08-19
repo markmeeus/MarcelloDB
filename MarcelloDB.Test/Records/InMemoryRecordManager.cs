@@ -23,8 +23,8 @@ namespace MarcelloDB.Test
             }
         }
         public Record AppendRecord(
-            byte[] data, 
-            bool reuseRecycledRecord = true, 
+            byte[] data,
+            bool reuseRecycledRecord = true,
             IAllocationStrategy allocationStrategy = null)
         {
             var record = new Record();
@@ -36,15 +36,22 @@ namespace MarcelloDB.Test
             return record;
         }
         public Record UpdateRecord(
-            Record record, 
-            byte[] data, 
-            bool reuseRecycledRecord = true, 
+            Record record,
+            byte[] data,
+            bool reuseRecycledRecord = true,
             IAllocationStrategy allocationStrategy = null)
         {
             if (_records.ContainsKey(record.Header.Address))
             {
-                _records[record.Header.Address].Data = data;
-                return _records[record.Header.Address];
+                if (data.Length > record.Header.AllocatedDataSize)
+                {
+                    return AppendRecord(data, reuseRecycledRecord, allocationStrategy);
+                }
+                else
+                {
+                    _records[record.Header.Address].Data = data;
+                    return _records[record.Header.Address];
+                }
             }
             else
             {

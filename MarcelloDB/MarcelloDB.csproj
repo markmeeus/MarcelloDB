@@ -81,6 +81,7 @@
     <Compile Include="Index\AddressList.cs" />
     <Compile Include="Helpers\ChangeTrackingListT.cs" />
     <Compile Include="Index\EntryList.cs" />
+    <Compile Include="Index\NodePersistence.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
