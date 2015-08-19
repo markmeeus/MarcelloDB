@@ -122,8 +122,6 @@ namespace MarcelloDB.Test.Index
             loadedNodes[node.Address] = node;
             loadedNodes[childNode.Address] = childNode;
 
-            //add the child to the parent
-            node.ChildrenAddresses.Add(childNode.Address);
             childNode.ChildrenAddresses.RemoveAt(0); //makes it dirty
 
             var serializer = new MockSerializer<Node<int,int>>();
@@ -156,6 +154,29 @@ namespace MarcelloDB.Test.Index
 
         }
 
+        [Test]
+        public void Deletes_Child_Node_When_Not_Reachable()
+        {
+            Node<int, int> node;
+            Node<int, int> childNode;
+
+            CreateParentAndChildNode(out node, out childNode);
+
+            var loadedNodes = new Dictionary<long, Node<int, int>>();
+            loadedNodes[node.Address] = node;
+            loadedNodes[childNode.Address] = childNode;
+
+            childNode.ChildrenAddresses.RemoveAt(0); //makes it dirty
+            node.ChildrenAddresses.RemoveRange(0, node.ChildrenAddresses.Count); //remove any children
+
+            var serializer = new MockSerializer<Node<int,int>>();
+            serializer.SerializeFunc = (obj) => new byte[1000];
+            _persistence.Persist(node, loadedNodes, serializer);
+
+            Assert.IsFalse(_inMemoryRecordManager._records.ContainsKey(childNode.Address));
+
+        }
+
         void CreateParentAndChildNode(out Node<int, int> parentNode, out Node<int, int> childNode)
         {
             parentNode = new Node<int, int>(2);
@@ -163,8 +184,9 @@ namespace MarcelloDB.Test.Index
             var serializer = new MockSerializer<Node<int,int>>();
             serializer.SerializeFunc = (obj) => new byte[]{ 1, 2, 3 };
 
-            parentNode.ChildrenAddresses.Add(0);
-            childNode.ChildrenAddresses.Add(0);
+            parentNode.ChildrenAddresses.Add(100000);
+            childNode.ChildrenAddresses.Add(100002);
+
             _persistence.Persist(parentNode, new Dictionary<long, Node<int, int>>(), serializer);
             _persistence.Persist(childNode, new Dictionary<long, Node<int, int>>(), serializer);
             //add the child to the parent
