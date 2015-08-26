@@ -79,7 +79,6 @@ namespace MarcelloDB.Index
 
         void FlushProvider()
         {
-            this.DataProvider.SetRootNode(this.Tree.Root);
             this.DataProvider.Flush();
         }
     }

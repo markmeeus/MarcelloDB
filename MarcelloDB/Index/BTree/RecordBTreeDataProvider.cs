@@ -65,16 +65,18 @@ namespace MarcelloDB.Index.BTree
         #region IBTreeDataProvider implementation
         public Node<TNodeKey, long> GetRootNode(int degree)
         {
-            var rootRecordAddress = this.MetaRecord.RootNodeAddress;
-            if (rootRecordAddress > 0)
+            if (this.RootNode == null)
             {
-                this.RootNode = GetNode(rootRecordAddress);
+                var rootRecordAddress = this.MetaRecord.RootNodeAddress;
+                if (rootRecordAddress > 0)
+                {
+                    this.RootNode = GetNode(rootRecordAddress);
+                }
+                else
+                {
+                    this.RootNode = CreateNode(degree);
+                }
             }
-            else
-            {
-                this.RootNode = CreateNode(degree);
-            }
-
             return this.RootNode;
         }
 

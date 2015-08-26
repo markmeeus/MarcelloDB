@@ -11,8 +11,6 @@ namespace MarcelloDB.Index.BTree
         void Insert(TK newKey, TP newPointer);
 
         void Delete(TK keyToDelete);
-
-        Node<TK, TP> Root { get; }
     }
 
     /// <summary>
@@ -24,7 +22,17 @@ namespace MarcelloDB.Index.BTree
 
         ObjectComparer Comparer { get; set; }
 
-        public Node<TK, TP> Root { get; private set; }
+        public Node<TK, TP> Root
+        {
+            get
+            {
+                return this.DataProvider.GetRootNode(this.Degree);
+            }
+            private set
+            {
+                this.DataProvider.SetRootNode(value);
+            }
+        }
 
         public BTree(IBTreeDataProvider<TK, TP> dataProvider, int degree)
         {
@@ -36,12 +44,9 @@ namespace MarcelloDB.Index.BTree
                 throw new ArgumentException("BTree degree must be at least 2", "degree");
             }
 
-            this.Root = DataProvider.GetRootNode(degree);
             this.Degree = degree;
             this.Height = 1;
         }
-
-
 
         public int Degree { get; private set; }
 

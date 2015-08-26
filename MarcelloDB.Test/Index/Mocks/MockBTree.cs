@@ -22,10 +22,6 @@ namespace MarcelloDB.Test
             _root = new Node<TK, TP>(2);
         }
 
-        public void SetRoot(Node<TK, TP> rootNode)
-        {
-            _root = rootNode;
-        }
 
         #region IBTree implementation
         public Entry<TK, TP> Search(TK key)
@@ -48,14 +44,6 @@ namespace MarcelloDB.Test
             Inserted.Remove(keyToDelete);
             Deleted.Add(keyToDelete);
             LastAction = "Delete";
-        }
-            
-        public Node<TK, TP> Root
-        {
-            get
-            {
-                return _root;
-            }
         }
         #endregion
     }

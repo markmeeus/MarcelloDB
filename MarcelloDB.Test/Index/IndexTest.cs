@@ -65,15 +65,6 @@ namespace MarcelloDB.Test.Index
         }
 
         [Test]
-        public void Register_Saves_Root_Address()
-        {
-            _mockTree.SetRoot(new Node<object, long>(2){Address = 123});
-            _index.Register(1, 2);
-            Assert.AreEqual(123, _mockProvider.RootNodeAddress);
-        }
-
-
-        [Test]
         public void UnRegister_Deletes_Original_Value()
         {
             _mockTree.Insert(1, 2);
@@ -86,14 +77,6 @@ namespace MarcelloDB.Test.Index
         {
             _index.UnRegister(1);
             Assert.IsTrue(_mockProvider.WasFlushed);
-        }
-
-        [Test]
-        public void UnRegister_Saves_Root_Address()
-        {
-            _mockTree.SetRoot(new Node<object, long>(2){Address = 123});
-            _index.UnRegister(1);
-            Assert.AreEqual(123, _mockProvider.RootNodeAddress);
         }
     }
 }

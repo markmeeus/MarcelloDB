@@ -29,6 +29,7 @@ namespace MarcelloDB.Test
 
         public void SetRootNode(Node<TK, TP> rootNode)
         {
+            _rootNode = rootNode;
             this.RootNodeAddress = rootNode.Address;
         }
 
@@ -43,7 +44,7 @@ namespace MarcelloDB.Test
             node.Address = _lastAddress++;
             AddNode(node);
             return node;
-        }                               
+        }
 
         void AddNode(Node<TK, TP> node)
         {

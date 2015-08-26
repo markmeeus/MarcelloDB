@@ -90,7 +90,7 @@ namespace MarcelloDB
         }
 
         void RecycleUntouchedNodes(
-            Dictionary<Int64, Node<TK, TP>> loadedNodes, 
+            Dictionary<Int64, Node<TK, TP>> loadedNodes,
             Dictionary<Int64, Node<TK, TP>> touchedNodes,
             IndexMetaRecord metaRecord)
         {
