@@ -144,11 +144,11 @@ namespace MarcelloDB.Index.BTree
             if (childNode.HasReachedMinEntries)
             {
                 int leftIndex = subtreeIndexInNode - 1;
-                Node<TK, TP> leftSibling = subtreeIndexInNode > 0 ?
+                var leftSibling = subtreeIndexInNode > 0 ?
                       this.DataProvider.GetNode(parentNode.ChildrenAddresses[leftIndex]) : null;
 
                 int rightIndex = subtreeIndexInNode + 1;
-                Node<TK, TP> rightSibling = subtreeIndexInNode < parentNode.ChildrenAddresses.Count - 1
+                var rightSibling = subtreeIndexInNode < parentNode.ChildrenAddresses.Count - 1
                     ? this.DataProvider.GetNode(parentNode.ChildrenAddresses[rightIndex])
                     : null;
 
@@ -292,21 +292,16 @@ namespace MarcelloDB.Index.BTree
         /// <returns>Successor entry that got deleted.</returns>
         private Entry<TK, TP> DeleteSuccessor(Node<TK, TP> node)
         {
-            try
+            if (node.IsLeaf)
             {
-                if (node.IsLeaf)
-                {
-                    var result = node.EntryList[0];
-                    node.EntryList.RemoveAt(0);
-                    return result;
-                }
-
-                return this.DeleteSuccessor(
-                    this.DataProvider.GetNode(node.ChildrenAddresses.First())
-                );
-            }catch(Exception e){
-                throw;
+                var result = node.EntryList[0];
+                node.EntryList.RemoveAt(0);
+                return result;
             }
+
+            return this.DeleteSuccessor(
+                this.DataProvider.GetNode(node.ChildrenAddresses.First())
+            );
         }
 
         /// <summary>
@@ -338,7 +333,7 @@ namespace MarcelloDB.Index.BTree
         /// <param name="nodeToBeSplit">Node to be split.</param>
         private void SplitChild(Node<TK, TP> parentNode, int nodeToBeSplitIndex, Node<TK, TP> nodeToBeSplit)
         {
-            var newNode = this.DataProvider.CreateNode(this.Degree);;
+            var newNode = this.DataProvider.CreateNode(this.Degree);
 
             parentNode.EntryList.Insert(nodeToBeSplitIndex, nodeToBeSplit.EntryList[this.Degree - 1]);
             parentNode.ChildrenAddresses.Insert(nodeToBeSplitIndex + 1, newNode.Address);

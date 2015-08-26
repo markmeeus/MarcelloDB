@@ -67,16 +67,7 @@ namespace MarcelloDB.Index
 
         internal void Register(TNodeKey keyValue, Int64 recordAddress)
         {
-            var entry = this.Tree.Search(keyValue);
-            if (entry != null)
-            {
-                this.Tree.Insert(keyValue, recordAddress);
-            }
-            else
-            {
-                //keyvalue not yet in index
-                this.Tree.Insert(keyValue, recordAddress);
-            }
+            this.Tree.Insert(keyValue, recordAddress);
             FlushProvider();
         }
 

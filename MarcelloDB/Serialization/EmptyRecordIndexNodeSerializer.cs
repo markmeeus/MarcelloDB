@@ -84,6 +84,7 @@ namespace MarcelloDB.Serialization
                 Key = new EmptyRecordIndexKey{ S = s, A = a },
                 Pointer = pointer
             };
+
         }
     }
 }

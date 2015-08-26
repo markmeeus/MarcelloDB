@@ -391,9 +391,10 @@ namespace MarcelloDB.Test
             using (var session = new Session(platform, "./data/"))
             {
                 var articles = session["data"].Collection<Article>("articles");
-
+                var ids = new List<int>();
                 for (int i = 1; i < 1000; i++)
                 {
+                    ids.Add(i);
                     var a = new Article { ID = i, Name = "Article " + i.ToString() };
                     articles.Persist(a);
                 }
@@ -401,8 +402,12 @@ namespace MarcelloDB.Test
                 for (int i = 1; i < 1000; i++)
                 {
                     var a = articles.Find(i);
-                    Assert.AreEqual(i, a.ID, "Article " + i.ToString() + " should have been found.");
+                    Assert.NotNull(a, "Article with ID: " + i.ToString() + " Should have been found");
+                    Assert.AreEqual(i, a.ID, "Article " + i.ToString() + " Should have been found.");
                 }
+
+                var savedIds = articles.All.Select(a => a.ID);
+                Assert.AreEqual(ids, savedIds);
             }
         }
 

@@ -3,6 +3,7 @@ using MarcelloDB.Records;
 using MarcelloDB.Serialization;
 using System.Collections.Generic;
 using MarcelloDB.AllocationStrategies;
+using System.Linq;
 
 namespace MarcelloDB.Index.BTree
 {
@@ -73,6 +74,7 @@ namespace MarcelloDB.Index.BTree
             {
                 this.RootNode = CreateNode(degree);
             }
+
             return this.RootNode;
         }
 
@@ -99,6 +101,7 @@ namespace MarcelloDB.Index.BTree
 
         public Node<TNodeKey, long> CreateNode(int degree)
         {
+
             var node = new Node<TNodeKey, long>(degree);
             var data = Serializer.Serialize(node);
 
@@ -118,65 +121,21 @@ namespace MarcelloDB.Index.BTree
 
         public void Flush()
         {
-            var retry = true;
-            while (retry)
-            {
-                retry = false;
-                var nodesToKeep = new Dictionary<Int64, Node<TNodeKey,Int64>>();
+            var loadedNodes = this.NodeCache.ToDictionary(e => e.Key, e => e.Value);
 
-                if (this.RootNode != null)
-                {
-                    nodesToKeep[this.RootNode.Address] = this.RootNode;
-                    FindAllNodes(this.RootNode, nodesToKeep);
-                }
-
-                foreach (var nodeAddress in NodeCache.Keys)
-                {
-                    if (!nodesToKeep.ContainsKey(nodeAddress) && this.ReuseRecycledRecords)
-                    {
-                        RecordManager.Recycle(nodeAddress);
-                        this.MetaRecord.NumberOfNodes--;
-                    }
-                }
-
-                NodeCache = nodesToKeep;
-                var updateNodes = new Dictionary<Int64, Node<TNodeKey, Int64>>() ;
-                foreach (var node in NodeCache.Values)
-                {
-                    var record = RecordManager.GetRecord(node.Address);
-                    var updateData = Serializer.Serialize(node);
-                    var oldAddress = record.Header.Address;
-                    var updatedRecord = RecordManager.UpdateRecord(
-                        record,
-                        updateData,
-                        reuseRecycledRecord: this.ReuseRecycledRecords,
-                        allocationStrategy: this.AllocationStrategy
-                    );
-                    if (oldAddress != updatedRecord.Header.Address)
-                    {
-                        node.Address = updatedRecord.Header.Address;
-                        updateNodes.Add(oldAddress, node);
-                        //update any children linking to this node
-                        foreach(var n in NodeCache.Values){
-                            var indexOfOldAddress = n.ChildrenAddresses.IndexOf(oldAddress);
-                            if (indexOfOldAddress > -1)
-                            {
-                                n.ChildrenAddresses[indexOfOldAddress] = updatedRecord.Header.Address;
-                                retry = true;
-                            }
-                        }
-                    }
-                }
-                foreach (var oldAddress in updateNodes.Keys)
-                {
-                    NodeCache.Remove(oldAddress);
-                    var node = updateNodes[oldAddress];
-                    NodeCache[node.Address] = node;
-                }
-                this.MetaRecord.RootNodeAddress = this.RootNode.Address;
-                SaveMetaRecord();
-            }
+            //Clear node cache, persisting may cause re-entrancy
+            this.NodeCache = new Dictionary<Int64, Node<TNodeKey, Int64>>();
+            new NodePersistence<TNodeKey, Int64>(this.RecordManager, this.ReuseRecycledRecords).
+                Persist(
+                    this.RootNode,
+                    loadedNodes,
+                    this.Serializer,
+                this.MetaRecord);
+            this.MetaRecord.RootNodeAddress = this.RootNode.Address;
+            SaveMetaRecord();
+            CacheNode(this.RootNode); //rootnode should always be cached
         }
+
         #endregion
         private void FindAllNodes(Node<TNodeKey, Int64> node, Dictionary<Int64, Node<TNodeKey, Int64>> acc, int depth = 0)
         {

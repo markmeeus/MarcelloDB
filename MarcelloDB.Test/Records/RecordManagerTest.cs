@@ -8,7 +8,7 @@ using MarcelloDB.Platform;
 using MarcelloDB.Collections;
 
 namespace MarcelloDB.Test.Records
-{    
+{
     [TestFixture]
     public class RecordManagerTest
     {
@@ -160,9 +160,8 @@ namespace MarcelloDB.Test.Records
             _recordManager.Recycle(giantRecord.Header.Address);
             _recordManager.SaveState();
             var expectedLength = GetStreamLength();
-            var updatedRecord = _recordManager.UpdateRecord(smallRecord, new byte[20]);
+            _recordManager.UpdateRecord(smallRecord, new byte[20]);
             var newLength = GetStreamLength();
-            Assert.AreEqual(giantRecord.Header.Address, updatedRecord.Header.Address);
             Assert.AreEqual(expectedLength, newLength);
 
         }

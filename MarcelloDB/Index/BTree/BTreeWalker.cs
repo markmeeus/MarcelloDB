@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 namespace MarcelloDB.Index.BTree
-{   
+{
     public class BTreeWalker<TK, TP>
     {
         class BreadCrumb
@@ -38,7 +38,7 @@ namespace MarcelloDB.Index.BTree
             if (this.CurrentEntryIndex < CurrentNode.EntryList.Count)
             {
                 return CurrentNode.EntryList[this.CurrentEntryIndex];
-            }        
+            }
             return null;
         }
 
@@ -61,7 +61,7 @@ namespace MarcelloDB.Index.BTree
             this.CurrentEntryIndex += 1;
 
             //walk up untill an entry is found
-            while (this.CurrentEntryIndex >= this.CurrentNode.EntryList.Count && 
+            while (this.CurrentEntryIndex >= this.CurrentNode.EntryList.Count &&
                 this.BreadCrumbs.Count > 0)
             {
                 var breadCrumb = this.BreadCrumbs.Pop();

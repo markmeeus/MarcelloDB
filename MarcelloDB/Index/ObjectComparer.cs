@@ -9,15 +9,15 @@ namespace MarcelloDB.Index
         }
 
         public int Compare(object a, object b)
-        {        
+        {
             long lngA;
             long lngB;
             if(TryLongify(a, out lngA) && TryLongify(b, out lngB))
             {
                 return lngA.CompareTo(lngB);
             }
-                 
-            return ((IComparable)a).CompareTo((IComparable)b);              
+
+            return ((IComparable)a).CompareTo((IComparable)b);
         }
 
         bool TryLongify(object o, out long result)

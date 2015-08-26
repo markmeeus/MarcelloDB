@@ -35,7 +35,7 @@ namespace MarcelloDB.Collections
                 try{
                     this.Collection.BlockModification = true;
                     var index = RecordIndex.Create<object>(
-                        this.RecordManager, 
+                        this.RecordManager,
                         RecordIndex.GetIDIndexName<T>(Collection.Name),
                         new BsonSerializer<Node<object, Int64>>()
                     );

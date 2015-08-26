@@ -30,7 +30,7 @@ namespace MarcelloDB.Serialization
         internal Int32 ReadInt32()
         {
             var bytes = GetBytesInLittleEndianOrder(sizeof(Int32));
-                
+
             var value = BitConverter.ToInt32(bytes, 0);
             this.Position += sizeof(Int32);
             return value;
@@ -43,7 +43,7 @@ namespace MarcelloDB.Serialization
             var value = BitConverter.ToInt64(bytes, 0);
             this.Position += sizeof(Int64);
             return value;
-        }            
+        }
 
         void Initialize(byte[] buffer, bool isLittleEndian){
             this.Buffer = buffer;

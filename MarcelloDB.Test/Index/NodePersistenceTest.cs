@@ -48,7 +48,7 @@ namespace MarcelloDB.Test.Index
             var serializer = new MockSerializer<Node<int,int>>();
             serializer.SerializeFunc = (obj) => new byte[]{ 1, 2, 3 };
 
-            _persistence.Persist(node, new Dictionary<long, Node<int, int>>(), serializer);
+            _persistence.Persist(node, new Dictionary<long, Node<int, int>>(), serializer, new IndexMetaRecord());
             Assert.AreEqual(new byte[]{ 1, 2, 3 }, _inMemoryRecordManager._records.Values.First().Data);
         }
 
@@ -60,7 +60,7 @@ namespace MarcelloDB.Test.Index
             var serializer = new MockSerializer<Node<int,int>>();
             serializer.SerializeFunc = (obj) => new byte[]{ 1, 2, 3 };
 
-            _persistence.Persist(node, new Dictionary<long, Node<int, int>>(), serializer);
+            _persistence.Persist(node, new Dictionary<long, Node<int, int>>(), serializer, new IndexMetaRecord());
             Assert.AreEqual(_inMemoryRecordManager._records.Keys.First(), node.Address);
         }
 
@@ -71,10 +71,10 @@ namespace MarcelloDB.Test.Index
             node.ChildrenAddresses.Added.Add(1); // to make dirty
             var serializer = new MockSerializer<Node<int,int>>();
             serializer.SerializeFunc = (obj) => new byte[]{ 1, 2, 3 };
-            _persistence.Persist(node, new Dictionary<long, Node<int, int>>(), serializer);
+            _persistence.Persist(node, new Dictionary<long, Node<int, int>>(), serializer, new IndexMetaRecord());
 
             serializer.SerializeFunc = (obj) => new byte[] { 4, 5, 6 };
-            _persistence.Persist(node, new Dictionary<long, Node<int, int>>(), serializer);
+            _persistence.Persist(node, new Dictionary<long, Node<int, int>>(), serializer, new IndexMetaRecord());
 
             Assert.AreEqual(new byte[]{ 4, 5, 6 }, _inMemoryRecordManager._records.Values.First().Data);
         }
@@ -86,10 +86,10 @@ namespace MarcelloDB.Test.Index
             node.ChildrenAddresses.Added.Add(1); // to make dirty
             var serializer = new MockSerializer<Node<int,int>>();
             serializer.SerializeFunc = (obj) => new byte[]{ 1, 2, 3 };
-            _persistence.Persist(node, new Dictionary<long, Node<int, int>>(), serializer);
+            _persistence.Persist(node, new Dictionary<long, Node<int, int>>(), serializer, new IndexMetaRecord());
 
             serializer.SerializeFunc = (obj) => new byte[1000];
-            _persistence.Persist(node, new Dictionary<long, Node<int, int>>(), serializer);
+            _persistence.Persist(node, new Dictionary<long, Node<int, int>>(), serializer, new IndexMetaRecord());
 
             Assert.AreEqual(_inMemoryRecordManager._records.Keys.Last(), node.Address);
         }
@@ -101,11 +101,11 @@ namespace MarcelloDB.Test.Index
             node.ChildrenAddresses.Added.Add(1); // to make dirty
             var serializer = new MockSerializer<Node<int,int>>();
             serializer.SerializeFunc = (obj) => new byte[]{ 1, 2, 3 };
-            _persistence.Persist(node, new Dictionary<long, Node<int, int>>(), serializer);
+            _persistence.Persist(node, new Dictionary<long, Node<int, int>>(), serializer, new IndexMetaRecord());
 
             node.ClearChanges();
             serializer.SerializeFunc = (obj) => new byte[]{ 4, 5, 6 };
-            _persistence.Persist(node, new Dictionary<long, Node<int, int>>(), serializer);
+            _persistence.Persist(node, new Dictionary<long, Node<int, int>>(), serializer, new IndexMetaRecord());
 
             Assert.AreEqual(new byte[]{ 1, 2, 3 }, _inMemoryRecordManager._records[node.Address].Data);
         }
@@ -126,7 +126,7 @@ namespace MarcelloDB.Test.Index
 
             var serializer = new MockSerializer<Node<int,int>>();
             serializer.SerializeFunc = (obj) => new byte[]{ 4, 5, 6 };
-            _persistence.Persist(node, loadedNodes, serializer);
+            _persistence.Persist(node, loadedNodes, serializer, new IndexMetaRecord());
 
             Assert.AreEqual(new byte[]{ 4, 5, 6 }, _inMemoryRecordManager._records[childNode.Address].Data);
         }
@@ -148,7 +148,7 @@ namespace MarcelloDB.Test.Index
 
             var serializer = new MockSerializer<Node<int,int>>();
             serializer.SerializeFunc = (obj) => new byte[1000];
-            _persistence.Persist(node, loadedNodes, serializer);
+            _persistence.Persist(node, loadedNodes, serializer, new IndexMetaRecord());
 
             Assert.AreEqual(childNode.Address, node.ChildrenAddresses.Last());
 
@@ -171,7 +171,7 @@ namespace MarcelloDB.Test.Index
 
             var serializer = new MockSerializer<Node<int,int>>();
             serializer.SerializeFunc = (obj) => new byte[1000];
-            _persistence.Persist(node, loadedNodes, serializer);
+            _persistence.Persist(node, loadedNodes, serializer, new IndexMetaRecord());
 
             Assert.IsFalse(_inMemoryRecordManager._records.ContainsKey(childNode.Address));
 
@@ -187,8 +187,8 @@ namespace MarcelloDB.Test.Index
             parentNode.ChildrenAddresses.Add(100000);
             childNode.ChildrenAddresses.Add(100002);
 
-            _persistence.Persist(parentNode, new Dictionary<long, Node<int, int>>(), serializer);
-            _persistence.Persist(childNode, new Dictionary<long, Node<int, int>>(), serializer);
+            _persistence.Persist(parentNode, new Dictionary<long, Node<int, int>>(), serializer, new IndexMetaRecord());
+            _persistence.Persist(childNode, new Dictionary<long, Node<int, int>>(), serializer, new IndexMetaRecord());
             //add the child to the parent
             parentNode.ChildrenAddresses.Add(childNode.Address);
 

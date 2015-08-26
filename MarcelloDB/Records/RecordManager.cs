@@ -246,8 +246,8 @@ namespace MarcelloDB.Records
             var walker = this.EmptyRecordIndex.GetWalker();
 
             var entry = walker.Next();
-            while (entry != null &&
-                ((EmptyRecordIndexKey)entry.Key).S < minimumLength)
+
+            while (entry != null && entry.Key.S < minimumLength)
             {
                 entry = walker.Next();
             }
@@ -261,17 +261,28 @@ namespace MarcelloDB.Records
 
         void RegisterRecycledRecordsInEmptyRecordIndex()
         {
-            foreach (var address in _recordsToRecycle)
+            var recyclingRecords = _recordsToRecycle.ToArray();
+            //Recycling records may cause nodes from the empty record index to be recycled.
+            //If this happesn, the _recordToRecycle list contains new records.
+            while (recyclingRecords.Length > 0)
             {
-                var recordHeader = ReadRecordHeader(address);
+                _recordsToRecycle.Clear();
 
-                var emptyRecordIndexKey = new EmptyRecordIndexKey
+                foreach (var address in recyclingRecords)
+                {
+                    var recordHeader = ReadRecordHeader(address);
+
+                    var emptyRecordIndexKey = new EmptyRecordIndexKey
                     {
                         A = recordHeader.Address, S = recordHeader.AllocatedDataSize
                     };
-                this.EmptyRecordIndex.Register(
-                    emptyRecordIndexKey,
-                    recordHeader.Address);
+                    this.EmptyRecordIndex.Register(
+                        emptyRecordIndexKey,
+                        recordHeader.Address);
+
+                }
+
+                recyclingRecords = _recordsToRecycle.ToArray();
             }
         }
 
