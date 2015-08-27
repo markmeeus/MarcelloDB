@@ -7,13 +7,13 @@ namespace MarcelloDB.Index.BTree
     {
         Node<TK, TP> GetRootNode(int degree);
 
+        void SetRootNode(Node<TK, TP> node);
+
         Node<TK, TP> GetNode(Int64 address);
 
         Node<TK, TP> CreateNode(int degree);
 
         void Flush();
-
-        void SetRootNode(Node<TK, TP> node);
     }
 }
 

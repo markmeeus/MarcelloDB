@@ -17,8 +17,6 @@ namespace MarcelloDB.Index.BTree
 
         Dictionary<Int64, Node<TNodeKey, Int64>> NodeCache { get; set; }
 
-        Node<TNodeKey, Int64> RootNode { get; set; }
-
         string RootRecordName { get; set; }
 
         bool ReuseRecycledRecords { get; set; }
@@ -62,27 +60,30 @@ namespace MarcelloDB.Index.BTree
 
         }
 
-        #region IBTreeDataProvider implementation
-        public Node<TNodeKey, long> GetRootNode(int degree)
-        {
-            if (this.RootNode == null)
+        Node<TNodeKey, Int64> RootNode {
+            get
             {
-                var rootRecordAddress = this.MetaRecord.RootNodeAddress;
-                if (rootRecordAddress > 0)
-                {
-                    this.RootNode = GetNode(rootRecordAddress);
-                }
-                else
-                {
-                    this.RootNode = CreateNode(degree);
-                }
+                return this.GetRootNode();
             }
-            return this.RootNode;
+            set
+            {
+                this.SetRootNode(value);
+            }
+        }
+        #region IBTreeDataProvider implementation
+        public Node<TNodeKey, long> GetRootNode(int degree = -1)
+        {
+            if (this.MetaRecord.RootNodeAddress <= 0)
+            {
+                var rootNode = CreateNode(degree);
+                this.MetaRecord.RootNodeAddress = rootNode.Address;
+            }
+            return GetNode(this.MetaRecord.RootNodeAddress);
         }
 
         public void SetRootNode(Node<TNodeKey, long> rootNode)
         {
-            this.RootNode = rootNode;
+            this.MetaRecord.RootNodeAddress = rootNode.Address;
         }
 
         public Node<TNodeKey, long> GetNode(long address)
@@ -124,18 +125,20 @@ namespace MarcelloDB.Index.BTree
         public void Flush()
         {
             var loadedNodes = this.NodeCache.ToDictionary(e => e.Key, e => e.Value);
+            var rootNode = this.RootNode;
 
-            //Clear node cache, persisting may cause re-entrancy
+            //Clear node cache before persisting, persisting may cause re-entrancy
             this.NodeCache = new Dictionary<Int64, Node<TNodeKey, Int64>>();
+
             new NodePersistence<TNodeKey, Int64>(this.RecordManager, this.ReuseRecycledRecords).
                 Persist(
-                    this.RootNode,
+                        rootNode,
                     loadedNodes,
                     this.Serializer,
                 this.MetaRecord);
-            this.MetaRecord.RootNodeAddress = this.RootNode.Address;
+
+            this.MetaRecord.RootNodeAddress = rootNode.Address;
             SaveMetaRecord();
-            CacheNode(this.RootNode); //rootnode should always be cached
         }
 
         #endregion

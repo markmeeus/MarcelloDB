@@ -12,14 +12,11 @@ namespace MarcelloDB.Test
         public Dictionary<TK, TP> Inserted { get; set; }
         public List<TK> Deleted { get; set; }
 
-        Node<TK, TP> _root;
-
         public MockBTree()
         {
             Searched = new List<TK>();
             Inserted = new Dictionary<TK, TP>();
             Deleted = new List<TK>();
-            _root = new Node<TK, TP>(2);
         }
 
 
