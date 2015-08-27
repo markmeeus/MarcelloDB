@@ -44,6 +44,9 @@ namespace MarcelloDB
                 return;
             }
 
+            //setting it dirty now, EmptyRecordIndex nodes may become dirty while persisting due to re-use.
+            node.ClearChanges();
+
             var bytes = serializer.Serialize(node);
 
             if (node.Address <= 0)

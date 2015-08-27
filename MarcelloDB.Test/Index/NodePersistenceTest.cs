@@ -68,11 +68,12 @@ namespace MarcelloDB.Test.Index
         public void Updates_A_Node()
         {
             Node<int,int> node = new Node<int, int>(2);
-            node.ChildrenAddresses.Added.Add(1); // to make dirty
+            node.ChildrenAddresses.Added.Add(1); // to make it dirty
             var serializer = new MockSerializer<Node<int,int>>();
             serializer.SerializeFunc = (obj) => new byte[]{ 1, 2, 3 };
             _persistence.Persist(node, new Dictionary<long, Node<int, int>>(), serializer, new IndexMetaRecord());
 
+            node.ChildrenAddresses.Added.Add(2); // to make it dirty again
             serializer.SerializeFunc = (obj) => new byte[] { 4, 5, 6 };
             _persistence.Persist(node, new Dictionary<long, Node<int, int>>(), serializer, new IndexMetaRecord());
 
@@ -129,6 +130,27 @@ namespace MarcelloDB.Test.Index
             _persistence.Persist(node, loadedNodes, serializer, new IndexMetaRecord());
 
             Assert.AreEqual(new byte[]{ 4, 5, 6 }, _inMemoryRecordManager._records[childNode.Address].Data);
+        }
+
+        [Test]
+        public void Resets_Dirty_Flags_For_Saved_Nodes()
+        {
+            Node<int, int> node;
+            Node<int, int> childNode;
+
+            CreateParentAndChildNode(out node, out childNode);
+
+            var loadedNodes = new Dictionary<long, Node<int, int>>();
+            loadedNodes[node.Address] = node;
+            loadedNodes[childNode.Address] = childNode;
+
+            childNode.ChildrenAddresses.RemoveAt(0); //makes it dirty
+
+            var serializer = new MockSerializer<Node<int,int>>();
+            serializer.SerializeFunc = (obj) => new byte[]{ 4, 5, 6 };
+            _persistence.Persist(node, loadedNodes, serializer, new IndexMetaRecord());
+
+            Assert.AreEqual(0, loadedNodes.Values.Where(n => n.Dirty).Count());
         }
 
         [Test]
