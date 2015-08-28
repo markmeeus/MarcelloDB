@@ -37,7 +37,7 @@ namespace MarcelloDB.Serialization
             WriteBytes(LittleEndian(BitConverter.GetBytes(value)));
             return this;
         }
-            
+
         internal byte[] GetTrimmedBuffer()
         {
             if (this.Buffer.Length == this.Position)
@@ -51,7 +51,7 @@ namespace MarcelloDB.Serialization
                 return trimmed;
             }
         }
-            
+
         void Initialize(byte[] buffer, bool isLittleEndian)
         {
             this.Buffer = buffer;

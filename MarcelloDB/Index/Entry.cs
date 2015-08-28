@@ -6,7 +6,7 @@ namespace MarcelloDB.Index
     public class Entry<TK, TP> : IEquatable<Entry<TK, TP>>
     {
         TK _key;
-        public TK Key 
+        public TK Key
         {
             get { return _key; }
             set

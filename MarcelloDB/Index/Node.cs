@@ -2,9 +2,19 @@
 using System.Collections.Generic;
 
 namespace MarcelloDB.Index
-{    
+{
     public class Node<TK, TP>
     {
+        internal static int MaxEntriesForDegree(int degree)
+        {
+            return MaxChildrenForDegree(degree) - 1;
+        }
+
+        internal static int MaxChildrenForDegree(int degree)
+        {
+            return (2 * degree);
+        }
+
         public int Degree { get; set; }
 
         public Int64 Address{ get; set; }
@@ -32,7 +42,7 @@ namespace MarcelloDB.Index
         {
             get
             {
-                return this.EntryList.Count == (2 * this.Degree) - 1;
+                return this.EntryList.Count == MaxEntriesForDegree(this.Degree);
             }
         }
 

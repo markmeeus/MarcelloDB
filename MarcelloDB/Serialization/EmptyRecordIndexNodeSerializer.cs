@@ -13,12 +13,16 @@ namespace MarcelloDB.Serialization
         static internal int MaxSizeForDegree(int degree)
         {
             var sizeOfDegree = sizeof(Int32);
-            var maxSizeOfEntry = sizeof(Int64) + sizeof(Int64) + sizeof(Int32);
-            var maxSizeOfEntries = maxSizeOfEntry * (degree * 2);
-            var maxSizeOfChildAddresses = sizeof(Int64);
+            var sizeOfEntryListCount = sizeof(Int32);
+            var maxSizeOfEntry = sizeof(Int64) + sizeof(Int64) + sizeof(Int32); //(Key, Address, Size)
+            var maxSizeOfEntries = maxSizeOfEntry * Node<int,int>.MaxEntriesForDegree(degree);
+            var sizeOfChildrenAddressessCount = sizeof(Int32);
+            var maxSizeOfChildAddresses = sizeof(Int64) * Node<int,int>.MaxChildrenForDegree(degree);
 
             return sizeOfDegree +
+                sizeOfEntryListCount +
                 maxSizeOfEntries +
+                sizeOfChildrenAddressessCount +
                 maxSizeOfChildAddresses;
         }
         #region IObjectSerializer implementation
@@ -41,7 +45,7 @@ namespace MarcelloDB.Serialization
                 writer.WriteInt64(childAddress);            //every child address
             }
 
-            return writer.GetTrimmedBuffer();
+            return writer.Buffer;
         }
 
         public Node<EmptyRecordIndexKey, Int64> Deserialize(byte[] bytes)

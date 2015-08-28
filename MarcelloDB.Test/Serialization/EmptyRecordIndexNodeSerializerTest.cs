@@ -44,6 +44,31 @@ namespace MarcelloDB.Test.Serialization
             Assert.AreEqual(node.EntryList[1].Key, deserialized.EntryList[1].Key);
 
         }
+
+        [Test]
+        public void Empty_And_Full_Nodes_Have_Same_Byte_Size()
+        {
+            var node = new Node<EmptyRecordIndexKey, Int64>(12);
+            var serializer = new EmptyRecordIndexNodeSerializer();
+            var emptyBytes = serializer.Serialize(node);
+            for(int i = 1; i <= Node<int,int>.MaxEntriesForDegree(12); i++) //max nr of entries for degree 12
+            {
+                node.EntryList.Add(
+                    new Entry<EmptyRecordIndexKey, long>{
+                        Key = new EmptyRecordIndexKey{S = 1, A = 1},
+                        Pointer = i
+                    }
+                );
+            }
+            for(int i = 1; i <= Node<int,int>.MaxChildrenForDegree(12); i++) //max nr of childres for degree 12
+            {
+                node.ChildrenAddresses.Add(i);
+            }
+
+            var fullBytes = serializer.Serialize(node);
+            Assert.AreEqual(emptyBytes.Length, fullBytes.Length);
+        }
+
     }
 }
 
