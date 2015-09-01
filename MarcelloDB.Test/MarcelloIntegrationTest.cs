@@ -448,6 +448,64 @@ namespace MarcelloDB.Test
         }
 
         [Test]
+        public void Add_100_And_Remove_Backwards()
+        {
+
+            var articles = _session["data"].Collection<Article>("articles");
+
+            for (int i = 1; i < 1000; i++)
+            {
+                var a = new Article { ID = i, Name = "Article " + i.ToString() };
+                articles.Persist(a);
+            }
+
+            for (int i = 999; i > 0; i--)
+            {
+                var a = articles.Find(i);
+                articles.Destroy(a);
+            }
+
+            Assert.AreEqual(0, articles.All.Count());
+
+            for (int i = 1; i < 1000; i++)
+            {
+                var a = new Article { ID = i, Name = "Article " + i.ToString() };
+                articles.Persist(a);
+            }
+
+            Assert.AreEqual(999, articles.All.Count());
+
+            for (int i = 999; i > 0; i--)
+            {
+                var a = new Article { ID = i, Name = "Article " + i.ToString() };
+                articles.Destroy(a);
+            }
+            Assert.AreEqual(0, articles.All.Count());
+        }
+
+        [Test]
+        public void Add_And_Remove_Random_1000()
+        {
+            var rand = new Random();
+            var articles = _session["data"].Collection<Article>("articles");
+            var articleIDs = new List<int>();
+            for (int i = 1; i < 1000; i++)
+            {
+                var a = new Article { ID = i, Name = "Article " + i.ToString() };
+                articles.Persist(a);
+                articleIDs.Add(a.ID);
+            }
+
+
+            while(articleIDs.Count > 0){
+                var toDelete = articleIDs [rand.Next() % articleIDs.Count];
+                articles.Destroy(new Article(){ID = toDelete});
+                articleIDs.Remove(toDelete);
+            }
+
+        }
+
+        [Test]
         public void Can_Use_Multiple_Collections()
         {
             var locations = _collectionFile.Collection<Location>("locations");

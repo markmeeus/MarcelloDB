@@ -243,22 +243,28 @@ namespace MarcelloDB.Index.BTree
                 return;
             }
 
-            Node<TK, TP> predecessorChild = this.DataProvider.GetNode(node.ChildrenAddresses[keyIndexInNode]);
-            if (predecessorChild.EntryList.Count >= this.Degree)
+            var nextLeaf = GetFirstLeaf(
+                this.DataProvider.GetNode(node.ChildrenAddresses[keyIndexInNode + 1])
+            );
+            if (nextLeaf.EntryList.Count >= this.Degree)
             {
-                Entry<TK, TP> predecessor = this.DeletePredecessor(predecessorChild);
-                node.EntryList[keyIndexInNode] = predecessor;
+                Entry<TK, TP> nextEntry = this.DeleteLastEntry(nextLeaf);
+                node.EntryList[keyIndexInNode] = nextEntry;
             }
             else
             {
-                Node<TK, TP> successorChild = this.DataProvider.GetNode(node.ChildrenAddresses[keyIndexInNode + 1]);
-                if (successorChild.EntryList.Count >= this.Degree)
+                var lastLeaf = GetLastLeaf(
+                    this.DataProvider.GetNode(node.ChildrenAddresses[keyIndexInNode + 1])
+                );
+                if (nextLeaf.EntryList.Count >= this.Degree)
                 {
-                    Entry<TK, TP> successor = this.DeleteSuccessor(successorChild);
-                    node.EntryList[keyIndexInNode] = successor;
+                    Entry<TK, TP> previousEntry = this.DeleteFirstEntry(lastLeaf);
+                    node.EntryList[keyIndexInNode] = previousEntry;
                 }
                 else
                 {
+                    var predecessorChild = this.DataProvider.GetNode(node.ChildrenAddresses[keyIndexInNode]);
+                    var successorChild = this.DataProvider.GetNode(node.ChildrenAddresses[keyIndexInNode + 1]);
                     predecessorChild.EntryList.Add(node.EntryList[keyIndexInNode]);
                     predecessorChild.EntryList.AddRange(successorChild.EntryList.Entries);
                     predecessorChild.ChildrenAddresses.AddRange(successorChild.ChildrenAddresses.Addresses);
@@ -271,23 +277,40 @@ namespace MarcelloDB.Index.BTree
             }
         }
 
-        /// <summary>
-        /// Helper method that deletes a predecessor key (i.e. rightmost key) for a given node.
-        /// </summary>
-        /// <param name="node">Node for which the predecessor will be deleted.</param>
-        /// <returns>Predecessor entry that got deleted.</returns>
-        private Entry<TK, TP> DeletePredecessor(Node<TK, TP> node)
+        Node<TK, TP> GetFirstLeaf(Node<TK,TP> node)
         {
             if (node.IsLeaf)
             {
-                var result = node.EntryList[node.EntryList.Count - 1];
-                node.EntryList.RemoveAt(node.EntryList.Count - 1);
-                return result;
+                return node;
             }
 
-            return this.DeletePredecessor(
-                this.DataProvider.GetNode(node.ChildrenAddresses.Last())
+            return GetFirstLeaf(
+                this.DataProvider.GetNode(node.ChildrenAddresses.Addresses[0])
             );
+        }
+
+        Node<TK, TP> GetLastLeaf(Node<TK,TP> node)
+        {
+            if (node.IsLeaf)
+            {
+                return node;
+            }
+
+            return GetLastLeaf(
+                this.DataProvider.GetNode(node.ChildrenAddresses.Addresses[node.ChildrenAddresses.Count - 1])
+            );
+        }
+        /// <summary>
+        /// Helper method that deletes the last key for a given node.
+        /// </summary>
+        /// <param name="node">Node for which the predecessor will be deleted.</param>
+        /// <returns>Predecessor entry that got deleted.</returns>
+        private Entry<TK, TP> DeleteLastEntry(Node<TK, TP> node)
+        {
+            Debug.Assert(node.IsLeaf);
+            var result = node.EntryList[node.EntryList.Count - 1];
+            node.EntryList.RemoveAt(node.EntryList.Count - 1);
+            return result;
         }
 
         /// <summary>
@@ -295,18 +318,12 @@ namespace MarcelloDB.Index.BTree
         /// </summary>
         /// <param name="node">Node for which the successor will be deleted.</param>
         /// <returns>Successor entry that got deleted.</returns>
-        private Entry<TK, TP> DeleteSuccessor(Node<TK, TP> node)
+        private Entry<TK, TP> DeleteFirstEntry(Node<TK, TP> node)
         {
-            if (node.IsLeaf)
-            {
-                var result = node.EntryList[0];
-                node.EntryList.RemoveAt(0);
-                return result;
-            }
-
-            return this.DeleteSuccessor(
-                this.DataProvider.GetNode(node.ChildrenAddresses.First())
-            );
+            Debug.Assert(node.IsLeaf);
+            var result = node.EntryList[0];
+            node.EntryList.RemoveAt(0);
+            return result;
         }
 
         /// <summary>

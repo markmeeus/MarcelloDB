@@ -183,6 +183,24 @@ namespace MarcelloDB.Test.Index
         }
 
 
+        [Test]
+        public void Regression_Deplete_Successor()
+        {
+
+            var degree = 2;
+            var mockDataProvider = new MockBTreeDataProvider<int, int>();
+            var btree = new BTree<int, int>(mockDataProvider, degree);
+            var r = new Random();
+            var keys = new List<int>();
+            for (int i = 0; i < 10; i++)
+            {
+                btree.Insert(i, i);
+            }
+
+            new List<int>(){ 3, 4 }.ForEach((i) => btree.Delete(i));
+
+        }
+
         #region Private Helper Methods
         private void InsertTestData(BTree<int, int> btree, int testDataIndex)
         {

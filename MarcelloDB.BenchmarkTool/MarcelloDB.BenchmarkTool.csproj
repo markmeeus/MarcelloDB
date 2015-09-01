@@ -8,6 +8,7 @@
     <RootNamespace>MarcelloDB.BenchmarkTool</RootNamespace>
     <AssemblyName>MarcelloDB.BenchmarkTool</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <StartupObject>MarcelloDB.BenchmarkTool.MainClass</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

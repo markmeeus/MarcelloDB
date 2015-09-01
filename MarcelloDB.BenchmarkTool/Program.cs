@@ -58,10 +58,10 @@ namespace MarcelloDB.BenchmarkTool
             Console.WriteLine(string.Format("EnumerateAll {0} took: {1} ms", large, elapsed.TotalMilliseconds));
 
             elapsed = new SequentialDestroy(large).Run();
-            Console.WriteLine(string.Format("EnumerateAll {0} took: {1} ms", large, elapsed.TotalMilliseconds));
+            Console.WriteLine(string.Format("SequentialDestroy {0} took: {1} ms", large, elapsed.TotalMilliseconds));
 
             elapsed = new RandomDestroy(large).Run();
-            Console.WriteLine(string.Format("EnumerateAll {0} took: {1} ms", large, elapsed.TotalMilliseconds));
+            Console.WriteLine(string.Format("RandomDestroy {0} took: {1} ms", large, elapsed.TotalMilliseconds));
         }
     }
 }
