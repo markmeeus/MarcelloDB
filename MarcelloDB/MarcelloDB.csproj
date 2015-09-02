@@ -83,6 +83,7 @@
     <Compile Include="Index\EntryList.cs" />
     <Compile Include="Index\NodePersistence.cs" />
     <Compile Include="AllocationStrategies\ExactSizeAllocationStrategy.cs" />
+    <Compile Include="Index\EmptyRecordIndex.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

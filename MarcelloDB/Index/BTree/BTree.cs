@@ -34,7 +34,7 @@ namespace MarcelloDB.Index.BTree
             }
         }
 
-        public BTree(IBTreeDataProvider<TK, TP> dataProvider, int degree)
+        internal BTree(IBTreeDataProvider<TK, TP> dataProvider, int degree)
         {
             DataProvider = dataProvider;
             Comparer = new ObjectComparer();

@@ -34,7 +34,7 @@ namespace MarcelloDB.Collections
             lock(Session.SyncLock){
                 try{
                     this.Collection.BlockModification = true;
-                    var index = RecordIndex.Create<object>(
+                    var index = new RecordIndex<object>(
                         this.RecordManager,
                         RecordIndex.GetIDIndexName<T>(Collection.Name),
                         new BsonSerializer<Node<object, Int64>>()

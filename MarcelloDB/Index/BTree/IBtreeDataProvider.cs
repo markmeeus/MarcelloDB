@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using MarcelloDB.AllocationStrategies;
 
 namespace MarcelloDB.Index.BTree
 {
-    public interface IBTreeDataProvider<TK, TP>
+    internal interface IBTreeDataProvider<TK, TP>
     {
         Node<TK, TP> GetRootNode(int degree);
 

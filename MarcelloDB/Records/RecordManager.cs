@@ -34,7 +34,7 @@ namespace MarcelloDB.Records
 
     internal class RecordManager : IRecordManager, ITransactor
     {
-        RecordIndex<EmptyRecordIndexKey> _emptyRecordIndex;
+        EmptyRecordIndex _emptyRecordIndex;
 
         List<Int64> _recordsToRecycle;
 
@@ -64,7 +64,7 @@ namespace MarcelloDB.Records
             {
                 if (_emptyRecordIndex == null)
                 {
-                    _emptyRecordIndex = RecordIndex.Create<EmptyRecordIndexKey>(
+                    _emptyRecordIndex = new Index.EmptyRecordIndex(
                         this,
                         RecordIndex.EMPTY_RECORDS_BY_SIZE,
                         new EmptyRecordIndexNodeSerializer());

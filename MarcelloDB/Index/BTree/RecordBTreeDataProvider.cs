@@ -24,13 +24,15 @@ namespace MarcelloDB.Index.BTree
         internal RecordBTreeDataProvider(
             IRecordManager recordManager,
             IObjectSerializer<Node<TNodeKey, Int64>> serializer,
-            string rootRecordName
+            string rootRecordName,
+            IAllocationStrategy allocationStrategy
             )
         {
             this.RecordManager = recordManager;
             this.Serializer = serializer;
             this.NodeCache = new Dictionary<long, Node<TNodeKey, long>>();
             this.RootRecordName = rootRecordName;
+            this.AllocationStrategy = allocationStrategy;
             this.Initialize();
         }
 

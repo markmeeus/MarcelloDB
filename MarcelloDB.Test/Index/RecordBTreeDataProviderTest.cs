@@ -94,7 +94,7 @@ namespace MarcelloDB.Test.Index
             _provider = new RecordBTreeDataProvider<object>(
                 _manager,
                 new BsonSerializer<Node<object,Int64>>(),
-                "Root");
+                "Root", new DoubleSizeAllocationStrategy());
         }
 
         [Test]
@@ -115,9 +115,9 @@ namespace MarcelloDB.Test.Index
         public void Construction_Uses_Existing_Meta_Record()
         {
             var secondProvider = new RecordBTreeDataProvider<object>(
-                                     _manager,
-                                     new BsonSerializer<Node<object,Int64>>(),
-                                     "Root");
+                 _manager,
+                 new BsonSerializer<Node<object,Int64>>(),
+                "Root", new DoubleSizeAllocationStrategy());
             Assert.AreEqual(_provider.MetaRecord.Record.Header.Address,
                 secondProvider.MetaRecord.Record.Header.Address);
         }
@@ -148,7 +148,7 @@ namespace MarcelloDB.Test.Index
             var newProvider = new RecordBTreeDataProvider<object>(
                 _manager,
                 new BsonSerializer<Node<object,Int64>>(),
-                "Root");
+                "Root", new DoubleSizeAllocationStrategy());
             Assert.AreEqual(3, newProvider.MetaRecord.NumberOfNodes);
         }
 
@@ -165,7 +165,7 @@ namespace MarcelloDB.Test.Index
             var newProvider = new RecordBTreeDataProvider<object>(
                 _manager,
                 new BsonSerializer<Node<object,Int64>>(),
-                "Root");
+                "Root", new DoubleSizeAllocationStrategy());
 
             rootNode = newProvider.GetRootNode(2);
             newProvider.GetNode(node2.Address);
@@ -175,7 +175,7 @@ namespace MarcelloDB.Test.Index
             newProvider = new RecordBTreeDataProvider<object>(
                 _manager,
                 new BsonSerializer<Node<object,Int64>>(),
-                "Root");
+                "Root", new DoubleSizeAllocationStrategy());
 
             Assert.AreEqual(2, newProvider.MetaRecord.NumberOfNodes);
         }
@@ -185,9 +185,9 @@ namespace MarcelloDB.Test.Index
         {
             var node = _provider.CreateNode(2);
             var loadedNode = new RecordBTreeDataProvider<object>(
-                                 _manager,
-                                new BsonSerializer<Node<object,Int64>>(),
-                                "Root").GetNode(node.Address);
+                 _manager,
+                new BsonSerializer<Node<object,Int64>>(),
+                "Root", new DoubleSizeAllocationStrategy()).GetNode(node.Address);
             Assert.AreEqual(node.Address, loadedNode.Address);
         }
 
@@ -198,7 +198,7 @@ namespace MarcelloDB.Test.Index
             var newProvider = new RecordBTreeDataProvider<object>(
                 _manager,
                 new BsonSerializer<Node<object,Int64>>(),
-                "Root");
+                "Root", new DoubleSizeAllocationStrategy());
             node = newProvider.GetNode(node.Address); // get with new provider
             node.ChildrenAddresses.Add(12);
             node = newProvider.GetNode(node.Address); //get it again
@@ -229,7 +229,7 @@ namespace MarcelloDB.Test.Index
             var newProvider = new RecordBTreeDataProvider<object>(
                 _manager,
                 new BsonSerializer<Node<object,Int64>>(),
-                "Root");
+                "Root", new DoubleSizeAllocationStrategy());
             newProvider.GetRootNode(2);
 
             Assert.AreEqual(2, _manager.Records.Values.Count()); //metarecord and rootnode

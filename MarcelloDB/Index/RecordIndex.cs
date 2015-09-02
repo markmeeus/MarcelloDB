@@ -16,36 +16,45 @@ namespace MarcelloDB.Index
         {
             return ID_INDEX_PREFIX + collectionName.ToUpper() + "_" + typeof(T).Name.ToUpper();
         }
-
-        internal static RecordIndex<TNodeKey> Create<TNodeKey>(
-            IRecordManager recordManager,
-            string indexName,
-            IObjectSerializer<Node<TNodeKey, Int64>> serializer)
-        {
-            var dataProvider = new RecordBTreeDataProvider<TNodeKey>(
-                recordManager,
-                serializer,
-                indexName
-            );
-
-            var btree = new BTree<TNodeKey, Int64>(dataProvider, BTREE_DEGREE);
-
-            return new RecordIndex<TNodeKey>(btree, dataProvider);
-        }
     }
 
     internal class RecordIndex<TNodeKey>
     {
-
         IBTree<TNodeKey, Int64> Tree { get; set; }
 
         IBTreeDataProvider<TNodeKey, Int64> DataProvider { get; set; }
 
+        internal RecordIndex(IRecordManager recordManager,
+            string indexName,
+            IObjectSerializer<Node<TNodeKey, Int64>> serializer)
+        {
+            this.DataProvider = new RecordBTreeDataProvider<TNodeKey>(
+                recordManager,
+                serializer,
+                indexName,
+                this.AllocationStrategy
+            );
+
+            this.Tree = new BTree<TNodeKey, Int64>(this.DataProvider, RecordIndex.BTREE_DEGREE);
+        }
+
+        /// <summary>
+        /// Overide to return a specialized allocation strategy
+        /// </summary>
+        /// <value>The allocation strategy.</value>
+        protected virtual IAllocationStrategy AllocationStrategy
+        {
+            get
+            {
+                return new DoubleSizeAllocationStrategy();
+            }
+        }
+
         internal RecordIndex(IBTree<TNodeKey, Int64> btree,
             IBTreeDataProvider<TNodeKey, Int64> dataProvider)
         {
-            this.Tree = btree;
             this.DataProvider = dataProvider;
+            this.Tree = btree;
         }
 
         internal BTreeWalker<TNodeKey, Int64> GetWalker()

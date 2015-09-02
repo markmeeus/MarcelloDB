@@ -21,7 +21,7 @@ namespace MarcelloDB.Index.BTree
 
         Stack<BreadCrumb> BreadCrumbs { get; set; }
 
-        public BTreeWalker(int degree, IBTreeDataProvider<TK, TP> dataProvider )
+        internal BTreeWalker(int degree, IBTreeDataProvider<TK, TP> dataProvider )
         {
             this.DataProvider = dataProvider;
             this.Degree = degree;
