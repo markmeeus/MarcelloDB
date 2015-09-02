@@ -82,6 +82,7 @@
     <Compile Include="Helpers\ChangeTrackingListT.cs" />
     <Compile Include="Index\EntryList.cs" />
     <Compile Include="Index\NodePersistence.cs" />
+    <Compile Include="AllocationStrategies\ExactSizeAllocationStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

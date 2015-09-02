@@ -64,6 +64,8 @@
     <Compile Include="Helpers\ChangeTrackingListTest.cs" />
     <Compile Include="Index\NodeTest.cs" />
     <Compile Include="Index\NodePersistenceTest.cs" />
+    <Compile Include="AllocationStrategies\DoubleSizeAllocationStrategyTest.cs" />
+    <Compile Include="AllocationStrategies\ExactSizeAllocationStrategy.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -75,6 +77,7 @@
     <Folder Include="Helpers\" />
     <Folder Include="Index\" />
     <Folder Include="Index\Mocks\" />
+    <Folder Include="AllocationStrategies\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MarcelloDB.netfx\MarcelloDB.netfx.csproj">
