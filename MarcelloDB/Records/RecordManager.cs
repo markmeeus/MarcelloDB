@@ -16,21 +16,18 @@ namespace MarcelloDB.Records
 
         Record AppendRecord(
             byte[] data,
-            bool reuseRecycledRecord = true,
             IAllocationStrategy allocationStrategy = null);
 
         Record UpdateRecord(
             Record record,
             byte[] data,
-            bool reuseRecycledRecord = true,
             IAllocationStrategy allocationStrategy  = null);
 
         void Recycle(Int64 address);
 
         void RegisterNamedRecordAddress(
             string name,
-            Int64 recordAddress,
-            bool reuseRecycledRecord = true);
+            Int64 recordAddress);
 
         Int64 GetNamedRecordAddress(string name);
     }
@@ -70,8 +67,7 @@ namespace MarcelloDB.Records
                     _emptyRecordIndex = RecordIndex.Create<EmptyRecordIndexKey>(
                         this,
                         RecordIndex.EMPTY_RECORDS_BY_SIZE,
-                        new EmptyRecordIndexNodeSerializer(),
-                        canReuseRecycledRecords:false); //do not reuse records for this index. It will try to reuse for building itself.
+                        new EmptyRecordIndexNodeSerializer());
                 }
                 return _emptyRecordIndex;
             }
@@ -98,7 +94,6 @@ namespace MarcelloDB.Records
 
         public Record AppendRecord(
             byte[] data,
-            bool reuseRecycledRecord = true,
             IAllocationStrategy allocationStrategy = null)
         {
             Record record = null;
@@ -124,15 +119,12 @@ namespace MarcelloDB.Records
         public Record UpdateRecord(
             Record record,
             byte[] data,
-            bool reuseRecycledRecord = true,
             IAllocationStrategy allocationStrategy = null)
         {
             if (data.Length > record.Header.AllocatedDataSize )
             {
-                if(reuseRecycledRecord){
-                    Recycle(record.Header.Address);
-                }
-                return AppendRecord(data, reuseRecycledRecord, allocationStrategy);
+                Recycle(record.Header.Address);
+                return AppendRecord(data, allocationStrategy);
             }
             else
             {
@@ -147,7 +139,7 @@ namespace MarcelloDB.Records
             _recordsToRecycle.Add(address);
         }
 
-        public void RegisterNamedRecordAddress(string name, Int64 recordAddress, bool reuseRecycledRecord = true)
+        public void RegisterNamedRecordAddress(string name, Int64 recordAddress)
         {
             var namedRecordIndexRecord = GetNamedRecordIndexRecord();
 
@@ -156,7 +148,7 @@ namespace MarcelloDB.Records
             namedRecordIndex.NamedRecordIndexes.Remove(name);
             namedRecordIndex.NamedRecordIndexes.Add(name, recordAddress);
 
-            var updateRecord = UpdateRecord(namedRecordIndexRecord, namedRecordIndex.ToBytes(), reuseRecycledRecord);
+            var updateRecord = UpdateRecord(namedRecordIndexRecord, namedRecordIndex.ToBytes());
 
             this.Root.NamedRecordIndexAddress = updateRecord.Header.Address;
         }
@@ -231,8 +223,8 @@ namespace MarcelloDB.Records
             if (this.Root.NamedRecordIndexAddress == 0)
             {
                 var namedRecordIndex = new NamedRecordsIndex();
-                var namedRecordIndexRecord = AppendRecord(
-                    namedRecordIndex.ToBytes(), reuseRecycledRecord:false);
+                var namedRecordIndexRecord =
+                    AppendRecord(namedRecordIndex.ToBytes());
 
                 this.Root.NamedRecordIndexAddress =
                     namedRecordIndexRecord.Header.Address;
@@ -312,11 +304,11 @@ namespace MarcelloDB.Records
                 byte[] data = this.Root.Serialize();
                 if (_rootRecord == null)
                 {
-                    _rootRecord = this.AppendRecord(data, true);
+                    _rootRecord = this.AppendRecord(data);
                 }
                 else
                 {
-                    _rootRecord = this.UpdateRecord(_rootRecord, data, true);
+                    _rootRecord = this.UpdateRecord(_rootRecord, data);
                 }
 
                 WriteRootAddress(_rootRecord.Header.Address);

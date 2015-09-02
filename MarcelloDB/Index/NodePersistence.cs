@@ -10,11 +10,10 @@ namespace MarcelloDB
     internal class NodePersistence<TK, TP>
     {
         IRecordManager RecordManager { get; set; }
-        bool ReuseRecycledRecords { get; set; }
-        internal NodePersistence(IRecordManager recordManager, bool reuseRecycledRecords = false)
+
+        internal NodePersistence(IRecordManager recordManager)
         {
             this.RecordManager = recordManager;
-            this.ReuseRecycledRecords = reuseRecycledRecords;
         }
 
         internal void Persist(
@@ -57,7 +56,7 @@ namespace MarcelloDB
             else
             {
                 var record = this.RecordManager.GetRecord(node.Address);
-                record = this.RecordManager.UpdateRecord(record, bytes, this.ReuseRecycledRecords);
+                record = this.RecordManager.UpdateRecord(record, bytes);
                 node.Address = record.Header.Address;
             }
 

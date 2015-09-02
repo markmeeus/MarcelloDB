@@ -24,7 +24,6 @@ namespace MarcelloDB.Test
         }
         public Record AppendRecord(
             byte[] data,
-            bool reuseRecycledRecord = true,
             IAllocationStrategy allocationStrategy = null)
         {
             var record = new Record();
@@ -38,14 +37,13 @@ namespace MarcelloDB.Test
         public Record UpdateRecord(
             Record record,
             byte[] data,
-            bool reuseRecycledRecord = true,
             IAllocationStrategy allocationStrategy = null)
         {
             if (_records.ContainsKey(record.Header.Address))
             {
                 if (data.Length > record.Header.AllocatedDataSize)
                 {
-                    return AppendRecord(data, reuseRecycledRecord, allocationStrategy);
+                    return AppendRecord(data, allocationStrategy);
                 }
                 else
                 {
@@ -69,7 +67,7 @@ namespace MarcelloDB.Test
                 throw new ArgumentException("No record here: " + address.ToString());
             }
         }
-        public void RegisterNamedRecordAddress(string name, long recordAddress, bool reuseRecycledRecord = true)
+        public void RegisterNamedRecordAddress(string name, long recordAddress)
         {
             if (!_namedRecordAdresses.ContainsKey(name))
             {

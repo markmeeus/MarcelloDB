@@ -138,7 +138,7 @@ namespace MarcelloDB.Collections
         {
             var data = Serializer.Serialize(obj);
 
-            return RecordManager.AppendRecord(data, true);
+            return RecordManager.AppendRecord(data);
         }
 
         Record UpdateObject(Record record, T obj)

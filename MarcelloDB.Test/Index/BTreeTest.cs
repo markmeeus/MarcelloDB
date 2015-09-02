@@ -190,8 +190,7 @@ namespace MarcelloDB.Test.Index
             var degree = 2;
             var mockDataProvider = new MockBTreeDataProvider<int, int>();
             var btree = new BTree<int, int>(mockDataProvider, degree);
-            var r = new Random();
-            var keys = new List<int>();
+           
             for (int i = 0; i < 10; i++)
             {
                 btree.Insert(i, i);

@@ -19,22 +19,18 @@ namespace MarcelloDB.Index.BTree
 
         string RootRecordName { get; set; }
 
-        bool ReuseRecycledRecords { get; set; }
-
         IAllocationStrategy AllocationStrategy { get; set; }
 
         internal RecordBTreeDataProvider(
             IRecordManager recordManager,
             IObjectSerializer<Node<TNodeKey, Int64>> serializer,
-            string rootRecordName,
-            bool reuseRecycledRecords
+            string rootRecordName
             )
         {
             this.RecordManager = recordManager;
             this.Serializer = serializer;
             this.NodeCache = new Dictionary<long, Node<TNodeKey, long>>();
             this.RootRecordName = rootRecordName;
-            this.ReuseRecycledRecords = reuseRecycledRecords;
             this.Initialize();
         }
 
@@ -46,9 +42,9 @@ namespace MarcelloDB.Index.BTree
             {
                 var metaRecord = new IndexMetaRecord();
                 var bytes = serializer.Serialize(metaRecord);
-                metaRecord.Record = this.RecordManager.AppendRecord(bytes, this.ReuseRecycledRecords, null);
+                metaRecord.Record = this.RecordManager.AppendRecord(bytes, null);
                 this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName,
-                    metaRecord.Record.Header.Address, this.ReuseRecycledRecords);
+                    metaRecord.Record.Header.Address);
                 this.MetaRecord = metaRecord;
             }
             else
@@ -110,7 +106,6 @@ namespace MarcelloDB.Index.BTree
 
             var record = RecordManager.AppendRecord(
                 data,
-                reuseRecycledRecord:this.ReuseRecycledRecords,
                 allocationStrategy: this.AllocationStrategy);
 
             node.Address = record.Header.Address;
@@ -130,7 +125,7 @@ namespace MarcelloDB.Index.BTree
             //Clear node cache before persisting, persisting may cause re-entrancy
             this.NodeCache = new Dictionary<Int64, Node<TNodeKey, Int64>>();
 
-            new NodePersistence<TNodeKey, Int64>(this.RecordManager, this.ReuseRecycledRecords).
+            new NodePersistence<TNodeKey, Int64>(this.RecordManager).
                 Persist(
                         rootNode,
                     loadedNodes,
@@ -168,11 +163,10 @@ namespace MarcelloDB.Index.BTree
         {
             var serializer = new IndexMetaRecordSerializer();
             var bytes = serializer.Serialize(this.MetaRecord);
-            this.RecordManager.UpdateRecord(this.MetaRecord.Record,bytes,this.ReuseRecycledRecords, null);
+            this.RecordManager.UpdateRecord(this.MetaRecord.Record,bytes, null);
             this.RecordManager.RegisterNamedRecordAddress(
                 this.RootRecordName,
-                this.MetaRecord.Record.Header.Address,
-                this.ReuseRecycledRecords);
+                this.MetaRecord.Record.Header.Address);
         }
     }
 }
