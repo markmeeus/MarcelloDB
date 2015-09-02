@@ -25,8 +25,8 @@ namespace MarcelloDB.Test
         public void Setup()
         {
             _platform = new TestPlatform();
-            _provider = (InMemoryStreamProvider)_platform.CreateStorageStreamProvider("/");
             _session = new Session(_platform, "/");
+            _provider = (InMemoryStreamProvider)_session.StreamProvider;
             _collectionFile = _session["articles"];
             _articles = _collectionFile.Collection<Article>("articles");
         }
@@ -308,18 +308,21 @@ namespace MarcelloDB.Test
             var barbieDoll = Article.BarbieDoll;
             var spinalTapDvd = Article.SpinalTapDvd;
 
+            //create and destroy a few records to allow db to initialize
             _articles.Persist(barbieDoll);
+            _articles.Persist(spinalTapDvd);
+            _articles.Destroy(spinalTapDvd);
             _articles.Persist(spinalTapDvd);
 
             _session.Journal.Apply (); //make sure the journal is applied to the backing stream
 
-            var storageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
+            var storageSize = ((InMemoryStream)_provider.GetStream("articles")).BackingStream.Length;
             _articles.Destroy(barbieDoll);
             _articles.Persist(barbieDoll);
 
             _session.Journal.Apply (); //make sure the journal is applied to the backing stream
 
-            var newStorageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
+            var newStorageSize = ((InMemoryStream)_provider.GetStream("articles")).BackingStream.Length;
             Assert.AreEqual(storageSize, newStorageSize);
         }
 
@@ -330,13 +333,16 @@ namespace MarcelloDB.Test
             var spinalTapDvd = Article.SpinalTapDvd;
             var toiletPaper = Article.ToiletPaper;
 
+            //a few inserts and delete to allow db to initialize
             _articles.Persist(barbieDoll);
             _articles.Persist(spinalTapDvd);
+            _articles.Persist(toiletPaper);
+            _articles.Destroy(toiletPaper);
             _articles.Persist(toiletPaper);
 
             _session.Journal.Apply (); //make sure the journal is applied to the backing stream
 
-            var storageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
+            var storageSize = ((InMemoryStream)_provider.GetStream("articles")).BackingStream.Length;
             _articles.Destroy(barbieDoll);
             _articles.Destroy(toiletPaper);
 
@@ -344,7 +350,7 @@ namespace MarcelloDB.Test
             _articles.Persist(toiletPaper);
             _session.Journal.Apply (); //make sure the journal is applied to the backing stream
 
-            var newStorageSize = ((InMemoryStream)_provider.GetStream("Article")).BackingStream.Length;
+            var newStorageSize = ((InMemoryStream)_provider.GetStream("articles")).BackingStream.Length;
             Assert.AreEqual(storageSize, newStorageSize);
         }
 

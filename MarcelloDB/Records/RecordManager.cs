@@ -102,10 +102,8 @@ namespace MarcelloDB.Records
             IAllocationStrategy allocationStrategy = null)
         {
             Record record = null;
-            if (reuseRecycledRecord)
-            {
-                record = ReuseRecycledRecord(data.Length);
-            }
+
+            record = ReuseRecycledRecord(data.Length);
 
             if (record == null)
             {
@@ -241,22 +239,26 @@ namespace MarcelloDB.Records
             }
         }
 
+
         Record ReuseRecycledRecord(int minimumLength)
         {
-            var walker = this.EmptyRecordIndex.GetWalker();
+            return UsingEmptyRecordIndex(()=>{
+                var walker = this.EmptyRecordIndex.GetWalker();
 
-            var entry = walker.Next();
+                var entry = walker.Next();
 
-            while (entry != null && entry.Key.S < minimumLength)
-            {
-                entry = walker.Next();
-            }
-            if (entry != null)
-            {
-                this.EmptyRecordIndex.UnRegister(entry.Key);
-                return GetRecord(entry.Pointer);
-            }
-            return null;
+                while (entry != null && entry.Key.S < minimumLength)
+                {
+                    entry = walker.Next();
+                }
+                if (entry != null)
+                {
+                    this.EmptyRecordIndex.UnRegister(entry.Key);
+                    return GetRecord(entry.Pointer);
+                }
+
+                return null;
+            });
         }
 
         void RegisterRecycledRecordsInEmptyRecordIndex()
@@ -276,9 +278,13 @@ namespace MarcelloDB.Records
                     {
                         A = recordHeader.Address, S = recordHeader.AllocatedDataSize
                     };
-                    this.EmptyRecordIndex.Register(
-                        emptyRecordIndexKey,
-                        recordHeader.Address);
+
+                    UsingEmptyRecordIndex(() =>
+                    {
+                        this.EmptyRecordIndex.Register(
+                            emptyRecordIndexKey,
+                            recordHeader.Address);
+                    });
 
                 }
 
@@ -333,7 +339,26 @@ namespace MarcelloDB.Records
             );
         }
 
+        bool usingEmptyRecordIndex;
+        T UsingEmptyRecordIndex<T>(Func<T> func)
+        {
+            if (usingEmptyRecordIndex)
+            {
+                return default(T);
+            }
+            usingEmptyRecordIndex = true;
+            var result = func();
+            usingEmptyRecordIndex = false;
+            return result;
+        }
 
+        void UsingEmptyRecordIndex(Action action)
+        {
+            UsingEmptyRecordIndex(()=>{
+                action();
+                return true;
+            });
+        }
     }
 }
 

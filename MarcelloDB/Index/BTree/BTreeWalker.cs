@@ -39,6 +39,7 @@ namespace MarcelloDB.Index.BTree
             {
                 return CurrentNode.EntryList[this.CurrentEntryIndex];
             }
+
             return null;
         }
 
