@@ -24,7 +24,7 @@ namespace MarcelloDB.Test
         }
         public Record AppendRecord(
             byte[] data,
-            IAllocationStrategy allocationStrategy = null)
+            IAllocationStrategy allocationStrategy)
         {
             var record = new Record();
             record.Header.Address = _records.Values.Count + 1;
@@ -37,7 +37,7 @@ namespace MarcelloDB.Test
         public Record UpdateRecord(
             Record record,
             byte[] data,
-            IAllocationStrategy allocationStrategy = null)
+            IAllocationStrategy allocationStrategy)
         {
             if (_records.ContainsKey(record.Header.Address))
             {

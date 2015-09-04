@@ -13,7 +13,6 @@ namespace MarcelloDB.Collections
     {
         Session Session { get; set; }
 
-        StorageEngine StorageEngine { get; set; }
 
         RecordManager RecordManager { get; set; }
 
@@ -26,11 +25,8 @@ namespace MarcelloDB.Collections
             this.Session = session;
             this.Name = name;
             Collections = new Dictionary<string, Collection>();
-            this.StorageEngine = new StorageEngine(this.Session, this.Name);
             this.RecordManager = new RecordManager(
-                new DoubleSizeAllocationStrategy(),
-                this.StorageEngine
-            );
+                new StorageEngine(this.Session, this.Name));
         }
 
         public Collection<T> Collection<T>(string collectionName)
@@ -45,7 +41,6 @@ namespace MarcelloDB.Collections
                         this,
                         collectionName,
                         new BsonSerializer<T>(),
-                        new DoubleSizeAllocationStrategy(),
                         this.RecordManager)
                     );
             }

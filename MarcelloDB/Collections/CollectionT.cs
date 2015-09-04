@@ -26,21 +26,17 @@ namespace MarcelloDB.Collections
 
         IObjectSerializer<T> Serializer { get; set; }
 
-        IAllocationStrategy AllocationStrategy { get; set;}
-
         RecordManager RecordManager { get; set; }
 
         internal Collection (Session session,
             CollectionFile file,
             string name,
             IObjectSerializer<T> serializer,
-            IAllocationStrategy allocationStrategy,
             RecordManager recordManager)
         {
             this.Session = session;
             this.File = file;
             this.Name = name;
-            this.AllocationStrategy = allocationStrategy;
             this.Serializer = serializer;
             this.RecordManager = recordManager;
         }
@@ -138,13 +134,13 @@ namespace MarcelloDB.Collections
         {
             var data = Serializer.Serialize(obj);
 
-            return RecordManager.AppendRecord(data);
+            return RecordManager.AppendRecord(data, AllocationStrategy.StrategyFor(obj));
         }
 
         Record UpdateObject(Record record, T obj)
         {
             var bytes = Serializer.Serialize(obj);
-            return RecordManager.UpdateRecord(record, bytes);
+            return RecordManager.UpdateRecord(record, bytes, AllocationStrategy.StrategyFor(obj));
         }
 
         void DestroyInternal (T obj)

@@ -19,20 +19,16 @@ namespace MarcelloDB.Index.BTree
 
         string RootRecordName { get; set; }
 
-        IAllocationStrategy AllocationStrategy { get; set; }
-
         internal RecordBTreeDataProvider(
             IRecordManager recordManager,
             IObjectSerializer<Node<TNodeKey, Int64>> serializer,
-            string rootRecordName,
-            IAllocationStrategy allocationStrategy
+            string rootRecordName
             )
         {
             this.RecordManager = recordManager;
             this.Serializer = serializer;
             this.NodeCache = new Dictionary<long, Node<TNodeKey, long>>();
             this.RootRecordName = rootRecordName;
-            this.AllocationStrategy = allocationStrategy;
             this.Initialize();
         }
 
@@ -44,9 +40,13 @@ namespace MarcelloDB.Index.BTree
             {
                 var metaRecord = new IndexMetaRecord();
                 var bytes = serializer.Serialize(metaRecord);
-                metaRecord.Record = this.RecordManager.AppendRecord(bytes, null);
+
+                metaRecord.Record =
+                    this.RecordManager.AppendRecord(bytes, AllocationStrategy.StrategyFor(metaRecord));
+
                 this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName,
                     metaRecord.Record.Header.Address);
+
                 this.MetaRecord = metaRecord;
             }
             else
@@ -105,10 +105,8 @@ namespace MarcelloDB.Index.BTree
 
             var node = new Node<TNodeKey, long>(degree);
             var data = Serializer.Serialize(node);
-
-            var record = RecordManager.AppendRecord(
-                data,
-                allocationStrategy: this.AllocationStrategy);
+            var allocationStrategy = AllocationStrategy.StrategyFor(node);
+            var record = RecordManager.AppendRecord(data, allocationStrategy);
 
             node.Address = record.Header.Address;
 

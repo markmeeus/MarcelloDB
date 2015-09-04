@@ -27,29 +27,30 @@ namespace MarcelloDB.Test.Records
         InMemoryStreamProvider _streamProvider;
         RecordManager _recordManager;
         Session _session;
+        IAllocationStrategy _allocationStrategy;
+
         [SetUp]
         public void Initialize()
         {
             _platform = new TestPlatform();
             _streamProvider = (InMemoryStreamProvider)_platform.CreateStorageStreamProvider("/");
             _session = new Session(_platform, "/");
-
+            _allocationStrategy = AllocationStrategy.StrategyFor(new object());
             _recordManager = new RecordManager(
-                new DoubleSizeAllocationStrategy(),
                 new StorageEngine(_session, "article"));
         }
 
         [Test]
         public void Append_Record_Returns_Record()
         {
-            var record = _recordManager.AppendRecord(new byte[0]);
+            var record = _recordManager.AppendRecord(new byte[0], _allocationStrategy);
             Assert.NotNull(record);
         }
 
         [Test]
         public void Get_Record_Returns_Appended_Record()
         {
-            var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 });
+            var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 }, _allocationStrategy);
             var readRecord = _recordManager.GetRecord(record.Header.Address);
             Assert.AreEqual(new byte[3]{ 1, 2, 3 }, readRecord.Data);
         }
@@ -57,15 +58,15 @@ namespace MarcelloDB.Test.Records
         [Test]
         public void Update_Record_Returns_Updated_Record()
         {
-            var record = _recordManager.AppendRecord(new byte[3] { 1, 2, 3 });
-            record = _recordManager.UpdateRecord(record, new byte[3]{ 4, 5, 6 });
+            var record = _recordManager.AppendRecord(new byte[3] { 1, 2, 3 }, _allocationStrategy);
+            record = _recordManager.UpdateRecord(record, new byte[3]{ 4, 5, 6 }, _allocationStrategy);
             Assert.AreEqual(new byte[3]{ 4, 5, 6}, record.Data);
         }
 
         [Test]
         public void Append_Record_Assigns_Address()
         {
-            var record = _recordManager.AppendRecord(new byte[0]);
+            var record = _recordManager.AppendRecord(new byte[0], _allocationStrategy);
             Assert.Greater(record.Header.Address, 0);
         }
 
@@ -90,8 +91,8 @@ namespace MarcelloDB.Test.Records
         [Test]
         public void Update_Record_Updates_Record()
         {
-            var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 });
-            _recordManager.UpdateRecord(record, new byte[3] { 4, 5, 6 });
+            var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 }, _allocationStrategy);
+            _recordManager.UpdateRecord(record, new byte[3] { 4, 5, 6 }, _allocationStrategy);
             var readRecord = _recordManager.GetRecord(record.Header.Address);
             Assert.AreEqual(new byte[3]{ 4, 5, 6}, readRecord.Data);
         }
@@ -99,9 +100,9 @@ namespace MarcelloDB.Test.Records
         [Test]
         public void Update_Record_Doesnt_Increase_StorageSize()
         {
-            var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 });
+            var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 }, _allocationStrategy);
             var streamLength =  GetStreamLength();
-            _recordManager.UpdateRecord(record, new byte[3] { 4, 5, 6 });
+            _recordManager.UpdateRecord(record, new byte[3] { 4, 5, 6 }, _allocationStrategy);
             var newStreamLength =  GetStreamLength();
             Assert.AreEqual(streamLength, newStreamLength);
         }
@@ -131,12 +132,12 @@ namespace MarcelloDB.Test.Records
         [Test]
         public void Append_Record_Reuses_Empty_Record()
         {
-            var record = _recordManager.AppendRecord(new byte[3]{1, 2, 3});
+            var record = _recordManager.AppendRecord(new byte[3]{1, 2, 3}, _allocationStrategy);
 
             _recordManager.Recycle(record.Header.Address);
 
             var expectedLength = GetStreamLength();
-            _recordManager.AppendRecord(new byte[3]{1, 2, 3});
+            _recordManager.AppendRecord(new byte[3]{1, 2, 3}, _allocationStrategy);
             var newLength = GetStreamLength();
             Assert.AreEqual(expectedLength, newLength);
         }
@@ -144,23 +145,23 @@ namespace MarcelloDB.Test.Records
         [Test]
         public void Record_Does_Not_Get_Recycled_Twice()
         {
-            var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 });
+            var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 }, _allocationStrategy);
             _recordManager.Recycle(record.Header.Address);
 
-            var firstNewRecord = _recordManager.AppendRecord(new byte[3]{ 4, 5, 6 });
-            var secondNewRecord = _recordManager.AppendRecord(new byte[3]{ 7, 8, 9 });
+            var firstNewRecord = _recordManager.AppendRecord(new byte[3]{ 4, 5, 6 }, _allocationStrategy);
+            var secondNewRecord = _recordManager.AppendRecord(new byte[3]{ 7, 8, 9 }, _allocationStrategy);
             Assert.AreNotEqual(firstNewRecord.Header.Address, secondNewRecord.Header.Address);
         }
 
         [Test]
         public void Update_Record_Reuses_Empty_Record()
         {
-            var smallRecord = _recordManager.AppendRecord(new byte[1]{ 1 });
-            var giantRecord = _recordManager.AppendRecord(new byte[100]);
+            var smallRecord = _recordManager.AppendRecord(new byte[1]{ 1 }, _allocationStrategy);
+            var giantRecord = _recordManager.AppendRecord(new byte[100], _allocationStrategy);
             _recordManager.Recycle(giantRecord.Header.Address);
             _recordManager.SaveState();
             var expectedLength = GetStreamLength();
-            _recordManager.UpdateRecord(smallRecord, new byte[20]);
+            _recordManager.UpdateRecord(smallRecord, new byte[20], _allocationStrategy);
             var newLength = GetStreamLength();
             Assert.AreEqual(expectedLength, newLength);
 

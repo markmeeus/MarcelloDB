@@ -31,23 +31,10 @@ namespace MarcelloDB.Index
             this.DataProvider = new RecordBTreeDataProvider<TNodeKey>(
                 recordManager,
                 serializer,
-                indexName,
-                this.AllocationStrategy
+               indexName
             );
 
             this.Tree = new BTree<TNodeKey, Int64>(this.DataProvider, RecordIndex.BTREE_DEGREE);
-        }
-
-        /// <summary>
-        /// Overide to return a specialized allocation strategy
-        /// </summary>
-        /// <value>The allocation strategy.</value>
-        protected virtual IAllocationStrategy AllocationStrategy
-        {
-            get
-            {
-                return new DoubleSizeAllocationStrategy();
-            }
         }
 
         internal RecordIndex(IBTree<TNodeKey, Int64> btree,

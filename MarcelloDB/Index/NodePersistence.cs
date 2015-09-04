@@ -4,6 +4,7 @@ using MarcelloDB.Serialization;
 using MarcelloDB.Index;
 using System.Collections.Generic;
 using System.Linq;
+using MarcelloDB.AllocationStrategies;
 
 namespace MarcelloDB
 {
@@ -47,16 +48,16 @@ namespace MarcelloDB
             node.ClearChanges();
 
             var bytes = serializer.Serialize(node);
-
+            var allocationStrategy = AllocationStrategy.StrategyFor(node);
             if (node.Address <= 0)
             {
-                var record = this.RecordManager.AppendRecord(bytes);
+                var record = this.RecordManager.AppendRecord(bytes, allocationStrategy);
                 node.Address = record.Header.Address;
             }
             else
             {
                 var record = this.RecordManager.GetRecord(node.Address);
-                record = this.RecordManager.UpdateRecord(record, bytes);
+                record = this.RecordManager.UpdateRecord(record, bytes, allocationStrategy);
                 node.Address = record.Header.Address;
             }
 

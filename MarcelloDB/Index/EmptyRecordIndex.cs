@@ -15,14 +15,6 @@ namespace MarcelloDB.Index
             IObjectSerializer<Node<EmptyRecordIndexKey, Int64>> serializer
         ):base(recordManager, indexName, serializer)
         {}
-
-        protected override IAllocationStrategy AllocationStrategy
-        {
-            get
-            {
-                return new ExactSizeAllocationStrategy();
-            }
-        }
     }
 }
 

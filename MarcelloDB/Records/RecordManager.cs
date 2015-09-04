@@ -16,12 +16,12 @@ namespace MarcelloDB.Records
 
         Record AppendRecord(
             byte[] data,
-            IAllocationStrategy allocationStrategy = null);
+            IAllocationStrategy allocationStrategy);
 
         Record UpdateRecord(
             Record record,
             byte[] data,
-            IAllocationStrategy allocationStrategy  = null);
+            IAllocationStrategy allocationStrategy);
 
         void Recycle(Int64 address);
 
@@ -46,15 +46,11 @@ namespace MarcelloDB.Records
 
         StorageEngine StorageEngine { get;set; }
 
-        IAllocationStrategy DefaultAllocationStrategy { get; set; }
-
         internal RecordManager(
-            IAllocationStrategy allocationStrategy,
             StorageEngine storageEngine
         )
         {
             this.StorageEngine = storageEngine;
-            this.DefaultAllocationStrategy = allocationStrategy;
             _recordsToRecycle = new List<Int64>();
         }
 
@@ -92,9 +88,7 @@ namespace MarcelloDB.Records
             return ReadEntireRecord(address);
         }
 
-        public Record AppendRecord(
-            byte[] data,
-            IAllocationStrategy allocationStrategy = null)
+        public Record AppendRecord(byte[] data, IAllocationStrategy allocationStrategy)
         {
             Record record = null;
 
@@ -104,22 +98,19 @@ namespace MarcelloDB.Records
             {
                 //append
                 record = new Record();
-                record.Header.AllocatedDataSize = (allocationStrategy ?? DefaultAllocationStrategy).CalculateSize(data.Length);
+                record.Header.AllocatedDataSize = allocationStrategy.CalculateSize(data.Length);
                 record.Data = data;
                 WriteRecordAtHead(record);
 
             }
             else //reuse
             {
-                UpdateRecord(record, data);
+                UpdateRecord(record, data, allocationStrategy);
             }
             return record;
         }
 
-        public Record UpdateRecord(
-            Record record,
-            byte[] data,
-            IAllocationStrategy allocationStrategy = null)
+        public Record UpdateRecord(Record record, byte[] data, IAllocationStrategy allocationStrategy)
         {
             if (data.Length > record.Header.AllocatedDataSize )
             {
@@ -147,8 +138,9 @@ namespace MarcelloDB.Records
 
             namedRecordIndex.NamedRecordIndexes.Remove(name);
             namedRecordIndex.NamedRecordIndexes.Add(name, recordAddress);
-
-            var updateRecord = UpdateRecord(namedRecordIndexRecord, namedRecordIndex.ToBytes());
+            var allocationStrategy = AllocationStrategy.StrategyFor(namedRecordIndex);
+            var updateRecord = UpdateRecord(
+                    namedRecordIndexRecord, namedRecordIndex.ToBytes(), allocationStrategy);
 
             this.Root.NamedRecordIndexAddress = updateRecord.Header.Address;
         }
@@ -223,8 +215,9 @@ namespace MarcelloDB.Records
             if (this.Root.NamedRecordIndexAddress == 0)
             {
                 var namedRecordIndex = new NamedRecordsIndex();
+                var allocationStrategy = AllocationStrategy.StrategyFor(namedRecordIndex);
                 var namedRecordIndexRecord =
-                    AppendRecord(namedRecordIndex.ToBytes());
+                    AppendRecord(namedRecordIndex.ToBytes(), allocationStrategy);
 
                 this.Root.NamedRecordIndexAddress =
                     namedRecordIndexRecord.Header.Address;
@@ -302,13 +295,14 @@ namespace MarcelloDB.Records
             if (this.Root.IsDirty)
             {
                 byte[] data = this.Root.Serialize();
+                var allocationStrategy = AllocationStrategy.StrategyFor(this.Root);
                 if (_rootRecord == null)
                 {
-                    _rootRecord = this.AppendRecord(data);
+                    _rootRecord = this.AppendRecord(data, allocationStrategy);
                 }
                 else
                 {
-                    _rootRecord = this.UpdateRecord(_rootRecord, data);
+                    _rootRecord = this.UpdateRecord(_rootRecord, data, allocationStrategy);
                 }
 
                 WriteRootAddress(_rootRecord.Header.Address);
