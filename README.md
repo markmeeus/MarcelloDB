@@ -1,5 +1,5 @@
-MarcelloDB
-========
+
+<img  width="60%" src="http://markmeeus.github.io/MarcelloDB/images/logo/logo_blue.svg"/>
 
 [![Build Status](https://travis-ci.org/markmeeus/MarcelloDB.svg?branch=master)](https://travis-ci.org/markmeeus/MarcelloDB)
 
@@ -97,7 +97,7 @@ Finding objects
 You can find a specific object by it's ID (more on ID's below)
 
 Find uses a btree index to search for objects. Depending on the size of your collection, a Find will be way faster than iterating the collection to find it.
-Sub-milliseconds lookups should be expected, even for large collections.
+Sub-millisecond lookups should be expected, even for large collections.
 
 Usage:
 
@@ -199,7 +199,7 @@ Data is stored in an unencrypted format. An encryption engine is available as a 
 
 Indexes
 =
-Will be implemented in 0.3.x and 0.4.x
+Will be implemented in 0.2.x and 0.3.x
 
 Roadmap
 =
@@ -218,13 +218,9 @@ Roadmap
 
 0.2.0
 -
-- Metadata Records (named records)
-
-0.3.0
--
 - Indexed Properties
 
-0.4.0
+0.3.0
 -
 - Indexed Properties of nested objects
 
