@@ -85,6 +85,7 @@
     <Compile Include="AllocationStrategies\ExactSizeAllocationStrategy.cs" />
     <Compile Include="Index\EmptyRecordIndex.cs" />
     <Compile Include="AllocationStrategies\AllocationStrategy.cs" />
+    <Compile Include="AllocationStrategies\PredictiveBTreeNodeAllocationStrategy.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

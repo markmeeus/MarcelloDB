@@ -11,6 +11,11 @@ namespace MarcelloDB.AllocationStrategies
             return new ExactSizeAllocationStrategy();
         }
 
+        internal static IAllocationStrategy StrategyFor<TK, TP>(Node<TK, TP> node)
+        {
+            return new PredictiveBTreeNodeAllocationStrategy<TK, TP>(node);
+        }
+
         internal static IAllocationStrategy StrategyFor(object  obj)
         {
             if(obj.GetType() == typeof(Node<EmptyRecordIndexKey, Int64>))

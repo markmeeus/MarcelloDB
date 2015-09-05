@@ -3,8 +3,15 @@ using System.Collections.Generic;
 
 namespace MarcelloDB.Index
 {
-    public class Node<TK, TP>
+    public class Node 
     {
+        public int Degree { get; set; }
+
+        public Int64 Address{ get; set; }
+
+        public AddressList ChildrenAddresses { get; set; }
+
+
         internal static int MaxEntriesForDegree(int degree)
         {
             return MaxChildrenForDegree(degree) - 1;
@@ -15,18 +22,21 @@ namespace MarcelloDB.Index
             return (2 * degree);
         }
 
-        public int Degree { get; set; }
-
-        public Int64 Address{ get; set; }
-
-        public AddressList ChildrenAddresses { get; set; }
-
-        public EntryList<TK, TP> EntryList { get; set; }
-
         public Node(int degree)
         {
             this.Degree = degree;
             this.ChildrenAddresses = new AddressList();
+        }
+    }
+
+    public class Node<TK, TP> : Node
+    {
+
+     
+        public EntryList<TK, TP> EntryList { get; set; }
+
+        public Node(int degree) : base(degree)
+        {            
             this.EntryList = new EntryList<TK, TP>();
         }
 
