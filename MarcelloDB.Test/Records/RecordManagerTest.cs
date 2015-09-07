@@ -35,8 +35,9 @@ namespace MarcelloDB.Test.Records
             _platform = new TestPlatform();
             _streamProvider = (InMemoryStreamProvider)_platform.CreateStorageStreamProvider("/");
             _session = new Session(_platform, "/");
-            _allocationStrategy = AllocationStrategy.StrategyFor(new object());
+            _allocationStrategy = _session.AllocationStrategyResolver.StrategyFor(new object());
             _recordManager = new RecordManager(
+                _session,
                 new StorageEngine(_session, "article"));
         }
 

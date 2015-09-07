@@ -10,6 +10,13 @@ using MarcelloDB.Platform;
 
 namespace MarcelloDB
 {
+    internal class SessionBasedObject
+    {
+        internal Session Session { get; }
+
+        internal SessionBasedObject(Session session){this.Session = session;}
+    }
+
     public class Session : IDisposable
     {
         Dictionary<string, CollectionFile> CollectionFiles { get; set; }
@@ -17,6 +24,8 @@ namespace MarcelloDB
         internal IStorageStreamProvider StreamProvider { get; set; }
 
         internal Transaction CurrentTransaction { get; set; }
+
+        internal AllocationStrategyResolver AllocationStrategyResolver { get; set; }
 
         internal Journal Journal { get; set; }
 
@@ -27,6 +36,7 @@ namespace MarcelloDB
             this.CollectionFiles = new Dictionary<string, CollectionFile>();
             this.StreamProvider = platform.CreateStorageStreamProvider(rootPath);
             this.Journal = new Journal(this);
+            this.AllocationStrategyResolver = new AllocationStrategyResolver();
             SyncLock = new object();
         }
 

@@ -10,10 +10,11 @@ namespace MarcelloDB.Index
     {
 
         internal EmptyRecordIndex(
+            Session session,
             IRecordManager recordManager,
             string indexName,
             IObjectSerializer<Node<EmptyRecordIndexKey, Int64>> serializer
-        ):base(recordManager, indexName, serializer)
+        ):base(session, recordManager, indexName, serializer)
         {}
     }
 }

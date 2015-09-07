@@ -66,8 +66,8 @@
     <Compile Include="Index\NodePersistenceTest.cs" />
     <Compile Include="AllocationStrategies\DoubleSizeAllocationStrategyTest.cs" />
     <Compile Include="AllocationStrategies\ExactSizeAllocationStrategy.cs" />
-    <Compile Include="AllocationStrategies\AllocationStrategyTest.cs" />
     <Compile Include="AllocationStrategies\PredictiveBTreeNodeAllocationStrategyTest.cs" />
+    <Compile Include="AllocationStrategies\AllocationStrategyResolver.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

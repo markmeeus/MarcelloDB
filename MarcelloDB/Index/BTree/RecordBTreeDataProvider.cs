@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace MarcelloDB.Index.BTree
 {
-    internal class RecordBTreeDataProvider<TNodeKey> :  IBTreeDataProvider<TNodeKey, Int64>
+    internal class RecordBTreeDataProvider<TNodeKey> :  SessionBasedObject, IBTreeDataProvider<TNodeKey, Int64>
     {
         internal IndexMetaRecord MetaRecord{ get; private set; }
 
@@ -20,10 +20,11 @@ namespace MarcelloDB.Index.BTree
         string RootRecordName { get; set; }
 
         internal RecordBTreeDataProvider(
+            Session session,
             IRecordManager recordManager,
             IObjectSerializer<Node<TNodeKey, Int64>> serializer,
             string rootRecordName
-            )
+        ):base(session)
         {
             this.RecordManager = recordManager;
             this.Serializer = serializer;
@@ -42,7 +43,7 @@ namespace MarcelloDB.Index.BTree
                 var bytes = serializer.Serialize(metaRecord);
 
                 metaRecord.Record =
-                    this.RecordManager.AppendRecord(bytes, AllocationStrategy.StrategyFor(metaRecord));
+                    this.RecordManager.AppendRecord(bytes, this.Session.AllocationStrategyResolver.StrategyFor(metaRecord));
 
                 this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName,
                     metaRecord.Record.Header.Address);
@@ -105,7 +106,7 @@ namespace MarcelloDB.Index.BTree
 
             var node = new Node<TNodeKey, long>(degree);
             var data = Serializer.Serialize(node);
-            var allocationStrategy = AllocationStrategy.StrategyFor(node);
+            var allocationStrategy = this.Session.AllocationStrategyResolver.StrategyFor(node);
             var record = RecordManager.AppendRecord(data, allocationStrategy);
 
             node.Address = record.Header.Address;
@@ -125,7 +126,7 @@ namespace MarcelloDB.Index.BTree
             //Clear node cache before persisting, persisting may cause re-entrancy
             this.NodeCache = new Dictionary<Int64, Node<TNodeKey, Int64>>();
 
-            new NodePersistence<TNodeKey, Int64>(this.RecordManager).
+            new NodePersistence<TNodeKey, Int64>(this.Session, this.RecordManager).
                 Persist(
                         rootNode,
                     loadedNodes,

@@ -8,11 +8,11 @@ using MarcelloDB.AllocationStrategies;
 
 namespace MarcelloDB
 {
-    internal class NodePersistence<TK, TP>
+    internal class NodePersistence<TK, TP> : SessionBasedObject
     {
         IRecordManager RecordManager { get; set; }
 
-        internal NodePersistence(IRecordManager recordManager)
+        internal NodePersistence(Session session, IRecordManager recordManager): base(session)
         {
             this.RecordManager = recordManager;
         }
@@ -48,7 +48,7 @@ namespace MarcelloDB
             node.ClearChanges();
 
             var bytes = serializer.Serialize(node);
-            var allocationStrategy = AllocationStrategy.StrategyFor(node);
+            var allocationStrategy = this.Session.AllocationStrategyResolver.StrategyFor(node);
             if (node.Address <= 0)
             {
                 var record = this.RecordManager.AppendRecord(bytes, allocationStrategy);

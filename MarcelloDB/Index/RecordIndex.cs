@@ -18,17 +18,18 @@ namespace MarcelloDB.Index
         }
     }
 
-    internal class RecordIndex<TNodeKey>
+    internal class RecordIndex<TNodeKey> : SessionBasedObject
     {
         IBTree<TNodeKey, Int64> Tree { get; set; }
 
         IBTreeDataProvider<TNodeKey, Int64> DataProvider { get; set; }
 
-        internal RecordIndex(IRecordManager recordManager,
+        internal RecordIndex(Session session, IRecordManager recordManager,
             string indexName,
-            IObjectSerializer<Node<TNodeKey, Int64>> serializer)
+            IObjectSerializer<Node<TNodeKey, Int64>> serializer) : base(session)
         {
             this.DataProvider = new RecordBTreeDataProvider<TNodeKey>(
+                this.Session,
                 recordManager,
                 serializer,
                indexName
@@ -37,8 +38,8 @@ namespace MarcelloDB.Index
             this.Tree = new BTree<TNodeKey, Int64>(this.DataProvider, RecordIndex.BTREE_DEGREE);
         }
 
-        internal RecordIndex(IBTree<TNodeKey, Int64> btree,
-            IBTreeDataProvider<TNodeKey, Int64> dataProvider)
+        internal RecordIndex(Session session, IBTree<TNodeKey, Int64> btree,
+            IBTreeDataProvider<TNodeKey, Int64> dataProvider): base(session)
         {
             this.DataProvider = dataProvider;
             this.Tree = btree;

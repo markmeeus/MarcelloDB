@@ -32,7 +32,7 @@ namespace MarcelloDB.Records
         Int64 GetNamedRecordAddress(string name);
     }
 
-    internal class RecordManager : IRecordManager, ITransactor
+    internal class RecordManager : SessionBasedObject, IRecordManager, ITransactor
     {
         EmptyRecordIndex _emptyRecordIndex;
 
@@ -42,13 +42,12 @@ namespace MarcelloDB.Records
 
         Record _rootRecord;
 
-        Session Session { get; set; }
-
         StorageEngine StorageEngine { get;set; }
 
         internal RecordManager(
+            Session session,
             StorageEngine storageEngine
-        )
+        ):base(session)
         {
             this.StorageEngine = storageEngine;
             _recordsToRecycle = new List<Int64>();
@@ -61,6 +60,7 @@ namespace MarcelloDB.Records
                 if (_emptyRecordIndex == null)
                 {
                     _emptyRecordIndex = new Index.EmptyRecordIndex(
+                        this.Session,
                         this,
                         RecordIndex.EMPTY_RECORDS_BY_SIZE,
                         new EmptyRecordIndexNodeSerializer());
@@ -138,7 +138,7 @@ namespace MarcelloDB.Records
 
             namedRecordIndex.NamedRecordIndexes.Remove(name);
             namedRecordIndex.NamedRecordIndexes.Add(name, recordAddress);
-            var allocationStrategy = AllocationStrategy.StrategyFor(namedRecordIndex);
+            var allocationStrategy = this.Session.AllocationStrategyResolver.StrategyFor(namedRecordIndex);
             var updateRecord = UpdateRecord(
                     namedRecordIndexRecord, namedRecordIndex.ToBytes(), allocationStrategy);
 
@@ -215,7 +215,7 @@ namespace MarcelloDB.Records
             if (this.Root.NamedRecordIndexAddress == 0)
             {
                 var namedRecordIndex = new NamedRecordsIndex();
-                var allocationStrategy = AllocationStrategy.StrategyFor(namedRecordIndex);
+                var allocationStrategy = this.Session.AllocationStrategyResolver.StrategyFor(namedRecordIndex);
                 var namedRecordIndexRecord =
                     AppendRecord(namedRecordIndex.ToBytes(), allocationStrategy);
 
@@ -295,7 +295,7 @@ namespace MarcelloDB.Records
             if (this.Root.IsDirty)
             {
                 byte[] data = this.Root.Serialize();
-                var allocationStrategy = AllocationStrategy.StrategyFor(this.Root);
+                var allocationStrategy = this.Session.AllocationStrategyResolver.StrategyFor(this.Root);
                 if (_rootRecord == null)
                 {
                     _rootRecord = this.AppendRecord(data, allocationStrategy);

@@ -91,6 +91,7 @@ namespace MarcelloDB.Collections
         Record GetRecordForObjectID(object objectID)
         {
             var index = new RecordIndex<object>(
+                this.Session,
                 this.RecordManager,
                 RecordIndex.GetIDIndexName<T>(this.Name),
                 new BsonSerializer<Node<object, Int64>>());
@@ -107,6 +108,7 @@ namespace MarcelloDB.Collections
             var objectID = GetObjectIDOrThrow(obj);
 
             var index = new RecordIndex<object>(
+                this.Session,
                 this.RecordManager,
                 RecordIndex.GetIDIndexName<T>(this.Name),
                 new BsonSerializer<Node<object, Int64>>());
@@ -134,13 +136,13 @@ namespace MarcelloDB.Collections
         {
             var data = Serializer.Serialize(obj);
 
-            return RecordManager.AppendRecord(data, AllocationStrategy.StrategyFor(obj));
+            return RecordManager.AppendRecord(data, this.Session.AllocationStrategyResolver.StrategyFor(obj));
         }
 
         Record UpdateObject(Record record, T obj)
         {
             var bytes = Serializer.Serialize(obj);
-            return RecordManager.UpdateRecord(record, bytes, AllocationStrategy.StrategyFor(obj));
+            return RecordManager.UpdateRecord(record, bytes, this.Session.AllocationStrategyResolver.StrategyFor(obj));
         }
 
         void DestroyInternal (T obj)
@@ -151,6 +153,7 @@ namespace MarcelloDB.Collections
             if (record != null)
             {
                 var index = new RecordIndex<object>(
+                    this.Session,
                     this.RecordManager,
                     RecordIndex.GetIDIndexName<T>(this.Name),
                     new BsonSerializer<Node<object, Int64>>());

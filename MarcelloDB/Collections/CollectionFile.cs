@@ -26,6 +26,7 @@ namespace MarcelloDB.Collections
             this.Name = name;
             Collections = new Dictionary<string, Collection>();
             this.RecordManager = new RecordManager(
+                this.Session,
                 new StorageEngine(this.Session, this.Name));
         }
 

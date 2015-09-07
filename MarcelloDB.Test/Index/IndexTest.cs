@@ -12,13 +12,15 @@ namespace MarcelloDB.Test.Index
         MockBTreeDataProvider<object, Int64> _mockProvider;
 
         RecordIndex<object> _index;
+        Session _session;
 
         [SetUp]
         public void Initialize()
         {
+            _session = new Session(new TestPlatform(), "");
             _mockTree = new MockBTree<object, Int64>();
             _mockProvider = new MockBTreeDataProvider<object, Int64>();
-            _index = new RecordIndex<object>(_mockTree, _mockProvider);
+            _index = new RecordIndex<object>(_session, _mockTree, _mockProvider);
         }
 
         [Test]

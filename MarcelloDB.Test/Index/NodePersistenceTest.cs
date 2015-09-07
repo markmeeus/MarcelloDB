@@ -29,6 +29,8 @@ namespace MarcelloDB.Test.Index
 
         }
 
+        Session _session;
+
         NodePersistence<int,int> _persistence;
 
         InMemoryRecordManager _inMemoryRecordManager;
@@ -36,8 +38,9 @@ namespace MarcelloDB.Test.Index
         [SetUp]
         public void Initialize()
         {
+            _session = new Session(new TestPlatform(), "");
             _inMemoryRecordManager = new InMemoryRecordManager();
-            _persistence = new NodePersistence<int,int>(_inMemoryRecordManager);
+            _persistence = new NodePersistence<int,int>(_session, _inMemoryRecordManager);
         }
 
         [Test]
