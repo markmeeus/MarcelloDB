@@ -94,7 +94,7 @@ namespace MarcelloDB.Collections
                 this.Session,
                 this.RecordManager,
                 RecordIndex.GetIDIndexName<T>(this.Name),
-                new BsonSerializer<Node<object, Int64>>());
+                this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>());
             var address = index.Search(objectID);
             if (address > 0)
             {
@@ -111,7 +111,7 @@ namespace MarcelloDB.Collections
                 this.Session,
                 this.RecordManager,
                 RecordIndex.GetIDIndexName<T>(this.Name),
-                new BsonSerializer<Node<object, Int64>>());
+                this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>());
 
             Record record = GetRecordForObjectID(objectID);
             if (record != null)
@@ -156,7 +156,7 @@ namespace MarcelloDB.Collections
                     this.Session,
                     this.RecordManager,
                     RecordIndex.GetIDIndexName<T>(this.Name),
-                    new BsonSerializer<Node<object, Int64>>());
+                    this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>());
                 index.UnRegister(objectID);
 
                 this.RecordManager.Recycle(record.Header.Address);

@@ -27,6 +27,8 @@ namespace MarcelloDB
 
         internal AllocationStrategyResolver AllocationStrategyResolver { get; set; }
 
+        internal SerializerResolver SerializerResolver { get; set; }
+
         internal Journal Journal { get; set; }
 
         internal object SyncLock { get; set; }
@@ -37,6 +39,7 @@ namespace MarcelloDB
             this.StreamProvider = platform.CreateStorageStreamProvider(rootPath);
             this.Journal = new Journal(this);
             this.AllocationStrategyResolver = new AllocationStrategyResolver();
+            this.SerializerResolver = new SerializerResolver();
             SyncLock = new object();
         }
 

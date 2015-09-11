@@ -41,7 +41,7 @@ namespace MarcelloDB.Collections
                     new Collection<T> (this.Session,
                         this,
                         collectionName,
-                        new BsonSerializer<T>(),
+                        this.Session.SerializerResolver.SerializerFor<T>(),
                         this.RecordManager)
                     );
             }

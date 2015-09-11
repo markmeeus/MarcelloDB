@@ -103,7 +103,8 @@ namespace MarcelloDB.Transactions
         }
 
         void PersistJournal(TransactionJournal transactionJournal){
-            var bson = new BsonSerializer<TransactionJournal>().Serialize(transactionJournal);
+            var bson = this.Session.SerializerResolver.SerializerFor<TransactionJournal>()
+                .Serialize(transactionJournal);
 
             this.JournalWriter.Write(0,
                 new BufferWriter(new byte[sizeof(int)])
@@ -119,7 +120,8 @@ namespace MarcelloDB.Transactions
             if (length > 0)
             {
                 var bytes = this.JournalReader.Read(sizeof(int), length);
-                return new BsonSerializer<TransactionJournal>().Deserialize(bytes);
+                return this.Session.SerializerResolver.SerializerFor<TransactionJournal>()
+                    .Deserialize(bytes);
             }
             return null;
         }

@@ -38,7 +38,7 @@ namespace MarcelloDB.Collections
                         this.Session,
                         this.RecordManager,
                         RecordIndex.GetIDIndexName<T>(Collection.Name),
-                        new BsonSerializer<Node<object, Int64>>()
+                        this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>()
                     );
                     var walker = index.GetWalker();
                     var node = walker.Next();

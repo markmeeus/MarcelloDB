@@ -63,7 +63,7 @@ namespace MarcelloDB.Records
                         this.Session,
                         this,
                         RecordIndex.EMPTY_RECORDS_BY_SIZE,
-                        new EmptyRecordIndexNodeSerializer());
+                        this.Session.SerializerResolver.SerializerFor<Node<EmptyRecordIndexKey, Int64>>());
                 }
                 return _emptyRecordIndex;
             }

@@ -35,7 +35,7 @@ namespace MarcelloDB.Index.BTree
 
         void Initialize()
         {
-            var serializer = new IndexMetaRecordSerializer();
+            var serializer = this.Session.SerializerResolver.SerializerFor<IndexMetaRecord>();
             var rootRecordAddress = this.RecordManager.GetNamedRecordAddress(this.RootRecordName);
             if (rootRecordAddress <= 0)
             {
@@ -162,7 +162,7 @@ namespace MarcelloDB.Index.BTree
 
         private void SaveMetaRecord()
         {
-            var serializer = new IndexMetaRecordSerializer();
+            var serializer = this.Session.SerializerResolver.SerializerFor<IndexMetaRecord>();
             var bytes = serializer.Serialize(this.MetaRecord);
             this.RecordManager.UpdateRecord(this.MetaRecord.Record,bytes, null);
             this.RecordManager.RegisterNamedRecordAddress(

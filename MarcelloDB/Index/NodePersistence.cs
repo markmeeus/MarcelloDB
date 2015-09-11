@@ -18,13 +18,13 @@ namespace MarcelloDB
         }
 
         internal void Persist(
-            Node<TK, TP> node,
+            Node<TK, TP> rootNode,
             Dictionary<Int64, Node<TK, TP>> loadedNodes,
             IObjectSerializer<Node<TK, TP>> serializer,
             IndexMetaRecord metaRecord)
         {
             var touchedNodes = new Dictionary<Int64, Node<TK, TP>>();
-            Persist(node, loadedNodes, serializer, touchedNodes, metaRecord);
+            Persist(rootNode, loadedNodes, serializer, touchedNodes, metaRecord);
             RecycleUntouchedNodes(loadedNodes, touchedNodes, metaRecord);
         }
 

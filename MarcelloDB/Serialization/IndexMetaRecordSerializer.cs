@@ -4,8 +4,8 @@ using MarcelloDB.Records;
 namespace MarcelloDB.Serialization
 {
     internal class IndexMetaRecordSerializer : IObjectSerializer<IndexMetaRecord>
-    {
-        #region IObjectSerializer implementation
+    {        
+        #region IObjectSerializer implementation    
 
         public byte[] Serialize(IndexMetaRecord record)
         {

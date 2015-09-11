@@ -86,6 +86,7 @@
     <Compile Include="Index\EmptyRecordIndex.cs" />
     <Compile Include="AllocationStrategies\PredictiveBTreeNodeAllocationStrategy.cs" />
     <Compile Include="AllocationStrategies\AllocationStrategyResolver.cs" />
+    <Compile Include="Serialization\SerializerResolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
