@@ -2,6 +2,7 @@
 using MarcelloDB.Records;
 using System.Collections.Generic;
 using NUnit.Framework;
+using MarcelloDB.Serialization;
 
 namespace MarcelloDB.Test.Records
 {
@@ -129,8 +130,10 @@ namespace MarcelloDB.Test.Records
             var collectionFileRoot = CollectionFileRoot.Create();
             collectionFileRoot.SetCollectionRootAddress("123", 123);
             collectionFileRoot.SetCollectionRootAddress("456", 456);
-            var deserialized = CollectionFileRoot.Deserialize(
-                collectionFileRoot.Serialize());
+
+            var serializer = new SerializerResolver().SerializerFor<CollectionFileRoot>();
+            var deserialized =   serializer.Deserialize(serializer.Serialize(collectionFileRoot));
+
             Assert.AreEqual(123, deserialized.CollectionRootAddress("123"));
             Assert.AreEqual(456, deserialized.CollectionRootAddress("456"));
         }

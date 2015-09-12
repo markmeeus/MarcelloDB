@@ -73,20 +73,6 @@ namespace MarcelloDB
         {
             return new CollectionFileRoot();
         }
-
-
-        internal byte[] Serialize()
-        {
-            var serializer = new BsonSerializer<CollectionFileRoot>();
-            return serializer.Serialize(this);
-        }
-
-        public static CollectionFileRoot Deserialize(byte[] bytes)
-        {
-            var serializer = new BsonSerializer<CollectionFileRoot>();
-            var deser = serializer.Deserialize(bytes);
-            return deser;
-        }
     }
 }
 

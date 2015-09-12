@@ -134,13 +134,16 @@ namespace MarcelloDB.Records
         {
             var namedRecordIndexRecord = GetNamedRecordIndexRecord();
 
-            var namedRecordIndex = NamedRecordsIndex.FromBytes(namedRecordIndexRecord.Data);
+            var namedRecordIndex = this.Session.SerializerResolver.SerializerFor<NamedRecordsIndex>()
+                .Deserialize(namedRecordIndexRecord.Data);
 
             namedRecordIndex.NamedRecordIndexes.Remove(name);
             namedRecordIndex.NamedRecordIndexes.Add(name, recordAddress);
             var allocationStrategy = this.Session.AllocationStrategyResolver.StrategyFor(namedRecordIndex);
             var updateRecord = UpdateRecord(
-                    namedRecordIndexRecord, namedRecordIndex.ToBytes(), allocationStrategy);
+                namedRecordIndexRecord,
+                this.Session.SerializerResolver.SerializerFor<NamedRecordsIndex>().Serialize(namedRecordIndex),
+                allocationStrategy);
 
             this.Root.NamedRecordIndexAddress = updateRecord.Header.Address;
         }
@@ -201,7 +204,8 @@ namespace MarcelloDB.Records
 
         NamedRecordsIndex GetNamedRecordIndex()
         {
-            return NamedRecordsIndex.FromBytes(GetNamedRecordIndexRecord().Data);
+            return this.Session.SerializerResolver.SerializerFor<NamedRecordsIndex>()
+                .Deserialize(GetNamedRecordIndexRecord().Data);
         }
 
         Record GetNamedRecordIndexRecord()
@@ -217,13 +221,14 @@ namespace MarcelloDB.Records
                 var namedRecordIndex = new NamedRecordsIndex();
                 var allocationStrategy = this.Session.AllocationStrategyResolver.StrategyFor(namedRecordIndex);
                 var namedRecordIndexRecord =
-                    AppendRecord(namedRecordIndex.ToBytes(), allocationStrategy);
+                    AppendRecord(
+                        Session.SerializerResolver.SerializerFor<NamedRecordsIndex>().Serialize(namedRecordIndex),
+                        allocationStrategy);
 
                 this.Root.NamedRecordIndexAddress =
                     namedRecordIndexRecord.Header.Address;
             }
         }
-
 
         Record ReuseRecycledRecord(int minimumLength)
         {
@@ -282,7 +287,8 @@ namespace MarcelloDB.Records
             if (rootAddress > 0)
             {
                 _rootRecord = this.GetRecord(rootAddress);
-                _root = CollectionFileRoot.Deserialize(_rootRecord.Data);
+                _root = this.Session.SerializerResolver.SerializerFor<CollectionFileRoot>()
+                    .Deserialize(_rootRecord.Data);
             }
             else
             {
@@ -294,7 +300,9 @@ namespace MarcelloDB.Records
         {
             if (this.Root.IsDirty)
             {
-                byte[] data = this.Root.Serialize();
+                byte[] data = this.Session.SerializerResolver.SerializerFor<CollectionFileRoot>()
+                    .Serialize(this.Root);
+
                 var allocationStrategy = this.Session.AllocationStrategyResolver.StrategyFor(this.Root);
                 if (_rootRecord == null)
                 {
