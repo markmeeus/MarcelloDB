@@ -32,11 +32,11 @@ namespace MarcelloDB.Helpers
             this.Removed.Clear();
         }
 
-        public IReadOnlyList<T> Items
+        public List<T> Items
         {
             get
             {
-                return _items.ToArray();
+                return _items;
             }
             set
             {

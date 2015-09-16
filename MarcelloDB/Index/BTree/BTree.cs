@@ -22,7 +22,7 @@ namespace MarcelloDB.Index.BTree
 
         ObjectComparer Comparer { get; set; }
 
-        public Node<TK, TP> Root
+        internal Node<TK, TP> Root
         {
             get
             {

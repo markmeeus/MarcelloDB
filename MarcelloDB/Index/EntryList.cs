@@ -6,12 +6,17 @@ namespace MarcelloDB.Index
 {
     public class EntryList<TKey, TAddress> : ChangeTrackingList<Entry<TKey, TAddress>>
     {
-        public  IReadOnlyList<Entry<TKey, TAddress>> Entries
+        public  List<Entry<TKey, TAddress>> Entries
         {
             get
             {
                 return base.Items;
             }
+        }
+
+        internal void SetEntries(List<Entry<TKey, TAddress>> entries)
+        {
+            base.Items = entries;
         }
     }
 }

@@ -223,7 +223,7 @@ namespace MarcelloDB.Test.Index
             }
         }
 
-        public void ValidateTree(Node<int, int> tree, int degree, params int[] expectedKeys)
+        internal void ValidateTree(Node<int, int> tree, int degree, params int[] expectedKeys)
         {
             var foundKeys = new Dictionary<int, List<Entry<int, int>>>();
             ValidateSubtree(tree, tree, degree, int.MinValue, int.MaxValue, foundKeys);

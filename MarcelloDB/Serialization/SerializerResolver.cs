@@ -40,7 +40,7 @@ namespace MarcelloDB.Serialization
         IObjectSerializer<T> ConstructBTreeNodeSerializer<T>()
         {
             var genericTypes = typeof(T).GenericTypeArguments;
-            var typeInfo = typeof(BtreeNodeSerializer<,>).GetTypeInfo();
+            var typeInfo = typeof(BTreeNodeSerializer<,>).GetTypeInfo();
             var genericType = typeInfo.MakeGenericType(genericTypes);
 
             var constructor = genericType.GetTypeInfo().DeclaredConstructors.First();

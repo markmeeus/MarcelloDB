@@ -69,6 +69,7 @@
     <Compile Include="AllocationStrategies\PredictiveBTreeNodeAllocationStrategyTest.cs" />
     <Compile Include="Serialization\SerializerResolverTest.cs" />
     <Compile Include="AllocationStrategies\AllocationStrategyResolverTest.cs" />
+    <Compile Include="Serialization\BtreeNodeSerializerTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
