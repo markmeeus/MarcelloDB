@@ -87,6 +87,7 @@
     <Compile Include="AllocationStrategies\PredictiveBTreeNodeAllocationStrategy.cs" />
     <Compile Include="AllocationStrategies\AllocationStrategyResolver.cs" />
     <Compile Include="Serialization\SerializerResolver.cs" />
+    <Compile Include="Serialization\BtreeNodeSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

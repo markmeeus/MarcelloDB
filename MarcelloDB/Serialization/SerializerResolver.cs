@@ -2,7 +2,8 @@
 using MarcelloDB.Records;
 using MarcelloDB.Index;
 using System.Collections.Generic;
-
+using System.Reflection;
+using System.Linq;
 
 namespace MarcelloDB.Serialization
 {
@@ -20,11 +21,30 @@ namespace MarcelloDB.Serialization
 
         internal IObjectSerializer<T> SerializerFor<T>()
         {
-            if(_serializers.ContainsKey(typeof(T)))
+            if (!_serializers.ContainsKey(typeof(T)))
             {
-                return (IObjectSerializer<T>)_serializers[typeof(T)];
+                _serializers[typeof(T)] = ConstructSerializer<T>();
+            }
+            return (IObjectSerializer<T>)_serializers[typeof(T)];
+        }
+
+        IObjectSerializer<T> ConstructSerializer<T>()
+        {
+            if(typeof(T).GetTypeInfo().IsSubclassOf(typeof(Node)))
+            {
+                return ConstructBTreeNodeSerializer<T>();
             }
             return new BsonSerializer<T>();
+        }
+
+        IObjectSerializer<T> ConstructBTreeNodeSerializer<T>()
+        {
+            var genericTypes = typeof(T).GenericTypeArguments;
+            var typeInfo = typeof(BtreeNodeSerializer<,>).GetTypeInfo();
+            var genericType = typeInfo.MakeGenericType(genericTypes);
+
+            var constructor = genericType.GetTypeInfo().DeclaredConstructors.First();
+            return (IObjectSerializer<T>)constructor.Invoke(new object[0]);
         }
 	}
 }

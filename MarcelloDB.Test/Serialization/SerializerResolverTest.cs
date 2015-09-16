@@ -37,6 +37,13 @@ namespace MarcelloDB.Test.Serialization
             var serializer = new SerializerResolver().SerializerFor<Node<EmptyRecordIndexKey, Int64>>();
             Assert.AreEqual(typeof(EmptyRecordIndexNodeSerializer), serializer.GetType());
         }
+
+        [Test]
+        public void SerializerForBtreeNodeType_Returns_Specific_Serializer()
+        {
+            var serializer = new SerializerResolver().SerializerFor<Node<string, Int64>>();
+            Assert.AreEqual(typeof(BtreeNodeSerializer<string, Int64>), serializer.GetType());
+        }
     }
 }
 
