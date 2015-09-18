@@ -13,20 +13,22 @@ namespace MarcelloDB.Serialization
 
     public class BsonSerializer<T> : IObjectSerializer<T>
     {
+        JsonSerializer JsonSerializer { get; set; }
+
         public BsonSerializer ()
         {
+            this.JsonSerializer = GetSerializer();
         }
 
         #region IObjectSerializer implementation
 
         public byte[] Serialize(T o)
         {
-            var serializer = GetSerializer();
 
             var memoryStream = new MemoryStream();
             var bsonWriter = new BsonWriter(memoryStream);
 
-            serializer.Serialize(bsonWriter, new ObjectWrapper<T>{O=o});
+            this.JsonSerializer.Serialize(bsonWriter, new ObjectWrapper<T>{O=o});
             bsonWriter.Flush();
 
             return memoryStream.ToArray();
@@ -34,12 +36,11 @@ namespace MarcelloDB.Serialization
 
         public T Deserialize (byte[] bytes)
         {
-            var serializer = GetSerializer();
             var reader = new BsonReader(
                 new MemoryStream(bytes)
             );
 
-            return serializer.Deserialize<ObjectWrapper<T>>(reader).O;
+            return this.JsonSerializer.Deserialize<ObjectWrapper<T>>(reader).O;
         }
         #endregion
 
