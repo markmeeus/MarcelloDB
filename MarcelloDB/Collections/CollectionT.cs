@@ -12,15 +12,16 @@ using MarcelloDB.Exceptions;
 
 namespace MarcelloDB.Collections
 {
-    public class Collection{}
+    public class Collection : SessionBoundObject
+    {
+        internal  Collection(Session session) : base(session){}
+    }
 
     public class Collection<T> : Collection
     {
         public string Name { get; set; }
 
         internal bool BlockModification { get; set; }
-
-        Session Session { get; set; }
 
         CollectionFile File { get; set; }
 
@@ -32,9 +33,8 @@ namespace MarcelloDB.Collections
             CollectionFile file,
             string name,
             IObjectSerializer<T> serializer,
-            RecordManager recordManager)
+            RecordManager recordManager) : base(session)
         {
-            this.Session = session;
             this.File = file;
             this.Name = name;
             this.Serializer = serializer;

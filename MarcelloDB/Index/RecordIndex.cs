@@ -18,7 +18,7 @@ namespace MarcelloDB.Index
         }
     }
 
-    internal class RecordIndex<TNodeKey> : SessionBasedObject
+    internal class RecordIndex<TNodeKey> : SessionBoundObject
     {
         IBTree<TNodeKey, Int64> Tree { get; set; }
 

@@ -4,10 +4,8 @@ using System.Collections.Generic;
 
 namespace MarcelloDB.Transactions
 {
-    internal class Transaction
+    internal class Transaction : SessionBoundObject
     {
-        Session Session { get; set; }
-
         internal bool Running { get; set; }
 
         internal bool IsCommitting { get; set; }
@@ -16,13 +14,11 @@ namespace MarcelloDB.Transactions
 
         int Enlisted { get; set; }
 
-        internal Transaction(Session session)
+        internal Transaction(Session session) : base(session)
         {
-            this.Session = session;
             Transactors = new List<ITransactor>();
             this.Running = true;
             this.IsCommitting = false;
-            this.Apply(); //apply to be sure
         }
 
         internal void Enlist()

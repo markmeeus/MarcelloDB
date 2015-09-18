@@ -2,15 +2,12 @@
 
 namespace MarcelloDB.Storage.StreamActors
 {
-    internal class StreamActor
+    internal class StreamActor : SessionBoundObject
     {
-        protected Session Session { get; set; }
-
         protected string StreamName {get;set;}
 
-        internal StreamActor(Session session, string streamName)
+        internal StreamActor(Session session, string streamName) : base(session)
         {
-            this.Session = session;
             this.StreamName = streamName;
         }
 

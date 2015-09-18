@@ -11,11 +11,9 @@ using MarcelloDB.Storage.StreamActors;
 
 namespace MarcelloDB.Transactions
 {
-    internal class Journal
+    internal class Journal : SessionBoundObject
     {
         internal const string JOURNAL_COLLECTION_NAME = "journal";
-
-        Session Session { get; set; }
 
         List<JournalEntry> UncommittedEntries { get;set; }
 
@@ -24,14 +22,13 @@ namespace MarcelloDB.Transactions
         Writer JournalWriter { get; set; }
         Reader JournalReader { get; set; }
 
-        internal Journal (Session session)
+        internal Journal (Session session) : base(session)
         {
-            this.Session = session;
             this.Writers = new Dictionary<string, Writer>();
             this.JournalWriter = new Writer(this.Session, JOURNAL_COLLECTION_NAME);
             this.JournalReader = new Reader(this.Session, JOURNAL_COLLECTION_NAME);
             this.UncommittedEntries = new List<JournalEntry> ();
-        }
+            }
 
         internal void Write (string streamName, long address, byte[] data)
         {

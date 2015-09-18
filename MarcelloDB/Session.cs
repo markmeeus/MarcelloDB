@@ -10,11 +10,13 @@ using MarcelloDB.Platform;
 
 namespace MarcelloDB
 {
-    internal class SessionBasedObject
+    public class SessionBoundObject
     {
-        internal Session Session { get; }
+        internal Session Session { get; private set;}
 
-        internal SessionBasedObject(Session session){this.Session = session;}
+        internal SessionBoundObject(Session session){
+            this.Session = session;
+        }
     }
 
     public class Session : IDisposable
@@ -67,7 +69,7 @@ namespace MarcelloDB
                     CurrentTransaction.Enlist ();
                     action ();
                     CurrentTransaction.Leave ();
-                } catch (Exception) {
+                } catch (Exception e) {
                     CurrentTransaction.Rollback ();
                     throw;
                 } finally {
@@ -87,7 +89,10 @@ namespace MarcelloDB
         {
             if (CurrentTransaction == null)
             {
+                //Make sure the journal is  applied before a new transaction is started
+                this.Journal.Apply();
                 CurrentTransaction = new Transaction(this);
+
             }
         }
 

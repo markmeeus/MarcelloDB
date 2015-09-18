@@ -5,15 +5,13 @@ using MarcelloDB.Transactions;
 
 namespace MarcelloDB.Storage
 {
-    internal class StorageEngine
+    internal class StorageEngine : SessionBoundObject
     {
-        internal Session Session { get; set; }
 
         string StreamName { get; set; }
 
-        public StorageEngine(Session session,string streamName)
+        public StorageEngine(Session session,string streamName) : base(session)
         {
-            this.Session = session;
             this.StreamName = streamName;
         }
 

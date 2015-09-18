@@ -32,7 +32,7 @@ namespace MarcelloDB.Records
         Int64 GetNamedRecordAddress(string name);
     }
 
-    internal class RecordManager : SessionBasedObject, IRecordManager, ITransactor
+    internal class RecordManager : SessionBoundObject, IRecordManager, ITransactor
     {
         EmptyRecordIndex _emptyRecordIndex;
 

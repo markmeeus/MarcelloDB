@@ -9,20 +9,16 @@ using MarcelloDB.Transactions;
 
 namespace MarcelloDB.Collections
 {
-    public class CollectionFile
+    public class CollectionFile : SessionBoundObject
     {
-        Session Session { get; set; }
-
-
         RecordManager RecordManager { get; set; }
 
         string Name { get; set; }
 
         Dictionary<string, Collection> Collections { get; set; }
 
-        internal CollectionFile(Session session, string name)
+        internal CollectionFile(Session session, string name) : base(session)
         {
-            this.Session = session;
             this.Name = name;
             Collections = new Dictionary<string, Collection>();
             this.RecordManager = new RecordManager(

@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace MarcelloDB.Index.BTree
 {
-    internal class RecordBTreeDataProvider<TNodeKey> :  SessionBasedObject, IBTreeDataProvider<TNodeKey, Int64>
+    internal class RecordBTreeDataProvider<TNodeKey> :  SessionBoundObject, IBTreeDataProvider<TNodeKey, Int64>
     {
         internal IndexMetaRecord MetaRecord{ get; private set; }
 

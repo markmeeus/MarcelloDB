@@ -7,7 +7,7 @@ using MarcelloDB.Index;
 
 namespace MarcelloDB.Collections
 {
-	internal class CollectionEnumerator<T> : IEnumerable<T>
+    internal class CollectionEnumerator<T> : SessionBoundObject, IEnumerable<T>
 	{
         Collection<T> Collection { get; set; }
 
@@ -15,16 +15,14 @@ namespace MarcelloDB.Collections
 
         IObjectSerializer<T> Serializer { get; set; }
 
-        Session Session { get; set; }
 
         public CollectionEnumerator(
             Collection<T> collection,
             Session session,
             RecordManager recordManager,
-            IObjectSerializer<T> serializer)
+            IObjectSerializer<T> serializer) : base(session)
         {
             this.Collection = collection;
-            this.Session = session;
             this.RecordManager = recordManager;
             this.Serializer = serializer;
         }

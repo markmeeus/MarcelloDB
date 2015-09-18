@@ -8,7 +8,7 @@ using MarcelloDB.AllocationStrategies;
 
 namespace MarcelloDB
 {
-    internal class NodePersistence<TK, TP> : SessionBasedObject
+    internal class NodePersistence<TK, TP> : SessionBoundObject
     {
         IRecordManager RecordManager { get; set; }
 
