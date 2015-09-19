@@ -24,17 +24,15 @@ namespace MarcelloDB.AllocationStrategies
             var maxEntries = Index.Node.MaxEntriesForDegree(Node.Degree);
             var maxChildren = Index.Node.MaxChildrenForDegree(Node.Degree);
 
-            var filledEntries = 100 * ((float)Node.EntryList.Count / (float) maxEntries);
-            var filled = filledEntries;
+            var fillFactor = (float) maxEntries / (float)Node.EntryList.Count;
 
-            if (!Node.IsLeaf)//for non-leaf nodes, take children into account
+            var predictedEntriesDataSize = dataSize * fillFactor;
+            var maxSizeGuesstimation = 2 * (int)predictedEntriesDataSize;
+            if (maxSizeGuesstimation < dataSize)
             {
-                var filledChildrenAddresses = 100 * ((float)Node.ChildrenAddresses.Count / (float) maxChildren);
-                filled = (filledEntries + filledChildrenAddresses) / 2;
+                return dataSize * 2;
             }
-
-            var predictedEntriesDataSize = dataSize * (int)filled;
-            return 2 * predictedEntriesDataSize; //double the size to have some buffer
+            return maxSizeGuesstimation; //double the size to have some buffer
         }
 
         #endregion
