@@ -1,5 +1,6 @@
 ﻿using System;
 using MarcelloDB.Index;
+using System.Reflection;
 
 namespace MarcelloDB.AllocationStrategies
 {
@@ -22,20 +23,39 @@ namespace MarcelloDB.AllocationStrategies
             }
 
             var maxEntries = Index.Node.MaxEntriesForDegree(Node.Degree);
-            var maxChildren = Index.Node.MaxChildrenForDegree(Node.Degree);
 
             var fillFactor = (float) maxEntries / (float)Node.EntryList.Count;
 
-            var predictedEntriesDataSize = dataSize * fillFactor;
-            var maxSizeGuesstimation = 2 * (int)predictedEntriesDataSize;
+            var maxSizeGuesstimation = dataSize * fillFactor;
+
+            if(!KeyIsValueType)
+            {
+                //Non-value types are hard to predict so we should give them some rooom to grow
+                maxSizeGuesstimation *= 2;
+            }
+
             if (maxSizeGuesstimation < dataSize)
             {
                 return dataSize * 2;
             }
-            return maxSizeGuesstimation; //double the size to have some buffer
+
+            return (int)maxSizeGuesstimation;
         }
 
         #endregion
+
+        bool? _keyIsValueType;
+        bool KeyIsValueType
+        {
+            get
+            {
+                if (!_keyIsValueType.HasValue)
+                {
+                    _keyIsValueType = typeof(TK).GetTypeInfo().IsValueType;
+                }
+                return _keyIsValueType.Value;
+            }
+        }
     }
 }
 
