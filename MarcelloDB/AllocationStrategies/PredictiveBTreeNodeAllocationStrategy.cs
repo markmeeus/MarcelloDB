@@ -24,6 +24,10 @@ namespace MarcelloDB.AllocationStrategies
 
             var maxEntries = Index.Node.MaxEntriesForDegree(Node.Degree);
 
+            if (Node.EntryList.Count > maxEntries)
+            {
+                throw new InvalidOperationException("PANIC: Too much entries in Node.");
+            }
             var fillFactor = (float) maxEntries / (float)Node.EntryList.Count;
 
             var maxSizeGuesstimation = dataSize * fillFactor;
@@ -32,11 +36,6 @@ namespace MarcelloDB.AllocationStrategies
             {
                 //Non-value types are hard to predict so we should give them some rooom to grow
                 maxSizeGuesstimation *= 2;
-            }
-
-            if (maxSizeGuesstimation < dataSize)
-            {
-                return dataSize * 2;
             }
 
             return (int)maxSizeGuesstimation;

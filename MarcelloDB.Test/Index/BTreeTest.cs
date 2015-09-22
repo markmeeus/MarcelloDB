@@ -184,9 +184,8 @@ namespace MarcelloDB.Test.Index
 
 
         [Test]
-        public void Regression_Deplete_Successor()
+        public void Test_Btree_Bug_Remove_From_Subtree_Fix()
         {
-
             var degree = 2;
             var mockDataProvider = new MockBTreeDataProvider<int, int>();
             var btree = new BTree<int, int>(mockDataProvider, degree);
@@ -196,8 +195,19 @@ namespace MarcelloDB.Test.Index
                 btree.Insert(i, i);
             }
 
-            new List<int>(){ 3, 4 }.ForEach((i) => btree.Delete(i));
+            new List<int>(){ 3, 4 }.ForEach((i) => {
+                btree.Delete(i);
+            });
 
+        }
+
+        [Test]
+        public void Brute_Force_Test()
+        {
+            for (int i = 0; i < 1000; i++)
+            {
+                RunBruteForce();
+            }
         }
 
         #region Private Helper Methods
@@ -281,6 +291,62 @@ namespace MarcelloDB.Test.Index
                 }
             }
         }
+
+        public void RunBruteForce()
+        {
+            var degree = 2;
+
+            var mockDataProvider = new MockBTreeDataProvider<string, int>();
+            var btree = new BTree<string, int>(mockDataProvider, degree);
+
+            var rand = new Random();
+            for (int i = 0; i < 1000; i++)
+            {
+                var value = (int)rand.Next() % 100;
+                var key = value.ToString();
+
+                if (rand.Next() % 2 == 0)
+                {
+                    if (btree.Search(key) == null)
+                    {
+                        btree.Insert(key, value);
+                    }
+                    Assert.AreEqual(value, btree.Search(key).Pointer);
+                }
+                else
+                {
+                    btree.Delete(key);
+                    Assert.IsNull(btree.Search(key));
+                }
+                CheckNode(btree.Root, mockDataProvider);
+            }
+        }
+
+        private void CheckNode(Node<string, int> node, IBTreeDataProvider<string, int> btreeData)
+        {
+            if (node.ChildrenAddresses.Count > 0 &&
+               node.ChildrenAddresses.Count != node.EntryList.Count + 1)
+            {
+                Assert.Fail("There are children, but they don't match the number of entries.");
+            }
+
+            if (node.EntryList.Count > Node.MaxEntriesForDegree(node.Degree))
+            {
+                Assert.Fail("Too much entries in node");
+            }
+
+            if (node.EntryList.Count > Node.MaxChildrenForDegree(node.Degree))
+            {
+                Assert.Fail("Too much children in node");
+            }
+
+            foreach (var childAddress in node.ChildrenAddresses.Addresses)
+            {
+                var childNode = btreeData.GetNode(childAddress);
+                CheckNode(childNode, btreeData);
+            }
+        }
+
         #endregion
     }
 }
