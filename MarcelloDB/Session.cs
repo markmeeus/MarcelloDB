@@ -69,7 +69,7 @@ namespace MarcelloDB
                     CurrentTransaction.Enlist ();
                     action ();
                     CurrentTransaction.Leave ();
-                } catch (Exception e) {
+                } catch (Exception) {
                     CurrentTransaction.Rollback ();
                     throw;
                 } finally {
