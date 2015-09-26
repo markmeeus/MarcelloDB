@@ -6,6 +6,7 @@ using MarcelloDB.AllocationStrategies;
 using MarcelloDB.Storage;
 using MarcelloDB.Records;
 using MarcelloDB.Transactions;
+using MarcelloDB.Index;
 
 namespace MarcelloDB.Collections
 {

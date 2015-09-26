@@ -23,19 +23,19 @@ namespace MarcelloDB.Collections
 
         internal bool BlockModification { get; set; }
 
-        CollectionFile File { get; set; }
+        CollectionFile CollectionFile { get; set; }
 
         IObjectSerializer<T> Serializer { get; set; }
 
         RecordManager RecordManager { get; set; }
 
         internal Collection (Session session,
-            CollectionFile file,
+            CollectionFile collectionFile,
             string name,
             IObjectSerializer<T> serializer,
             RecordManager recordManager) : base(session)
         {
-            this.File = file;
+            this.CollectionFile = collectionFile;
             this.Name = name;
             this.Serializer = serializer;
             this.RecordManager = recordManager;
@@ -90,11 +90,7 @@ namespace MarcelloDB.Collections
 
         Record GetRecordForObjectID(object objectID)
         {
-            var index = new RecordIndex<object>(
-                this.Session,
-                this.RecordManager,
-                RecordIndex.GetIDIndexName<T>(this.Name),
-                this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>());
+            var index = GetIDIndex();
             var address = index.Search(objectID);
             if (address > 0)
             {
@@ -107,12 +103,7 @@ namespace MarcelloDB.Collections
         {
             var objectID = GetObjectIDOrThrow(obj);
 
-            var index = new RecordIndex<object>(
-                this.Session,
-                this.RecordManager,
-                RecordIndex.GetIDIndexName<T>(this.Name),
-                this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>());
-
+            var index = GetIDIndex();
             Record record = GetRecordForObjectID(objectID);
             if (record != null)
             {
@@ -152,11 +143,7 @@ namespace MarcelloDB.Collections
             Record record = GetRecordForObjectID(objectID);
             if (record != null)
             {
-                var index = new RecordIndex<object>(
-                    this.Session,
-                    this.RecordManager,
-                    RecordIndex.GetIDIndexName<T>(this.Name),
-                    this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>());
+                var index = GetIDIndex();
                 index.UnRegister(objectID);
 
                 this.RecordManager.Recycle(record.Header.Address);
@@ -170,6 +157,18 @@ namespace MarcelloDB.Collections
                     " either has no ID property, or the property returned null");
             }
             return objectID;
+        }
+
+        RecordIndex<object> GetIDIndex()
+        {
+            var indexName = RecordIndex.GetIDIndexName<T>(this.Name);
+
+            return new RecordIndex<object>(
+                this.Session,
+                this.RecordManager,
+                indexName,
+                this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>());
+
         }
 
         void EnsureModificationIsAllowed()
