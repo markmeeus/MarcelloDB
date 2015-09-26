@@ -637,6 +637,36 @@ namespace MarcelloDB.Test
             });
         }
 
+        [Test]
+        public void Throw_ObjectDisposedException_When_Enumerating_In_Disposed_Session()
+        {
+            _session.Dispose();
+            Assert.Throws<ObjectDisposedException>(() => _articles.All.ToList());
+        }
+
+        [Test]
+        public void Throw_ObjectDisposedException_When_Persisting_In_Disposed_Session()
+        {
+            _session.Dispose();
+            Assert.Throws<ObjectDisposedException>(() => _articles.Persist(Article.BarbieDoll));
+        }
+
+        [Test]
+        public void Throw_ObjectDisposedException_When_Finding_In_Disposed_Session()
+        {
+            _articles.Persist(Article.BarbieDoll);
+            _session.Dispose();
+            Assert.Throws<ObjectDisposedException>(() => _articles.Find(Article.BarbieDoll.ID));
+        }
+
+        [Test]
+        public void Throw_ObjectDisposedException_When_Destroying_In_Disposed_Session()
+        {
+            _articles.Persist(Article.BarbieDoll);
+            _session.Dispose();
+            Assert.Throws<ObjectDisposedException>(() => _articles.Destroy(Article.BarbieDoll));
+        }
+
         private void EnsureFolder(string path)
         {
             if(System.IO.Directory.Exists("data")){

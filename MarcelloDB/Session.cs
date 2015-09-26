@@ -7,6 +7,8 @@ using MarcelloDB.Storage;
 using System.Collections.Generic;
 using System.Threading;
 using MarcelloDB.Platform;
+using MarcelloDB.Records;
+using MarcelloDB.Index;
 
 namespace MarcelloDB
 {
@@ -34,6 +36,8 @@ namespace MarcelloDB
         internal Journal Journal { get; set; }
 
         internal object SyncLock { get; set; }
+
+        bool Disposed { get; set; }
 
         public Session (IPlatform platform, string rootPath)
         {
@@ -64,6 +68,7 @@ namespace MarcelloDB
         public void Transaction(Action action)
         {
             lock (this.SyncLock) {
+                this.AssertValid();
                 EnsureTransaction ();
                 try {
                     CurrentTransaction.Enlist ();
@@ -82,7 +87,31 @@ namespace MarcelloDB
 
         public void Dispose()
         {
-            this.StreamProvider.Dispose();
+            Dispose(true);
+
+        }
+
+        void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                this.StreamProvider.Dispose();
+                this.Disposed = true;
+            }
+            GC.SuppressFinalize(this);
+        }
+
+        ~Session()
+        {
+            this.Dispose(false);
+        }
+
+        internal void AssertValid()
+        {
+            if (this.Disposed)
+            {
+                throw new ObjectDisposedException("This session was disposed and cannot be used anymore");
+            }
         }
 
         void EnsureTransaction()

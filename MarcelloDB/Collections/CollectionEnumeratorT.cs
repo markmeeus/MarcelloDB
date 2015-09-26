@@ -29,6 +29,7 @@ namespace MarcelloDB.Collections
 
         public IEnumerator<T> GetEnumerator()
         {
+            Session.AssertValid();
             lock(Session.SyncLock){
                 try{
                     this.Collection.BlockModification = true;
