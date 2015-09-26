@@ -33,16 +33,24 @@ namespace MarcelloDB.uwp
 
         public void Dispose()
         {
-            foreach (var stream in this.Streams.Values)
-            {
-                ((FileStorageStream)stream).Dispose();
-            }
+            Dispose(true);
+        }
 
+        void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                foreach (var stream in this.Streams.Values)
+                {
+                    ((FileStorageStream)stream).Dispose();
+                }
+            }
+            GC.SuppressFinalize(this);
         }
 
         ~FileStorageStreamProvider()
         {
-            Dispose();
+            Dispose(false);
         }
     }
 
@@ -76,8 +84,22 @@ namespace MarcelloDB.uwp
 
         public void Dispose()
         {
-            _backingStream.Flush();
-            _backingStream.Dispose();
+            Dispose(true);
+        }
+
+        void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _backingStream.Flush();
+                _backingStream.Dispose();
+            }
+            GC.SuppressFinalize(this);
+        }
+
+        ~FileStorageStream()
+        {
+            Dispose(false);
         }
     }
 }
