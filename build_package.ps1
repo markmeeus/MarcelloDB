@@ -1,4 +1,4 @@
-#c:\"Program Files (x86)"\MSBuild\12.0\bin\Amd64/MsBuild.Exe .\MarcelloDB.win.sln
+c:\"Program Files (x86)"\MSBuild\12.0\bin\Amd64/MsBuild.Exe .\MarcelloDB.win.sln
 
 
 Remove-Item -Recurse -Force Package\lib
