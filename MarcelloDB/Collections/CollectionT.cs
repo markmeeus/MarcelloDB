@@ -147,6 +147,10 @@ namespace MarcelloDB.Collections
 
                 this.RecordManager.Recycle(record.Header.Address);
             }
+            else
+            {
+                throw new ObjectNotFoundException("Object not found: " + objectID.ToString());
+            }
         }
 
         object GetObjectIDOrThrow(T obj){

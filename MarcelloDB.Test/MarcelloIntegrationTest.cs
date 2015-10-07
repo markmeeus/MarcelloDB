@@ -235,20 +235,6 @@ namespace MarcelloDB.Test
         }
 
         [Test]
-        public void Destroy_Virgin_Object()
-        {
-            var toiletPaper = Article.ToiletPaper;
-            var spinalTapDvd = Article.SpinalTapDvd;
-
-            _articles.Persist(toiletPaper);
-
-            Assert.DoesNotThrow(() =>
-                {
-                    _articles.Destroy(spinalTapDvd.ID);
-                });
-        }
-
-        [Test]
         public void Destroy_All_Same_Size()
         {
             foreach (var a in new Article[]{
@@ -570,6 +556,16 @@ namespace MarcelloDB.Test
                     _session["data"].Collection<object>("objects").Persist(new {Name = "Object Without ID"});
                 });
         }
+
+        [Test]
+        public void Throw_ObjectNotFoundException_When_Deleting_Non_Existing_Object()
+        {
+            Assert.Throws(typeof(ObjectNotFoundException), () =>
+                {
+                    _session["data"].Collection<object>("objects").Destroy("123");
+                });
+        }
+
 
         [Test]
         public void Thows_ArgumentException_When_Trying_To_Open_Journal_File()
