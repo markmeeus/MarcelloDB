@@ -13,12 +13,18 @@ MarcelloDB is a pure C# implementation, so there is no need to package other bin
 
 MarcelloDB is portable code: Xamarin (iOS and Android), Windows 8.1 and Windows Phone 8.1 and Windows 10
 
+
+
 Current Status
 =
 Marcello is still in an experimental phase.
 
 Be carefull. Backwards compatibility with existing data will not be guaranteed untill v1.
 
+Getting Started
+````
+PM > Install-Package MarcelloDB
+```
 Sessions
 =
 Using MarcelloDB starts with the creation of a session.
