@@ -2,13 +2,13 @@
 <package >
   <metadata>
     <id>MarcelloDB</id>
-    <title>MarcelloDB, Embedded Object Database.</title>
+    <title>MarcelloDB, Mobile Object Database.</title>
     <version>0.1.1</version>
     <authors>Mark Meeus</authors>
     <owners>Mark Meeus</owners>
     <projectUrl>https://github.com/markmeeus/MarcelloDB</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>MarcelloDB is a pure c# embeddable object database. Storing plain c# objects like a boss. Supported on Windows and Xamarin Android and iOS.</description>
+    <description>MarcelloDB is a pure c# embeddable object database. Storing plain c# objects like a boss. Supported on Xamarin (Android and iOS) and Windows (8.1-10 and Phone 8.1-10).</description>
     <releaseNotes>First alpha release.</releaseNotes>
     <copyright>Copyright 2015</copyright>
     <tags>Database NoSql Mobile Xamarin Windows</tags>
