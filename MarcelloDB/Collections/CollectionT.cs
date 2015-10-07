@@ -71,11 +71,11 @@ namespace MarcelloDB.Collections
             });
         }
 
-        public void Destroy(T obj)
+        public void Destroy(object objectID)
         {
             EnsureModificationIsAllowed();
             Transacted(() => {
-                DestroyInternal(obj);
+                DestroyInternal(objectID);
             });
         }
 
@@ -136,9 +136,8 @@ namespace MarcelloDB.Collections
             return RecordManager.UpdateRecord(record, bytes, this.Session.AllocationStrategyResolver.StrategyFor(obj));
         }
 
-        void DestroyInternal (T obj)
+        void DestroyInternal (object objectID)
         {
-            var objectID = GetObjectIDOrThrow(obj);
             //Try to load the record with object ID
             Record record = GetRecordForObjectID(objectID);
             if (record != null)

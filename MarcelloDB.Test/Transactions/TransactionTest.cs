@@ -89,8 +89,8 @@ namespace MarcelloDB.Test.Transactions
             _locations.Persist(harrods);
 
             _session.Transaction(() => {
-                _articles.Destroy(barbieDoll);
-                _locations.Destroy(harrods);
+                _articles.Destroy(barbieDoll.ID);
+                _locations.Destroy(harrods.ID);
             });
 
             Assert.AreEqual(0, _articles.All.Count());
@@ -106,9 +106,9 @@ namespace MarcelloDB.Test.Transactions
             _locations.Persist(harrods);
 
             _session.Transaction(() => {
-                _articles.Destroy(barbieDoll);
+                _articles.Destroy(barbieDoll.ID);
                 Assert.AreEqual(0, _articles.All.Count());
-                _locations.Destroy(harrods);
+                _locations.Destroy(harrods.ID);
                 Assert.AreEqual(0, _locations.All.Count());
             });
         }
@@ -161,8 +161,8 @@ namespace MarcelloDB.Test.Transactions
 
             try{
                 _session.Transaction (() => {
-                    _articles.Destroy(article);
-                    _locations.Destroy(harrods);
+                    _articles.Destroy(article.ID);
+                    _locations.Destroy(harrods.ID);
                     throw new Exception ("Rollback");
                 });
             }catch(Exception){}

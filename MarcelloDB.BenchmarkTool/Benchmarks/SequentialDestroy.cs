@@ -35,7 +35,7 @@ namespace MarcelloDB.BenchmarkTool.Benchmarks
 
             foreach (var p in _toDestroy)
             {
-                this.Collection.Destroy(p);
+                this.Collection.Destroy(p.ID);
             }
         }
     }

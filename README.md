@@ -22,10 +22,10 @@ Be carefull. Backwards compatibility with existing data will not be guaranteed u
 Sessions
 =
 Using MarcelloDB starts with the creation of a session.
-The session makes sure you have access to the actual files where the data is stored. 
+The session makes sure you have access to the actual files where the data is stored.
 A session handles a set of data files in a specific folder.
 
-MarcelloDB is a portable class library, but there are some platform specific things that simply cannot be written in portable code. Currently, MarcelloDB relies on a platform specific implementation for interacting with the file system. 
+MarcelloDB is a portable class library, but there are some platform specific things that simply cannot be written in portable code. Currently, MarcelloDB relies on a platform specific implementation for interacting with the file system.
 
 All of this is hidden from you as it is wrapped inside the Platform object.
 
@@ -40,7 +40,7 @@ So first: create the Platform object in your platform specific project.
 var platform =  new Platform();
 ```
 
-Then create the actual session. 
+Then create the actual session.
 (You can do this in a portable class library)
 ```cs
 //Create a Marcello session, this can be done in PCL code
@@ -65,14 +65,14 @@ A collection can only handle objects of a specific type (including subclasses);
 To start working with a collection, simple access it like this:
 ```cs
 //Deals with instances of Book or subclasses of Book
-var bookCollection = productsFile.Collection<Book>("books"); 
+var bookCollection = productsFile.Collection<Book>("books");
 var dvdCollection = productsFile.Collection<Dvd>("dvd");
 ```
-If you use different collection-names you can even have multiple collections for the same type within one collection-file. 
+If you use different collection-names you can even have multiple collections for the same type within one collection-file.
 ```cs
 //Deals with instances of Book or subclasses of Book
-var bookCollection = productsFile.Collection<Dvd>("dvds"); 
-var bookCollection = productsFile.Collection<Dvd>("upcomming-dvds"); 
+var bookCollection = productsFile.Collection<Dvd>("dvds");
+var bookCollection = productsFile.Collection<Dvd>("upcomming-dvds");
 ```
 
 Persisting objects
@@ -110,13 +110,13 @@ Deleting objects
 =
 Delete your objects like this:
 ```cs
-bookCollection.Destroy(book);
+bookCollection.Destroy(book.ID);
 ```
 
 How Objects are Identified
 =
 MarcelloDB needs a single property which uniquely identifies an object.
-This value is needed to distinguish an insert from an update, and identify objects to delete.
+This value is needed to build the main index and make a distinction between an insert or an update.
 
 You can use any of the following naming conventions, or add the MarcelloDB.Attributes.ID attribute.
 ```cs
@@ -169,7 +169,7 @@ session["data"].Collection<Book>("books").Persist(book);
 
 Transactions
 =
-To avoid data corruption, all changes are written to a write ahead journal and applied as a single atomic and durable action.  
+To avoid data corruption, all changes are written to a write ahead journal and applied as a single atomic and durable action.
 MarcelloDB does this for calls to Persist and Destroy, but you can extend the transaction to make it span multiple data mutations.
 
 A transaction runs on a session and can include changes in multiple collections from multiple collection files.
@@ -195,7 +195,7 @@ session.Transaction(() => {
 
 Encryption
 =
-Data is stored in an unencrypted format. An encryption engine is available as a pro extension. Please contact mark.meeus at gmail.com for more info. 
+Data is stored in an unencrypted format. An encryption engine is available as a pro extension. Please contact mark.meeus at gmail.com for more info.
 
 Indexes
 =

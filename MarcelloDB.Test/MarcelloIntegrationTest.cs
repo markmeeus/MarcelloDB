@@ -177,7 +177,7 @@ namespace MarcelloDB.Test
 
             _articles.Persist(toiletPaper);
 
-            _articles.Destroy(toiletPaper);
+            _articles.Destroy(toiletPaper.ID);
 
             Assert.AreEqual (0, _articles.All.Count());
         }
@@ -191,7 +191,7 @@ namespace MarcelloDB.Test
             _articles.Persist(toiletPaper);
             _articles.Persist(spinalTapDvd);
 
-            _articles.Destroy(toiletPaper);
+            _articles.Destroy(toiletPaper.ID);
 
             Assert.AreEqual(1, _articles.All.Count());
             Assert.AreEqual(spinalTapDvd.ID, _articles.All.First().ID);
@@ -208,7 +208,7 @@ namespace MarcelloDB.Test
             _articles.Persist(spinalTapDvd);
             _articles.Persist(barbieDoll);
 
-            _articles.Destroy(spinalTapDvd);
+            _articles.Destroy(spinalTapDvd.ID);
 
             Assert.AreEqual(2, _articles.All.Count());
             Assert.AreEqual(toiletPaper.ID, _articles.All.First().ID);
@@ -227,7 +227,7 @@ namespace MarcelloDB.Test
             _articles.Persist(spinalTapDvd);
             _articles.Persist(barbieDoll);
 
-            _articles.Destroy(barbieDoll);
+            _articles.Destroy(barbieDoll.ID);
 
             Assert.AreEqual(2, _articles.All.Count());
             Assert.AreEqual(toiletPaper.ID, _articles.All.First().ID);
@@ -244,7 +244,7 @@ namespace MarcelloDB.Test
 
             Assert.DoesNotThrow(() =>
                 {
-                _articles.Destroy(spinalTapDvd);
+                    _articles.Destroy(spinalTapDvd.ID);
                 });
         }
 
@@ -262,7 +262,7 @@ namespace MarcelloDB.Test
 
             foreach (var a in _articles.All.ToArray())
             {
-                _articles.Destroy(a);
+                _articles.Destroy(a.ID);
             }
 
             Assert.AreEqual(0, _articles.All.Count());
@@ -276,7 +276,7 @@ namespace MarcelloDB.Test
 
             _articles.Persist(toiletPaper);
             _articles.Persist(spinalTapDvd);
-            _articles.Destroy(spinalTapDvd);
+            _articles.Destroy(spinalTapDvd.ID);
 
             var barbieDoll = Article.BarbieDoll;
             _articles.Persist(barbieDoll);
@@ -292,7 +292,7 @@ namespace MarcelloDB.Test
             var spinalTapDvd = Article.SpinalTapDvd;
 
             _articles.Persist(spinalTapDvd);
-            _articles.Destroy(spinalTapDvd);
+            _articles.Destroy(spinalTapDvd.ID);
 
             var barbieDoll = Article.BarbieDoll;
             _articles.Persist(barbieDoll);
@@ -311,13 +311,13 @@ namespace MarcelloDB.Test
             //create and destroy a few records to allow db to initialize
             _articles.Persist(barbieDoll);
             _articles.Persist(spinalTapDvd);
-            _articles.Destroy(spinalTapDvd);
+            _articles.Destroy(spinalTapDvd.ID);
             _articles.Persist(spinalTapDvd);
 
             _session.Journal.Apply (); //make sure the journal is applied to the backing stream
 
             var storageSize = ((InMemoryStream)_provider.GetStream("articles")).BackingStream.Length;
-            _articles.Destroy(barbieDoll);
+            _articles.Destroy(barbieDoll.ID);
             _articles.Persist(barbieDoll);
 
             _session.Journal.Apply (); //make sure the journal is applied to the backing stream
@@ -337,14 +337,14 @@ namespace MarcelloDB.Test
             _articles.Persist(barbieDoll);
             _articles.Persist(spinalTapDvd);
             _articles.Persist(toiletPaper);
-            _articles.Destroy(toiletPaper);
+            _articles.Destroy(toiletPaper.ID);
             _articles.Persist(toiletPaper);
 
             _session.Journal.Apply (); //make sure the journal is applied to the backing stream
 
             var storageSize = ((InMemoryStream)_provider.GetStream("articles")).BackingStream.Length;
-            _articles.Destroy(barbieDoll);
-            _articles.Destroy(toiletPaper);
+            _articles.Destroy(barbieDoll.ID);
+            _articles.Destroy(toiletPaper.ID);
 
             _articles.Persist(barbieDoll);
             _articles.Persist(toiletPaper);
@@ -432,7 +432,7 @@ namespace MarcelloDB.Test
             for (int i = 1; i < 1000; i++)
             {
                 var a = articles.Find(i);
-                articles.Destroy(a);
+                articles.Destroy(a.ID);
             }
 
             Assert.AreEqual(0, articles.All.Count());
@@ -448,7 +448,7 @@ namespace MarcelloDB.Test
             for (int i = 1; i < 1000; i++)
             {
                 var a = new Article { ID = i, Name = "Article " + i.ToString() };
-                articles.Destroy(a);
+                articles.Destroy(a.ID);
             }
                 Assert.AreEqual(0, articles.All.Count());
         }
@@ -468,7 +468,7 @@ namespace MarcelloDB.Test
             for (int i = 999; i > 0; i--)
             {
                 var a = articles.Find(i);
-                articles.Destroy(a);
+                articles.Destroy(a.ID);
             }
 
             Assert.AreEqual(0, articles.All.Count());
@@ -484,7 +484,7 @@ namespace MarcelloDB.Test
             for (int i = 999; i > 0; i--)
             {
                 var a = new Article { ID = i, Name = "Article " + i.ToString() };
-                articles.Destroy(a);
+                articles.Destroy(a.ID);
             }
             Assert.AreEqual(0, articles.All.Count());
         }
@@ -505,7 +505,7 @@ namespace MarcelloDB.Test
 
             while(articleIDs.Count > 0){
                 var toDelete = articleIDs [rand.Next() % articleIDs.Count];
-                articles.Destroy(new Article(){ID = toDelete});
+                articles.Destroy(toDelete);
                 articleIDs.Remove(toDelete);
             }
 
@@ -526,8 +526,8 @@ namespace MarcelloDB.Test
             Assert.AreEqual(Location.Harrods.Name, locations.All.First().Name);
             Assert.AreEqual(Location.MandS.Name, locations.All.Last().Name);
 
-            _articles.Destroy(Article.SpinalTapDvd);
-            locations.Destroy(Location.Harrods);
+            _articles.Destroy(Article.SpinalTapDvd.ID);
+            locations.Destroy(Location.Harrods.ID);
 
             Assert.AreEqual(1, _articles.All.Count());
             Assert.AreEqual(1, locations.All.Count());
@@ -605,7 +605,7 @@ namespace MarcelloDB.Test
             Assert.Throws(typeof(InvalidOperationException), () =>
                 {
                     foreach(var a in _articles.All){
-                        _articles.Destroy(a);
+                        _articles.Destroy(a.ID);
                     }
                 });
         }
