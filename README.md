@@ -77,8 +77,8 @@ var dvdCollection = productsFile.Collection<Dvd>("dvd");
 If you use different collection-names you can even have multiple collections for the same type within one collection-file.
 ```cs
 //Deals with instances of Book or subclasses of Book
-var bookCollection = productsFile.Collection<Dvd>("dvds");
-var bookCollection = productsFile.Collection<Dvd>("upcomming-dvds");
+var dvdCollection = productsFile.Collection<Dvd>("dvds");
+var upcommingDvdCollection = productsFile.Collection<Dvd>("upcomming-dvds");
 ```
 
 Persisting objects
