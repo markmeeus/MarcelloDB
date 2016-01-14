@@ -70,6 +70,7 @@
     <Compile Include="Serialization\SerializerResolverTest.cs" />
     <Compile Include="AllocationStrategies\AllocationStrategyResolverTest.cs" />
     <Compile Include="Serialization\BtreeNodeSerializerTest.cs" />
+    <Compile Include="Index\IndexDefinitionTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

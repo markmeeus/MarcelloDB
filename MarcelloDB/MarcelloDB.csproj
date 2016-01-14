@@ -89,6 +89,8 @@
     <Compile Include="Serialization\SerializerResolver.cs" />
     <Compile Include="Serialization\BtreeNodeSerializer.cs" />
     <Compile Include="Exceptions\ObjectNotFoundException.cs" />
+    <Compile Include="Index\IndexDefinition.cs" />
+    <Compile Include="Index\IndexedFieldDescriptor.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
