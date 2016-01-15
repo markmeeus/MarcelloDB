@@ -17,6 +17,15 @@ namespace MarcelloDB.Collections
         internal  Collection(Session session) : base(session){}
     }
 
+    public class Collection<T, TIndexDef> : Collection<T>{
+        internal Collection (Session session,
+            CollectionFile collectionFile,
+            string name,
+            IObjectSerializer<T> serializer,
+            RecordManager recordManager) :
+        base(session, collectionFile, name, serializer, recordManager){}
+    }
+
     public class Collection<T> : Collection
     {
         public string Name { get; set; }
@@ -103,7 +112,6 @@ namespace MarcelloDB.Collections
         {
             var objectID = GetObjectIDOrThrow(obj);
 
-            var index = GetIDIndex();
             Record record = GetRecordForObjectID(objectID);
             if (record != null)
             {
@@ -112,14 +120,13 @@ namespace MarcelloDB.Collections
                 if (record.Header.Address != originalAddress)
                 {
                     //object moved, register it's adress in the index
-                    index.UnRegister(objectID);
-                    index.Register(objectID, record.Header.Address);
+                    RegisterInIndexes(objectID, record, true);
                 }
             }
             else
             {
                 record = AppendObject(obj);
-                index.Register(objectID, record.Header.Address);
+                RegisterInIndexes(objectID, record);
             }
         }
 
@@ -142,9 +149,7 @@ namespace MarcelloDB.Collections
             Record record = GetRecordForObjectID(objectID);
             if (record != null)
             {
-                var index = GetIDIndex();
-                index.UnRegister(objectID);
-
+                UnRegisterRecordInIndexes(objectID, record);
                 this.RecordManager.Recycle(record.Header.Address);
             }
             else
@@ -172,6 +177,35 @@ namespace MarcelloDB.Collections
                 indexName,
                 this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>());
 
+        }
+
+        void RegisterInIndexes(object objectID, Record record, bool unregisterFirst = false)
+        {
+            var indexes = GetIndexes();
+
+            foreach (var index in indexes)
+            {
+                if (unregisterFirst)
+                {
+                    index.UnRegister(objectID);
+                }
+                index.Register(objectID, record.Header.Address);
+            }
+        }
+
+        void UnRegisterRecordInIndexes(object objectID, Record record)
+        {
+            var indexes = GetIndexes();
+            foreach(var index in indexes){
+                index.UnRegister(objectID);
+            }
+        }
+
+        List<RecordIndex<object>> GetIndexes()
+        {
+            var indexes = new List<RecordIndex<object>>();
+            indexes.Add(GetIDIndex());
+            return indexes;
         }
 
         void EnsureModificationIsAllowed()
