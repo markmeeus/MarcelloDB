@@ -52,6 +52,31 @@ namespace MarcelloDB.Collections
 
         }
 
+        public Collection<T,TIndexDef> Collection<T, TIndexDef>(string collectionName) where TIndexDef: new()
+        {
+            if (collectionName == null)
+            {
+                collectionName = typeof(T).Name.ToLower();
+            }
+            if(!Collections.ContainsKey(collectionName)){
+                Collections.Add (collectionName,
+                    new Collection<T, TIndexDef> (this.Session,
+                        this,
+                        collectionName,
+                        this.Session.SerializerResolver.SerializerFor<T>(),
+                        this.RecordManager)
+                );
+            }
+
+            var retVal = Collections[collectionName] as Collection<T,TIndexDef>;
+            if (retVal == null)
+            {
+                ThrowCollectionDefinedForOtherType<T>(collectionName);
+            }
+            return (Collection<T, TIndexDef>)Collections[collectionName];
+
+        }
+
         void ThrowCollectionDefinedForOtherType<T>(string collectionName)
         {
             throw new InvalidOperationException(

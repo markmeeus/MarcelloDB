@@ -10,30 +10,10 @@ namespace MarcelloDB
 
         internal Func<object, object> ValueFunc {get; set;}
 
+        internal bool IsID { get; set; }
+
         internal IndexedFieldDescriptor()
         {
-        }
-
-        internal object GetValueFor(object o)
-        {
-            var oType = o.GetType();
-            if (ValueFunc != null)
-            {
-                return this.ValueFunc(o);
-            }
-            else
-            {
-                //no value function, fallback to property by name
-                var prop = oType.GetRuntimeProperties()
-                    .FirstOrDefault(p => p.Name == this.Name);
-
-                if (prop != null)
-                {
-                    return prop.GetMethod.Invoke(o, new object[0]);
-                }
-            }
-
-            return null;
         }
     }
 }

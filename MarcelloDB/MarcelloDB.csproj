@@ -91,6 +91,7 @@
     <Compile Include="Exceptions\ObjectNotFoundException.cs" />
     <Compile Include="Index\IndexDefinition.cs" />
     <Compile Include="Index\IndexedFieldDescriptor.cs" />
+    <Compile Include="Collections\IndexEnumeratorT.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

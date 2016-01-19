@@ -36,7 +36,7 @@ namespace MarcelloDB.Collections
                     var index = new RecordIndex<object>(
                         this.Session,
                         this.RecordManager,
-                        RecordIndex.GetIDIndexName<T>(Collection.Name),
+                        RecordIndex.GetIndexName<T>(Collection.Name, "ID"),
                         this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>()
                     );
                     var walker = index.GetWalker();

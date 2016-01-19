@@ -66,6 +66,24 @@ namespace MarcelloDB.Test
             Assert.AreEqual(toiletPaper.Name, article.Name, "First article");
         }
 
+        class ArticleWithNameDef
+        {
+            public string Name {get;}
+        }
+        [Test]
+        public void Insert_Object_Updates_Index()
+        {
+            var toiletPaper = Article.ToiletPaper;
+
+            Collection<Article, ArticleWithNameDef> articles = _session["indexed_articles"].Collection<Article, ArticleWithNameDef>("articles");
+
+            articles.Persist(toiletPaper);
+
+            var papers = articles.Index((idx)=>idx.Name).Find(toiletPaper.Name);
+
+            Assert.AreEqual(Article.ToiletPaper.ID, papers.First());
+        }
+
         [Test]
         public void Insert_2_Objects()
         {

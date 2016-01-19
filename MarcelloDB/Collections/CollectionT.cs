@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MarcelloDB.Serialization;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using MarcelloDB.AllocationStrategies;
 using MarcelloDB.Records;
@@ -17,13 +18,30 @@ namespace MarcelloDB.Collections
         internal  Collection(Session session) : base(session){}
     }
 
-    public class Collection<T, TIndexDef> : Collection<T>{
+    public class Collection<T, TIndexDef> : Collection<T> where TIndexDef : new(){
         internal Collection (Session session,
             CollectionFile collectionFile,
             string name,
             IObjectSerializer<T> serializer,
             RecordManager recordManager) :
-        base(session, collectionFile, name, serializer, recordManager){}
+        base(session, collectionFile, name, serializer, recordManager){
+
+        }
+
+        public IndexEnumerator<T, TIndexKey> Index<TIndexKey>(Expression<Func<TIndexDef, TIndexKey>> keyMap)
+        {
+            var memberExpression = keyMap.Body as MemberExpression;
+            if (memberExpression != null)
+            {
+                return new IndexEnumerator<T, TIndexKey>();
+            }
+            return null;
+        }
+
+        internal override List<IndexedFieldDescriptor> GetIndexedFieldDescriptors()
+        {
+            return IndexDefinition.GetIndexedFieldDescriptors<TIndexDef, T>();
+        }
     }
 
     public class Collection<T> : Collection
@@ -36,7 +54,7 @@ namespace MarcelloDB.Collections
 
         IObjectSerializer<T> Serializer { get; set; }
 
-        RecordManager RecordManager { get; set; }
+        internal RecordManager RecordManager { get; set; }
 
         internal Collection (Session session,
             CollectionFile collectionFile,
@@ -169,14 +187,7 @@ namespace MarcelloDB.Collections
 
         RecordIndex<object> GetIDIndex()
         {
-            var indexName = RecordIndex.GetIDIndexName<T>(this.Name);
-
-            return new RecordIndex<object>(
-                this.Session,
-                this.RecordManager,
-                indexName,
-                this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>());
-
+            return GetIndex(GetIndexedFieldDescriptors().First( d=>d.IsID ).Name);
         }
 
         void RegisterInIndexes(object objectID, Record record, bool unregisterFirst = false)
@@ -201,11 +212,30 @@ namespace MarcelloDB.Collections
             }
         }
 
+        internal virtual List<IndexedFieldDescriptor> GetIndexedFieldDescriptors()
+        {
+            return IndexDefinition.GetIndexedFieldDescriptors<EmptyIndexDef, T>();
+        }
+
         List<RecordIndex<object>> GetIndexes()
         {
             var indexes = new List<RecordIndex<object>>();
-            indexes.Add(GetIDIndex());
+
+            foreach (var indexedFieldDescriptor in this.GetIndexedFieldDescriptors())
+            {
+                indexes.Add(GetIndex(indexedFieldDescriptor.Name));
+
+            }
             return indexes;
+        }
+
+        RecordIndex<object> GetIndex(string indexName)
+        {
+            return new RecordIndex<object>(
+                this.Session,
+                this.RecordManager,
+                RecordIndex.GetIndexName<T>(this.Name, indexName),
+                this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>());
         }
 
         void EnsureModificationIsAllowed()
