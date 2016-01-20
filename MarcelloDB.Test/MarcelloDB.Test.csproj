@@ -71,6 +71,7 @@
     <Compile Include="AllocationStrategies\AllocationStrategyResolverTest.cs" />
     <Compile Include="Serialization\BtreeNodeSerializerTest.cs" />
     <Compile Include="Index\IndexDefinitionTest.cs" />
+    <Compile Include="Records\ValueWithAddressIndexKeyTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

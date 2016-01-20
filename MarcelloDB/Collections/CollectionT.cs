@@ -211,11 +211,21 @@ namespace MarcelloDB.Collections
             {
                 var index = GetIndex(indexedFieldDescriptor.Name);
                 var value = indexedFieldDescriptor.ValueFunc(o);
+                object indexKey = value;
+
+                if (!indexedFieldDescriptor.IsID)
+                {
+                    indexKey = new ValueWithAddressIndexKey(){
+                        V=(IComparable)value,
+                        A =record.Header.Address
+                    };
+                }
+
                 if (unregisterFirst)
                 {
-                    index.UnRegister(value);
+                    index.UnRegister(indexKey);
                 }
-                index.Register(value, record.Header.Address);
+                index.Register(indexKey, record.Header.Address);
             }
         }
 

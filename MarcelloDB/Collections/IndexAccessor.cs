@@ -32,13 +32,14 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<T> Find(TIndexKey indexKey)
         {
-            var index = new RecordIndex<TIndexKey>(
+            var index = new RecordIndex<ValueWithAddressIndexKey>(
                 this.Session,
                 this.RecordManager,
                 RecordIndex.GetIndexName<T>(Collection.Name, this.IndexName),
-                this.Session.SerializerResolver.SerializerFor<Node<TIndexKey, Int64>>()
+                this.Session.SerializerResolver.SerializerFor<Node<ValueWithAddressIndexKey, Int64>>()
             );
-            var adress = index.Search(indexKey);
+            var indexKeyWithAddress = new ValueWithAddressIndexKey(){V=(IComparable)indexKey}; //no address matches all
+            var adress = index.Search(indexKeyWithAddress);
             if (adress > 0)
             {
                 var record = this.RecordManager.GetRecord(adress);
@@ -47,7 +48,7 @@ namespace MarcelloDB.Collections
                     this.Session.SerializerResolver.SerializerFor<T>().Deserialize(record.Data)
                 };
             }
-            return new List<T>(){default(T)};
+            return new List<T>();
         }
     }
 }
