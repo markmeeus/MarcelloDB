@@ -81,7 +81,7 @@ namespace MarcelloDB.Test
 
             var papers = articles.Index((idx)=>idx.Name).Find(toiletPaper.Name);
 
-            Assert.AreEqual(Article.ToiletPaper.ID, papers.First());
+            Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
         }
 
         [Test]

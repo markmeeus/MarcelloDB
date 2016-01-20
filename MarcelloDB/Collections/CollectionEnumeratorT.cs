@@ -15,16 +15,18 @@ namespace MarcelloDB.Collections
 
         IObjectSerializer<T> Serializer { get; set; }
 
-
+        string IndexName {get; set;}
         public CollectionEnumerator(
             Collection<T> collection,
             Session session,
             RecordManager recordManager,
-            IObjectSerializer<T> serializer) : base(session)
+            IObjectSerializer<T> serializer,
+            string indexName) : base(session)
         {
             this.Collection = collection;
             this.RecordManager = recordManager;
             this.Serializer = serializer;
+            this.IndexName = indexName;
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -36,7 +38,7 @@ namespace MarcelloDB.Collections
                     var index = new RecordIndex<object>(
                         this.Session,
                         this.RecordManager,
-                        RecordIndex.GetIndexName<T>(Collection.Name, "ID"),
+                        RecordIndex.GetIndexName<T>(Collection.Name, this.IndexName),
                         this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>()
                     );
                     var walker = index.GetWalker();

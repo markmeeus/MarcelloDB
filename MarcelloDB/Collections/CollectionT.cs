@@ -28,12 +28,13 @@ namespace MarcelloDB.Collections
 
         }
 
-        public IndexEnumerator<T, TIndexKey> Index<TIndexKey>(Expression<Func<TIndexDef, TIndexKey>> keyMap)
+        public IndexAccessor<T, TIndexKey> Index<TIndexKey>(Expression<Func<TIndexDef, TIndexKey>> keyMap)
         {
             var memberExpression = keyMap.Body as MemberExpression;
             if (memberExpression != null)
             {
-                return new IndexEnumerator<T, TIndexKey>();
+                return new IndexAccessor<T, TIndexKey>(
+                    this, this.Session, this.RecordManager, this.Serializer, memberExpression.Member.Name);
             }
             return null;
         }
@@ -52,7 +53,7 @@ namespace MarcelloDB.Collections
 
         CollectionFile CollectionFile { get; set; }
 
-        IObjectSerializer<T> Serializer { get; set; }
+        internal IObjectSerializer<T> Serializer { get; set; }
 
         internal RecordManager RecordManager { get; set; }
 
@@ -72,7 +73,7 @@ namespace MarcelloDB.Collections
         {
             get{
                 return new CollectionEnumerator<T>(
-                    this, Session, RecordManager, Serializer);
+                    this, Session, RecordManager, Serializer, this.GetIDIndexedFieldDescriptor().Name);
             }
         }
 
@@ -138,13 +139,13 @@ namespace MarcelloDB.Collections
                 if (record.Header.Address != originalAddress)
                 {
                     //object moved, register it's adress in the index
-                    RegisterInIndexes(objectID, record, true);
+                    RegisterInIndexes(obj, record, true);
                 }
             }
             else
             {
                 record = AppendObject(obj);
-                RegisterInIndexes(objectID, record);
+                RegisterInIndexes(obj, record);
             }
         }
 
@@ -165,9 +166,10 @@ namespace MarcelloDB.Collections
         {
             //Try to load the record with object ID
             Record record = GetRecordForObjectID(objectID);
+            var o = Serializer.Deserialize(record.Data);
             if (record != null)
             {
-                UnRegisterRecordInIndexes(objectID, record);
+                UnRegisterInIndexes(o, record);
                 this.RecordManager.Recycle(record.Header.Address);
             }
             else
@@ -185,48 +187,8 @@ namespace MarcelloDB.Collections
             return objectID;
         }
 
-        RecordIndex<object> GetIDIndex()
-        {
-            return GetIndex(GetIndexedFieldDescriptors().First( d=>d.IsID ).Name);
-        }
-
-        void RegisterInIndexes(object objectID, Record record, bool unregisterFirst = false)
-        {
-            var indexes = GetIndexes();
-
-            foreach (var index in indexes)
-            {
-                if (unregisterFirst)
-                {
-                    index.UnRegister(objectID);
-                }
-                index.Register(objectID, record.Header.Address);
-            }
-        }
-
-        void UnRegisterRecordInIndexes(object objectID, Record record)
-        {
-            var indexes = GetIndexes();
-            foreach(var index in indexes){
-                index.UnRegister(objectID);
-            }
-        }
-
-        internal virtual List<IndexedFieldDescriptor> GetIndexedFieldDescriptors()
-        {
-            return IndexDefinition.GetIndexedFieldDescriptors<EmptyIndexDef, T>();
-        }
-
-        List<RecordIndex<object>> GetIndexes()
-        {
-            var indexes = new List<RecordIndex<object>>();
-
-            foreach (var indexedFieldDescriptor in this.GetIndexedFieldDescriptors())
-            {
-                indexes.Add(GetIndex(indexedFieldDescriptor.Name));
-
-            }
-            return indexes;
+        IndexedFieldDescriptor GetIDIndexedFieldDescriptor(){
+            return GetIndexedFieldDescriptors().First(d => d.IsID);
         }
 
         RecordIndex<object> GetIndex(string indexName)
@@ -236,6 +198,40 @@ namespace MarcelloDB.Collections
                 this.RecordManager,
                 RecordIndex.GetIndexName<T>(this.Name, indexName),
                 this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>());
+        }
+
+        RecordIndex<object> GetIDIndex()
+        {
+            return GetIndex(GetIDIndexedFieldDescriptor().Name);
+        }
+
+        void RegisterInIndexes(T o, Record record, bool unregisterFirst = false)
+        {
+            foreach (var indexedFieldDescriptor in this.GetIndexedFieldDescriptors())
+            {
+                var index = GetIndex(indexedFieldDescriptor.Name);
+                var value = indexedFieldDescriptor.ValueFunc(o);
+                if (unregisterFirst)
+                {
+                    index.UnRegister(value);
+                }
+                index.Register(value, record.Header.Address);
+            }
+        }
+
+        void UnRegisterInIndexes(T o, Record record)
+        {
+            foreach (var indexedFieldDescriptor in this.GetIndexedFieldDescriptors())
+            {
+                var index = GetIndex(indexedFieldDescriptor.Name);
+                var value = indexedFieldDescriptor.ValueFunc(o);
+                index.UnRegister(value);
+            }
+        }
+
+        internal virtual List<IndexedFieldDescriptor> GetIndexedFieldDescriptors()
+        {
+            return IndexDefinition.GetIndexedFieldDescriptors<EmptyIndexDef, T>();
         }
 
         void EnsureModificationIsAllowed()
