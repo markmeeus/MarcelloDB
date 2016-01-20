@@ -166,9 +166,9 @@ namespace MarcelloDB.Collections
         {
             //Try to load the record with object ID
             Record record = GetRecordForObjectID(objectID);
-            var o = Serializer.Deserialize(record.Data);
             if (record != null)
             {
+                var o = Serializer.Deserialize(record.Data);
                 UnRegisterInIndexes(o, record);
                 this.RecordManager.Recycle(record.Header.Address);
             }
