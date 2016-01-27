@@ -92,12 +92,13 @@
     <Compile Include="Index\IndexDefinition.cs" />
     <Compile Include="Index\IndexedFieldDescriptor.cs" />
     <Compile Include="Records\ValueWithAddressIndexKey.cs" />
-    <Compile Include="Collections\IndexAccessor.cs" />
+    <Compile Include="Collections\IndexedValue.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\portable-net45+wp80+win8+wpa81+aspnetcore50\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

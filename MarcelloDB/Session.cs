@@ -14,7 +14,7 @@ namespace MarcelloDB
 {
     public class SessionBoundObject
     {
-        internal Session Session { get; private set;}
+        internal Session Session { get; set;}
 
         internal SessionBoundObject(Session session){
             this.Session = session;

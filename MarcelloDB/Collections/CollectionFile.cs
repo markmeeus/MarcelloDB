@@ -52,7 +52,8 @@ namespace MarcelloDB.Collections
 
         }
 
-        public Collection<T,TIndexDef> Collection<T, TIndexDef>(string collectionName) where TIndexDef: new()
+        public Collection<T,TIndexDef> Collection<T, TIndexDef>(string collectionName)
+            where TIndexDef: IndexDefinition<T>, new()
         {
             if (collectionName == null)
             {

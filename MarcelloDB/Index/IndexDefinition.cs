@@ -4,21 +4,89 @@ using System.Reflection;
 using System.Linq.Expressions;
 using System.Linq;
 using MarcelloDB.Serialization;
+using MarcelloDB.Records;
+using MarcelloDB.Collections;
+using System.Runtime.CompilerServices;
 
 namespace MarcelloDB.Index
 {
-    internal class EmptyIndexDef
+    public abstract class IndexDefinition
     {
+        /// <summary>
+        /// _customIndexedValues keeps a reference to every instantiated IndexedValue
+        /// This is needed to populate it with the necessary references to access the relevant index
+        /// </summary>
+        protected Dictionary<string, object> _customIndexedValues = new Dictionary<string, object>();
+
+        internal List<IndexedFieldDescriptor> Descriptors { get; set; }
+
+        internal IndexDefinition()
+        {
+            this.BuildIndexedFieldDescriptors();
+        }
+
+        internal static TIndexDef Build<TObj, TIndexDef>(
+            string collectionName,
+            Session session,
+            RecordManager recordManager,
+            IObjectSerializer<TObj> serializer)
+            where TIndexDef:IndexDefinition<TObj>, new()
+        {
+            var indexDefinition = new TIndexDef();
+
+            foreach (var prop in typeof(TIndexDef).GetRuntimeProperties())
+            {
+                var propertyType = prop.PropertyType;
+                if (propertyType.IsConstructedGenericType)
+                {
+                    if(propertyType.GetGenericTypeDefinition() == typeof(IndexedValue<,>)){
+                        var typeArgs = propertyType.GenericTypeArguments;
+                        var indexValue = prop.GetValue(indexDefinition);
+                        if (indexValue == null)
+                        {
+                            //build and assign the IndexedValue<,>
+                            var buildMethod = propertyType.GetRuntimeMethods().First(m => m.Name == "Build");
+                            indexValue = buildMethod.Invoke(null, new object[]{});
+                            prop.SetValue(indexDefinition, indexValue);
+                        }
+
+                        ((dynamic)indexValue).SetContext(
+                            collectionName, session, recordManager, serializer, prop.Name);
+
+                    }
+                }
+            }
+            return indexDefinition;
+        }
+
+        protected abstract void BuildIndexedFieldDescriptors();
 
     }
 
-    internal class IndexDefinition{
-        internal static List<IndexedFieldDescriptor> GetIndexedFieldDescriptors<TDef, T>() where TDef: new()
-        {
-            var descriptors = new List<IndexedFieldDescriptor>();
-            var definitionType = typeof(TDef);
+    public class IndexDefinition<T> : IndexDefinition
+    {
 
-            descriptors.Add(new IndexedFieldDescriptor(){
+        /// <summary>
+        /// Creates (or reuses from cache) and IndexedValue
+        /// IndexedValues are cached per CallerName
+        /// </summary>
+        protected IndexedValue<T, TAttribute> IndexedValue<TAttribute>
+            (Func<T, TAttribute> valueFunc, [CallerMemberName] string callerMember = "")
+        {
+            if (!_customIndexedValues.ContainsKey(callerMember))
+            {
+                _customIndexedValues[callerMember] = new IndexedValue<T, TAttribute>(valueFunc);
+            }
+
+            return (IndexedValue<T, TAttribute>)_customIndexedValues[callerMember];
+        }
+
+        protected override void BuildIndexedFieldDescriptors()
+        {
+            var definitionType = this.GetType();
+            this.Descriptors = new List<IndexedFieldDescriptor>();
+
+            this.Descriptors.Add(new IndexedFieldDescriptor(){
                 Name = "ID",
                 IsID = true,
                 ValueFunc = (o) => new ObjectProxy<T>((T)o).ID
@@ -27,25 +95,30 @@ namespace MarcelloDB.Index
             foreach (var prop in definitionType.GetRuntimeProperties()
                 .Where(m => m.DeclaringType == definitionType))
             {
-                descriptors.Add(new IndexedFieldDescriptor(){
+                //if the get method returns an IndexedValue, it is a custom index field
+                Func<object,object> valueFunc;
+
+                object propertyValue = prop.GetValue(this);
+                if (propertyValue == null)
+                {
+                    valueFunc = (o) => typeof(T)
+                        .GetRuntimeProperty(prop.Name).GetMethod.Invoke(o, new object[0]);
+                }
+                else
+                {
+                    valueFunc = (o) =>
+                        {
+                            return (((dynamic)(dynamic)propertyValue).ValueFunction).Invoke((T)o);
+                        };
+                }
+                this.Descriptors.Add(new IndexedFieldDescriptor(){
                     Name = prop.Name,
                     IsID = false,
-                    ValueFunc = (o) => typeof(T)
-                        .GetRuntimeProperty(prop.Name).GetMethod.Invoke(o, new object[0])
+                    ValueFunc = valueFunc
                 });
             }
-
-            foreach (var method in definitionType.GetRuntimeMethods()
-                .Where(m => m.DeclaringType == definitionType && !m.IsSpecialName))
-            {
-                descriptors.Add(new IndexedFieldDescriptor(){
-                    Name = method.Name,
-                    IsID = false,
-                    ValueFunc = (o) => method.Invoke(new TDef(), new object[]{o})
-                });
-            }
-            return descriptors;
         }
+
     }
 }
 

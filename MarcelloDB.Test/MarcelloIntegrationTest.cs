@@ -9,6 +9,7 @@ using MarcelloDB.Collections;
 using MarcelloDB.Storage;
 using MarcelloDB.Exceptions;
 using MarcelloDB.Transactions;
+using MarcelloDB.Index;
 
 namespace MarcelloDB.Test
 {
@@ -66,20 +67,45 @@ namespace MarcelloDB.Test
             Assert.AreEqual(toiletPaper.Name, article.Name, "First article");
         }
 
-        class ArticleWithNameDef
+        class ArticleIndexes : IndexDefinition<Article>
         {
-            public string Name {get;}
+            public IndexedValue<Article, string> Name { get; set;}
+            public IndexedValue<Article, string> Description { get; set; }
+
+            public IndexedValue<Article, string> NameAndDescription {
+                get {
+                    return IndexedValue((Article article) =>
+                    {
+                        return String.Format("{0}-{1}", article.Name, article.Description);
+                    });
+                }
+            }
         }
+
         [Test]
-        public void Insert_Object_Updates_Index()
+        public void Insert_Object_Updates_Property_Index()
         {
             var toiletPaper = Article.ToiletPaper;
 
-            Collection<Article, ArticleWithNameDef> articles = _session["indexed_articles"].Collection<Article, ArticleWithNameDef>("articles");
+            var articles = _session["indexed_articles"].Collection<Article, ArticleIndexes>("articles");
+
+            articles.Persist(toiletPaper);
+            var papers = articles.Indexes.Name.Find(toiletPaper.Name);
+
+            Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
+        }
+
+        [Test]
+        public void Insert_Object_Updates_Method_Index()
+        {
+            var toiletPaper = Article.ToiletPaper;
+
+            var articles = _session["indexed_articles"].Collection<Article, ArticleIndexes>("articles");
 
             articles.Persist(toiletPaper);
 
-            var papers = articles.Index((idx)=>idx.Name).Find(toiletPaper.Name);
+            var papers = articles.Indexes.NameAndDescription
+                .Find(String.Format("{0}-{1}", Article.ToiletPaper.Name, Article.ToiletPaper.Description));
 
             Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
         }

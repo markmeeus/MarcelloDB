@@ -1,29 +1,43 @@
-﻿using System;
+﻿    using System;
 using NUnit.Framework;
 using MarcelloDB.Test.Classes;
 using MarcelloDB.Index;
 using System.Collections.Generic;
+using MarcelloDB.Collections;
+using System.Linq;
 
 namespace MarcelloDB.Test.Index
 {
-    class TestDefinitionWithProp
+    class TestDefinitionWithProp : IndexDefinition<Article>
     {
-        public string Name {get; set;}
+        public IndexedValue<Article, string> Name {get; set;}
     }
 
-    class TestDefinitionWithMethod
+    class TestDefinitionWithCustomProp : IndexDefinition<Article>
     {
-        public string Description(Article a){
-            return "Custom" + a.Description;
+        public IndexedValue<Article, string> CustomDescription
+        {
+            get
+            {
+                return IndexedValue((Article article)=>{
+                    return "Custom" + article.Description;
+                });
+            }
         }
     }
 
-    class TestDefinition
+    class TestDefinition : IndexDefinition<Article>
     {
-        public string Name{ get; }
+        public IndexedValue<Article, string> Name{ get; set; }
 
-        public string Description(Article a){
-            return "Custom" + a.Description;
+        public IndexedValue<Article, string> CustomDescription
+        {
+            get
+            {
+                return new IndexedValue<Article, string>((article)=>{
+                    return "Custom" + article.Description;
+                });
+            }
         }
     }
 
@@ -34,50 +48,50 @@ namespace MarcelloDB.Test.Index
         [Test]
         public void GetIndexedFieldDescriptors_Returns_ID_Descriptor()
         {
-            var descriptors = IndexDefinition.GetIndexedFieldDescriptors<TestDefinitionWithProp, Article>();
+            var descriptors = new TestDefinitionWithProp().Descriptors;
             Assert.AreEqual("ID", descriptors[0].Name);
         }
 
         [Test]
         public void GetIndexedFieldDescriptors_Returns_ID_Descriptor_Value()
         {
-            var descriptors = IndexDefinition.GetIndexedFieldDescriptors<TestDefinitionWithProp, Article>();
+            var descriptors = new TestDefinitionWithProp().Descriptors;
             Assert.AreEqual(Article.BarbieDoll.ID, descriptors[0].ValueFunc(Article.BarbieDoll));
         }
 
         [Test]
-        public void GetIndexedFieldDescriptors_Returns_Descriptor_For_Property()
+        public void GetIndexedFieldDescriptors_Returns_Descriptor_For_Default_Property()
         {
-            var descriptors = IndexDefinition.GetIndexedFieldDescriptors<TestDefinitionWithProp, Article>();
+            var descriptors = new TestDefinitionWithProp().Descriptors;
             Assert.AreEqual("Name", descriptors[1].Name);
         }
 
         [Test]
-        public void GetIndexedFieldDescriptors_Returns_Descriptor_For_Method()
+        public void GetIndexedFieldDescriptors_Returns_Descriptor_For_Custom_Property()
         {
-            var descriptors = IndexDefinition.GetIndexedFieldDescriptors<TestDefinitionWithMethod, Article>();
-            Assert.AreEqual("Description", descriptors[1].Name);
+            var descriptors = new TestDefinitionWithProp().Descriptors;
+            Assert.IsNotNull(descriptors.Where((d)=>d.Name=="Description"));
         }
 
         [Test]
-        public void GetIndexedFieldDescriptors_Returns_Descriptor_For_Props_And_Methods()
+        public void GetIndexedFieldDescriptors_Returns_Descriptor_For_Default_And_Custom()
         {
-            var descriptors = IndexDefinition.GetIndexedFieldDescriptors<TestDefinition, Article>();
-            Assert.AreEqual("Name", descriptors[1].Name);
-            Assert.AreEqual("Description", descriptors[2].Name);
+            var descriptors = new TestDefinition().Descriptors;
+            Assert.IsNotNull(descriptors.Where((d)=>d.Name=="Name"));
+            Assert.IsNotNull(descriptors.Where((d)=>d.Name=="Description"));
         }
 
         [Test]
-        public void GetIndexedFieldDescriptors_Sets_ValueFunc_For_Property()
+        public void GetIndexedFieldDescriptors_Sets_ValueFunc_For_Default_Prop()
         {
-            var descriptors = IndexDefinition.GetIndexedFieldDescriptors<TestDefinitionWithProp, Article>();
+            var descriptors = new TestDefinitionWithProp().Descriptors;
             Assert.AreEqual(Article.BarbieDoll.Name, descriptors[1].ValueFunc(Article.BarbieDoll));
         }
 
         [Test]
-        public void GetIndexedFieldDescriptors_Sets_ValueFunc_For_Method()
+        public void GetIndexedFieldDescriptors_Sets_ValueFunc_For_Custom_Prop()
         {
-            var descriptors = IndexDefinition.GetIndexedFieldDescriptors<TestDefinitionWithMethod, Article>();
+            var descriptors = new TestDefinitionWithCustomProp().Descriptors;
             Assert.AreEqual("Custom" + Article.BarbieDoll.Description, descriptors[1].ValueFunc(Article.BarbieDoll));
         }
     }

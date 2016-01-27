@@ -10,6 +10,7 @@ using MarcelloDB.Storage;
 using MarcelloDB.Index;
 using MarcelloDB.Transactions;
 using MarcelloDB.Exceptions;
+using System.Reflection;
 
 namespace MarcelloDB.Collections
 {
@@ -18,30 +19,23 @@ namespace MarcelloDB.Collections
         internal  Collection(Session session) : base(session){}
     }
 
-    public class Collection<T, TIndexDef> : Collection<T> where TIndexDef : new(){
+    public class Collection<T, TIndexDef> : Collection<T> where TIndexDef : IndexDefinition<T>, new()
+    {
+        public TIndexDef Indexes { get; private set; }
+
         internal Collection (Session session,
             CollectionFile collectionFile,
             string name,
             IObjectSerializer<T> serializer,
             RecordManager recordManager) :
-        base(session, collectionFile, name, serializer, recordManager){
-
-        }
-
-        public IndexAccessor<T, TIndexKey> Index<TIndexKey>(Expression<Func<TIndexDef, TIndexKey>> keyMap)
+        base(session, collectionFile, name, serializer, recordManager)
         {
-            var memberExpression = keyMap.Body as MemberExpression;
-            if (memberExpression != null)
-            {
-                return new IndexAccessor<T, TIndexKey>(
-                    this, this.Session, this.RecordManager, this.Serializer, memberExpression.Member.Name);
-            }
-            return null;
+            this.Indexes = IndexDefinition.Build<T, TIndexDef>(this.Name, this.Session, this.RecordManager, this.Serializer);
         }
 
         internal override List<IndexedFieldDescriptor> GetIndexedFieldDescriptors()
         {
-            return IndexDefinition.GetIndexedFieldDescriptors<TIndexDef, T>();
+            return this.Indexes.Descriptors;
         }
     }
 
@@ -241,7 +235,8 @@ namespace MarcelloDB.Collections
 
         internal virtual List<IndexedFieldDescriptor> GetIndexedFieldDescriptors()
         {
-            return IndexDefinition.GetIndexedFieldDescriptors<EmptyIndexDef, T>();
+            return IndexDefinition.Build<T, IndexDefinition<T>>
+                (this.Name, this.Session, this.RecordManager, this.Serializer).Descriptors;
         }
 
         void EnsureModificationIsAllowed()
