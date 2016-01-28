@@ -20,8 +20,11 @@ namespace MarcelloDB.Index
 
         internal List<IndexedFieldDescriptor> Descriptors { get; set; }
 
+        internal List<IndexedValue> IndexedValues { get; set; }
+
         internal IndexDefinition()
         {
+            this.IndexedValues = new List<IndexedValue>();
             this.BuildIndexedFieldDescriptors();
         }
 
@@ -41,18 +44,9 @@ namespace MarcelloDB.Index
                 {
                     if(propertyType.GetGenericTypeDefinition() == typeof(IndexedValue<,>)){
                         var typeArgs = propertyType.GenericTypeArguments;
-                        var indexValue = prop.GetValue(indexDefinition);
-                        if (indexValue == null)
-                        {
-                            //build and assign the IndexedValue<,>
-                            var buildMethod = propertyType.GetRuntimeMethods().First(m => m.Name == "Build");
-                            indexValue = buildMethod.Invoke(null, new object[]{});
-                            prop.SetValue(indexDefinition, indexValue);
-                        }
-
+                        var indexValue = (dynamic)prop.GetValue(indexDefinition);
                         ((dynamic)indexValue).SetContext(
                             collectionName, session, recordManager, serializer, prop.Name);
-
                     }
                 }
             }
@@ -65,7 +59,35 @@ namespace MarcelloDB.Index
 
     public class IndexDefinition<T> : IndexDefinition
     {
+        public IndexDefinition()
+        {
+            this.IndexedValues.Add(new IndexedIDValue()
+                {
+                    IDValueFunction = (o) => new ObjectProxy<T>((T)o).ID
+                });
 
+            foreach (var prop in this.GetType().GetRuntimeProperties())
+            {
+                var propertyType = prop.PropertyType;
+                if (propertyType.IsConstructedGenericType)
+                {
+                    if(propertyType.GetGenericTypeDefinition() == typeof(IndexedValue<,>)){
+                        var typeArgs = propertyType.GenericTypeArguments;
+                        var indexedValue = (dynamic)prop.GetValue(this);
+                        if (indexedValue == null)
+                        {
+                            //build and assign the IndexedValue<,>
+                            var buildMethod = propertyType.GetRuntimeMethods().First(m => m.Name == "Build");
+                            indexedValue = buildMethod.Invoke(null, new object[]{});
+                            //Set the value in the property
+                            prop.SetValue(this, indexedValue);
+                        }
+                        indexedValue.PropertyName = prop.Name;
+                        this.IndexedValues.Add(indexedValue);
+                    }
+                }
+            }
+        }
         /// <summary>
         /// Creates (or reuses from cache) and IndexedValue
         /// IndexedValues are cached per CallerName

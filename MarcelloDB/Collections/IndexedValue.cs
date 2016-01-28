@@ -4,10 +4,20 @@ using System.Collections.Generic;
 using MarcelloDB.Records;
 using MarcelloDB.Serialization;
 using MarcelloDB.Index;
+using System.Reflection;
 
 namespace MarcelloDB.Collections
 {
-    public class IndexedValue<TObj, TAttribute> : SessionBoundObject
+    public abstract class IndexedValue : SessionBoundObject
+    {
+        public IndexedValue(Session session) : base(session){}
+
+        protected internal abstract object GetValue(object o);
+
+        protected internal string PropertyName { get; set; }
+    }
+
+    public class IndexedValue<TObj, TAttribute> : IndexedValue
     {
         string CollectionName { get; set; }
 
@@ -15,13 +25,35 @@ namespace MarcelloDB.Collections
 
         IObjectSerializer<TObj> Serializer { get; set; }
 
-        string IndexName {get; set;}
+        Func<TObj, TAttribute> _userValueFunction;
 
+        Func<TObj, TAttribute> _propValueFunction;
 
-        internal Func<TObj, TAttribute> ValueFunction { get; set; }
+        internal Func<TObj, TAttribute> ValueFunction
+        {
+            get
+            {
+                if (_userValueFunction != null)
+                {
+                    return _userValueFunction;
+                }
+                else
+                {
+                    return _propValueFunction = _propValueFunction ?? (_propValueFunction = ((TObj o) => {
+                        return (TAttribute)(typeof(TObj).GetRuntimeProperty(this.PropertyName)
+                            .GetMethod.Invoke(o, new object[0]));
+                    }));
+                }
+            }
+        }
+
+        protected internal override object GetValue(object o)
+        {
+            return (object)ValueFunction((TObj)o);
+        }
 
         public IndexedValue(Func<TObj, TAttribute> valueFunction):base(null){
-            this.ValueFunction = valueFunction;
+            this._userValueFunction = valueFunction;
         }
 
         IndexedValue():base(null)
@@ -37,13 +69,13 @@ namespace MarcelloDB.Collections
             Session session,
             RecordManager recordManager,
             IObjectSerializer<TObj> serializer,
-            string indexName)
+            string propertyName)
         {
             this.CollectionName = collectionName;
             this.Session = session;
             this.RecordManager = recordManager;
             this.Serializer = serializer;
-            this.IndexName = indexName;
+            this.PropertyName = propertyName;
         }
 
         public IEnumerable<TObj> Find(TAttribute value)
@@ -51,7 +83,7 @@ namespace MarcelloDB.Collections
             var index = new RecordIndex<ValueWithAddressIndexKey>(
                 this.Session,
                 this.RecordManager,
-                RecordIndex.GetIndexName<TObj>(this.CollectionName, this.IndexName),
+                RecordIndex.GetIndexName<TObj>(this.CollectionName, this.PropertyName),
                 this.Session.SerializerResolver.SerializerFor<Node<ValueWithAddressIndexKey, Int64>>()
             );
 
@@ -71,6 +103,18 @@ namespace MarcelloDB.Collections
         public IEnumerable<TObj> Find(IEnumerable<TAttribute> values)
         {
             return new List<TObj>{ default(TObj)};
+        }
+    }
+
+    internal class IndexedIDValue : IndexedValue<object, object>
+    {
+        internal IndexedIDValue():base(null){}
+
+        internal Func<object, object> IDValueFunction { get; set; }
+
+        protected internal override object GetValue(object o)
+        {
+            return IDValueFunction(o);
         }
     }
 }

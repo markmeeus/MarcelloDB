@@ -8,24 +8,6 @@ using System.Linq;
 
 namespace MarcelloDB.Test.Index
 {
-    class TestDefinitionWithProp : IndexDefinition<Article>
-    {
-        public IndexedValue<Article, string> Name {get; set;}
-    }
-
-    class TestDefinitionWithCustomProp : IndexDefinition<Article>
-    {
-        public IndexedValue<Article, string> CustomDescription
-        {
-            get
-            {
-                return IndexedValue((Article article)=>{
-                    return "Custom" + article.Description;
-                });
-            }
-        }
-    }
-
     class TestDefinition : IndexDefinition<Article>
     {
         public IndexedValue<Article, string> Name{ get; set; }
@@ -44,55 +26,42 @@ namespace MarcelloDB.Test.Index
     [TestFixture]
     public class IndexDefinitionTest
     {
-
         [Test]
-        public void GetIndexedFieldDescriptors_Returns_ID_Descriptor()
+        public void IndexedValues_Returns_ID_IndexedValue()
         {
-            var descriptors = new TestDefinitionWithProp().Descriptors;
-            Assert.AreEqual("ID", descriptors[0].Name);
+            var indexedValues = new TestDefinition().IndexedValues;
+            var idIndexedValue = indexedValues.First(v => v is IndexedIDValue);
+            Assert.AreEqual(Article.BarbieDoll.ID, idIndexedValue.GetValue(Article.BarbieDoll));
         }
 
         [Test]
-        public void GetIndexedFieldDescriptors_Returns_ID_Descriptor_Value()
+        public void IndexedValues_Contains_IndexedValue_For_Empty_Property()
         {
-            var descriptors = new TestDefinitionWithProp().Descriptors;
-            Assert.AreEqual(Article.BarbieDoll.ID, descriptors[0].ValueFunc(Article.BarbieDoll));
+            var indexValues = new TestDefinition().IndexedValues;
+            Assert.NotNull(indexValues.FirstOrDefault(v => v.PropertyName == "Name"));
         }
 
         [Test]
-        public void GetIndexedFieldDescriptors_Returns_Descriptor_For_Default_Property()
+        public void IndexedValues_Contains_Indexed_Value_For_Implemented_Property()
         {
-            var descriptors = new TestDefinitionWithProp().Descriptors;
-            Assert.AreEqual("Name", descriptors[1].Name);
+            var indexValues = new TestDefinition().IndexedValues;
+            Assert.NotNull(indexValues.FirstOrDefault(v => v.PropertyName == "CustomDescription"));
         }
 
         [Test]
-        public void GetIndexedFieldDescriptors_Returns_Descriptor_For_Custom_Property()
+        public void IndexedField_GetValue_Returns_Correct_Value_For_Empty_Property()
         {
-            var descriptors = new TestDefinitionWithProp().Descriptors;
-            Assert.IsNotNull(descriptors.Where((d)=>d.Name=="Description"));
+            var indexValues = new TestDefinition().IndexedValues;
+            var indexValue = indexValues.FirstOrDefault(v => v.PropertyName == "Name");
+            Assert.AreEqual(Article.BarbieDoll.Name, indexValue.GetValue(Article.BarbieDoll));
         }
 
         [Test]
-        public void GetIndexedFieldDescriptors_Returns_Descriptor_For_Default_And_Custom()
+        public void IndexedField_GetValue_Returns_Correct_Value_For_Implemented_Property()
         {
-            var descriptors = new TestDefinition().Descriptors;
-            Assert.IsNotNull(descriptors.Where((d)=>d.Name=="Name"));
-            Assert.IsNotNull(descriptors.Where((d)=>d.Name=="Description"));
-        }
-
-        [Test]
-        public void GetIndexedFieldDescriptors_Sets_ValueFunc_For_Default_Prop()
-        {
-            var descriptors = new TestDefinitionWithProp().Descriptors;
-            Assert.AreEqual(Article.BarbieDoll.Name, descriptors[1].ValueFunc(Article.BarbieDoll));
-        }
-
-        [Test]
-        public void GetIndexedFieldDescriptors_Sets_ValueFunc_For_Custom_Prop()
-        {
-            var descriptors = new TestDefinitionWithCustomProp().Descriptors;
-            Assert.AreEqual("Custom" + Article.BarbieDoll.Description, descriptors[1].ValueFunc(Article.BarbieDoll));
+            var indexValues = new TestDefinition().IndexedValues;
+            var indexValue = indexValues.FirstOrDefault(v => v.PropertyName == "CustomDescription");
+            Assert.AreEqual("Custom" + Article.BarbieDoll.Description, indexValue.GetValue(Article.BarbieDoll));
         }
     }
 }
