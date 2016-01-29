@@ -16,7 +16,7 @@ namespace MarcelloDB.Test.Index
         {
             get
             {
-                return new IndexedValue<Article, string>((article)=>{
+                return IndexedValue((Article article)=>{
                     return "Custom" + article.Description;
                 });
             }
@@ -30,7 +30,7 @@ namespace MarcelloDB.Test.Index
         public void IndexedValues_Returns_ID_IndexedValue()
         {
             var indexedValues = new TestDefinition().IndexedValues;
-            var idIndexedValue = indexedValues.First(v => v is IndexedIDValue);
+            var idIndexedValue = indexedValues.First(v => v is IndexedIDValue<Article>);
             Assert.AreEqual(Article.BarbieDoll.ID, idIndexedValue.GetValue(Article.BarbieDoll));
         }
 

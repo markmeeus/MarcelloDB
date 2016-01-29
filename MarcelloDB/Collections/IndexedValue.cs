@@ -106,9 +106,12 @@ namespace MarcelloDB.Collections
         }
     }
 
-    internal class IndexedIDValue : IndexedValue<object, object>
+    internal class IndexedIDValue<T> : IndexedValue<T, object>
     {
-        internal IndexedIDValue():base(null){}
+        internal IndexedIDValue():base(null)
+        {
+            this.PropertyName = "ID";
+        }
 
         internal Func<object, object> IDValueFunction { get; set; }
 

@@ -19,6 +19,10 @@ namespace MarcelloDB.Collections
         internal  Collection(Session session) : base(session){}
     }
 
+    internal class EmptyIndexDefinition<T>: IndexDefinition<T>
+    {
+    }
+
     public class Collection<T, TIndexDef> : Collection<T> where TIndexDef : IndexDefinition<T>, new()
     {
         public TIndexDef Indexes { get; private set; }
@@ -30,12 +34,13 @@ namespace MarcelloDB.Collections
             RecordManager recordManager) :
         base(session, collectionFile, name, serializer, recordManager)
         {
-            this.Indexes = IndexDefinition.Build<T, TIndexDef>(this.Name, this.Session, this.RecordManager, this.Serializer);
+            this.Indexes = new TIndexDef();
+            this.Indexes.SetContext(name, session, recordManager, serializer);
         }
 
-        internal override List<IndexedFieldDescriptor> GetIndexedFieldDescriptors()
+        internal override IndexDefinition<T> GetIndexDefinition()
         {
-            return this.Indexes.Descriptors;
+            return this.Indexes;
         }
     }
 
@@ -51,6 +56,8 @@ namespace MarcelloDB.Collections
 
         internal RecordManager RecordManager { get; set; }
 
+        internal EmptyIndexDefinition<T> EmptyIndexDefinition { get; set; }
+
         internal Collection (Session session,
             CollectionFile collectionFile,
             string name,
@@ -61,13 +68,16 @@ namespace MarcelloDB.Collections
             this.Name = name;
             this.Serializer = serializer;
             this.RecordManager = recordManager;
+
+            this.EmptyIndexDefinition = new EmptyIndexDefinition<T>();
+            this.EmptyIndexDefinition.SetContext(name, session, recordManager, serializer);
         }
 
         public IEnumerable<T> All
         {
             get{
                 return new CollectionEnumerator<T>(
-                    this, Session, RecordManager, Serializer, this.GetIDIndexedFieldDescriptor().Name);
+                    this, Session, RecordManager, Serializer, this.GetIDIndexedValue().PropertyName);
             }
         }
 
@@ -181,8 +191,9 @@ namespace MarcelloDB.Collections
             return objectID;
         }
 
-        IndexedFieldDescriptor GetIDIndexedFieldDescriptor(){
-            return GetIndexedFieldDescriptors().First(d => d.IsID);
+        IndexedIDValue<T> GetIDIndexedValue()
+        {
+            return (IndexedIDValue<T>) GetIndexDefinition().IndexedValues.First(v => v is IndexedIDValue<T>);
         }
 
         RecordIndex<object> GetIndex(string indexName)
@@ -196,18 +207,18 @@ namespace MarcelloDB.Collections
 
         RecordIndex<object> GetIDIndex()
         {
-            return GetIndex(GetIDIndexedFieldDescriptor().Name);
+            return GetIndex(GetIDIndexedValue().PropertyName);
         }
 
         void RegisterInIndexes(T o, Record record, bool unregisterFirst = false)
         {
-            foreach (var indexedFieldDescriptor in this.GetIndexedFieldDescriptors())
+            foreach (var indexedValue in this.GetIndexDefinition().IndexedValues)
             {
-                var index = GetIndex(indexedFieldDescriptor.Name);
-                var value = indexedFieldDescriptor.ValueFunc(o);
+                var index = GetIndex(indexedValue.PropertyName);
+                var value = indexedValue.GetValue(o);
                 object indexKey = value;
 
-                if (!indexedFieldDescriptor.IsID)
+                if (!(indexedValue is IndexedIDValue<T>))
                 {
                     indexKey = new ValueWithAddressIndexKey(){
                         V=(IComparable)value,
@@ -225,18 +236,28 @@ namespace MarcelloDB.Collections
 
         void UnRegisterInIndexes(T o, Record record)
         {
-            foreach (var indexedFieldDescriptor in this.GetIndexedFieldDescriptors())
+            foreach (var indexedValue in this.GetIndexDefinition().IndexedValues)
             {
-                var index = GetIndex(indexedFieldDescriptor.Name);
-                var value = indexedFieldDescriptor.ValueFunc(o);
-                index.UnRegister(value);
+                var index = GetIndex(indexedValue.PropertyName);
+                var value = indexedValue.GetValue(o);
+
+                object indexKey = value;
+
+                if (!(indexedValue is IndexedIDValue<T>))
+                {
+                    indexKey = new ValueWithAddressIndexKey(){
+                        V=(IComparable)value,
+                        A =record.Header.Address
+                    };
+                }
+
+                index.UnRegister(indexKey);
             }
         }
 
-        internal virtual List<IndexedFieldDescriptor> GetIndexedFieldDescriptors()
+        internal virtual IndexDefinition<T> GetIndexDefinition()
         {
-            return IndexDefinition.Build<T, IndexDefinition<T>>
-                (this.Name, this.Session, this.RecordManager, this.Serializer).Descriptors;
+            return this.EmptyIndexDefinition;
         }
 
         void EnsureModificationIsAllowed()
