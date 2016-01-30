@@ -96,7 +96,7 @@ namespace MarcelloDB.Test
         }
 
         [Test]
-        public void Insert_Object_Updates_Method_Index()
+        public void Insert_Object_Updates_Custom_Index()
         {
             var toiletPaper = Article.ToiletPaper;
 
@@ -108,6 +108,69 @@ namespace MarcelloDB.Test
                 .Find(String.Format("{0}-{1}", Article.ToiletPaper.Name, Article.ToiletPaper.Description));
 
             Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
+        }
+
+        [Test]
+        public void Update_Object_Removes_From_Property_Index()
+        {
+            var toiletPaper = Article.ToiletPaper;
+
+            var articles = _session["indexed_articles"].Collection<Article, ArticleIndexes>("articles");
+
+            articles.Persist(toiletPaper);
+            var originalName = toiletPaper.Name;
+            toiletPaper.Name = "Papier de toilette";
+            articles.Persist(toiletPaper);
+
+            var papers = articles.Indexes.Name.Find(originalName);
+            Assert.IsEmpty(papers);
+        }
+
+        [Test]
+        public void Update_Object_Removes_From_Custom_Index()
+        {
+            var toiletPaper = Article.ToiletPaper;
+
+            var articles = _session["indexed_articles"].Collection<Article, ArticleIndexes>("articles");
+
+            articles.Persist(toiletPaper);
+            var originalName = toiletPaper.Name;
+            toiletPaper.Name = "Papier de toilette";
+            articles.Persist(toiletPaper);
+
+            var papers = articles.Indexes.NameAndDescription
+                .Find(String.Format("{0}-{1}", originalName, Article.ToiletPaper.Description));
+
+            Assert.IsEmpty(papers);
+        }
+
+        [Test]
+        public void Destroy_Object_Removes_From_Property_Index()
+        {
+            var toiletPaper = Article.ToiletPaper;
+
+            var articles = _session["indexed_articles"].Collection<Article, ArticleIndexes>("articles");
+
+            articles.Persist(toiletPaper);
+            articles.Destroy(toiletPaper.ID);
+            var papers = articles.Indexes.Name.Find(toiletPaper.Name);
+
+            Assert.IsEmpty(papers);
+        }
+
+        [Test]
+        public void Destroy_Object_Removes_From_Custom_Index()
+        {
+            var toiletPaper = Article.ToiletPaper;
+
+            var articles = _session["indexed_articles"].Collection<Article, ArticleIndexes>("articles");
+
+            articles.Persist(toiletPaper);
+            articles.Destroy(toiletPaper.ID);
+            var papers = articles.Indexes.NameAndDescription
+                .Find(String.Format("{0}-{1}", Article.ToiletPaper.Name, Article.ToiletPaper.Description));
+
+            Assert.IsEmpty(papers);
         }
 
         [Test]

@@ -139,12 +139,12 @@ namespace MarcelloDB.Collections
             if (record != null)
             {
                 var originalAddress = record.Header.Address;
+                var originalObject = Serializer.Deserialize(record.Data);
+
                 record = UpdateObject(record, obj);
-                if (record.Header.Address != originalAddress)
-                {
-                    //object moved, register it's adress in the index
-                    RegisterInIndexes(obj, record, true);
-                }
+
+                //update all indexes
+                RegisterInIndexes(obj, record, originalAddress, originalObject);
             }
             else
             {
@@ -210,7 +210,7 @@ namespace MarcelloDB.Collections
             return GetIndex(GetIDIndexedValue().PropertyName);
         }
 
-        void RegisterInIndexes(T o, Record record, bool unregisterFirst = false)
+        void RegisterInIndexes(T o, Record record, Int64 originalAddress = 0, T originalObject = default(T))
         {
             foreach (var indexedValue in this.GetIndexDefinition().IndexedValues)
             {
@@ -222,13 +222,21 @@ namespace MarcelloDB.Collections
                 {
                     indexKey = new ValueWithAddressIndexKey(){
                         V=(IComparable)value,
-                        A =record.Header.Address
+                        A = record.Header.Address
                     };
                 }
 
-                if (unregisterFirst)
+                if (originalAddress > 0)
                 {
-                    index.UnRegister(indexKey);
+                    var originalIndexKey = indexedValue.GetValue(originalObject);
+                    if (!(indexedValue is IndexedIDValue<T>))
+                    {
+                        originalIndexKey = new ValueWithAddressIndexKey(){
+                            V=(IComparable)originalIndexKey,
+                            A = originalAddress
+                        };
+                    }
+                    index.UnRegister(originalIndexKey);
                 }
                 index.Register(indexKey, record.Header.Address);
             }
