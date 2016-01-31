@@ -145,6 +145,40 @@ namespace MarcelloDB.Test
         }
 
         [Test]
+        public void Large_Update_Object_Adjusts_Property_Index()
+        {
+            var toiletPaper = Article.ToiletPaper;
+
+            var articles = _session["indexed_articles"].Collection<Article, ArticleIndexes>("articles");
+
+            articles.Persist(toiletPaper);
+            var originalName = toiletPaper.Name;
+            toiletPaper.Name = new string('a', 10000);
+            articles.Persist(toiletPaper);
+
+            var papers = articles.Indexes.Name.Find(toiletPaper.Name);
+            Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
+        }
+
+        [Test]
+        public void Large_Update_Object_Adjusts_Custom_Index()
+        {
+            var toiletPaper = Article.ToiletPaper;
+
+            var articles = _session["indexed_articles"].Collection<Article, ArticleIndexes>("articles");
+
+            articles.Persist(toiletPaper);
+            var originalName = toiletPaper.Name;
+            toiletPaper.Name = new string('a', 10000);
+            articles.Persist(toiletPaper);
+
+            var papers = articles.Indexes.NameAndDescription
+                .Find(String.Format("{0}-{1}", toiletPaper.Name,toiletPaper.Description));
+
+            Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
+        }
+
+        [Test]
         public void Destroy_Object_Removes_From_Property_Index()
         {
             var toiletPaper = Article.ToiletPaper;
@@ -153,8 +187,8 @@ namespace MarcelloDB.Test
 
             articles.Persist(toiletPaper);
             articles.Destroy(toiletPaper.ID);
-            var papers = articles.Indexes.Name.Find(toiletPaper.Name);
 
+            var papers = articles.Indexes.Name.Find(toiletPaper.Name);
             Assert.IsEmpty(papers);
         }
 
@@ -167,9 +201,9 @@ namespace MarcelloDB.Test
 
             articles.Persist(toiletPaper);
             articles.Destroy(toiletPaper.ID);
+
             var papers = articles.Indexes.NameAndDescription
                 .Find(String.Format("{0}-{1}", Article.ToiletPaper.Name, Article.ToiletPaper.Description));
-
             Assert.IsEmpty(papers);
         }
 
@@ -184,7 +218,6 @@ namespace MarcelloDB.Test
             _articles.Persist (spinalTapDvd);
 
             var articleNames = _articles.All.Select(a => a.Name).ToList();
-
             Assert.AreEqual(new List<string>{toiletPaper.Name, spinalTapDvd.Name}, articleNames, "Should return 2 article names");
         }
 
