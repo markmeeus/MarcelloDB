@@ -156,7 +156,6 @@ namespace MarcelloDB.Collections
         Record AppendObject(T obj)
         {
             var data = Serializer.Serialize(obj);
-
             return RecordManager.AppendRecord(data, this.Session.AllocationStrategyResolver.StrategyFor(obj));
         }
 
@@ -215,29 +214,14 @@ namespace MarcelloDB.Collections
             foreach (var indexedValue in this.GetIndexDefinition().IndexedValues)
             {
                 var index = GetIndex(indexedValue.PropertyName);
-                var value = indexedValue.GetValue(o);
-                object indexKey = value;
-
-                if (!(indexedValue is IndexedIDValue<T>))
-                {
-                    indexKey = new ValueWithAddressIndexKey(){
-                        V=(IComparable)value,
-                        A = record.Header.Address
-                    };
-                }
+                object indexKey = indexedValue.GetKey(o, record.Header.Address);
 
                 if (originalAddress > 0)
                 {
-                    var originalIndexKey = indexedValue.GetValue(originalObject);
-                    if (!(indexedValue is IndexedIDValue<T>))
-                    {
-                        originalIndexKey = new ValueWithAddressIndexKey(){
-                            V=(IComparable)originalIndexKey,
-                            A = originalAddress
-                        };
-                    }
+                    var originalIndexKey = indexedValue.GetKey(originalObject, originalAddress);
                     index.UnRegister(originalIndexKey);
                 }
+
                 index.Register(indexKey, record.Header.Address);
             }
         }
@@ -247,18 +231,7 @@ namespace MarcelloDB.Collections
             foreach (var indexedValue in this.GetIndexDefinition().IndexedValues)
             {
                 var index = GetIndex(indexedValue.PropertyName);
-                var value = indexedValue.GetValue(o);
-
-                object indexKey = value;
-
-                if (!(indexedValue is IndexedIDValue<T>))
-                {
-                    indexKey = new ValueWithAddressIndexKey(){
-                        V=(IComparable)value,
-                        A =record.Header.Address
-                    };
-                }
-
+                object indexKey = indexedValue.GetKey(o, record.Header.Address);
                 index.UnRegister(indexKey);
             }
         }

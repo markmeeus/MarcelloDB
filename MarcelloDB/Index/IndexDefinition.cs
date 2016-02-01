@@ -52,7 +52,10 @@ namespace MarcelloDB.Index
         protected void BuildIndexedValues()
         {
             this.IndexedValues.Add(new IndexedIDValue<T>() {
-                IDValueFunction = o => new ObjectProxy<T>((T)o).ID
+                IDValueFunction = o =>
+                    {
+                        return new ObjectProxy<T>((T)o).ID;
+                    }
             });
             foreach (var prop in this.GetType().GetRuntimeProperties())
             {

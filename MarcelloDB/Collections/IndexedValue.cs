@@ -14,6 +14,8 @@ namespace MarcelloDB.Collections
 
         protected internal abstract object GetValue(object o);
 
+        protected internal abstract object GetKey(object o, Int64 address);
+
         protected internal string PropertyName { get; set; }
     }
 
@@ -29,53 +31,12 @@ namespace MarcelloDB.Collections
 
         Func<TObj, TAttribute> _propValueFunction;
 
-        internal Func<TObj, TAttribute> ValueFunction
-        {
-            get
-            {
-                if (_userValueFunction != null)
-                {
-                    return _userValueFunction;
-                }
-                else
-                {
-                    return _propValueFunction = _propValueFunction ?? (_propValueFunction = ((TObj o) => {
-                        return (TAttribute)(typeof(TObj).GetRuntimeProperty(this.PropertyName)
-                            .GetMethod.Invoke(o, new object[0]));
-                    }));
-                }
-            }
-        }
-
-        protected internal override object GetValue(object o)
-        {
-            return (object)ValueFunction((TObj)o);
-        }
-
-        public IndexedValue(Func<TObj, TAttribute> valueFunction):base(null){
+        internal IndexedValue(Func<TObj, TAttribute> valueFunction):base(null){
             this._userValueFunction = valueFunction;
         }
 
         IndexedValue():base(null)
         {
-        }
-
-        internal static IndexedValue<TObj, TAttribute> Build()
-        {
-            return new IndexedValue<TObj, TAttribute>();
-        }
-
-        internal void SetContext( string collectionName,
-            Session session,
-            RecordManager recordManager,
-            IObjectSerializer<TObj> serializer,
-            string propertyName)
-        {
-            this.CollectionName = collectionName;
-            this.Session = session;
-            this.RecordManager = recordManager;
-            this.Serializer = serializer;
-            this.PropertyName = propertyName;
         }
 
         public IEnumerable<TObj> Find(TAttribute value)
@@ -104,6 +65,56 @@ namespace MarcelloDB.Collections
         {
             return new List<TObj>{ default(TObj)};
         }
+
+        protected internal override object GetValue(object o)
+        {
+            return (object)ValueFunction((TObj)o);
+        }
+
+        protected internal override object GetKey(object o, Int64 address)
+        {
+            return new ValueWithAddressIndexKey
+            {
+                V = (IComparable)GetValue(o),
+                A = address
+            };
+        }
+
+        internal Func<TObj, TAttribute> ValueFunction
+        {
+            get
+            {
+                if (_userValueFunction != null)
+                {
+                    return _userValueFunction;
+                }
+                else
+                {
+                    return _propValueFunction = _propValueFunction ?? (_propValueFunction = ((TObj o) => {
+                        return (TAttribute)(typeof(TObj).GetRuntimeProperty(this.PropertyName)
+                            .GetMethod.Invoke(o, new object[0]));
+                    }));
+                }
+            }
+        }
+
+        internal static IndexedValue<TObj, TAttribute> Build()
+        {
+            return new IndexedValue<TObj, TAttribute>();
+        }
+
+        internal void SetContext( string collectionName,
+            Session session,
+            RecordManager recordManager,
+            IObjectSerializer<TObj> serializer,
+            string propertyName)
+        {
+            this.CollectionName = collectionName;
+            this.Session = session;
+            this.RecordManager = recordManager;
+            this.Serializer = serializer;
+            this.PropertyName = propertyName;
+        }
     }
 
     internal class IndexedIDValue<T> : IndexedValue<T, object>
@@ -118,6 +129,12 @@ namespace MarcelloDB.Collections
         protected internal override object GetValue(object o)
         {
             return IDValueFunction(o);
+        }
+
+        protected internal override object GetKey(object o, long address)
+        {
+            //ID Index has it's value as key
+            return base.GetValue(o);
         }
     }
 }
