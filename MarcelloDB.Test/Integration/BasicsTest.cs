@@ -11,10 +11,10 @@ using MarcelloDB.Exceptions;
 using MarcelloDB.Transactions;
 using MarcelloDB.Index;
 
-namespace MarcelloDB.Test
+namespace MarcelloDB.Test.Integration
 {
     [TestFixture]
-    public class MarcelloIntegrationTest
+    public class BasicsTest
     {
         Session _session;
         CollectionFile _collectionFile;
@@ -65,146 +65,6 @@ namespace MarcelloDB.Test
             var article = _articles.Find(toiletPaper.ID);
 
             Assert.AreEqual(toiletPaper.Name, article.Name, "First article");
-        }
-
-        class ArticleIndexes : IndexDefinition<Article>
-        {
-            public IndexedValue<Article, string> Name { get; set;}
-            public IndexedValue<Article, string> Description { get; set; }
-
-            public IndexedValue<Article, string> NameAndDescription {
-                get {
-                    return IndexedValue((Article article) =>
-                    {
-                        return String.Format("{0}-{1}", article.Name, article.Description);
-                    });
-                }
-            }
-        }
-
-        [Test]
-        public void Insert_Object_Updates_Property_Index()
-        {
-            var toiletPaper = Article.ToiletPaper;
-
-            var articles = _session["indexed_articles"].Collection<Article, ArticleIndexes>("articles");
-
-            articles.Persist(toiletPaper);
-            var papers = articles.Indexes.Name.Find(toiletPaper.Name);
-
-            Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
-        }
-
-        [Test]
-        public void Insert_Object_Updates_Custom_Index()
-        {
-            var toiletPaper = Article.ToiletPaper;
-
-            var articles = _session["indexed_articles"].Collection<Article, ArticleIndexes>("articles");
-
-            articles.Persist(toiletPaper);
-
-            var papers = articles.Indexes.NameAndDescription
-                .Find(String.Format("{0}-{1}", Article.ToiletPaper.Name, Article.ToiletPaper.Description));
-
-            Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
-        }
-
-        [Test]
-        public void Update_Object_Removes_From_Property_Index()
-        {
-            var toiletPaper = Article.ToiletPaper;
-
-            var articles = _session["indexed_articles"].Collection<Article, ArticleIndexes>("articles");
-
-            articles.Persist(toiletPaper);
-            var originalName = toiletPaper.Name;
-            toiletPaper.Name = "Papier de toilette";
-            articles.Persist(toiletPaper);
-
-            var papers = articles.Indexes.Name.Find(originalName);
-            Assert.IsEmpty(papers);
-        }
-
-        [Test]
-        public void Update_Object_Removes_From_Custom_Index()
-        {
-            var toiletPaper = Article.ToiletPaper;
-
-            var articles = _session["indexed_articles"].Collection<Article, ArticleIndexes>("articles");
-
-            articles.Persist(toiletPaper);
-            var originalName = toiletPaper.Name;
-            toiletPaper.Name = "Papier de toilette";
-            articles.Persist(toiletPaper);
-
-            var papers = articles.Indexes.NameAndDescription
-                .Find(String.Format("{0}-{1}", originalName, Article.ToiletPaper.Description));
-
-            Assert.IsEmpty(papers);
-        }
-
-        [Test]
-        public void Large_Update_Object_Adjusts_Property_Index()
-        {
-            var toiletPaper = Article.ToiletPaper;
-
-            var articles = _session["indexed_articles"].Collection<Article, ArticleIndexes>("articles");
-
-            articles.Persist(toiletPaper);
-            var originalName = toiletPaper.Name;
-            toiletPaper.Name = new string('a', 10000);
-            articles.Persist(toiletPaper);
-
-            var papers = articles.Indexes.Name.Find(toiletPaper.Name);
-            Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
-        }
-
-        [Test]
-        public void Large_Update_Object_Adjusts_Custom_Index()
-        {
-            var toiletPaper = Article.ToiletPaper;
-
-            var articles = _session["indexed_articles"].Collection<Article, ArticleIndexes>("articles");
-
-            articles.Persist(toiletPaper);
-            var originalName = toiletPaper.Name;
-            toiletPaper.Name = new string('a', 10000);
-            articles.Persist(toiletPaper);
-
-            var papers = articles.Indexes.NameAndDescription
-                .Find(String.Format("{0}-{1}", toiletPaper.Name,toiletPaper.Description));
-
-            Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
-        }
-
-        [Test]
-        public void Destroy_Object_Removes_From_Property_Index()
-        {
-            var toiletPaper = Article.ToiletPaper;
-
-            var articles = _session["indexed_articles"].Collection<Article, ArticleIndexes>("articles");
-
-            articles.Persist(toiletPaper);
-            articles.Destroy(toiletPaper.ID);
-
-            var papers = articles.Indexes.Name.Find(toiletPaper.Name);
-            Assert.IsEmpty(papers);
-        }
-
-        [Test]
-        public void Destroy_Object_Removes_From_Custom_Index()
-        {
-            var toiletPaper = Article.ToiletPaper;
-
-            var articles = _session["indexed_articles"].Collection<Article, ArticleIndexes>("articles");
-
-            articles.Persist(toiletPaper);
-            articles.Destroy(toiletPaper.ID);
-
-            var papers = articles.Indexes.NameAndDescription
-                .Find(String.Format("{0}-{1}", Article.ToiletPaper.Name, Article.ToiletPaper.Description));
-            Assert.IsEmpty(papers);
         }
 
         [Test]

@@ -42,7 +42,6 @@
     <Compile Include="Records\RecordHeaderTest.cs" />
     <Compile Include="Transactions\TransactionTest.cs" />
     <Compile Include="Helpers\DataHelperTest.cs" />
-    <Compile Include="MarcelloIntegrationTest.cs" />
     <Compile Include="Serialization\BufferWriterTest.cs" />
     <Compile Include="Serialization\BufferReaderTest.cs" />
     <Compile Include="Index\BTreeTest.cs" />
@@ -72,6 +71,9 @@
     <Compile Include="Serialization\BtreeNodeSerializerTest.cs" />
     <Compile Include="Index\IndexDefinitionTest.cs" />
     <Compile Include="Records\ValueWithAddressIndexKeyTest.cs" />
+    <Compile Include="Integration\BasicsTest.cs" />
+    <Compile Include="Integration\IndexesTest.cs" />
+    <Compile Include="Classes\ArticleIndexDefinition.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -84,6 +86,7 @@
     <Folder Include="Index\" />
     <Folder Include="Index\Mocks\" />
     <Folder Include="AllocationStrategies\" />
+    <Folder Include="Integration\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MarcelloDB.netfx\MarcelloDB.netfx.csproj">
