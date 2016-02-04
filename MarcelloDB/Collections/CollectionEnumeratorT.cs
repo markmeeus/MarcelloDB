@@ -17,8 +17,6 @@ namespace MarcelloDB.Collections
 
         RecordIndex<TKey> Index { get; set; }
 
-        TKey MatchValue { get; set; }
-
         TKey StartAt { get; set; }
 
         TKey EndAt { get; set; }
