@@ -7,7 +7,7 @@ using MarcelloDB.Index;
 
 namespace MarcelloDB.Collections
 {
-    internal class CollectionEnumerator<T> : SessionBoundObject, IEnumerable<T>
+    internal class CollectionEnumerator<T, TKey> : SessionBoundObject, IEnumerable<T>
 	{
         Collection<T> Collection { get; set; }
 
@@ -15,18 +15,28 @@ namespace MarcelloDB.Collections
 
         IObjectSerializer<T> Serializer { get; set; }
 
-        string IndexName {get; set;}
+        RecordIndex<TKey> Index { get; set; }
+
+        TKey MatchValue { get; set; }
+
+        TKey StartAt { get; set; }
+
+        TKey EndAt { get; set; }
+
+        bool UseRange { get; set; }
+
         public CollectionEnumerator(
             Collection<T> collection,
             Session session,
             RecordManager recordManager,
             IObjectSerializer<T> serializer,
-            string indexName) : base(session)
+            RecordIndex<TKey> index
+        ) : base(session)
         {
             this.Collection = collection;
             this.RecordManager = recordManager;
             this.Serializer = serializer;
-            this.IndexName = indexName;
+            this.Index = index;
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -35,13 +45,12 @@ namespace MarcelloDB.Collections
             lock(Session.SyncLock){
                 try{
                     this.Collection.BlockModification = true;
-                    var index = new RecordIndex<object>(
-                        this.Session,
-                        this.RecordManager,
-                        RecordIndex.GetIndexName<T>(Collection.Name, this.IndexName),
-                        this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>()
-                    );
-                    var walker = index.GetWalker();
+                    var walker = this.Index.GetWalker();
+                    if(this.UseRange)
+                    {
+                        walker.SetRange(this.StartAt, this.EndAt);
+                    }
+
                     var node = walker.Next();
                     while (node != null)
                     {
@@ -62,5 +71,13 @@ namespace MarcelloDB.Collections
         {
             return GetEnumerator();
         }
+
+        internal void SetRange(TKey startAt, TKey endAt)
+        {
+            this.StartAt = startAt;
+            this.EndAt = endAt;
+            this.UseRange = true;
+        }
+
     }
 }

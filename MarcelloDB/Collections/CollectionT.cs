@@ -35,7 +35,7 @@ namespace MarcelloDB.Collections
         base(session, collectionFile, name, serializer, recordManager)
         {
             this.Indexes = new TIndexDef();
-            this.Indexes.SetContext(name, session, recordManager, serializer);
+            this.Indexes.SetContext(this, session, recordManager, serializer);
         }
 
         internal override IndexDefinition<T> GetIndexDefinition()
@@ -70,14 +70,20 @@ namespace MarcelloDB.Collections
             this.RecordManager = recordManager;
 
             this.EmptyIndexDefinition = new EmptyIndexDefinition<T>();
-            this.EmptyIndexDefinition.SetContext(name, session, recordManager, serializer);
+            this.EmptyIndexDefinition.SetContext(this, session, recordManager, serializer);
         }
 
         public IEnumerable<T> All
         {
             get{
-                return new CollectionEnumerator<T>(
-                    this, Session, RecordManager, Serializer, this.GetIDIndexedValue().PropertyName);
+                var index = new RecordIndex<object>(
+                    this.Session,
+                    this.RecordManager,
+                    RecordIndex.GetIndexName<T>(this.Name, this.GetIDIndexedValue().PropertyName),
+                    this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>()
+                );
+                return new CollectionEnumerator<T, object>(
+                    this, Session, RecordManager, Serializer, index);
             }
         }
 

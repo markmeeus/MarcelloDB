@@ -21,7 +21,7 @@ namespace MarcelloDB.Collections
 
     public class IndexedValue<TObj, TAttribute> : IndexedValue
     {
-        string CollectionName { get; set; }
+        Collection<TObj> Collection { get; set; }
 
         RecordManager RecordManager  { get; set; }
 
@@ -44,21 +44,19 @@ namespace MarcelloDB.Collections
             var index = new RecordIndex<ValueWithAddressIndexKey>(
                 this.Session,
                 this.RecordManager,
-                RecordIndex.GetIndexName<TObj>(this.CollectionName, this.PropertyName),
+                RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName),
                 this.Session.SerializerResolver.SerializerFor<Node<ValueWithAddressIndexKey, Int64>>()
             );
 
-            var indexKeyWithAddress = new ValueWithAddressIndexKey(){V=(IComparable)value}; //no address matches all
-            var adress = index.Search(indexKeyWithAddress);
-            if (adress > 0)
-            {
-                var record = this.RecordManager.GetRecord(adress);
-                return new List<TObj>
-                {
-                    this.Serializer.Deserialize(record.Data)
-                };
-            }
-            return new List<TObj>();
+
+            var enumerator =  new CollectionEnumerator<TObj, ValueWithAddressIndexKey>(
+                this.Collection, Session, RecordManager, Serializer, index);
+
+            var key = new ValueWithAddressIndexKey{ V = (IComparable)value };
+
+            enumerator.SetRange(key, key);
+
+            return enumerator;
         }
 
         public IEnumerable<TObj> Find(IEnumerable<TAttribute> values)
@@ -103,13 +101,13 @@ namespace MarcelloDB.Collections
             return new IndexedValue<TObj, TAttribute>();
         }
 
-        internal void SetContext( string collectionName,
+        internal void SetContext(Collection<TObj> collection,
             Session session,
             RecordManager recordManager,
             IObjectSerializer<TObj> serializer,
             string propertyName)
         {
-            this.CollectionName = collectionName;
+            this.Collection = collection;
             this.Session = session;
             this.RecordManager = recordManager;
             this.Serializer = serializer;

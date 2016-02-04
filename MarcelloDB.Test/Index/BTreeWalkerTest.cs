@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MarcelloDB.Index;
 using MarcelloDB.Index.BTree;
 using System.Linq;
+using System;
 
 namespace MarcelloDB.Test.Index
 {
@@ -145,101 +146,152 @@ namespace MarcelloDB.Test.Index
                 entry = _walker.Next();
             }
 
-
             Assert.AreEqual(walkedKeys, new List<int>(){0,1,2,3,4,5,6,7,8,9});
         }
 
         [Test]
-        public void MoveTo_Finds_1st_Item()
+        public void Walks_From_1st_Item()
         {
             BuildTestTree();
-            AssertItemsWalkedFrom(0);
+            AssertItemsWalkedFrom(0, 9);
         }
 
         [Test]
-        public void MoveTo_Finds_2nd_Item()
+        public void Walks_From_2nd_Item()
         {
             BuildTestTree();
-            AssertItemsWalkedFrom(1);
+            AssertItemsWalkedFrom(1, 9);
         }
 
         [Test]
-        public void MoveTo_Finds_3rd_Item()
+        public void Walks_From_3rd_Item()
         {
             BuildTestTree();
-            AssertItemsWalkedFrom(2);
+            AssertItemsWalkedFrom(2, 8);
         }
 
         [Test]
-        public void MoveTo_Finds_4th_Item()
+        public void Walks_From_4th_Item()
         {
             BuildTestTree();
-            AssertItemsWalkedFrom(3);
+            AssertItemsWalkedFrom(3, 7);
         }
 
         [Test]
-        public void MoveTo_Finds_5th_Item()
+        public void Walks_From_5th_Item()
         {
             BuildTestTree();
-            AssertItemsWalkedFrom(4);
+            AssertItemsWalkedFrom(4, 6);
         }
 
 
         [Test]
-        public void MoveTo_Finds_6th_Item()
+        public void Walks_From_6th_Item()
         {
             BuildTestTree();
-            AssertItemsWalkedFrom(5);
+            AssertItemsWalkedFrom(5, 5);
         }
 
         [Test]
-        public void MoveTo_Finds_7th_Item()
+        public void Walks_From_7th_Item()
         {
             BuildTestTree();
-            AssertItemsWalkedFrom(6);
+            AssertItemsWalkedFrom(6, 9);
         }
 
         [Test]
-        public void MoveTo_Finds_8th_Item()
+        public void Walks_From_8th_Item()
         {
             BuildTestTree();
-            AssertItemsWalkedFrom(7);
+            AssertItemsWalkedFrom(7, 8);
         }
 
         [Test]
-        public void MoveTo_Finds_9th_Item()
+        public void Walks_From_9th_Item()
         {
             BuildTestTree();
-            AssertItemsWalkedFrom(8);
+            AssertItemsWalkedFrom(8, 8);
         }
 
         [Test]
-        public void MoveTo_Finds_10th_Item()
+        public void Walks_From_10th_Item()
         {
             BuildTestTree();
-            AssertItemsWalkedFrom(9);
+            AssertItemsWalkedFrom(9, 9);
         }
 
         [Test]
-        public void MoveTo_Returns_Null_When_Not_Found()
+        public void Walks_Duplicate_Keys_Within_Range()
         {
-            BuildTestTree();
-            Assert.IsNull(_walker.MoveTo(-1));
+            var rootNode = _mockDataProvider.GetRootNode(_degree);
+
+            var entry1 = new Entry<int, int>{ Key = 1, Pointer = 2 };
+            var entry2 = new Entry<int, int>{ Key = 2, Pointer = 4 };
+            var entry3 = new Entry<int, int>{ Key = 2, Pointer = 5 };
+
+            rootNode.EntryList.Add(entry1);
+            rootNode.EntryList.Add(entry2);
+            rootNode.EntryList.Add(entry3);
+
+            var walkedPointers = new List<int>();
+
+            _walker.SetRange(2, 2);
+
+            var result = _walker.Next();
+            while (result != null)
+            {
+                walkedPointers.Add(result.Pointer);
+                result = _walker.Next();
+            }
+
+            Assert.AreEqual(walkedPointers, new List<int>{4,5});
         }
 
-        void AssertItemsWalkedFrom(int startItem)
+        [Test]
+        public void Walks_Empty_List()
+        {
+            Assert.IsNull(_walker.Next());
+        }
+
+        [Test]
+        public void Walks_Empty_Range_In_Empty_Tree()
+        {
+            _walker.SetRange(1, 2);
+            Assert.IsNull(_walker.Next());
+        }
+
+        [Test]
+        public void Walks_Empty_Range_In_FilledTree()
+        {
+            BuildTestTree();
+
+            _walker.SetRange(11, 12);
+            Assert.IsNull(_walker.Next());
+        }
+
+        [Test]
+        public void Throws_On_Invalid_Range()
+        {
+            Assert.Throws<InvalidOperationException>(() =>_walker.SetRange(1, 0));
+        }
+
+        void AssertItemsWalkedFrom(int startItem, int endItem)
         {
             var walkedKeys = new List<int>();
-            var entry = _walker.MoveTo(startItem);
+
+            _walker.SetRange(startItem, endItem);
+
+            var entry = _walker.Next();
             while (entry != null)
             {
                 walkedKeys.Add(entry.Key);
                 entry = _walker.Next();
             }
 
-            var expected = Enumerable.Range(startItem, 10 - startItem);
+            var expected = Enumerable.Range(startItem, 1+ (endItem - startItem));
             Assert.AreEqual(walkedKeys, expected);
         }
+
 
         /*
          *                         [9]
@@ -299,7 +351,4 @@ namespace MarcelloDB.Test.Index
             });
         }
 	}
-
-
-
 }

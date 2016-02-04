@@ -62,7 +62,6 @@
     <Compile Include="Index\Node.cs" />
     <Compile Include="Index\Entry.cs" />
     <Compile Include="Records\NamedRecordsIndex.cs" />
-    <Compile Include="Index\ObjectComparer.cs" />
     <Compile Include="Serialization\JsonSerializer.cs" />
     <Compile Include="Index\RecordIndex.cs" />
     <Compile Include="Transactions\ITransactor.cs" />
@@ -90,9 +89,9 @@
     <Compile Include="Serialization\BtreeNodeSerializer.cs" />
     <Compile Include="Exceptions\ObjectNotFoundException.cs" />
     <Compile Include="Index\IndexDefinition.cs" />
-    <Compile Include="Index\IndexedFieldDescriptor.cs" />
     <Compile Include="Records\ValueWithAddressIndexKey.cs" />
     <Compile Include="Collections\IndexedValue.cs" />
+    <Compile Include="Index\ObjectComparer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

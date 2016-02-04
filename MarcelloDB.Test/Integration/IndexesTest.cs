@@ -3,6 +3,7 @@ using NUnit.Framework;
 using MarcelloDB.Collections;
 using MarcelloDB.Test.Classes;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace MarcelloDB.Test.Integration
 {
@@ -132,6 +133,30 @@ namespace MarcelloDB.Test.Integration
             Assert.IsEmpty(papers);
         }
 
+        [Test]
+        public void Find_Finds_All()
+        {
+            var toiletPaper = Article.ToiletPaper;
+            var tootPaste = new Article
+            {
+                ID = 5,
+                Name = "ToothPaste",
+                Description = "Tootpaste with Minty flavour",
+                Category = toiletPaper.Category
+            };
+
+            _articles.Persist(toiletPaper);
+            _articles.Persist(tootPaste);
+            _articles.Persist(Article.BarbieDoll);
+            _articles.Persist(Article.SpinalTapDvd);
+            _articles.Persist(Food.Bread);
+
+            var hygienicArticles = _articles.Indexes.Category.Find(toiletPaper.Category).ToList();
+
+            Assert.AreEqual(
+                new List<Article>{toiletPaper, tootPaste}.Select(a => a.ID),
+                hygienicArticles.Select(a => a.ID));
+        }
 
     }
 }

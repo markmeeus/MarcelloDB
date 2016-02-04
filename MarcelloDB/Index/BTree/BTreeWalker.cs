@@ -24,7 +24,13 @@ namespace MarcelloDB.Index.BTree
 
         ObjectComparer Comparer { get; set; }
 
-        internal BTreeWalker(int degree, IBTreeDataProvider<TK, TP> dataProvider )
+        TK StartAt { get; set; }
+
+        TK EndAt { get; set; }
+
+        bool WalkRange { get; set; }
+
+        internal BTreeWalker(int degree, IBTreeDataProvider<TK, TP> dataProvider)
         {
             this.Comparer = new ObjectComparer();
 
@@ -34,20 +40,38 @@ namespace MarcelloDB.Index.BTree
             Reset();
         }
 
-        public Entry<TK, TP> MoveTo(TK key)
+        public void SetRange(TK startAt, TK endAt)
         {
-            Reset();
-            return MoveToInternal(key);
-        }
+            if (Comparer.Compare(startAt, endAt) > 0)
+            {
+                throw new InvalidOperationException("startAt must be smaller then endAt");
+            }
 
+            Reset();
+            this.StartAt = startAt;
+            this.EndAt = endAt;
+            this.WalkRange = true;
+        }
 
         public Entry<TK, TP> Next()
         {
-            MoveNext();
-
-            if (this.CurrentEntryIndex < CurrentNode.EntryList.Count)
+            if (WalkRange && this.CurrentEntryIndex < 0 && this.BreadCrumbs.Count == 0)
             {
-                return CurrentNode.EntryList[this.CurrentEntryIndex];
+                MoveTo(this.StartAt);
+            }
+            else
+            {
+                MoveNext();
+            }
+
+            if (this.CurrentEntryIndex >= 0 && this.CurrentEntryIndex < CurrentNode.EntryList.Count)
+            {
+                var entry = CurrentNode.EntryList[this.CurrentEntryIndex];
+                if ((!this.WalkRange) || Comparer.Compare(entry.Key, this.EndAt) <= 0)
+                {
+                    return CurrentNode.EntryList[this.CurrentEntryIndex];
+                }
+                return null;
             }
 
             return null;
@@ -60,7 +84,7 @@ namespace MarcelloDB.Index.BTree
             this.CurrentNode = this.DataProvider.GetRootNode(this.Degree);
         }
 
-        Entry<TK, TP> MoveToInternal(TK key)
+        void MoveTo(TK key)
         {
             int i = this.CurrentNode.EntryList.Entries
                 .TakeWhile(entry => Comparer.Compare(key, entry.Key) > 0).Count();
@@ -70,13 +94,20 @@ namespace MarcelloDB.Index.BTree
             {
                 //found it
                 this.CurrentEntryIndex = i;
-                return this.CurrentNode.EntryList[i];
+                return;
             }
 
-            if (this.CurrentNode.IsLeaf)
+            else if (this.CurrentNode.IsLeaf)
             {
                 //it's a leaf, but no entry matches
-                return null;
+                Reset();
+                return;
+            }
+            else if (i >= this.CurrentNode.ChildrenAddresses.Count)
+            {
+                //Tree seems unbalanced, still, assume done
+                Reset();
+                return;
             }
 
             //push the breadcrumb
@@ -86,11 +117,11 @@ namespace MarcelloDB.Index.BTree
             };
             this.BreadCrumbs.Push(breadCrumb);
 
-            this.CurrentEntryIndex = 0;
+            // set the target child as current node
             this.CurrentNode = this.DataProvider.GetNode(this.CurrentNode.ChildrenAddresses[i]);
 
             //and search in childnode
-            return MoveToInternal(key);
+            MoveTo(key);
         }
 
         void MoveNext()

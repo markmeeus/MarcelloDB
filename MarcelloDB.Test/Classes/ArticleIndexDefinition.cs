@@ -7,7 +7,10 @@ namespace MarcelloDB.Test.Classes
     class ArticleIndexes : IndexDefinition<Article>
     {
         public IndexedValue<Article, string> Name { get; set;}
+
         public IndexedValue<Article, string> Description { get; set; }
+
+        public IndexedValue<Article, string> Category { get; set; }
 
         public IndexedValue<Article, string> NameAndDescription {
             get {

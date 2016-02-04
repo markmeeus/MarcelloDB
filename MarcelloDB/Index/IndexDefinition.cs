@@ -24,7 +24,7 @@ namespace MarcelloDB.Index
             this.Building = false;
         }
 
-        internal void SetContext(string collectionName,
+        internal void SetContext(Collection<T> collection,
             Session session,
             RecordManager recordManager,
             IObjectSerializer<T> serializer)
@@ -32,7 +32,7 @@ namespace MarcelloDB.Index
             foreach (var indexedValue in this.IndexedValues)
             {
                 ((dynamic)indexedValue).SetContext(
-                    collectionName, session, recordManager, serializer, indexedValue.PropertyName);
+                    collection, session, recordManager, serializer, indexedValue.PropertyName);
             }
         }
 
