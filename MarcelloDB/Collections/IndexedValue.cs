@@ -5,6 +5,7 @@ using MarcelloDB.Records;
 using MarcelloDB.Serialization;
 using MarcelloDB.Index;
 using System.Reflection;
+using System.Collections;
 
 namespace MarcelloDB.Collections
 {
@@ -41,27 +42,12 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<TObj> Find(TAttribute value)
         {
-            var index = new RecordIndex<ValueWithAddressIndexKey>(
-                this.Session,
-                this.RecordManager,
-                RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName),
-                this.Session.SerializerResolver.SerializerFor<Node<ValueWithAddressIndexKey, Int64>>()
-            );
-
-
-            var enumerator =  new CollectionEnumerator<TObj, ValueWithAddressIndexKey>(
-                this.Collection, Session, RecordManager, Serializer, index);
-
-            var key = new ValueWithAddressIndexKey{ V = (IComparable)value };
-
-            enumerator.SetRange(key, key);
-
-            return enumerator;
+            return BuildEnumerator(value, value);
         }
 
-        public IEnumerable<TObj> Find(IEnumerable<TAttribute> values)
+        public BetweenBuilder<TObj, TAttribute> Between(TAttribute startValue)
         {
-            return new List<TObj>{ default(TObj)};
+            return new BetweenBuilder<TObj, TAttribute>(this, startValue);
         }
 
         protected internal override object GetValue(object o)
@@ -76,6 +62,26 @@ namespace MarcelloDB.Collections
                 V = (IComparable)GetValue(o),
                 A = address
             };
+        }
+
+        internal CollectionEnumerator<TObj, ValueWithAddressIndexKey> BuildEnumerator(TAttribute startAt, TAttribute endAt)
+        {
+            var startAtKey = new ValueWithAddressIndexKey{ V = (IComparable)startAt };
+            var endAtKey = new ValueWithAddressIndexKey{ V = (IComparable)endAt };
+
+            var index = new RecordIndex<ValueWithAddressIndexKey>(
+                this.Session,
+                this.RecordManager,
+                RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName),
+                this.Session.SerializerResolver.SerializerFor<Node<ValueWithAddressIndexKey, Int64>>()
+            );
+
+            var enumerator =  new CollectionEnumerator<TObj, ValueWithAddressIndexKey>(
+                this.Collection, Session, RecordManager, Serializer, index);
+
+            enumerator.SetRange(startAtKey, endAtKey);
+
+            return enumerator;
         }
 
         internal Func<TObj, TAttribute> ValueFunction
