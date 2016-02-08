@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using MarcelloDB.Records;
 using MarcelloDB.Serialization;
 using MarcelloDB.Index;
+using MarcelloDB.Index.BTree;
 
 namespace MarcelloDB.Collections
 {
@@ -17,11 +18,9 @@ namespace MarcelloDB.Collections
 
         RecordIndex<TKey> Index { get; set; }
 
-        TKey StartAt { get; set; }
+        BTreeWalkerRange<TKey> Range { get; set; }
 
-        TKey EndAt { get; set; }
-
-        bool UseRange { get; set; }
+        bool HasRange{ get { return this.Range != null; } }
 
         public CollectionEnumerator(
             Collection<T> collection,
@@ -44,9 +43,9 @@ namespace MarcelloDB.Collections
                 try{
                     this.Collection.BlockModification = true;
                     var walker = this.Index.GetWalker();
-                    if(this.UseRange)
+                    if(this.HasRange)
                     {
-                        walker.SetRange(this.StartAt, this.EndAt);
+                        walker.SetRange(this.Range);
                     }
 
                     var node = walker.Next();
@@ -70,12 +69,9 @@ namespace MarcelloDB.Collections
             return GetEnumerator();
         }
 
-        internal void SetRange(TKey startAt, TKey endAt)
+        internal void SetRange(BTreeWalkerRange<TKey> range)
         {
-            this.StartAt = startAt;
-            this.EndAt = endAt;
-            this.UseRange = true;
+            this.Range = range;
         }
-
     }
 }

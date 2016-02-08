@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections;
+using MarcelloDB.Records;
+using MarcelloDB.Index.BTree;
 
 namespace MarcelloDB.Collections
 {
@@ -23,7 +25,10 @@ namespace MarcelloDB.Collections
 
         public IEnumerator<TObj> GetEnumerator()
         {
-            return this.IndexedValue.BuildEnumerator(this.StartAt, this.EndAt).GetEnumerator();
+            var startKey = new ValueWithAddressIndexKey{ V = (IComparable)this.StartAt };
+            var endKey =  new ValueWithAddressIndexKey{ V = (IComparable)this.EndAt };
+            return this.IndexedValue.BuildEnumerator(
+                new BTreeWalkerRange<ValueWithAddressIndexKey>(startKey, endKey)).GetEnumerator();
         }
 
         #endregion

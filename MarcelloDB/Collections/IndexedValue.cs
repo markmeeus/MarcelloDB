@@ -6,6 +6,7 @@ using MarcelloDB.Serialization;
 using MarcelloDB.Index;
 using System.Reflection;
 using System.Collections;
+using MarcelloDB.Index.BTree;
 
 namespace MarcelloDB.Collections
 {
@@ -42,12 +43,18 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<TObj> Find(TAttribute value)
         {
-            return BuildEnumerator(value, value);
+            var key = new ValueWithAddressIndexKey{ V = (IComparable)value };
+            return BuildEnumerator(new BTreeWalkerRange<ValueWithAddressIndexKey>(key, key));
         }
 
         public BetweenBuilder<TObj, TAttribute> Between(TAttribute startValue)
         {
             return new BetweenBuilder<TObj, TAttribute>(this, startValue);
+        }
+
+        public GreaterThan<TObj, TAttribute> GreaterThan(TAttribute value)
+        {
+            return new GreaterThan<TObj, TAttribute>(this, value);
         }
 
         protected internal override object GetValue(object o)
@@ -64,10 +71,9 @@ namespace MarcelloDB.Collections
             };
         }
 
-        internal CollectionEnumerator<TObj, ValueWithAddressIndexKey> BuildEnumerator(TAttribute startAt, TAttribute endAt)
+        internal CollectionEnumerator<TObj, ValueWithAddressIndexKey>
+            BuildEnumerator(BTreeWalkerRange<ValueWithAddressIndexKey> range)
         {
-            var startAtKey = new ValueWithAddressIndexKey{ V = (IComparable)startAt };
-            var endAtKey = new ValueWithAddressIndexKey{ V = (IComparable)endAt };
 
             var index = new RecordIndex<ValueWithAddressIndexKey>(
                 this.Session,
@@ -79,7 +85,7 @@ namespace MarcelloDB.Collections
             var enumerator =  new CollectionEnumerator<TObj, ValueWithAddressIndexKey>(
                 this.Collection, Session, RecordManager, Serializer, index);
 
-            enumerator.SetRange(startAtKey, endAtKey);
+            enumerator.SetRange(range);
 
             return enumerator;
         }

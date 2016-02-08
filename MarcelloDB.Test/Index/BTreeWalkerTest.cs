@@ -221,6 +221,29 @@ namespace MarcelloDB.Test.Index
         }
 
         [Test]
+        public void Walks_Items_Above()
+        {
+            BuildTestTree();
+            var walkedKeys = new List<int>();
+
+            var range = new BTreeWalkerRange<int>();
+            range.SetStartAt(3);
+            range.IncludeStartAt = false;
+            _walker.SetRange(range);
+
+            var entry = _walker.Next();
+            while (entry != null)
+            {
+                walkedKeys.Add(entry.Key);
+                entry = _walker.Next();
+            }
+
+            var expected = Enumerable.Range(4, 6);
+            Assert.AreEqual(walkedKeys, expected);
+        }
+
+
+        [Test]
         public void Walks_Duplicate_Keys_Within_Range()
         {
             var rootNode = _mockDataProvider.GetRootNode(_degree);
@@ -235,7 +258,7 @@ namespace MarcelloDB.Test.Index
 
             var walkedPointers = new List<int>();
 
-            _walker.SetRange(2, 2);
+            _walker.SetRange(new BTreeWalkerRange<int>(2, 2));
 
             var result = _walker.Next();
             while (result != null)
@@ -256,7 +279,7 @@ namespace MarcelloDB.Test.Index
         [Test]
         public void Walks_Empty_Range_In_Empty_Tree()
         {
-            _walker.SetRange(1, 2);
+            _walker.SetRange(new BTreeWalkerRange<int>( 1, 2));
             Assert.IsNull(_walker.Next());
         }
 
@@ -265,21 +288,22 @@ namespace MarcelloDB.Test.Index
         {
             BuildTestTree();
 
-            _walker.SetRange(11, 12);
+            _walker.SetRange(new BTreeWalkerRange<int>(11, 12));
             Assert.IsNull(_walker.Next());
         }
 
         [Test]
         public void Throws_On_Invalid_Range()
         {
-            Assert.Throws<InvalidOperationException>(() =>_walker.SetRange(1, 0));
+            Assert.Throws<InvalidOperationException>(
+                () =>_walker.SetRange(new BTreeWalkerRange<int>(1, 0)));
         }
 
         void AssertItemsWalkedFrom(int startItem, int endItem)
         {
             var walkedKeys = new List<int>();
 
-            _walker.SetRange(startItem, endItem);
+            _walker.SetRange(new BTreeWalkerRange<int>(startItem, endItem));
 
             var entry = _walker.Next();
             while (entry != null)

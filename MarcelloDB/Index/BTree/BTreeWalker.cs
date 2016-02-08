@@ -4,6 +4,40 @@ using System.Linq;
 
 namespace MarcelloDB.Index.BTree
 {
+    internal class BTreeWalkerRange<TK>
+    {
+        internal TK StartAt { get; set; }
+
+        internal bool HasStartAt { get; set; }
+
+        internal bool IncludeStartAt { get; set; }
+
+        internal TK EndAt { get; set; }
+
+        internal bool HasEndAt { get; set; }
+
+        internal BTreeWalkerRange() {}
+
+        internal BTreeWalkerRange(TK startAt, TK endAt)
+        {
+            this.SetStartAt(startAt);
+            this.SetEndAt(endAt);
+        }
+
+        internal void SetStartAt(TK startAt)
+        {
+            this.StartAt = startAt;
+            this.HasStartAt = true;
+            this.IncludeStartAt = true;
+        }
+
+        internal void SetEndAt(TK endAt)
+        {
+            this.EndAt = endAt;
+            this.HasEndAt = true;
+        }
+    }
+
     public class BTreeWalker<TK, TP>
     {
         class BreadCrumb
@@ -24,11 +58,7 @@ namespace MarcelloDB.Index.BTree
 
         ObjectComparer Comparer { get; set; }
 
-        TK StartAt { get; set; }
-
-        TK EndAt { get; set; }
-
-        bool WalkRange { get; set; }
+        BTreeWalkerRange<TK> Range { get;set; }
 
         internal BTreeWalker(int degree, IBTreeDataProvider<TK, TP> dataProvider)
         {
@@ -40,24 +70,35 @@ namespace MarcelloDB.Index.BTree
             Reset();
         }
 
-        public void SetRange(TK startAt, TK endAt)
+        internal void SetRange(BTreeWalkerRange<TK> range)
         {
-            if (Comparer.Compare(startAt, endAt) > 0)
+            if (range.HasStartAt && range.HasEndAt)
             {
-                throw new InvalidOperationException("startAt must be smaller then endAt");
+                if (Comparer.Compare(range.StartAt, range.EndAt) > 0)
+                {
+                    throw new InvalidOperationException("startAt must be smaller then endAt");
+                }
             }
 
+
             Reset();
-            this.StartAt = startAt;
-            this.EndAt = endAt;
-            this.WalkRange = true;
+            this.Range = range;
         }
 
         public Entry<TK, TP> Next()
         {
-            if (WalkRange && this.CurrentEntryIndex < 0 && this.BreadCrumbs.Count == 0)
+            if ((this.Range != null) && this.CurrentEntryIndex < 0 && this.BreadCrumbs.Count == 0)
             {
-                MoveTo(this.StartAt);
+                MoveTo(this.Range.StartAt);
+                if (!this.Range.IncludeStartAt)
+                {
+                    while (this.CurrentEntryIndex >= 0
+                          && this.CurrentEntryIndex < CurrentNode.EntryList.Count
+                          && Comparer.Compare(this.CurrentNode.EntryList[this.CurrentEntryIndex].Key, this.Range.StartAt) <= 0)
+                    {
+                        MoveNext();
+                    }
+                }
             }
             else
             {
@@ -67,7 +108,7 @@ namespace MarcelloDB.Index.BTree
             if (this.CurrentEntryIndex >= 0 && this.CurrentEntryIndex < CurrentNode.EntryList.Count)
             {
                 var entry = CurrentNode.EntryList[this.CurrentEntryIndex];
-                if ((!this.WalkRange) || Comparer.Compare(entry.Key, this.EndAt) <= 0)
+                if ((this.Range == null) || !this.Range.HasEndAt || Comparer.Compare(entry.Key, this.Range.EndAt) <= 0)
                 {
                     return CurrentNode.EntryList[this.CurrentEntryIndex];
                 }
