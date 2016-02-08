@@ -14,6 +14,8 @@ namespace MarcelloDB.Index.BTree
 
         internal TK EndAt { get; set; }
 
+        internal bool IncludeEndAt { get; set; }
+
         internal bool HasEndAt { get; set; }
 
         internal BTreeWalkerRange() {}
@@ -35,6 +37,7 @@ namespace MarcelloDB.Index.BTree
         {
             this.EndAt = endAt;
             this.HasEndAt = true;
+            this.IncludeEndAt = true;
         }
     }
 
@@ -87,7 +90,8 @@ namespace MarcelloDB.Index.BTree
 
         public Entry<TK, TP> Next()
         {
-            if ((this.Range != null) && this.CurrentEntryIndex < 0 && this.BreadCrumbs.Count == 0)
+            if (this.Range != null && this.Range.HasStartAt
+                && this.CurrentEntryIndex < 0 && this.BreadCrumbs.Count == 0)
             {
                 MoveTo(this.Range.StartAt);
                 if (!this.Range.IncludeStartAt)
@@ -108,9 +112,9 @@ namespace MarcelloDB.Index.BTree
             if (this.CurrentEntryIndex >= 0 && this.CurrentEntryIndex < CurrentNode.EntryList.Count)
             {
                 var entry = CurrentNode.EntryList[this.CurrentEntryIndex];
-                if ((this.Range == null) || !this.Range.HasEndAt || Comparer.Compare(entry.Key, this.Range.EndAt) <= 0)
+                if(EntryIsBeforeEndOfRange(entry))
                 {
-                    return CurrentNode.EntryList[this.CurrentEntryIndex];
+                    return entry;
                 }
                 return null;
             }
@@ -193,6 +197,21 @@ namespace MarcelloDB.Index.BTree
                 this.CurrentEntryIndex += 1;
             }
         }
+
+        bool EntryIsBeforeEndOfRange(Entry<TK, TP> entry)
+        {
+            if (this.Range == null)
+                return true;
+
+            if(!this.Range.HasEndAt)
+                return true;
+
+            if (this.Range.IncludeEndAt)
+                return Comparer.Compare(entry.Key, this.Range.EndAt) <= 0;
+            else
+                return Comparer.Compare(entry.Key, this.Range.EndAt) < 0;
+        }
+
     }
 }
 

@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections;
 using MarcelloDB.Records;
 using MarcelloDB.Index.BTree;
+using System.Collections;
 
 namespace MarcelloDB.Collections
 {
-    public class GreaterThan<TObj, TAttribute> : IEnumerable<TObj>
+    public class SmallerThan<TObj, TAttribute> : IEnumerable<TObj>
     {
         IndexedValue<TObj, TAttribute> IndexedValue { get; set; }
 
         TAttribute Value { get; set; }
 
-        internal GreaterThan(IndexedValue<TObj, TAttribute> indexedValue, TAttribute value)
+        internal SmallerThan(IndexedValue<TObj, TAttribute> indexedValue, TAttribute value)
         {
             this.IndexedValue = indexedValue;
             this.Value = value;
@@ -24,8 +24,8 @@ namespace MarcelloDB.Collections
         {
             var startKey = new ValueWithAddressIndexKey{ V = (IComparable)this.Value };
             var range = new BTreeWalkerRange<ValueWithAddressIndexKey>();
-            range.SetStartAt(startKey);
-            range.IncludeStartAt = false;
+            range.SetEndAt(startKey);
+            range.IncludeEndAt = false;
             return this.IndexedValue
                 .BuildEnumerator(range)
                 .GetEnumerator();

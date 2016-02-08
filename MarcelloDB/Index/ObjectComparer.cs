@@ -16,7 +16,6 @@ namespace MarcelloDB.Index
             {
                 return lngA.CompareTo(lngB);
             }
-
             return ((IComparable)a).CompareTo((IComparable)b);
         }
 

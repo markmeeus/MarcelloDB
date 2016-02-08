@@ -94,6 +94,7 @@
     <Compile Include="Index\ObjectComparer.cs" />
     <Compile Include="Collections\Between.cs" />
     <Compile Include="Collections\GreaterThan.cs" />
+    <Compile Include="Collections\SmallerThan.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

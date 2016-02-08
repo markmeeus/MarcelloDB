@@ -57,6 +57,11 @@ namespace MarcelloDB.Collections
             return new GreaterThan<TObj, TAttribute>(this, value);
         }
 
+        public SmallerThan<TObj, TAttribute> SmallerThan(TAttribute value)
+        {
+            return new SmallerThan<TObj, TAttribute>(this, value);
+        }
+
         protected internal override object GetValue(object o)
         {
             return (object)ValueFunction((TObj)o);
