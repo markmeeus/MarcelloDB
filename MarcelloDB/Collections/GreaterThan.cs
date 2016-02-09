@@ -12,10 +12,13 @@ namespace MarcelloDB.Collections
 
         TAttribute Value { get; set; }
 
-        internal GreaterThan(IndexedValue<TObj, TAttribute> indexedValue, TAttribute value)
+        bool OrEqual { get; set; }
+
+        internal GreaterThan(IndexedValue<TObj, TAttribute> indexedValue, TAttribute value, bool orEqual)
         {
             this.IndexedValue = indexedValue;
             this.Value = value;
+            this.OrEqual = orEqual;
         }
 
         #region IEnumerable implementation
@@ -25,7 +28,7 @@ namespace MarcelloDB.Collections
             var startKey = new ValueWithAddressIndexKey{ V = (IComparable)this.Value };
             var range = new BTreeWalkerRange<ValueWithAddressIndexKey>();
             range.SetStartAt(startKey);
-            range.IncludeStartAt = false;
+            range.IncludeStartAt = this.OrEqual;
             return this.IndexedValue
                 .BuildEnumerator(range)
                 .GetEnumerator();
