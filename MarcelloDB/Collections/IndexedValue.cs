@@ -7,6 +7,7 @@ using MarcelloDB.Index;
 using System.Reflection;
 using System.Collections;
 using MarcelloDB.Index.BTree;
+using MarcelloDB.Collections.Scopes;
 
 namespace MarcelloDB.Collections
 {

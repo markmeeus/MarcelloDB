@@ -4,7 +4,7 @@ using MarcelloDB.Records;
 using MarcelloDB.Index.BTree;
 using System.Collections;
 
-namespace MarcelloDB.Collections
+namespace MarcelloDB.Collections.Scopes
 {
     public class SmallerThan<TObj, TAttribute> : IEnumerable<TObj>
     {

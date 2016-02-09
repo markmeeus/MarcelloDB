@@ -4,7 +4,7 @@ using System.Collections;
 using MarcelloDB.Records;
 using MarcelloDB.Index.BTree;
 
-namespace MarcelloDB.Collections
+namespace MarcelloDB.Collections.Scopes
 {
     public class Between<TObj, TAttribute> : IEnumerable<TObj>
     {

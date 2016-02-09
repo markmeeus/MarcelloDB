@@ -92,9 +92,9 @@
     <Compile Include="Records\ValueWithAddressIndexKey.cs" />
     <Compile Include="Collections\IndexedValue.cs" />
     <Compile Include="Index\ObjectComparer.cs" />
-    <Compile Include="Collections\Between.cs" />
-    <Compile Include="Collections\GreaterThan.cs" />
-    <Compile Include="Collections\SmallerThan.cs" />
+    <Compile Include="Collections\Scopes\Between.cs" />
+    <Compile Include="Collections\Scopes\GreaterThan.cs" />
+    <Compile Include="Collections\Scopes\SmallerThan.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
@@ -109,5 +109,6 @@
   <ItemGroup />
   <ItemGroup>
     <Folder Include="Platform\" />
+    <Folder Include="Collections\Scopes\" />
   </ItemGroup>
 </Project>
