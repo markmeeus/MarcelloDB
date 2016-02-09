@@ -12,13 +12,22 @@ namespace MarcelloDB.Collections
 
         TAttribute StartAt { get; set; }
 
+        bool IncludeStartAt { get; set; }
+
         TAttribute EndAt { get; set; }
 
-        internal Between(IndexedValue<TObj, TAttribute> indexedValue, TAttribute startAt, TAttribute endAt)
+        bool IncludeEndAt { get; set; }
+
+        internal Between(
+            IndexedValue<TObj, TAttribute> indexedValue,
+            TAttribute startAt, bool includeStartAt,
+            TAttribute endAt, bool includeEndAt)
         {
             this.IndexedValue = indexedValue;
             this.StartAt = startAt;
+            this.IncludeStartAt = includeStartAt;
             this.EndAt = endAt;
+            this.IncludeEndAt = includeEndAt;
         }
 
         #region IEnumerable implementation
@@ -27,8 +36,10 @@ namespace MarcelloDB.Collections
         {
             var startKey = new ValueWithAddressIndexKey{ V = (IComparable)this.StartAt };
             var endKey =  new ValueWithAddressIndexKey{ V = (IComparable)this.EndAt };
-            return this.IndexedValue.BuildEnumerator(
-                new BTreeWalkerRange<ValueWithAddressIndexKey>(startKey, endKey)).GetEnumerator();
+            var range = new BTreeWalkerRange<ValueWithAddressIndexKey>(startKey, endKey);
+            range.IncludeStartAt = this.IncludeStartAt;
+            range.IncludeEndAt = this.IncludeEndAt;
+            return this.IndexedValue.BuildEnumerator(range).GetEnumerator();
         }
 
         #endregion
@@ -49,15 +60,23 @@ namespace MarcelloDB.Collections
 
         TAttribute StartAt { get; set; }
 
-        internal BetweenBuilder(IndexedValue<TObj, TAttribute> indexedValue, TAttribute startAt)
+        bool IncludeStartAt { get; set; }
+
+        internal BetweenBuilder(IndexedValue<TObj, TAttribute> indexedValue, TAttribute startAt, bool includeStartAt)
         {
             this.IndexedValue = indexedValue;
             this.StartAt = startAt;
+            this.IncludeStartAt = includeStartAt;
         }
 
         public Between<TObj,TAttribute> And(TAttribute endAt)
         {
-            return new Between<TObj, TAttribute>(this.IndexedValue, this.StartAt, endAt);
+            return new Between<TObj, TAttribute>(this.IndexedValue, this.StartAt, this.IncludeStartAt, endAt, false);
+        }
+
+        public Between<TObj,TAttribute> AndIncluding(TAttribute endAt)
+        {
+            return new Between<TObj, TAttribute>(this.IndexedValue, this.StartAt, this.IncludeStartAt, endAt, true);
         }
     }
 }

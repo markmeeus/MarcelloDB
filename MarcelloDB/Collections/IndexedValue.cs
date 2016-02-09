@@ -49,7 +49,12 @@ namespace MarcelloDB.Collections
 
         public BetweenBuilder<TObj, TAttribute> Between(TAttribute startValue)
         {
-            return new BetweenBuilder<TObj, TAttribute>(this, startValue);
+            return new BetweenBuilder<TObj, TAttribute>(this, startValue, false);
+        }
+
+        public BetweenBuilder<TObj, TAttribute> BetweenIncluding(TAttribute startValue)
+        {
+            return new BetweenBuilder<TObj, TAttribute>(this, startValue, true);
         }
 
         public GreaterThan<TObj, TAttribute> GreaterThan(TAttribute value)
