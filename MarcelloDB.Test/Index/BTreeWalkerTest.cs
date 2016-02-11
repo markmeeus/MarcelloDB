@@ -221,6 +221,24 @@ namespace MarcelloDB.Test.Index
         }
 
         [Test]
+        public void Walks_In_Range_Not_In_Tree()
+        {
+            BuildTestTree();
+            _walker.SetRange(new BTreeWalkerRange<int>(-1, 11));
+
+            var walkedKeys = new List<int>();
+            var entry = _walker.Next();
+            while (entry != null)
+            {
+                walkedKeys.Add(entry.Key);
+                entry = _walker.Next();
+            }
+
+            var expected = Enumerable.Range(0, 10);
+            Assert.AreEqual(expected, walkedKeys);
+        }
+
+        [Test]
         public void Walks_Items_Above()
         {
             BuildTestTree();
@@ -268,6 +286,35 @@ namespace MarcelloDB.Test.Index
             }
 
             Assert.AreEqual(walkedPointers, new List<int>{4,5});
+        }
+
+        [Test]
+        public void Ignores_All_Non_Included()
+        {
+            var rootNode = _mockDataProvider.GetRootNode(_degree);
+
+            rootNode.EntryList.Add(new Entry<int, int>{ Key = 1, Pointer = 1 });
+            rootNode.EntryList.Add(new Entry<int, int>{ Key = 1, Pointer = 2 });
+            rootNode.EntryList.Add(new Entry<int, int>{ Key = 2, Pointer = 3 });
+            rootNode.EntryList.Add(new Entry<int, int>{ Key = 3, Pointer = 4 });
+            rootNode.EntryList.Add(new Entry<int, int>{ Key = 3, Pointer = 5 });
+            rootNode.EntryList.Add(new Entry<int, int>{ Key = 4, Pointer = 6 });
+
+
+            var walkedPointers = new List<int>();
+            var range = new  BTreeWalkerRange<int>(1, 4);
+            range.IncludeStartAt = false;
+            range.IncludeEndAt = false;
+            _walker.SetRange(range);
+
+            var result = _walker.Next();
+            while (result != null)
+            {
+                walkedPointers.Add(result.Pointer);
+                result = _walker.Next();
+            }
+
+            Assert.AreEqual(walkedPointers, new List<int>{3, 4,5});
         }
 
         [Test]

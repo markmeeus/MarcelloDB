@@ -94,6 +94,11 @@ namespace MarcelloDB.Index.BTree
                 && this.CurrentEntryIndex < 0 && this.BreadCrumbs.Count == 0)
             {
                 MoveTo(this.Range.StartAt);
+                if (this.CurrentEntryIndex < 0)
+                {
+                    //No current item, move next;
+                    MoveNext();
+                }
                 if (!this.Range.IncludeStartAt)
                 {
                     while (this.CurrentEntryIndex >= 0
@@ -145,13 +150,13 @@ namespace MarcelloDB.Index.BTree
             else if (this.CurrentNode.IsLeaf)
             {
                 //it's a leaf, but no entry matches
-                Reset();
+                this.CurrentEntryIndex = i;
                 return;
             }
             else if (i >= this.CurrentNode.ChildrenAddresses.Count)
             {
-                //Tree seems unbalanced, still, assume done
-                Reset();
+                //tree seems unbalanced
+                this.CurrentEntryIndex = i;
                 return;
             }
 
