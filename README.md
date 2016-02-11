@@ -59,7 +59,7 @@ MarcelloDB organizes it's data in collection-files and collections. A single ses
 
 (This way you can have all read-only data in a single file which you can download straight from your servers. Another file could be used to write data f.i.)
 
-You user collection-files like this:
+You access collection-files like this:
 ```cs
 var productsFile = session["products"];
 ```
