@@ -66,9 +66,9 @@ var productsFile = session["products"];
 
 With this collection-file, you can start accessing collections.
 Collections are a bit like tables, the main difference is that they contain entire objects, not just rows with colums.
-A collection can only handle objects of a specific type (including subclasses);
+A collection can only handle objects of a specific type (including subclasses).
 
-To start working with a collection, simple access it like this:
+You can get the collection form the collection-file like this:
 ```cs
 //Deals with instances of Book or subclasses of Book
 var bookCollection = productsFile.Collection<Book>("books");
@@ -224,11 +224,25 @@ Roadmap
 
 0.2.0
 -
-- Indexed Properties
+- ~~Indexing properties~~
+- ~~Indexing user-defined values~~
+- ~~Iterating indexes~~
+- ~~Iterating a range from an index~~
 
 0.3.0
 -
-- Indexed Properties of nested objects
+- Iterating indexes in descending order
+- Iterating index keys only
+
+0.4.0
+-
+- Indexing list of values
+- Contains/ContainsAll query
+
+
+0.5.0
+-
+- Unique indexes
 
 1.0.0
 -
