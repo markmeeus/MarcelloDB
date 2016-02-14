@@ -239,10 +239,10 @@ Roadmap
 - Indexing list of values
 - Contains/ContainsAll query
 
-
 0.5.0
 -
-- Unique indexes
+- Unique index attribute
+- IncludeNull index attribute
 
 1.0.0
 -

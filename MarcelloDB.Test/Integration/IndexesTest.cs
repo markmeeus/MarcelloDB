@@ -159,6 +159,23 @@ namespace MarcelloDB.Test.Integration
         }
 
         [Test]
+        public void Find_Finds_Null_Values()
+        {
+            var article1 = new Article{ID = 1, Name = "Article1", Description = null};
+            var article2 = new Article{ID = 2, Name = "Artcile2", Description = null};
+
+            _articles.Persist(article1);
+            _articles.Persist(article2);
+
+            var articles = _articles.Indexes.Category.Find(null).ToList();
+
+            Assert.AreEqual(
+                new List<int>{1, 2},
+                articles.Select(a => a.ID));
+        }
+
+
+        [Test]
         public void Finds_Between()
         {
             _articles.Persist(new Article(){ ID = 1, Name = "Item 1", Description = "Desc 1", Category = "Cat1" });
@@ -173,6 +190,7 @@ namespace MarcelloDB.Test.Integration
                 new List<int>{ 2, 3, 4, 5}, found.Select(a => a.ID));
         }
 
+
         [Test]
         public void Finds_Between_Including_Start()
         {
@@ -186,6 +204,21 @@ namespace MarcelloDB.Test.Integration
             var found = _articles.Indexes.Category.BetweenIncluding("Cat2").And("Cat4").ToList();
             Assert.AreEqual(
                 new List<int>{ 2, 3, 4, 5}, found.Select(a => a.ID));
+        }
+
+        [Test]
+        public void Finds_Between_Including_Start_With_Null_Values()
+        {
+            _articles.Persist(new Article(){ ID = 1, Description = null});
+            _articles.Persist(new Article(){ ID = 2, Description = null});
+            _articles.Persist(new Article(){ ID = 3, Description = "Desc 3"});
+            _articles.Persist(new Article(){ ID = 4, Description = "Desc 4"});
+            _articles.Persist(new Article(){ ID = 5, Description = "Desc 5"});
+            _articles.Persist(new Article(){ ID = 6, Description = "Desc 6"});
+
+            var found = _articles.Indexes.Description.BetweenIncluding(null).And("Desc 4").ToList();
+            Assert.AreEqual(
+                new List<int>{ 1, 2, 3}, found.Select(a => a.ID));
         }
 
         [Test]

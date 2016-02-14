@@ -12,7 +12,7 @@ namespace MarcelloDB.Records
         public int CompareTo(object obj)
         {
             var other = (ValueWithAddressIndexKey)obj;
-            var valueCompared = V.CompareTo(other.V);
+            var valueCompared = CompareValues(other);
             if(valueCompared == 0)
             {
                 if (A > 0 && other.A > 0) //no address is any of them considered equal
@@ -33,5 +33,23 @@ namespace MarcelloDB.Records
         }
 
         #endregion
+
+        int CompareValues(ValueWithAddressIndexKey other)
+        {
+            if (this.V == null)
+            {
+                if (other.V == null)
+                {
+                    return 0;
+                }
+                return -1;
+            }
+            else if (other.V == null)
+            {
+                return 1;
+            }
+
+            return V.CompareTo(other.V);
+        }
     }
 }
