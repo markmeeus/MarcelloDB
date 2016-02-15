@@ -311,5 +311,18 @@ namespace MarcelloDB.Test.Integration
             Assert.AreEqual(
                 new List<int>{1, 2 ,3, 4, 5, 6}, found.Select(a => a.ID));
         }
+
+        [Test]
+        public void Cannot_Update_While_Iterating()
+        {
+            _articles.Persist(new Article(){ ID = 1, Name = "Item 1", Description = "Desc 1", Category = "Cat1" });
+            _articles.Persist(new Article(){ ID = 2, Name = "Item 2a", Description = "Desc 2a", Category = "Cat2" });
+            Assert.Throws<InvalidOperationException>(() =>
+                {
+                    foreach(var article in _articles.Indexes.Name.GreaterThan(null)){
+                        _articles.Persist(Article.SpinalTapDvd);
+                    }
+                });
+        }
     }
 }
