@@ -11,8 +11,12 @@ namespace MarcelloDB
         // first Int64 points to the collection file root record
         internal const int INITIAL_HEAD = sizeof(Int64);
 
+        internal const int CURRENT_FORMAT_VERSION = 1;
+
         //to make it serializable
         public Dictionary<string, Int64> CollectionRootAddresses { get; set; }
+
+        public int FormatVersion { get; set; }
 
         internal bool IsDirty { get; private set;}
 
@@ -20,6 +24,7 @@ namespace MarcelloDB
         {
             this.Head = INITIAL_HEAD;
             this.CollectionRootAddresses = new Dictionary<string, long>();
+            this.FormatVersion = CURRENT_FORMAT_VERSION;
             this.IsDirty = true;
         }
 
@@ -47,6 +52,15 @@ namespace MarcelloDB
             }
         }
 
+        internal void Validate()
+        {
+            if (this.FormatVersion != CURRENT_FORMAT_VERSION)
+            {
+                throw new InvalidOperationException(
+                    string.Format("This collectionfile was created with a previous and unsupported version of MarcellodB")
+                );
+            }
+        }
 
         internal void SetCollectionRootAddress(string collectionName, Int64 address)
         {

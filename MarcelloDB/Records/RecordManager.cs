@@ -289,6 +289,7 @@ namespace MarcelloDB.Records
                 _rootRecord = this.GetRecord(rootAddress);
                 _root = this.Session.SerializerResolver.SerializerFor<CollectionFileRoot>()
                     .Deserialize(_rootRecord.Data);
+                _root.Validate();
             }
             else
             {

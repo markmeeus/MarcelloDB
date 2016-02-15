@@ -137,6 +137,24 @@ namespace MarcelloDB.Test.Records
             Assert.AreEqual(123, deserialized.CollectionRootAddress("123"));
             Assert.AreEqual(456, deserialized.CollectionRootAddress("456"));
         }
+
+        [Test]
+        public void Sets_FormatVersion()
+        {
+            Assert.AreEqual(1, CollectionFileRoot.Create().FormatVersion);
+        }
+
+        [Test]
+        public void Throws_When_FormatVersion_Conflicts()
+        {
+            var collectionFileRoot = CollectionFileRoot.Create();
+            collectionFileRoot.FormatVersion = 0;
+
+            Assert.Throws<InvalidOperationException>(() =>
+                {
+                    collectionFileRoot.Validate();        
+                });
+        }
     }
 }
 
