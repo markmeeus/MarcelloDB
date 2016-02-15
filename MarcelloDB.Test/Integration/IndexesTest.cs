@@ -134,6 +134,22 @@ namespace MarcelloDB.Test.Integration
         }
 
         [Test]
+        public void All_Enumerates_All()
+        {
+            var article1 = new Article{ID = 1, Name = "Article1", Description = "Description 1"};
+            var article2 = new Article{ID = 2, Name = "Artcile2", Description = "Description 2"};
+
+            _articles.Persist(article1);
+            _articles.Persist(article2);
+
+            var articles = _articles.Indexes.Description.All.ToList();
+
+            Assert.AreEqual(
+                new List<int>{1, 2},
+                articles.Select(a => a.ID));
+        }
+
+        [Test]
         public void Find_Finds_All()
         {
             var toiletPaper = Article.ToiletPaper;

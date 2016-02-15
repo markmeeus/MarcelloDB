@@ -48,6 +48,13 @@ namespace MarcelloDB.Collections
             return BuildEnumerator(new BTreeWalkerRange<ValueWithAddressIndexKey>(key, key));
         }
 
+        public All<TObj, TAttribute> All{
+            get
+            {
+                return new All<TObj, TAttribute>(this);
+            }
+        }
+
         public BetweenBuilder<TObj, TAttribute> Between(TAttribute startValue)
         {
             return new BetweenBuilder<TObj, TAttribute>(this, startValue, false);

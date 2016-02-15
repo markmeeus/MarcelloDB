@@ -95,6 +95,7 @@
     <Compile Include="Collections\Scopes\Between.cs" />
     <Compile Include="Collections\Scopes\GreaterThan.cs" />
     <Compile Include="Collections\Scopes\SmallerThan.cs" />
+    <Compile Include="Collections\Scopes\All.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
