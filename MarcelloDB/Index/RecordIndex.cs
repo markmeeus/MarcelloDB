@@ -21,8 +21,6 @@ namespace MarcelloDB.Index
 
     internal class RecordIndex<TNodeKey> : SessionBoundObject
     {
-        public string Name { get; private set; }
-
         IBTree<TNodeKey, Int64> Tree { get; set; }
 
         IBTreeDataProvider<TNodeKey, Int64> DataProvider { get; set; }
@@ -31,7 +29,6 @@ namespace MarcelloDB.Index
             string indexName,
             IObjectSerializer<Node<TNodeKey, Int64>> serializer) : base(session)
         {
-            this.Name = indexName;
             this.DataProvider = new RecordBTreeDataProvider<TNodeKey>(
                 this.Session,
                 recordManager,
