@@ -57,7 +57,7 @@ namespace MarcelloDB.Test.Records
         }
 
         [Test]
-        public void Set_Head_To_Different_Value_Keeps_It_Clean()
+        public void Set_Head_To_Different_Value_Makes_It_Dirty()
         {
             var collectionFileRoot = CollectionFileRoot.Create();
             collectionFileRoot.Head = 1;
