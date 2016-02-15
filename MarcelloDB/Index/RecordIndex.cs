@@ -13,10 +13,9 @@ namespace MarcelloDB.Index
 
         internal static string GetIndexName<T>(string collectionName, string indexName)
         {
-            return string.Format("__{0}__{1}_{2}",
-                indexName,
+            return string.Format("__INDEX_{0}_{1}",
                 collectionName.ToUpper(),
-                typeof(T).Name.ToUpper());
+                indexName.ToUpper());
         }
     }
 
