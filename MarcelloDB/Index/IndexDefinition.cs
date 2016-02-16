@@ -14,11 +14,15 @@ namespace MarcelloDB.Index
     {
         internal List<IndexedValue> IndexedValues { get; set; }
 
-        protected bool Building { get; set; }
+        internal bool Building { get; set; }
 
         public IndexDefinition()
         {
             this.IndexedValues = new List<IndexedValue>();
+        }
+
+        internal void Initialize()
+        {
             this.Building = true;
             this.BuildIndexedValues();
             this.Building = false;

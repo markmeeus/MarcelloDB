@@ -74,6 +74,7 @@
     <Compile Include="Integration\BasicsTest.cs" />
     <Compile Include="Integration\IndexesTest.cs" />
     <Compile Include="Classes\ArticleIndexDefinition.cs" />
+    <Compile Include="Index\IndexDefinitionValidatorTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

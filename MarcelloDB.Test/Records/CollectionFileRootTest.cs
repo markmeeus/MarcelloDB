@@ -152,7 +152,7 @@ namespace MarcelloDB.Test.Records
 
             Assert.Throws<InvalidOperationException>(() =>
                 {
-                    collectionFileRoot.Validate();        
+                    collectionFileRoot.Validate();
                 });
         }
     }

@@ -4,6 +4,7 @@ using MarcelloDB.Collections;
 using MarcelloDB.Test.Classes;
 using System.Linq;
 using System.Collections.Generic;
+using MarcelloDB.Index;
 
 namespace MarcelloDB.Test.Integration
 {
@@ -338,6 +339,20 @@ namespace MarcelloDB.Test.Integration
                     foreach(var article in _articles.Indexes.Name.GreaterThan(null)){
                         _articles.Persist(Article.SpinalTapDvd);
                     }
+                });
+        }
+
+        class UnexpectedIndexedAttributeDefinition : IndexDefinition<Article>
+        {
+            public string Description { get; set; }
+        }
+
+        [Test]
+        public void Throws_When_IndexDefinition_Contains_Unexpected_Property()
+        {
+            Assert.Throws<InvalidOperationException>(() =>
+                {
+                    _collectionFile.Collection<Article, UnexpectedIndexedAttributeDefinition>("unexpected");
                 });
         }
     }
