@@ -39,9 +39,7 @@ namespace MarcelloDB.Index
                 {
                     UnexpectedPropertyTypeError(prop.Name, prop.PropertyType.Name);
                 }
-
             }
-
         }
 
         static void ValidateAttribute<T>(IndexDefinition<T> definition, Type targetType, PropertyInfo property, Type expectedType)
@@ -65,7 +63,6 @@ namespace MarcelloDB.Index
                     NoTargetProperty(targetType.Name, property.Name);
                 }
             }
-
         }
 
         static void ValidateGetterAndSetter<T>(IndexDefinition<T> definition, PropertyInfo property)

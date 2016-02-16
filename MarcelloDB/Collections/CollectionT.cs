@@ -34,8 +34,6 @@ namespace MarcelloDB.Collections
             RecordManager recordManager) :
         base(session, collectionFile, name, serializer, recordManager)
         {
-            //Validate on separate instance of indef definition
-            //To allow the validator to test some state changing methods without breaking the collection's indexed
             IndexDefinitionValidator.Validate<T, TIndexDef>();
 
             this.Indexes = new TIndexDef();
