@@ -49,7 +49,6 @@ namespace MarcelloDB.Collections
                 ThrowCollectionDefinedForOtherType<T>(collectionName);
             }
             return (Collection<T>)Collections[collectionName];
-
         }
 
         public Collection<T,TIndexDef> Collection<T, TIndexDef>(string collectionName)
@@ -75,7 +74,6 @@ namespace MarcelloDB.Collections
                 ThrowCollectionDefinedForOtherType<T>(collectionName);
             }
             return (Collection<T, TIndexDef>)Collections[collectionName];
-
         }
 
         void ThrowCollectionDefinedForOtherType<T>(string collectionName)

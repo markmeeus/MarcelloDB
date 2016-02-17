@@ -79,7 +79,8 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<T> All
         {
-            get{
+            get
+            {
                 var index = new RecordIndex<object>(
                     this.Session,
                     this.RecordManager,
@@ -191,7 +192,8 @@ namespace MarcelloDB.Collections
             }
         }
 
-        object GetObjectIDOrThrow(T obj){
+        object GetObjectIDOrThrow(T obj)
+        {
             var objectID = new ObjectProxy<T>(obj).ID;
             if(objectID == null){
                 throw new IDMissingException(obj.GetType().Name +

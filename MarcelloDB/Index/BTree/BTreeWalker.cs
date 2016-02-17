@@ -82,8 +82,7 @@ namespace MarcelloDB.Index.BTree
                     throw new InvalidOperationException("startAt must be smaller then endAt");
                 }
             }
-
-
+                
             Reset();
             this.Range = range;
         }
@@ -123,7 +122,6 @@ namespace MarcelloDB.Index.BTree
                 }
                 return null;
             }
-
             return null;
         }
 
@@ -216,7 +214,6 @@ namespace MarcelloDB.Index.BTree
             else
                 return Comparer.Compare(entry.Key, this.Range.EndAt) < 0;
         }
-
     }
 }
 

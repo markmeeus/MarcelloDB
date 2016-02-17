@@ -11,6 +11,7 @@ namespace MarcelloDB
         // first Int64 points to the collection file root record
         internal const int INITIAL_HEAD = sizeof(Int64);
 
+        //Defines the format of file structure. Only change this value if backwards compatibility is broken.
         internal const int CURRENT_FORMAT_VERSION = 1;
 
         //to make it serializable
@@ -28,10 +29,16 @@ namespace MarcelloDB
             this.IsDirty = true;
         }
 
+        public static CollectionFileRoot Create()
+        {
+            return new CollectionFileRoot();
+        }
+
         Int64 _head;
         public Int64 Head {
             get { return _head; }
-            set {
+            set
+            {
                 if (_head != value)
                 {
                     _head = value;
@@ -43,7 +50,8 @@ namespace MarcelloDB
         Int64 _namedRecordIndexAddress;
         public Int64 NamedRecordIndexAddress {
             get { return _namedRecordIndexAddress; }
-            set {
+            set
+            {
                 if (_namedRecordIndexAddress != value)
                 {
                     _namedRecordIndexAddress = value;
@@ -77,15 +85,9 @@ namespace MarcelloDB
             return this.CollectionRootAddresses[collectionName];
         }
 
-
         internal void Clean()
         {
             this.IsDirty = false;
-        }
-
-        public static CollectionFileRoot Create()
-        {
-            return new CollectionFileRoot();
         }
     }
 }

@@ -34,7 +34,8 @@ namespace MarcelloDB.Collections
 
         Func<TObj, TAttribute> _propValueFunction;
 
-        internal IndexedValue(Func<TObj, TAttribute> valueFunction):base(null){
+        internal IndexedValue(Func<TObj, TAttribute> valueFunction):base(null)
+        {
             this._userValueFunction = valueFunction;
         }
 
@@ -48,7 +49,8 @@ namespace MarcelloDB.Collections
             return BuildEnumerator(new BTreeWalkerRange<ValueWithAddressIndexKey>(key, key));
         }
 
-        public All<TObj, TAttribute> All{
+        public All<TObj, TAttribute> All
+        {
             get
             {
                 return new All<TObj, TAttribute>(this);
