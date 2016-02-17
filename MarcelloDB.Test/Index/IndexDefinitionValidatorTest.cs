@@ -117,7 +117,7 @@ namespace MarcelloDB.Test.Index
 
         class DefinitionWithNoSetter : IndexDefinition<Article>
         {
-            public IndexedValue<Article, string> Description { get;}
+            public IndexedValue<Article, string> Description { get { return null; } }
         }
 
         [Test]

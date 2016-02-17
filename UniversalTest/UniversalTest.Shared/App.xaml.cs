@@ -41,9 +41,9 @@ namespace UniversalTest
 
             var dataFolderPath = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
             var session = new MarcelloDB.Session(new Platform(), dataFolderPath);
-            var collection = session["data"].Collection<Article>("articles");
-            
-            for(int i =0; i < 1000; i++)
+            var collection = session["data"].Collection<Article, ArticleIndex>("articles");
+
+            for (int i = 0; i < 1000; i++)
             {
                 collection.Persist(new Article { ID = i, Name = string.Format("Article_{0}", i) });
             }
@@ -52,6 +52,14 @@ namespace UniversalTest
                 var article = collection.Find(i);
                 System.Diagnostics.Debug.Assert(article != null);
             }
+            foreach (var article in collection.Indexes.Name.Between("Article_110").And("Article_120"))
+            {
+                System.Diagnostics.Debug.Assert(article != null);
+            }
+            
+            System.Diagnostics.Debug.Assert(
+                collection.Indexes.Name.Between("Article_110").AndIncluding("Article_120").Count() == 11
+            );            
         }
 
         /// <summary>
