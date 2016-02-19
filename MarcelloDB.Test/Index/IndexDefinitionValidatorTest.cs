@@ -32,7 +32,7 @@ namespace MarcelloDB.Test.Index
             }catch(Exception e){
                 message = e.Message;
             }
-            Assert.AreEqual("Unexpected property Description of type String. Properties of an IndexDefinition should be of type IndexedValue<,>.", message);
+            Assert.AreEqual("DefinitionWithWrongProperty: Unexpected property Description of type String. Properties of an IndexDefinition should be of type IndexedValue<,>.", message);
         }
 
         class DefinitionWithWrongGenericProperty : IndexDefinition<Article>
@@ -57,7 +57,7 @@ namespace MarcelloDB.Test.Index
             }catch(Exception e){
                 message = e.Message;
             }
-            Assert.AreEqual("Unexpected property Description of type List`1. Properties of an IndexDefinition should be of type IndexedValue<,>."
+            Assert.AreEqual("DefinitionWithWrongGenericProperty: Unexpected property Description of type List`1. Properties of an IndexDefinition should be of type IndexedValue<,>."
                 , message);
         }
 
@@ -83,7 +83,7 @@ namespace MarcelloDB.Test.Index
             }catch(Exception e){
                 message = e.Message;
             }
-            Assert.AreEqual("Property Description cannot be indexed as a String because it is of type Int32." +
+            Assert.AreEqual("DefinitionWithWrongAttributePropertyType: Property Description cannot be indexed as a String because it is of type Int32." +
                 "\nDid you mean:" +
                 "\npublic IndexedValue<Article, Int32> Description {get; set;}"
                 , message);
@@ -111,7 +111,7 @@ namespace MarcelloDB.Test.Index
             }catch(Exception e){
                 message = e.Message;
             }
-            Assert.AreEqual("NoSuchProperty cannot be indexed because NoSuchProperty does not exist on Article."
+            Assert.AreEqual("DefinitionWithNonExistingProperty: NoSuchProperty cannot be indexed because NoSuchProperty does not exist on Article."
                 , message);
         }
 
@@ -137,7 +137,7 @@ namespace MarcelloDB.Test.Index
             }catch(Exception e){
                 message = e.Message;
             }
-            Assert.AreEqual("Description does not have a setter. It looks like a default IndexedValue (because it returns null by default). Either add a setter or return base.IndexedValue()"
+            Assert.AreEqual("DefinitionWithNoSetter: Description does not have a setter. It looks like a default IndexedValue (because it returns null by default). Either add a setter or return base.IndexedValue()"
                 , message);
         }
 
@@ -163,7 +163,7 @@ namespace MarcelloDB.Test.Index
             }catch(Exception e){
                 message = e.Message;
             }
-            Assert.AreEqual("Description has a broken set method. It looks like a default IndexedValue (because it returns null by default), however, get is not returning what was set."
+            Assert.AreEqual("DefinitionWithBrokenSetter: Description has a broken set method. It looks like a default IndexedValue (because it returns null by default), however, get is not returning what was set."
                 , message);
         }
 
