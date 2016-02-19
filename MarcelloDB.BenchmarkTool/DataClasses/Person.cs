@@ -1,8 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using MarcelloDB.Index;
+using MarcelloDB.Collections;
 
 namespace MarcelloDB.BenchmarkTool.DataClasses
 {
+    public class PersonIndexes : IndexDefinition<Person>
+    {
+        public  IndexedValue<Person, string> FirstName { get; set; }
+        public  IndexedValue<Person, string> LastName { get; set; }
+        public IndexedValue<Person, string> FullName
+        {
+            get {
+                return base.IndexedValue(p => string.Format("{0} {1}", p.FirstName, p.LastName));
+            }
+        }
+    }
+
     public class Person: Base
     {
         static Random _rand = new Random();

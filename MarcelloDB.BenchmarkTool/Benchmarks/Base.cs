@@ -8,7 +8,7 @@ namespace MarcelloDB.BenchmarkTool.Benchmarks
 {
     public class Base
     {
-        protected MarcelloDB.Collections.Collection<Person> Collection {get; set;}
+        protected MarcelloDB.Collections.Collection<Person, PersonIndexes> Collection {get; set;}
 
         public Base()
         {
@@ -29,7 +29,7 @@ namespace MarcelloDB.BenchmarkTool.Benchmarks
             var platform = new MarcelloDB.netfx.Platform();
             using (var session = new Session(platform, dataPath))
             {
-                this.Collection = session["data"].Collection<Person>("persons");
+                this.Collection = session["data"].Collection<Person, PersonIndexes>("persons");
                 OnSetup();
 
                 w = Stopwatch.StartNew();
