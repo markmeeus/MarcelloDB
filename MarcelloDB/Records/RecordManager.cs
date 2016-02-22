@@ -7,6 +7,7 @@ using MarcelloDB.Index;
 using MarcelloDB.Transactions;
 using MarcelloDB.Collections;
 using System.Collections.Generic;
+using MarcelloDB.Index.BTree;
 
 namespace MarcelloDB.Records
 {
@@ -235,12 +236,12 @@ namespace MarcelloDB.Records
             return UsingEmptyRecordIndex(()=>{
                 var walker = this.EmptyRecordIndex.GetWalker();
 
+                var range = new BTreeWalkerRange<EmptyRecordIndexKey>();
+                range.SetStartAt(new EmptyRecordIndexKey{S = minimumLength, A = 0});
+                walker.SetRange(range);
+
                 var entry = walker.Next();
 
-                while (entry != null && entry.Key.S < minimumLength)
-                {
-                    entry = walker.Next();
-                }
                 if (entry != null)
                 {
                     this.EmptyRecordIndex.UnRegister(entry.Key);
