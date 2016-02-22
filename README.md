@@ -15,8 +15,8 @@ MarcelloDB is portable code: Xamarin (iOS and Android), Windows 8.1 and Windows 
 
 
 
-Current Status
-=
+#Current Status
+
 Marcello is still in an experimental phase.
 
 Be carefull. Backwards compatibility with existing data will not be guaranteed untill v1.
@@ -25,8 +25,8 @@ Getting Started
 ````
 PM > Install-Package MarcelloDB
 ```
-Sessions
-=
+#Sessions
+
 Using MarcelloDB starts with the creation of a session.
 The session makes sure you have access to the actual files where the data is stored.
 A session handles a set of data files in a specific folder.
@@ -53,8 +53,8 @@ Then create the actual session.
 var session = new MarcelloDB.Session(platform, "/path/to/data/folder/");
 ```
 
-CollectionFiles and Collections
-=
+#CollectionFiles and Collections
+
 MarcelloDB organizes it's data in collection-files and collections. A single session can handle multiple collection-files and a collection-file can handle multiple collections.
 
 (This way you can have all read-only data in a single file which you can download straight from your servers. Another file could be used to write data f.i.)
@@ -81,16 +81,16 @@ var dvdCollection = productsFile.Collection<Dvd>("dvds");
 var upcommingDvdCollection = productsFile.Collection<Dvd>("upcomming-dvds");
 ```
 
-Persisting objects
-=
+#Persisting objects
+
 This is where it gets really easy. Once you have this collection, just throw an instance at it:
 ```cs
 var book = new Book(){ ID = "123",  Title = "The Girl With The Dragon Tattoo" };
 bookCollection.Persist(book);
 ```
 
-Enumerating a collection
-=
+#Enumerating a collection
+
 A collection exposes an All property which implements IEnumerable.
 You can use it iterate all objects in the collection, and of course use Linq on it.
 (Note that when using Linq, it is still enumerating the collection)
@@ -98,8 +98,8 @@ You can use it iterate all objects in the collection, and of course use Linq on 
 foreach(var book in bookCollection.All){}
 ```
 
-Finding objects
-=
+#Finding objects
+
 You can find a specific object by it's ID (more on ID's below)
 
 Find uses a btree index to search for objects. Depending on the size of your collection, a Find will be way faster than iterating the collection to find it.
@@ -111,9 +111,8 @@ Usage:
 var book = bookCollection.Find(123)
 ```
 
-Indexes
-=
-
+#Indexes
+##IndexDefinition
 MarcelloDB allows you to define indexes on your data. Using these indexes, finding an object will be super fast.
 To enable indexes on a collection, you need to create it with an index definition.
 For instance:
@@ -121,34 +120,36 @@ For instance:
 productsFile.Collection<Dvd, DvdIndexDefiniton>("dvds");
 ```
 
-An index definition has to be based on the MarcelloDB.Index.IndexDefinition<T> subclass, where T is the type of the objects you want to store.
+An index definition has to be based on the `MarcelloDB.Index.IndexDefinition<T>` subclass, where T is the type of the objects you want to store.
 In case of the dvdCollection:
 
 ```cs
 class DvdIndexDefinition : IndexDefinition<Dvd>{}
 ```
 
-Indexing properties
-==
-The simplest way to index a property (of Dvd in this case) is to define a property on the index definition.
+##Indexing properties
 
-It has to 
+Creating an index on a property of your object can be done by adding a corresponding property on the index definition.
+
+This property has to 
 * have the same name as the property you want to index
-* be of type IndexedValue<TObj, TAttribute>
+* be of type `IndexedValue<T, TAttribute>`
 * have the same type for TAttribute as the type of the property you want to index
+* where T is the type of the objects in the collection.
 * has to return null when instantiated
 * Have a working setter (so that get returns what has been set)
 
-If any of these requirements is not met, the Collection method on the collection-file will throw as soon as you try to access it. This way, you either get a valid collection, or it throws.
+If any of these requirements is not met, the Collection method on the collection-file will throw as soon as you try to access it. This way, you either get a collection with valid and working indexes, or an error.
 
 An example:
 ```cs
 ///
-/// This IndexDefinition can be used to index the title property of Dvd's
-///
+/// This IndexDefinition can be used to index 
+//                            instances of Dvd
+///                                        ||
 class DvdIndexDefinition : IndexDefinition<Dvd>
 {
-   //                               Index title
+   //          Create an index on property Title
    //                                 ||
    public  IndexedValue<Dvd, string> Title { get; set; }
    //                   ||     ||
@@ -177,8 +178,8 @@ class DvdIndexDefinition : IndexDefinition<Dvd>
 }
 ```
 
-If it is comparable, it can be indexed
-==
+##If it is comparable, it can be indexed
+
 If a type implements IComparable, it can be indexed. Yes, even your custom objects. Just make sure they compare ok
 ```cs
 class DvdIndexDefinition : IndexDefinition<Dvd>
@@ -188,15 +189,15 @@ class DvdIndexDefinition : IndexDefinition<Dvd>
 ```
 
 
-Deleting objects
-=
+#Deleting objects
+
 Delete your objects like this:
 ```cs
 bookCollection.Destroy(book.ID);
 ```
 
-How Objects are Identified
-=
+#How Objects are Identified
+
 MarcelloDB needs a single property which uniquely identifies an object.
 This value is needed to build the main index and make a distinction between an insert or an update.
 
@@ -249,8 +250,8 @@ session["data"].Collection<Article>("articles").Persist(book);
 session["data"].Collection<Book>("books").Persist(book);
 ```
 
-Transactions
-=
+#Transactions
+
 To avoid data corruption, all changes are written to a write ahead journal and applied as a single atomic and durable action.
 MarcelloDB does this for calls to Persist and Destroy, but you can extend the transaction to make it span multiple data mutations.
 
@@ -275,16 +276,12 @@ session.Transaction(() => {
 });
 ```
 
-Encryption
-=
+#Encryption
+
 Data is stored in an unencrypted format. An encryption engine is available as a pro extension. Please contact mark.meeus at gmail.com for more info.
 
-Indexes
-=
-Will be implemented in 0.2.x and 0.3.x
 
-Roadmap
-=
+#Roadmap
 0.1.0
 -
 - ~~Persisting objects~~
