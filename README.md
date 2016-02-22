@@ -110,7 +110,83 @@ Usage:
 ```cs
 var book = bookCollection.Find(123)
 ```
-(In later versions, you'll be able to search and enumerate for other properties using the same index mechanism)
+
+Indexes
+=
+
+MarcelloDB allows you to define indexes on your data. Using these indexes, finding an object will be super fast.
+To enable indexes on a collection, you need to create it with an index definition.
+For instance:
+```cs
+productsFile.Collection<Dvd, DvdIndexDefiniton>("dvds");
+```
+
+An index definition has to be based on the MarcelloDB.Index.IndexDefinition<T> subclass, where T is the type of the objects you want to store.
+In case of the dvdCollection:
+
+```cs
+class DvdIndexDefinition : IndexDefinition<Dvd>{}
+```
+
+Indexing properties
+==
+The simplest way to index a property (of Dvd in this case) is to define a property on the index definition.
+
+It has to 
+* have the same name as the property you want to index
+* be of type IndexedValue<TObj, TAttribute>
+* have the same type for TAttribute as the type of the property you want to index
+* has to return null when instantiated
+* Have a working setter (so that get returns what has been set)
+
+If any of these requirements is not met, the Collection method on the collection-file will throw as soon as you try to access it. This way, you either get a valid collection, or it throws.
+
+An example:
+```cs
+///
+/// This IndexDefinition can be used to index the title property of Dvd's
+///
+class DvdIndexDefinition : IndexDefinition<Dvd>
+{
+   //                               Index title
+   //                                 ||
+   public  IndexedValue<Dvd, string> Title { get; set; }
+   //                   ||     ||
+   //             of Dvd which is a string 
+}
+```
+
+If indexing a property is not enough, you can also define custom indexes.
+In this case you also define a property with the same type requirements as above, except, you return an instance of IndexedValue. (And a setter is not needed)
+
+Like this:
+```cs
+///
+/// This IndexDefinition can be used to index the main categoruy property of Dvd's
+///
+class DvdIndexDefinition : IndexDefinition<Dvd>
+{
+   
+   public  IndexedValue<Dvd, string> MainCategory
+   { 
+      get{
+        //index the first 3 characters of the Category
+        return base.IndexedValue<Dvd, string>((dvd)=>dvd.Category.SubString(0,3));
+      }
+   }
+}
+```
+
+If it is comparable, it can be indexed
+==
+If a type implements IComparable, it can be indexed. Yes, even your custom objects. Just make sure they compare ok
+```cs
+class DvdIndexDefinition : IndexDefinition<Dvd>
+{
+  public  IndexedValue<Dvd, Rating> Rating { get; set; }
+}
+```
+
 
 Deleting objects
 =
