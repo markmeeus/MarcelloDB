@@ -113,7 +113,14 @@ var book = bookCollection.Find(123)
 
 #Indexes
 ##IndexDefinition
-MarcelloDB allows you to define indexes on your data. Using these indexes, finding an object will be super fast.
+MarcelloDB allows you to define indexes on your data. Using these indexes, finding objects will be super fast.
+
+Indexes also allow you to iterate your objects in the order of the index.
+
+To enable indexes on a collection, you need to create it with an index definition.
+
+For instance:
+
 To enable indexes on a collection, you need to create it with an index definition.
 For instance:
 ```cs
@@ -121,7 +128,7 @@ productsFile.Collection<Book, BookIndexDefiniton>("books");
 ```
 
 An index definition has to be based on the `MarcelloDB.Index.IndexDefinition<T>` subclass, where T is the type of the objects you want to store.
-In case of the dvdCollection:
+In case of the bookCollection:
 
 ```cs
 class BookIndexDefinition : IndexDefinition<Book>{}
@@ -139,7 +146,9 @@ This property has to
 * has to return null when instantiated
 * Have a working setter (so that get returns what has been set)
 
-If any of these requirements is not met, the Collection method on the collection-file will throw as soon as you try to access it. This way, you either get a collection with valid and working indexes, or an error.
+If any of these requirements is not met, the Collection method on the collection-file will throw as soon as you try to get a reference to it. So, you either get a collection with valid and working indexes, or you get an error.
+
+Once you have this collection, all index functionality is typed correctly. The compiler will prevent you from errors.
 
 An example:
 ```cs
@@ -163,7 +172,7 @@ In this case you also define a property with the same type requirements as above
 Like this:
 ```cs
 ///
-/// This IndexDefinition can be used to index the main categoruy property of Dvd's
+/// This IndexDefinition can be used to index the main category property of Books
 ///
 class BookIndexDefinition : IndexDefinition<Book>
 {
@@ -173,20 +182,78 @@ class BookIndexDefinition : IndexDefinition<Book>
       get{
         //index the first 3 characters of the Category
         return base.IndexedValue<Book, string>((book)=>book.Category.SubString(0,3));
-      }
+      }      
+   }
+   
+   public  IndexedValue<Book, int> MainAuthorName
+   { 
+      get{
+        //index the name of the first autor
+        return base.IndexedValue<Book, int>((book)=>{
+          return book.Authors.First().Name;
+        });
+      }      
    }
 }
 ```
 
 ##If it is comparable, it can be indexed
 
-If a type implements IComparable, it can be indexed. Yes, even your custom objects. Just make sure they compare ok
+If a type implements IComparable, it can be indexed. Even your custom objects. Just make sure they compare ok.
+Custom objects can be usefull if you want to order your objects by a more than 1 property.
+
+class AuthorNameAndTitle : IComparable
+{
+	string AuthorName { get; set; }
+	string Title { get; set; }
+	bool IgnoreTitle { get; set;}
+	
+	//Sort by AuthorName, Then by Title
+	public int CompareTo(object obj)
+    {
+    	var other = (AuthorTitle)obj;
+        var authorNameCompared = AuthorName.CompareTo(other.AuthorName);
+        if(authorNameCompared == 0)
+        {
+        	if(IgnoreTitle) //Ignore the title when searching for Author only.
+        	  return 0;
+
+        	return Title.CompareTo(other.Title);
+        }
+        return authorNameCompared;
+   }
+}
+ 
 ```cs
 class BookIndexDefinition : IndexDefinition<Book>
 {
-  public  IndexedValue<Book, Rating> Rating { get; set; }
+  public  IndexedValue<Book, AuthorNameAndTitle> AuthorNameAndTitle 
+  { 
+    get 
+    {
+    	return base.IndexedValue<Book, AuthorNameAndTitle>((book)=>{
+          return new AuthorNameAndTitle{AuthorName = book.Author.Name, Title = Book.Title};
+        });
+    }
+  }
 }
 ```
+
+
+```cs
+//Get all books, ordered by author and title
+bookCollection.Indexes.AuthorNameAndTitle.All
+
+//Get all books, for a given author
+var ernestBooks = bookCollection
+  .Indexes
+  .AuthorNameAndTitle
+  .Find(
+    new AuthorNameAndTitle{AuthorName = 'Ernest Hemingway', IgnoreTitle = true})
+  );
+
+```
+
 
 ##Using indexes
 A collection created with an index definition has a property Indexes. This property exposes a property for every index available. In fact, it is just an instance of the index definition used to create the collection.
