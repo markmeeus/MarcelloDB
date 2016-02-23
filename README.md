@@ -83,7 +83,7 @@ var upcommingDvdCollection = productsFile.Collection<Dvd>("upcomming-dvds");
 
 #Persisting objects
 
-This is where it gets really easy. Once you have this collection, just throw an instance at it:
+Once you have this collection, the methed Persist will add or update your object in the collection.
 ```cs
 var book = new Book(){ ID = "123",  Title = "The Girl With The Dragon Tattoo" };
 bookCollection.Persist(book);
@@ -117,14 +117,14 @@ MarcelloDB allows you to define indexes on your data. Using these indexes, findi
 To enable indexes on a collection, you need to create it with an index definition.
 For instance:
 ```cs
-productsFile.Collection<Dvd, DvdIndexDefiniton>("dvds");
+productsFile.Collection<Book, BookIndexDefiniton>("books");
 ```
 
 An index definition has to be based on the `MarcelloDB.Index.IndexDefinition<T>` subclass, where T is the type of the objects you want to store.
 In case of the dvdCollection:
 
 ```cs
-class DvdIndexDefinition : IndexDefinition<Dvd>{}
+class BookIndexDefinition : IndexDefinition<Book>{}
 ```
 
 ##Indexing properties
@@ -145,15 +145,15 @@ An example:
 ```cs
 ///
 /// This IndexDefinition can be used to index 
-//                            instances of Dvd
+//                            instances of Book
 ///                                        ||
-class DvdIndexDefinition : IndexDefinition<Dvd>
+class DvdIndexDefinition : IndexDefinition<Book>
 {
    //          Create an index on property Title
    //                                 ||
-   public  IndexedValue<Dvd, string> Title { get; set; }
+   public  IndexedValue<Book, string> Title { get; set; }
    //                   ||     ||
-   //             of Dvd which is a string 
+   //             of Book which is a string 
 }
 ```
 
@@ -165,14 +165,14 @@ Like this:
 ///
 /// This IndexDefinition can be used to index the main categoruy property of Dvd's
 ///
-class DvdIndexDefinition : IndexDefinition<Dvd>
+class BookIndexDefinition : IndexDefinition<Book>
 {
    
-   public  IndexedValue<Dvd, string> MainCategory
+   public  IndexedValue<Book, string> MainCategory
    { 
       get{
         //index the first 3 characters of the Category
-        return base.IndexedValue<Dvd, string>((dvd)=>dvd.Category.SubString(0,3));
+        return base.IndexedValue<Book, string>((book)=>book.Category.SubString(0,3));
       }
    }
 }
@@ -182,12 +182,67 @@ class DvdIndexDefinition : IndexDefinition<Dvd>
 
 If a type implements IComparable, it can be indexed. Yes, even your custom objects. Just make sure they compare ok
 ```cs
-class DvdIndexDefinition : IndexDefinition<Dvd>
+class BookIndexDefinition : IndexDefinition<Book>
 {
-  public  IndexedValue<Dvd, Rating> Rating { get; set; }
+  public  IndexedValue<Book, Rating> Rating { get; set; }
 }
 ```
 
+##Using indexes
+A collection created with an index definition has a property Indexes. This property exposes a property for every index available. In fact, it is just an instance of the index definition used to create the collection.
+Every index on that definition is now able to iterate (and search) the data sorted by the either the property, or the custom return value.
+
+All enumerations are implemented in a lazy fashion. The next object is only loaded when actually requested by the iteration. 
+So don't worry if you have a really large amount of data, Marcello never loads all that data in memory. 
+
+###All
+Find returns an IEnumerable<T> of all objects sorted by the indexed value.
+(In later versions you'll also be able to iterate the index backwards)
+```cs
+bookCollection.Indexes.Title.All; //sorted by Title
+```
+
+###Find
+Find returns an IEnumerable<T> of all objects that have the specific value for the indexed.
+```cs
+//All books with the title "MarcelloDB For Dummies"
+boolCollection.Indexes.Title.Find("MarcelloDB For Dummies")
+```
+In later versions, you'll be able to define a unique index, in which case a find will return just a single object, no IEnumerable.
+
+###Between And
+You can iterate objects with an indexed value wich is contained in a range.
+
+```cs
+//all books suitable for 8 and 13, edges not included
+```
+
+```cs
+//all books suitable for 8 and 13, edges included
+bookCollection.Indexes.AgeRecommendation.BetweenIncluding(8).AndIncluding(13)
+```
+
+###GreaterThan (OrEqual)
+Starts iteration at a specific value till the end of the index.
+```cs
+//all books suitable +12
+bookCollection.Indexes.AgeRecommendation.GreaterThan(12)
+```
+```cs
+//all books suitable 12 and up
+bookCollection.Indexes.AgeRecommendation.GreaterThanOrEqual(12)
+```
+
+###SmallerThan (OrEqual)
+Starts iteration at the beginning of the indexe untill a specific value
+```cs
+//all books suitable -12
+bookCollection.Indexes.AgeRecommendation.SmallerThan(12)
+```
+```cs
+//all books suitable up untill 12
+bookCollection.Indexes.AgeRecommendation.SmallerThanOrEqual(12)
+```
 
 #Deleting objects
 
