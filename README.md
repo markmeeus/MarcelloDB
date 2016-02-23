@@ -185,11 +185,11 @@ class BookIndexDefinition : IndexDefinition<Book>
       }      
    }
    
-   public  IndexedValue<Book, int> MainAuthorName
+   public  IndexedValue<Book, string> MainAuthorName
    { 
       get{
         //index the name of the first autor
-        return base.IndexedValue<Book, int>((book)=>{
+        return base.IndexedValue<Book, string>((book)=>{
           return book.Authors.First().Name;
         });
       }      
