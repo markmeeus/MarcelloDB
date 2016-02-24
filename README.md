@@ -17,51 +17,55 @@ MarcelloDB is portable code: Xamarin (iOS and Android), Windows 8.1 and Windows 
 
 #Current Status
 
-Marcello is still in an experimental phase.
+Current version: 0.2
 
-Be carefull. Backwards compatibility with existing data will not be guaranteed untill v1.
+Although still under heavy development, both the api and the file format are already quite stable.
 
-Getting Started
+See roadmap at the bottom of this page.
+
+Be carefull. Backwards compatibility with existing data will not be guaranteed untill v1.x
+
+#Installation
 ````
 PM > Install-Package MarcelloDB
 ```
 #Sessions
 
 Using MarcelloDB starts with the creation of a session.
-The session makes sure you have access to the actual files where the data is stored.
-A session handles a set of data files in a specific folder.
 
-MarcelloDB is a portable class library, but there are some platform specific things that simply cannot be written in portable code. Currently, MarcelloDB relies on a platform specific implementation for interacting with the file system.
+The session manages access to the filesystem as well as transactions and concurrency.
+Interaction with MarcelloDB always requires a valid session.
 
-All of this is hidden from you as it is wrapped inside the Platform object.
+MarcelloDB is a portable class library, but requires injection of implementations of platform specific features.
+(Currently, MarcelloDB only relies on a platform specific implementation for reading and writing files.)
+These platform specifics are implemented in ```Platform```
 
-The Platform implementation for mono/.net which can be used for Xamarin iOS and Android can be found in the Marcello.netfx assembly.
+The Platform implementation for mono/.net (for Xamarin iOS and Android, and regular mono/.net) can be found in the Marcello.netfx assembly.
 
-The implementation for Windows Phone 8.1 and Windows 8.1 (not tested in Windows 10 yet) can be found in the Marcello.uwp assembly.
+The implementation for Windows Phone 8.1 and Windows 8.1/10 Apps can be found in the Marcello.uwp assembly.
 
-So first: create the Platform object in your platform specific project.
-
+#Getting started
+Create the platform object
 ```cs
-//Create a platform on the specific platform
 var platform =  new Platform();
 ```
 
-Then create the actual session.
+Then create the session.
 (You can do this in a portable class library)
 ```cs
-//Create a Marcello session, this can be done in PCL code
 var session = new MarcelloDB.Session(platform, "/path/to/data/folder/");
 ```
 
 #CollectionFiles and Collections
 
-MarcelloDB organizes it's data in collection-files and collections. A single session can handle multiple collection-files and a collection-file can handle multiple collections.
+MarcelloDB organizes it's data in collection-files and collections. 
+A session can manage multiple collection-files, and a collection-file can contain multiple collection.
 
-(This way you can have all read-only data in a single file which you can download straight from your servers. Another file could be used to write data f.i.)
+You access a collection-file by it's actual filename.
 
-You access collection-files like this:
 ```cs
-var productsFile = session["products"];
+// products.data is the actual file name within the sessions folder
+var productsFile = session["products.data"];
 ```
 
 With this collection-file, you can start accessing collections.
@@ -74,7 +78,7 @@ You can get the collection form the collection-file like this:
 var bookCollection = productsFile.Collection<Book>("books");
 var dvdCollection = productsFile.Collection<Dvd>("dvd");
 ```
-If you use different collection-names you can even have multiple collections for the same type within one collection-file.
+If you use different collection-names you can have multiple collections for the same type within one collection-file.
 ```cs
 //Deals with instances of Book or subclasses of Book
 var dvdCollection = productsFile.Collection<Dvd>("dvds");
@@ -92,7 +96,7 @@ bookCollection.Persist(book);
 #Enumerating a collection
 
 A collection exposes an All property which implements IEnumerable.
-You can use it iterate all objects in the collection, and of course use Linq on it.
+You can use it to iterate all objects in the collection, and of course use Linq on it.
 (Note that when using Linq, it is still enumerating the collection)
 ```cs
 foreach(var book in bookCollection.All){}
