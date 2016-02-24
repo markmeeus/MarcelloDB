@@ -74,13 +74,11 @@ A collection can only handle objects of a specific type (including subclasses).
 
 You can get the collection form the collection-file like this:
 ```cs
-//Deals with instances of Book or subclasses of Book
 var bookCollection = productsFile.Collection<Book>("books");
 var dvdCollection = productsFile.Collection<Dvd>("dvd");
 ```
 If you use different collection-names you can have multiple collections for the same type within one collection-file.
 ```cs
-//Deals with instances of Book or subclasses of Book
 var dvdCollection = productsFile.Collection<Dvd>("dvds");
 var upcommingDvdCollection = productsFile.Collection<Dvd>("upcomming-dvds");
 ```
