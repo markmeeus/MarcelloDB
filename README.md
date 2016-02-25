@@ -80,7 +80,7 @@ var dvdCollection = productsFile.Collection<Dvd>("dvd");
 If you use different collection-names you can have multiple collections for the same type within one collection-file.
 ```cs
 var dvdCollection = productsFile.Collection<Dvd>("dvds");
-var upcommingDvdCollection = productsFile.Collection<Dvd>("upcomming-dvds");
+var upcomingDvdCollection = productsFile.Collection<Dvd>("upcoming-dvds");
 ```
 
 #Persisting objects
@@ -200,23 +200,23 @@ Custom objects can be usefull for instance when you want to order your objects b
 ```cs
 class AuthorNameAndTitle : IComparable
 {
-	string AuthorName { get; set; }
-	string Title { get; set; }
-	bool IgnoreTitle { get; set;}
+  public string AuthorName { get; set; }
+  public string Title { get; set; }
+  public bool IgnoreTitle { get; set;}
 	
-	//Sort by AuthorName, Then by Title
-	public int CompareTo(object obj)
+  //Sort by AuthorName, Then by Title
+  public int CompareTo(object obj)
+  {
+    var other = (AuthorTitle)obj;
+    var authorNameCompared = AuthorName.CompareTo(other.AuthorName);
+    if(authorNameCompared == 0)
     {
-    	var other = (AuthorTitle)obj;
-        var authorNameCompared = AuthorName.CompareTo(other.AuthorName);
-        if(authorNameCompared == 0)
-        {
-        	if(IgnoreTitle) //Ignore the title when searching for Author only.
-        	  return 0;
+      if(IgnoreTitle) //Ignore the title when searching for Author only.
+        return 0;
 
-        	return Title.CompareTo(other.Title);
-        }
-        return authorNameCompared;
+      return Title.CompareTo(other.Title);
+    }
+    return authorNameCompared;
    }
 }
 ```
@@ -226,11 +226,10 @@ class BookIndexDefinition : IndexDefinition<Book>
 {
   public  IndexedValue<Book, AuthorNameAndTitle> AuthorNameAndTitle 
   { 
-    get 
-    {
-    	return base.IndexedValue<Book, AuthorNameAndTitle>((book)=>{
-          return new AuthorNameAndTitle{AuthorName = book.Author.Name, Title = Book.Title};
-        });
+    get{
+      return base.IndexedValue<Book, AuthorNameAndTitle>((book)=>{
+        return new AuthorNameAndTitle{AuthorName = book.Author.Name, Title = Book.Title};
+      });
     }
   }
 }
