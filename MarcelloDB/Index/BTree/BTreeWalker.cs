@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections;
 
 namespace MarcelloDB.Index.BTree
 {
@@ -91,22 +92,27 @@ namespace MarcelloDB.Index.BTree
         {
             if (this.Range != null && this.Range.HasStartAt
                 && this.CurrentEntryIndex < 0 && this.BreadCrumbs.Count == 0)
-            {
-                MoveTo(this.Range.StartAt);
-                if (this.CurrentEntryIndex < 0)
-                {
-                    //No current item, move next;
-                    MoveNext();
-                }
+            {                
                 if (!this.Range.IncludeStartAt)
                 {
-                    while (this.CurrentEntryIndex >= 0
-                          && this.CurrentEntryIndex < CurrentNode.EntryList.Count
-                          && Comparer.Compare(this.CurrentNode.EntryList[this.CurrentEntryIndex].Key, this.Range.StartAt) <= 0)
+                    //searching backwards points us to the last item
+                    MoveTo(this.Range.StartAt, true);
+                    //move next to target the first greater item (unless there is no item found)
+                    if (this.CurrentEntryIndex >= 0)
                     {
                         MoveNext();
                     }
                 }
+                else
+                {
+                    MoveTo(this.Range.StartAt, false);
+                }
+
+                if (this.CurrentEntryIndex < 0)
+                {
+                    //No current item, move next;
+                    MoveNext();
+                }               
             }
             else
             {
@@ -132,44 +138,65 @@ namespace MarcelloDB.Index.BTree
             this.CurrentNode = this.DataProvider.GetRootNode(this.Degree);
         }
 
-        void MoveTo(TK key)
+        void MoveTo(TK key, bool backwards)
         {
-            int i = this.CurrentNode.EntryList.Entries
-                .TakeWhile(entry => Comparer.Compare(key, entry.Key) > 0).Count();
-
-            if (i < this.CurrentNode.EntryList.Count &&
-                Comparer.Compare(this.CurrentNode.EntryList[i].Key, key) == 0)
+            var entries = this.CurrentNode.EntryList.Entries 
+                as IEnumerable<Entry<TK, TP>>;
+            var childrenAddresses = this.CurrentNode.ChildrenAddresses.Addresses
+                as IEnumerable<Int64>;
+            
+            if (backwards)
             {
-                //found it
-                this.CurrentEntryIndex = i;
-                return;
+                entries = entries.Reverse();
+                childrenAddresses = childrenAddresses.Reverse();
             }
 
+            int i = -1;
+            if (!backwards)
+            {
+                i = entries.TakeWhile(entry => Comparer.Compare(key, entry.Key) > 0).Count();                
+            }
+            else
+            {
+                i = entries.TakeWhile(entry => Comparer.Compare(key, entry.Key) < 0).Count();                
+            }
+
+            int absoluteIndex = backwards ? (entries.Count() - 1) - i : i;
+
+            if (i < entries.Count() &&
+                Comparer.Compare(entries.ElementAt(i).Key, key) == 0)
+            {
+                //found it
+                this.CurrentEntryIndex = absoluteIndex;
+                return;
+            }
             else if (this.CurrentNode.IsLeaf)
             {
                 //it's a leaf, but no entry matches
-                this.CurrentEntryIndex = i;
+                this.CurrentEntryIndex = absoluteIndex;
                 return;
             }
-            else if (i >= this.CurrentNode.ChildrenAddresses.Count)
+            else if (i >= childrenAddresses.Count())
             {
                 //tree seems unbalanced
-                this.CurrentEntryIndex = i;
+                this.CurrentEntryIndex = absoluteIndex;
                 return;
             }
 
             //push the breadcrumb
             var breadCrumb = new BreadCrumb(){
-                CurrentEntryIndex = i - 1,
+                CurrentEntryIndex = backwards ? absoluteIndex : absoluteIndex - 1,
                 Node = CurrentNode
             };
+
             this.BreadCrumbs.Push(breadCrumb);
 
             // set the target child as current node
-            this.CurrentNode = this.DataProvider.GetNode(this.CurrentNode.ChildrenAddresses[i]);
+
+            this.CurrentNode = this.DataProvider.GetNode(childrenAddresses.ElementAt(i));           
 
             //and search in childnode
-            MoveTo(key);
+            MoveTo(key, backwards);
         }
 
         void MoveNext()
