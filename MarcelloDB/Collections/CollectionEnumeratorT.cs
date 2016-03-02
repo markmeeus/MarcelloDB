@@ -22,18 +22,22 @@ namespace MarcelloDB.Collections
 
         bool HasRange{ get { return this.Range != null; } }
 
+        bool IsDescending { get; set; }
+
         public CollectionEnumerator(
             Collection<T> collection,
             Session session,
             RecordManager recordManager,
             IObjectSerializer<T> serializer,
-            RecordIndex<TKey> index
+            RecordIndex<TKey> index,
+            bool IsDescending = false
         ) : base(session)
         {
             this.Collection = collection;
             this.RecordManager = recordManager;
             this.Serializer = serializer;
             this.Index = index;
+            this.IsDescending = IsDescending;
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -43,6 +47,12 @@ namespace MarcelloDB.Collections
                 try{
                     this.Collection.BlockModification = true;
                     var walker = this.Index.GetWalker();
+
+                    if(this.IsDescending)
+                    {
+                        walker.Reverse();
+                    }
+
                     if(this.HasRange)
                     {
                         walker.SetRange(this.Range);

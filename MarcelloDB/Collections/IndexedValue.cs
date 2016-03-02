@@ -102,7 +102,8 @@ namespace MarcelloDB.Collections
         }
 
         internal CollectionEnumerator<TObj, ValueWithAddressIndexKey>
-            BuildEnumerator(BTreeWalkerRange<ValueWithAddressIndexKey> range)
+            BuildEnumerator(BTreeWalkerRange<ValueWithAddressIndexKey> range,
+            bool IsDescending = false)
         {
 
             var index = new RecordIndex<ValueWithAddressIndexKey>(
@@ -113,7 +114,7 @@ namespace MarcelloDB.Collections
             );
 
             var enumerator =  new CollectionEnumerator<TObj, ValueWithAddressIndexKey>(
-                this.Collection, Session, RecordManager, Serializer, index);
+                this.Collection, Session, RecordManager, Serializer, index, IsDescending);
 
             enumerator.SetRange(range);
 

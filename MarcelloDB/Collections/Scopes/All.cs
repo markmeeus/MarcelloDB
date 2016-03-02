@@ -9,13 +9,20 @@ namespace MarcelloDB.Collections.Scopes
     {
         IndexedValue<TObj, TAttribute> IndexedValue { get; set; }
 
-        TAttribute Value { get; set; }
+        bool IsDescending { get; set; }
 
-        bool OrEqual { get; set; }
-
-        internal All(IndexedValue<TObj, TAttribute> indexedValue)
+        internal All(IndexedValue<TObj, TAttribute> indexedValue, bool isDescending = false)
         {
             this.IndexedValue = indexedValue;
+            this.IsDescending = isDescending;
+        }            
+
+        public All<TObj, TAttribute> Descending 
+        {
+            get 
+            {
+                return new All<TObj, TAttribute>(this.IndexedValue, true);
+            }
         }
 
         #region IEnumerable implementation
@@ -23,7 +30,7 @@ namespace MarcelloDB.Collections.Scopes
         public IEnumerator<TObj> GetEnumerator()
         {
             return this.IndexedValue
-                .BuildEnumerator(null)
+                .BuildEnumerator(null, this.IsDescending)
                 .GetEnumerator();
         }
 

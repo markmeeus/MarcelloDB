@@ -134,7 +134,7 @@ namespace MarcelloDB.Test.Index
         }
 
         [Test]
-        public void Walk_List_Of_Entries(){
+        public void Walks_List_Of_Entries(){
 
             BuildTestTree();
 
@@ -147,6 +147,24 @@ namespace MarcelloDB.Test.Index
             }
 
             Assert.AreEqual(Enumerable.Range(0, 18), walkedKeys);
+        }
+
+        [Test]
+        public void Walks_List_Of_Entries_Backwards()
+        {
+            BuildTestTree();
+
+            _walker.Reverse();
+
+            var walkedKeys = new List<int>();
+            var entry = _walker.Next();
+            while (entry != null)
+            {
+                walkedKeys.Add(entry.Key);
+                entry = _walker.Next();
+            }
+
+            Assert.AreEqual(Enumerable.Range(0, 18).Reverse(), walkedKeys);
         }
 
         [Test]
@@ -351,7 +369,6 @@ namespace MarcelloDB.Test.Index
             var walkedKeys = new List<int>();
 
             _walker.SetRange(new BTreeWalkerRange<int>(startItem, endItem));
-
             var entry = _walker.Next();
             while (entry != null)
             {
@@ -360,7 +377,21 @@ namespace MarcelloDB.Test.Index
             }
 
             var expected = Enumerable.Range(startItem, 1+ (endItem - startItem));
-            Assert.AreEqual(walkedKeys, expected);
+            Assert.AreEqual(expected, walkedKeys);
+
+            //And backwards
+            walkedKeys = new List<int>();
+            _walker.Reverse();
+            _walker.SetRange(new BTreeWalkerRange<int>(endItem, startItem));
+            entry = _walker.Next();
+            while (entry != null)
+            {
+                walkedKeys.Add(entry.Key);
+                entry = _walker.Next();
+            }
+
+            expected = Enumerable.Range(startItem, 1 + (endItem - startItem));
+            Assert.AreEqual(expected.Reverse(), walkedKeys);
         }
 
 

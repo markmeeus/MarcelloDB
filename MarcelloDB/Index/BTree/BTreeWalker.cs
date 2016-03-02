@@ -64,6 +64,8 @@ namespace MarcelloDB.Index.BTree
 
         BTreeWalkerRange<TK> Range { get;set; }
 
+        bool Reversed { get; set; }
+
         internal BTreeWalker(int degree, IBTreeDataProvider<TK, TP> dataProvider)
         {
             this.Comparer = new ObjectComparer();
@@ -71,6 +73,13 @@ namespace MarcelloDB.Index.BTree
             this.DataProvider = dataProvider;
             this.Degree = degree;
 
+            Reset();
+        }
+
+        internal void Reverse()
+        {
+            this.Reversed = true;
+            this.Comparer.Invert();
             Reset();
         }
 
@@ -83,7 +92,7 @@ namespace MarcelloDB.Index.BTree
                     throw new InvalidOperationException("startAt must be smaller then endAt");
                 }
             }
-                
+
             Reset();
             this.Range = range;
         }
@@ -92,7 +101,7 @@ namespace MarcelloDB.Index.BTree
         {
             if (this.Range != null && this.Range.HasStartAt
                 && this.CurrentEntryIndex < 0 && this.BreadCrumbs.Count == 0)
-            {                
+            {
                 if (!this.Range.IncludeStartAt)
                 {
                     //searching backwards points us to the last item
@@ -112,16 +121,16 @@ namespace MarcelloDB.Index.BTree
                 {
                     //No current item, move next;
                     MoveNext();
-                }               
+                }
             }
             else
             {
                 MoveNext();
             }
 
-            if (this.CurrentEntryIndex >= 0 && this.CurrentEntryIndex < CurrentNode.EntryList.Count)
+            if (this.CurrentEntryIndex >= 0 && this.CurrentEntryIndex < Entries(CurrentNode).Count())
             {
-                var entry = CurrentNode.EntryList[this.CurrentEntryIndex];
+                var entry = Entries(CurrentNode).ElementAt(this.CurrentEntryIndex);
                 if(EntryIsBeforeEndOfRange(entry))
                 {
                     return entry;
@@ -140,11 +149,11 @@ namespace MarcelloDB.Index.BTree
 
         void MoveTo(TK key, bool backwards)
         {
-            var entries = this.CurrentNode.EntryList.Entries 
-                as IEnumerable<Entry<TK, TP>>;
-            var childrenAddresses = this.CurrentNode.ChildrenAddresses.Addresses
-                as IEnumerable<Int64>;
-            
+
+            var entries = Entries(this.CurrentNode) as IEnumerable<Entry<TK, TP>>;
+
+            var childrenAddresses = ChildrenAddresses(this.CurrentNode) as IEnumerable<Int64>;
+
             if (backwards)
             {
                 entries = entries.Reverse();
@@ -154,11 +163,11 @@ namespace MarcelloDB.Index.BTree
             int i = -1;
             if (!backwards)
             {
-                i = entries.TakeWhile(entry => Comparer.Compare(key, entry.Key) > 0).Count();                
+                i = entries.TakeWhile(entry => Comparer.Compare(key, entry.Key) > 0).Count();
             }
             else
             {
-                i = entries.TakeWhile(entry => Comparer.Compare(key, entry.Key) < 0).Count();                
+                i = entries.TakeWhile(entry => Comparer.Compare(key, entry.Key) < 0).Count();
             }
 
             int absoluteIndex = backwards ? (entries.Count() - 1) - i : i;
@@ -193,7 +202,7 @@ namespace MarcelloDB.Index.BTree
 
             // set the target child as current node
 
-            this.CurrentNode = this.DataProvider.GetNode(childrenAddresses.ElementAt(i));           
+            this.CurrentNode = this.DataProvider.GetNode(childrenAddresses.ElementAt(i));
 
             //and search in childnode
             MoveTo(key, backwards);
@@ -202,14 +211,14 @@ namespace MarcelloDB.Index.BTree
         void MoveNext()
         {
             //Walk down untill there are no more children on the right of current entry
-            while (this.CurrentNode.ChildrenAddresses.Count > this.CurrentEntryIndex + 1)
+            while (ChildrenAddresses(this.CurrentNode).Count() > this.CurrentEntryIndex + 1)
             {
                 var breadCrumb = new BreadCrumb(){
                     CurrentEntryIndex = this.CurrentEntryIndex,
                     Node = CurrentNode
                 };
                 this.BreadCrumbs.Push(breadCrumb);
-                var childAddress = this.CurrentNode.ChildrenAddresses[this.CurrentEntryIndex + 1];
+                var childAddress = ChildrenAddresses(this.CurrentNode).ElementAt(this.CurrentEntryIndex + 1);
                 this.CurrentEntryIndex = -1;
                 this.CurrentNode = this.DataProvider.GetNode(childAddress);
             }
@@ -218,7 +227,7 @@ namespace MarcelloDB.Index.BTree
             this.CurrentEntryIndex += 1;
 
             //walk up untill an entry is found
-            while (this.CurrentEntryIndex >= this.CurrentNode.EntryList.Count &&
+            while (this.CurrentEntryIndex >= Entries(this.CurrentNode).Count() &&
                 this.BreadCrumbs.Count > 0)
             {
                 var breadCrumb = this.BreadCrumbs.Pop();
@@ -226,6 +235,22 @@ namespace MarcelloDB.Index.BTree
                 this.CurrentNode = breadCrumb.Node;
                 this.CurrentEntryIndex += 1;
             }
+        }
+
+        IEnumerable<Entry<TK, TP>> Entries(Node<TK, TP> node)
+        {
+            if (this.Reversed) {
+                return ((IEnumerable<Entry<TK, TP>>)node.EntryList.Entries).Reverse();
+            }
+            return node.EntryList.Entries;
+        }
+
+        IEnumerable<Int64> ChildrenAddresses(Node<TK, TP> node)
+        {
+            if (this.Reversed) {
+                return ((IEnumerable<Int64> )node.ChildrenAddresses.Addresses).Reverse();
+            }
+            return node.ChildrenAddresses.Addresses;
         }
 
         bool EntryIsBeforeEndOfRange(Entry<TK, TP> entry)

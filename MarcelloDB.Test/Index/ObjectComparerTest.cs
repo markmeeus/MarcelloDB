@@ -12,7 +12,7 @@ namespace MarcelloDB.Test.Index
         [SetUp]
         public void Initialize()
         {
-            _comparer = new ObjectComparer();  
+            _comparer = new ObjectComparer();
         }
 
         [Test]
@@ -45,6 +45,15 @@ namespace MarcelloDB.Test.Index
             Assert.AreEqual(-1, _comparer.Compare("1", "2"));
             Assert.AreEqual(0, _comparer.Compare("2", "2"));
             Assert.AreEqual(1, _comparer.Compare("2", "1"));
+        }
+
+        [Test]
+        public void ComparesInverted()
+        {
+            _comparer.Invert();
+            Assert.AreEqual(1, _comparer.Compare((short)1, (short)2));
+            Assert.AreEqual(0, _comparer.Compare((short)2, (short)2));
+            Assert.AreEqual(-1, _comparer.Compare((short)2, (short)1));
         }
     }
 }
