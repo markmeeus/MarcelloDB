@@ -97,6 +97,8 @@
     <Compile Include="Collections\Scopes\SmallerThan.cs" />
     <Compile Include="Collections\Scopes\All.cs" />
     <Compile Include="Index\IndexDefinitionValidator.cs" />
+    <Compile Include="Collections\Scopes\Descending.cs" />
+    <Compile Include="Collections\Scopes\BaseScope.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

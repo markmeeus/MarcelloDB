@@ -223,6 +223,20 @@ namespace MarcelloDB.Test.Integration
                 new List<int>{ 2, 3, 4, 5}, found.Select(a => a.ID));
         }
 
+        [Test]
+        public void Finds_Between_Descending()
+        {
+            _articles.Persist(new Article(){ ID = 1, Name = "Item 1", Description = "Desc 1", Category = "Cat1" });
+            _articles.Persist(new Article(){ ID = 2, Name = "Item 2a", Description = "Desc 2a", Category = "Cat2" });
+            _articles.Persist(new Article(){ ID = 3, Name = "Item 2b", Description = "Desc 2b", Category = "Cat2" });
+            _articles.Persist(new Article(){ ID = 4, Name = "Item 3a", Description = "Desc 3a", Category = "Cat3" });
+            _articles.Persist(new Article(){ ID = 5, Name = "Item 3b", Description = "Desc 3b", Category = "Cat3" });
+            _articles.Persist(new Article(){ ID = 6, Name = "Item 4", Description = "Desc 4", Category = "Cat4" });
+
+            var found = _articles.Indexes.Category.Between("Cat1").And("Cat4").Descending.ToList();
+            Assert.AreEqual(
+                new List<int>{ 5, 4, 3, 2}, found.Select(a => a.ID));
+        }
 
         [Test]
         public void Finds_Between_Including_Start()

@@ -6,7 +6,7 @@ using MarcelloDB.Index.BTree;
 
 namespace MarcelloDB.Collections.Scopes
 {
-    public class Between<TObj, TAttribute> : IEnumerable<TObj>
+    public class Between<TObj, TAttribute> : BaseScope<TObj, TAttribute>
     {
         IndexedValue<TObj, TAttribute> IndexedValue { get; set; }
 
@@ -30,27 +30,21 @@ namespace MarcelloDB.Collections.Scopes
             this.IncludeEndAt = includeEndAt;
         }
 
-        #region IEnumerable implementation
+        #region implemented abstract members of BaseScope
 
-        public IEnumerator<TObj> GetEnumerator()
+        internal override CollectionEnumerator<TObj, ValueWithAddressIndexKey> BuildEnumerator(bool descending)
         {
             var startKey = new ValueWithAddressIndexKey{ V = (IComparable)this.StartAt };
             var endKey =  new ValueWithAddressIndexKey{ V = (IComparable)this.EndAt };
-            var range = new BTreeWalkerRange<ValueWithAddressIndexKey>(startKey, endKey);
+
+            var range = descending ?
+                new BTreeWalkerRange<ValueWithAddressIndexKey>(endKey, startKey) :
+                new BTreeWalkerRange<ValueWithAddressIndexKey>(startKey, endKey);
+
             range.IncludeStartAt = this.IncludeStartAt;
             range.IncludeEndAt = this.IncludeEndAt;
-            return this.IndexedValue.BuildEnumerator(range).GetEnumerator();
+            return this.IndexedValue.BuildEnumerator(range, descending);
         }
-
-        #endregion
-
-        #region IEnumerable implementation
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
         #endregion
     }
 

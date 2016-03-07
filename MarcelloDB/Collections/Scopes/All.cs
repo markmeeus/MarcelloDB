@@ -5,45 +5,21 @@ using System.Collections.Generic;
 
 namespace MarcelloDB.Collections.Scopes
 {
-    public class All<TObj, TAttribute> : IEnumerable<TObj>
+    public class All<TObj, TAttribute> : BaseScope<TObj, TAttribute>
     {
         IndexedValue<TObj, TAttribute> IndexedValue { get; set; }
 
-        bool IsDescending { get; set; }
-
-        internal All(IndexedValue<TObj, TAttribute> indexedValue, bool isDescending = false)
+        internal All(IndexedValue<TObj, TAttribute> indexedValue)
         {
             this.IndexedValue = indexedValue;
-            this.IsDescending = isDescending;
-        }            
 
-        public All<TObj, TAttribute> Descending 
-        {
-            get 
-            {
-                return new All<TObj, TAttribute>(this.IndexedValue, true);
-            }
         }
 
-        #region IEnumerable implementation
-
-        public IEnumerator<TObj> GetEnumerator()
+        override internal CollectionEnumerator<TObj, ValueWithAddressIndexKey> BuildEnumerator(bool descending)
         {
             return this.IndexedValue
-                .BuildEnumerator(null, this.IsDescending)
-                .GetEnumerator();
+                .BuildEnumerator(null, descending);
         }
-
-        #endregion
-
-        #region IEnumerable implementation
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        #endregion
     }
 }
 
