@@ -254,6 +254,21 @@ namespace MarcelloDB.Test.Integration
         }
 
         [Test]
+        public void Finds_Between_Including_Start_Descending()
+        {
+            _articles.Persist(new Article(){ ID = 1, Name = "Item 1", Description = "Desc 1", Category = "Cat1" });
+            _articles.Persist(new Article(){ ID = 2, Name = "Item 2a", Description = "Desc 2a", Category = "Cat2" });
+            _articles.Persist(new Article(){ ID = 3, Name = "Item 2b", Description = "Desc 2b", Category = "Cat2" });
+            _articles.Persist(new Article(){ ID = 4, Name = "Item 3a", Description = "Desc 3a", Category = "Cat3" });
+            _articles.Persist(new Article(){ ID = 5, Name = "Item 3b", Description = "Desc 3b", Category = "Cat3" });
+            _articles.Persist(new Article(){ ID = 6, Name = "Item 4", Description = "Desc 4", Category = "Cat4" });
+
+            var found = _articles.Indexes.Category.BetweenIncluding("Cat2").And("Cat4").Descending.ToList();
+            Assert.AreEqual(
+                new List<int>{ 5, 4, 3, 2}, found.Select(a => a.ID));
+        }
+
+        [Test]
         public void Finds_Between_Including_Start_With_Null_Values()
         {
             _articles.Persist(new Article(){ ID = 1, Description = null});
@@ -266,6 +281,21 @@ namespace MarcelloDB.Test.Integration
             var found = _articles.Indexes.Description.BetweenIncluding(null).And("Desc 4").ToList();
             Assert.AreEqual(
                 new List<int>{ 1, 2, 3}, found.Select(a => a.ID));
+        }
+
+        [Test]
+        public void Finds_Between_Including_Start_With_Null_Values_Descending()
+        {
+            _articles.Persist(new Article(){ ID = 1, Description = null});
+            _articles.Persist(new Article(){ ID = 2, Description = null});
+            _articles.Persist(new Article(){ ID = 3, Description = "Desc 3"});
+            _articles.Persist(new Article(){ ID = 4, Description = "Desc 4"});
+            _articles.Persist(new Article(){ ID = 5, Description = "Desc 5"});
+            _articles.Persist(new Article(){ ID = 6, Description = "Desc 6"});
+
+            var found = _articles.Indexes.Description.BetweenIncluding(null).And("Desc 4").Descending.ToList();
+            Assert.AreEqual(
+                new List<int>{3, 2, 1}, found.Select(a => a.ID));
         }
 
         [Test]
@@ -284,6 +314,21 @@ namespace MarcelloDB.Test.Integration
         }
 
         [Test]
+        public void Finds_Between_Including_End_Descending()
+        {
+            _articles.Persist(new Article(){ ID = 1, Name = "Item 1", Description = "Desc 1", Category = "Cat1" });
+            _articles.Persist(new Article(){ ID = 2, Name = "Item 2a", Description = "Desc 2a", Category = "Cat2" });
+            _articles.Persist(new Article(){ ID = 3, Name = "Item 2b", Description = "Desc 2b", Category = "Cat2" });
+            _articles.Persist(new Article(){ ID = 4, Name = "Item 3a", Description = "Desc 3a", Category = "Cat3" });
+            _articles.Persist(new Article(){ ID = 5, Name = "Item 3b", Description = "Desc 3b", Category = "Cat3" });
+            _articles.Persist(new Article(){ ID = 6, Name = "Item 4", Description = "Desc 4", Category = "Cat4" });
+
+            var found = _articles.Indexes.Category.Between("Cat1").AndIncluding("Cat3").Descending.ToList();
+            Assert.AreEqual(
+                new List<int>{ 5, 4, 3, 2}, found.Select(a => a.ID));
+        }
+
+        [Test]
         public void Finds_Between_Including_Start_And_End()
         {
             _articles.Persist(new Article(){ ID = 1, Name = "Item 1", Description = "Desc 1", Category = "Cat1" });
@@ -298,6 +343,20 @@ namespace MarcelloDB.Test.Integration
                 new List<int>{ 2, 3, 4, 5}, found.Select(a => a.ID));
         }
 
+        [Test]
+        public void Finds_Between_Including_Start_And_End_Descending()
+        {
+            _articles.Persist(new Article(){ ID = 1, Name = "Item 1", Description = "Desc 1", Category = "Cat1" });
+            _articles.Persist(new Article(){ ID = 2, Name = "Item 2a", Description = "Desc 2a", Category = "Cat2" });
+            _articles.Persist(new Article(){ ID = 3, Name = "Item 2b", Description = "Desc 2b", Category = "Cat2" });
+            _articles.Persist(new Article(){ ID = 4, Name = "Item 3a", Description = "Desc 3a", Category = "Cat3" });
+            _articles.Persist(new Article(){ ID = 5, Name = "Item 3b", Description = "Desc 3b", Category = "Cat3" });
+            _articles.Persist(new Article(){ ID = 6, Name = "Item 4", Description = "Desc 4", Category = "Cat4" });
+
+            var found = _articles.Indexes.Category.BetweenIncluding("Cat2").AndIncluding("Cat3").Descending.ToList();
+            Assert.AreEqual(
+                new List<int>{ 5, 4, 3, 2}, found.Select(a => a.ID));
+        }
 
         [Test]
         public void Finds_GreaterThan()

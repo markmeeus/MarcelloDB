@@ -37,12 +37,21 @@ namespace MarcelloDB.Collections.Scopes
             var startKey = new ValueWithAddressIndexKey{ V = (IComparable)this.StartAt };
             var endKey =  new ValueWithAddressIndexKey{ V = (IComparable)this.EndAt };
 
-            var range = descending ?
-                new BTreeWalkerRange<ValueWithAddressIndexKey>(endKey, startKey) :
-                new BTreeWalkerRange<ValueWithAddressIndexKey>(startKey, endKey);
+            BTreeWalkerRange<ValueWithAddressIndexKey> range;
+            if (!descending)
+            {
+                range = new BTreeWalkerRange<ValueWithAddressIndexKey>(startKey, endKey);
+                range.IncludeStartAt = this.IncludeStartAt;
+                range.IncludeEndAt = this.IncludeEndAt;
+            }
+            else
+            {
+                //start and end are reversed
+                range = new BTreeWalkerRange<ValueWithAddressIndexKey>(endKey, startKey);
+                range.IncludeStartAt = this.IncludeEndAt;
+                range.IncludeEndAt = this.IncludeStartAt;
+            }
 
-            range.IncludeStartAt = this.IncludeStartAt;
-            range.IncludeEndAt = this.IncludeEndAt;
             return this.IndexedValue.BuildEnumerator(range, descending);
         }
         #endregion
