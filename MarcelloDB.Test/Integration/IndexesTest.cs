@@ -374,6 +374,21 @@ namespace MarcelloDB.Test.Integration
         }
 
         [Test]
+        public void Finds_GreaterThan_Descending()
+        {
+            _articles.Persist(new Article(){ ID = 1, Name = "Item 1", Description = "Desc 1", Category = "Cat1" });
+            _articles.Persist(new Article(){ ID = 2, Name = "Item 2a", Description = "Desc 2a", Category = "Cat2" });
+            _articles.Persist(new Article(){ ID = 3, Name = "Item 2b", Description = "Desc 2b", Category = "Cat2" });
+            _articles.Persist(new Article(){ ID = 4, Name = "Item 3a", Description = "Desc 3a", Category = "Cat3" });
+            _articles.Persist(new Article(){ ID = 5, Name = "Item 3b", Description = "Desc 3b", Category = "Cat3" });
+            _articles.Persist(new Article(){ ID = 6, Name = "Item 4", Description = "Desc 4", Category = "Cat4" });
+
+            var found = _articles.Indexes.Category.GreaterThan("Cat2").Descending.ToList();
+            Assert.AreEqual(
+                new List<int>{6, 5, 4}, found.Select(a => a.ID));
+        }
+
+        [Test]
         public void Finds_GreaterThanOrEql()
         {
             _articles.Persist(new Article(){ ID = 1, Name = "Item 1", Description = "Desc 1", Category = "Cat1" });
@@ -386,6 +401,21 @@ namespace MarcelloDB.Test.Integration
             var found = _articles.Indexes.Category.GreaterThanOrEqual("Cat2").ToList();
             Assert.AreEqual(
                 new List<int>{2, 3, 4, 5, 6}, found.Select(a => a.ID));
+        }
+
+        [Test]
+        public void Finds_GreaterThanOrEql_Descending()
+        {
+            _articles.Persist(new Article(){ ID = 1, Name = "Item 1", Description = "Desc 1", Category = "Cat1" });
+            _articles.Persist(new Article(){ ID = 2, Name = "Item 2a", Description = "Desc 2a", Category = "Cat2" });
+            _articles.Persist(new Article(){ ID = 3, Name = "Item 2b", Description = "Desc 2b", Category = "Cat2" });
+            _articles.Persist(new Article(){ ID = 4, Name = "Item 3a", Description = "Desc 3a", Category = "Cat3" });
+            _articles.Persist(new Article(){ ID = 5, Name = "Item 3b", Description = "Desc 3b", Category = "Cat3" });
+            _articles.Persist(new Article(){ ID = 6, Name = "Item 4", Description = "Desc 4", Category = "Cat4" });
+
+            var found = _articles.Indexes.Category.GreaterThanOrEqual("Cat2").Descending.ToList();
+            Assert.AreEqual(
+                new List<int>{6, 5, 4, 3, 2}, found.Select(a => a.ID));
         }
 
         [Test]
@@ -404,6 +434,21 @@ namespace MarcelloDB.Test.Integration
         }
 
         [Test]
+        public void Finds_SmallerThan_Descending()
+        {
+            _articles.Persist(new Article(){ ID = 1, Name = "Item 1", Description = "Desc 1", Category = "Cat1" });
+            _articles.Persist(new Article(){ ID = 2, Name = "Item 2a", Description = "Desc 2a", Category = "Cat2" });
+            _articles.Persist(new Article(){ ID = 3, Name = "Item 2b", Description = "Desc 2b", Category = "Cat2" });
+            _articles.Persist(new Article(){ ID = 4, Name = "Item 3a", Description = "Desc 3a", Category = "Cat3" });
+            _articles.Persist(new Article(){ ID = 5, Name = "Item 3b", Description = "Desc 3b", Category = "Cat3" });
+            _articles.Persist(new Article(){ ID = 6, Name = "Item 4", Description = "Desc 4", Category = "Cat4" });
+
+            var found = _articles.Indexes.Category.SmallerThan("Cat4").Descending.ToList();
+            Assert.AreEqual(
+                new List<int>{5, 4, 3, 2, 1}, found.Select(a => a.ID));
+        }
+                   
+        [Test]
         public void Finds_SmallerThanOrEqual()
         {
             _articles.Persist(new Article(){ ID = 1, Name = "Item 1", Description = "Desc 1", Category = "Cat1" });
@@ -413,9 +458,24 @@ namespace MarcelloDB.Test.Integration
             _articles.Persist(new Article(){ ID = 5, Name = "Item 3b", Description = "Desc 3b", Category = "Cat3" });
             _articles.Persist(new Article(){ ID = 6, Name = "Item 4", Description = "Desc 4", Category = "Cat4" });
 
-            var found = _articles.Indexes.Category.SmallerThanOrEqual("Cat4").ToList();
+            var found = _articles.Indexes.Category.SmallerThanOrEqual("Cat3").ToList();
             Assert.AreEqual(
-                new List<int>{1, 2 ,3, 4, 5, 6}, found.Select(a => a.ID));
+                new List<int>{1, 2 ,3, 4, 5}, found.Select(a => a.ID));
+        }
+
+        [Test]
+        public void Finds_SmallerThanOrEqual_Descending()
+        {
+            _articles.Persist(new Article(){ ID = 1, Name = "Item 1", Description = "Desc 1", Category = "Cat1" });
+            _articles.Persist(new Article(){ ID = 2, Name = "Item 2a", Description = "Desc 2a", Category = "Cat2" });
+            _articles.Persist(new Article(){ ID = 3, Name = "Item 2b", Description = "Desc 2b", Category = "Cat2" });
+            _articles.Persist(new Article(){ ID = 4, Name = "Item 3a", Description = "Desc 3a", Category = "Cat3" });
+            _articles.Persist(new Article(){ ID = 5, Name = "Item 3b", Description = "Desc 3b", Category = "Cat3" });
+            _articles.Persist(new Article(){ ID = 6, Name = "Item 4", Description = "Desc 4", Category = "Cat4" });
+
+            var found = _articles.Indexes.Category.SmallerThanOrEqual("Cat3").Descending.ToList();
+            Assert.AreEqual(
+                new List<int>{5, 4, 3, 2, 1}, found.Select(a => a.ID));
         }
 
         [Test]

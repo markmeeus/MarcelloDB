@@ -6,7 +6,7 @@ using System.Collections;
 
 namespace MarcelloDB.Collections.Scopes
 {
-    public class SmallerThan<TObj, TAttribute> : IEnumerable<TObj>
+    public class SmallerThan<TObj, TAttribute> : BaseScope<TObj, TAttribute>
     {
         IndexedValue<TObj, TAttribute> IndexedValue { get; set; }
 
@@ -20,30 +20,26 @@ namespace MarcelloDB.Collections.Scopes
             this.Value = value;
             this.OrEqual = orEqual;
         }
-
-        #region IEnumerable implementation
-
-        public IEnumerator<TObj> GetEnumerator()
+            
+        internal override CollectionEnumerator<TObj, ValueWithAddressIndexKey> BuildEnumerator(bool descending)
         {
             var startKey = new ValueWithAddressIndexKey{ V = (IComparable)this.Value };
             var range = new BTreeWalkerRange<ValueWithAddressIndexKey>();
-            range.SetEndAt(startKey);
-            range.IncludeEndAt = this.OrEqual;
+
+            if (!descending)
+            {
+                range.SetEndAt(startKey);
+                range.IncludeEndAt = this.OrEqual;
+            }
+            else
+            {
+                range.SetStartAt(startKey);
+                range.IncludeStartAt = this.OrEqual;
+            }
+
             return this.IndexedValue
-                .BuildEnumerator(range)
-                .GetEnumerator();
+                .BuildEnumerator(range, descending);
         }
-
-        #endregion
-
-        #region IEnumerable implementation
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        #endregion
     }
 }
 
