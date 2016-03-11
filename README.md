@@ -309,6 +309,17 @@ bookCollection.Indexes.AgeRecommendation.SmallerThan(12)
 bookCollection.Indexes.AgeRecommendation.SmallerThanOrEqual(12)
 ```
 
+###Descending
+Every index scope can be reversed to iterate your objects in a descending order
+```cs
+//starting from 12 down to 0
+bookCollection.Indexes.AgeRecommendation.SmallerThan(12).Descending 
+//starting from the max value down to 12
+bookCollection.Indexes.AgeRecommendation.GreaterThan(12).Descending 
+//from 16 down to 12
+bookCollection.Indexes.AgeRecommendation.Between(12).And(16).Descending 
+```
+
 #Deleting objects
 
 Delete your objects like this:
