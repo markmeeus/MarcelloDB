@@ -40,43 +40,37 @@ namespace MarcelloDB.Collections
             this.IsDescending = IsDescending;
         }
 
-        public IEnumerator<T> GetEnumerator()
+        IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
-            Session.AssertValid();
-            lock(Session.SyncLock){
-                try{
-                    this.Collection.BlockModification = true;
-                    var walker = this.Index.GetWalker();
+            var indexEnumerator = new IndexEntryEnumerator<T, TKey>(
+                this.Collection,
+                this.Session,
+                this.Index,
+                this.IsDescending);
 
-                    if(this.IsDescending)
-                    {
-                        walker.Reverse();
-                    }
+            indexEnumerator.SetRange(this.Range);
 
-                    if(this.HasRange)
-                    {
-                        walker.SetRange(this.Range);
-                    }
-
-                    var node = walker.Next();
-                    while (node != null)
-                    {
-                        var record = RecordManager.GetRecord(node.Pointer);
-                        var obj = Serializer.Deserialize(record.Data);
-                        yield return obj;
-                        node = walker.Next();
-                    }
-                }
-                finally
-                {
-                    this.Collection.BlockModification = false;
-                }
+            foreach (var node in indexEnumerator)
+            {
+                var record = RecordManager.GetRecord(node.Pointer);
+                var obj = Serializer.Deserialize(record.Data);
+                yield return obj;
             }
         }
 
+        public IEnumerable<TKey> GetKeyEnumerator()
+        {
+            return new KeysEnumerator<T, TKey>(
+               this.Collection,
+                this.Session,
+                this.Index,
+                this.IsDescending);
+        }
+
+
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return ((IEnumerable<T>)this).GetEnumerator();
         }
 
         internal void SetRange(BTreeWalkerRange<TKey> range)

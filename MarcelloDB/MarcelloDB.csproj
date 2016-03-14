@@ -99,6 +99,8 @@
     <Compile Include="Index\IndexDefinitionValidator.cs" />
     <Compile Include="Collections\Scopes\Descending.cs" />
     <Compile Include="Collections\Scopes\BaseScope.cs" />
+    <Compile Include="Collections\KeysEnumeratorT.cs" />
+    <Compile Include="Collections\IndexEntryEnumerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">

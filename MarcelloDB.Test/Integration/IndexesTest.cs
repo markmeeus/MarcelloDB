@@ -167,6 +167,20 @@ namespace MarcelloDB.Test.Integration
         }
 
         [Test]
+        public void All_Keys_Enumerates_All_Keys()
+        {
+            var article1 = new Article{ID = 1, Name = "Article1", Description = "Description 1"};
+            var article2 = new Article{ID = 2, Name = "Artcile2", Description = "Description 2"};
+
+            _articles.Persist(article1);
+            _articles.Persist(article2);
+
+            var articles = _articles.Indexes.Description.All. Keys.ToList();
+
+            Assert.AreEqual(new List<string>{article1.Description, article2.Description}, articles.ToArray());
+        }
+
+        [Test]
         public void Find_Finds_All()
         {
             var toiletPaper = Article.ToiletPaper;
@@ -447,7 +461,7 @@ namespace MarcelloDB.Test.Integration
             Assert.AreEqual(
                 new List<int>{5, 4, 3, 2, 1}, found.Select(a => a.ID));
         }
-                   
+
         [Test]
         public void Finds_SmallerThanOrEqual()
         {

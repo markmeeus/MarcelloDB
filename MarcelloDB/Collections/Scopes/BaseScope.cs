@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using MarcelloDB.Records;
 using MarcelloDB.Collections;
+using System.Collections;
 
 namespace MarcelloDB
 {
+
     public abstract class BaseScope<TObj, TAttribute> : IEnumerable<TObj>
     {
         public BaseScope()
@@ -21,21 +24,34 @@ namespace MarcelloDB
             }
         }
 
+        public IEnumerable<TAttribute> Keys
+        {
+            get
+            {
+                var keyEnumerator = (IEnumerable<ValueWithAddressIndexKey>) BuildEnumerator(false)
+                    .GetKeyEnumerator();
+                foreach (var key in keyEnumerator)
+                {
+                    yield return (TAttribute)key.V;
+                }
+            }
+        }
+
         #region IEnumerable implementation
 
-        public IEnumerator<TObj> GetEnumerator()
+        IEnumerator<TObj> IEnumerable<TObj>.GetEnumerator()
         {
             //default to ascending enumeration
-            return BuildEnumerator(false).GetEnumerator();
+            return ((IEnumerable<TObj>)BuildEnumerator(false)).GetEnumerator();
         }
 
         #endregion
 
         #region IEnumerable implementation
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return ((IEnumerable<TObj>)this).GetEnumerator();
         }
 
         #endregion
