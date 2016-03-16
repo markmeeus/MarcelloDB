@@ -4,14 +4,18 @@ using System.Linq;
 using MarcelloDB.Records;
 using MarcelloDB.Collections;
 using System.Collections;
+using MarcelloDB.Index;
 
 namespace MarcelloDB
 {
 
     public abstract class BaseScope<TObj, TAttribute> : IEnumerable<TObj>
     {
+        ObjectComparer Comparer { get; set; } 
+
         public BaseScope()
         {
+            this.Comparer = new ObjectComparer();
         }
 
         abstract internal CollectionEnumerator<TObj, ValueWithAddressIndexKey> BuildEnumerator(bool descending);
@@ -30,9 +34,19 @@ namespace MarcelloDB
             {
                 var keyEnumerator = (IEnumerable<ValueWithAddressIndexKey>) BuildEnumerator(false)
                     .GetKeyEnumerator();
+
+                ValueWithAddressIndexKey previousKey = null;
+                bool first = true;
+
                 foreach (var key in keyEnumerator)
                 {
-                    yield return (TAttribute)key.V;
+                    if (first || 
+                        (this.Comparer.Compare(previousKey.V, key.V) != 0))
+                    {                         
+                        yield return (TAttribute)key.V;
+                    }
+                    first = false;
+                    previousKey = key;
                 }
             }
         }

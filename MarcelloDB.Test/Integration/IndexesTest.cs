@@ -175,10 +175,27 @@ namespace MarcelloDB.Test.Integration
             _articles.Persist(article1);
             _articles.Persist(article2);
 
-            var articles = _articles.Indexes.Description.All. Keys.ToList();
+            var articleDescriptions = _articles.Indexes.Description.All.Keys.ToList();
 
-            Assert.AreEqual(new List<string>{article1.Description, article2.Description}, articles.ToArray());
+            Assert.AreEqual(new List<string>{article1.Description, article2.Description}, articleDescriptions.ToArray());
         }
+
+        [Test]
+        public void All_Keys_Skips_Duplicates()
+        {
+            var article1 = new Article{ID = 1, Name = "Article1", Description = "Description 1"};
+            var article2 = new Article{ID = 2, Name = "Artcile2", Description = "Description 2"};
+            var article3 = new Article{ID = 3, Name = "Artcile3", Description = "Description 2"};
+
+            _articles.Persist(article1);
+            _articles.Persist(article2);
+            _articles.Persist(article3);
+
+            var articleDescriptions = _articles.Indexes.Description.All.Keys.ToList();
+
+            Assert.AreEqual(new List<string>{article1.Description, article2.Description}, articleDescriptions.ToArray());
+        }
+
 
         [Test]
         public void Find_Finds_All()
