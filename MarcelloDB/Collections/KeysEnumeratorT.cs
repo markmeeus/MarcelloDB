@@ -9,11 +9,11 @@ namespace MarcelloDB
 {
     internal class KeysEnumerator<T, TKey>  : SessionBoundObject, IEnumerable<TKey>
     {
+        BTreeWalkerRange<TKey> Range { get; set; }
+
         Collection<T> Collection { get; set; }
 
         RecordIndex<TKey> Index { get; set; }
-
-        BTreeWalkerRange<TKey> Range { get; set; }
 
         bool HasRange{ get { return this.Range != null; } }
 
@@ -23,11 +23,17 @@ namespace MarcelloDB
             Collection<T> collection,
             Session session,
             RecordIndex<TKey> index,
-            bool IsDescending = false
+            bool isDescending = false
         ) : base(session)
         {
             this.Collection = collection;
             this.Index = index;
+            this.IsDescending = isDescending;
+        }
+
+        internal void SetRange(BTreeWalkerRange<TKey> range)
+        {
+            this.Range = range;
         }
 
         #region IEnumerable implementation
@@ -38,6 +44,8 @@ namespace MarcelloDB
                                       this.Session,
                                       this.Index,
                                       this.IsDescending);
+
+            indexEnumerator.SetRange(this.Range);
 
             foreach (var node in indexEnumerator)
             {

@@ -11,7 +11,7 @@ namespace MarcelloDB
 
     public abstract class BaseScope<TObj, TAttribute> : IEnumerable<TObj>
     {
-        ObjectComparer Comparer { get; set; } 
+        ObjectComparer Comparer { get; set; }
 
         public BaseScope()
         {
@@ -35,18 +35,34 @@ namespace MarcelloDB
                 var keyEnumerator = (IEnumerable<ValueWithAddressIndexKey>) BuildEnumerator(false)
                     .GetKeyEnumerator();
 
-                ValueWithAddressIndexKey previousKey = null;
+                IComparable previousKeyValue = null;
+
                 bool first = true;
 
                 foreach (var key in keyEnumerator)
                 {
-                    if (first || 
-                        (this.Comparer.Compare(previousKey.V, key.V) != 0))
-                    {                         
-                        yield return (TAttribute)key.V;
+                    var currentKeyValue = (IComparable)key.V;
+                    if (first)
+                    {
+                        yield return (TAttribute)currentKeyValue;
                     }
+                    else
+                    {
+                        if (previousKeyValue == null)
+                        {
+                            if (currentKeyValue != null)
+                            {
+                                yield return (TAttribute)currentKeyValue;
+                            }
+                        }
+                        else if (this.Comparer.Compare(previousKeyValue, currentKeyValue) != 0)
+                        {
+                            yield return (TAttribute)currentKeyValue;
+                        }
+                    }
+
                     first = false;
-                    previousKey = key;
+                    previousKeyValue = currentKeyValue;
                 }
             }
         }

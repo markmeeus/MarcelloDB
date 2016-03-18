@@ -60,11 +60,15 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<TKey> GetKeyEnumerator()
         {
-            return new KeysEnumerator<T, TKey>(
+            var keyEnumerator =  new KeysEnumerator<T, TKey>(
                this.Collection,
                 this.Session,
                 this.Index,
                 this.IsDescending);
+
+            keyEnumerator.SetRange(this.Range);
+
+            return keyEnumerator;
         }
 
 
