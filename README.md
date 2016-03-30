@@ -319,6 +319,13 @@ bookCollection.Indexes.AgeRecommendation.GreaterThan(12).Descending
 //from 16 down to 12
 bookCollection.Indexes.AgeRecommendation.Between(12).And(16).Descending 
 ```
+##Iterating the keys of an index
+You can iterate all keys of an index:
+```cs
+bookCollection.Indexes.AgeRecommendation.SmallerThan(12).Keys
+//works also on the Descending scope
+bookCollection.Indexes.AgeRecommendation.SmallerThan(12).Descending.Keys
+```
 
 #Deleting objects
 
