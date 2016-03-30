@@ -442,8 +442,8 @@ Data is stored in an unencrypted format. An encryption engine is available as a 
 
 0.3.0
 -
-- Iterating indexes in descending order
-- Iterating index keys only
+- ~~Iterating indexes in descending order~~
+- ~~Iterating index keys only~~
 
 0.4.0
 -
