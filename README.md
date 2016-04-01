@@ -17,7 +17,7 @@ MarcelloDB is portable code: Xamarin (iOS and Android), Windows 8.1 and Windows 
 
 #Current Status
 
-Current version: 0.2
+Current version: 0.3
 
 Although still under heavy development, both the api and the file format are already quite stable.
 
