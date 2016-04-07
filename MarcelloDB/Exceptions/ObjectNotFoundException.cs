@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MarcelloDB
+namespace MarcelloDB.Exceptions
 {
     public class ObjectNotFoundException : Exception
     {

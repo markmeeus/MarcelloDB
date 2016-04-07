@@ -28,7 +28,7 @@ namespace MarcelloDB.Transactions
         }
     }
 
-    public class JournalEntry
+    internal class JournalEntry
     {
         public long Stamp { get; set; }
 

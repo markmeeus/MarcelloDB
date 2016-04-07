@@ -2,7 +2,7 @@
 
 namespace MarcelloDB.Records
 {
-    public class ValueWithAddressIndexKey : IComparable, IEquatable<ValueWithAddressIndexKey>
+    internal class ValueWithAddressIndexKey : IComparable, IEquatable<ValueWithAddressIndexKey>
     {
         public Int64 A { get; set; } //Address, abbreviated to save storage
         public IComparable V { get; set; } //Size

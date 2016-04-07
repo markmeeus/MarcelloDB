@@ -2,7 +2,7 @@
 
 namespace MarcelloDB.AllocationStrategies
 {
-    public class ExactSizeAllocationStrategy : IAllocationStrategy
+    internal class ExactSizeAllocationStrategy : IAllocationStrategy
     {
         #region IAllocationStrategy implementation
 

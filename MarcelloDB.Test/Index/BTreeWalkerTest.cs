@@ -11,7 +11,7 @@ namespace MarcelloDB.Test.Index
 	[TestFixture]
 	class BTreeWalkerTest
 	{
-        MockBTreeDataProvider<int,int> _mockDataProvider;
+        IBTreeDataProvider<int,int> _mockDataProvider;
 
         BTreeWalker<int,int> _walker;
 

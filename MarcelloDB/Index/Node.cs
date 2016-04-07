@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MarcelloDB.Index
 {
-    public class Node
+    internal class Node
     {
         public int Degree { get; set; }
 
@@ -28,7 +28,7 @@ namespace MarcelloDB.Index
         }
     }
 
-    public class Node<TK, TP> : Node
+    internal class Node<TK, TP> : Node
     {
 
         public EntryList<TK, TP> EntryList { get; set; }

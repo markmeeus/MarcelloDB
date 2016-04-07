@@ -5,7 +5,7 @@ using MarcelloDB.Index.BTree;
 
 namespace MarcelloDB.Test
 {
-    public class MockBTreeDataProvider<TK, TP> : IBTreeDataProvider<TK, TP>
+    internal class MockBTreeDataProvider<TK, TP> : IBTreeDataProvider<TK, TP>
     {
         public bool WasFlushed { get; set; }
 
@@ -16,7 +16,7 @@ namespace MarcelloDB.Test
 
         public Int64 RootNodeAddress { get; set; }
 
-        public Node<TK, TP> GetRootNode(int degree)
+        Node<TK, TP> IBTreeDataProvider<TK, TP>.GetRootNode(int degree)
         {
             if (_rootNode == null)
             {
@@ -27,18 +27,18 @@ namespace MarcelloDB.Test
             return _rootNode;
         }
 
-        public void SetRootNode(Node<TK, TP> rootNode)
+        void IBTreeDataProvider<TK, TP>.SetRootNode(Node<TK, TP> rootNode)
         {
             _rootNode = rootNode;
             this.RootNodeAddress = rootNode.Address;
         }
 
-        public Node<TK, TP> GetNode(Int64 address)
+        Node<TK, TP> IBTreeDataProvider<TK, TP>.GetNode(Int64 address)
         {
             return _nodes[address];
         }
 
-        public Node<TK, TP> CreateNode(int degree)
+        Node<TK, TP> IBTreeDataProvider<TK, TP>.CreateNode(int degree)
         {
             var node = new Node<TK, TP>(degree);
             node.Address = _lastAddress++;

@@ -10,7 +10,7 @@ namespace MarcelloDB.Test.Index
     [TestFixture]
     public class BTreeTest
     {
-        private MockBTreeDataProvider<int, int> _mockDataProvider;
+        private IBTreeDataProvider<int, int> _mockDataProvider;
         private const int Degree = 2;
 
         private readonly int[] testKeyData = new int[] { 10, 20, 30, 50 };

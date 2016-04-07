@@ -5,13 +5,13 @@ using Newtonsoft.Json.Bson;
 
 namespace MarcelloDB.Serialization
 {
-    public class ObjectWrapper<T>
+    internal class ObjectWrapper<T>
     {
         public T O { get; set; }
     }
 
 
-    public class BsonSerializer<T> : IObjectSerializer<T>
+    internal class BsonSerializer<T> : IObjectSerializer<T>
     {
         JsonSerializer JsonSerializer { get; set; }
 

@@ -2,7 +2,7 @@
 
 namespace MarcelloDB.Index
 {
-    public class ObjectComparer
+    internal class ObjectComparer
     {
         bool Inverted { get; set; }
 

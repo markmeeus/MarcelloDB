@@ -35,7 +35,6 @@
     <Compile Include="Collections\CollectionEnumeratorT.cs" />
     <Compile Include="Collections\CollectionT.cs" />
     <Compile Include="Records\Record.cs" />
-    <Compile Include="Records\RecordBuilder.cs" />
     <Compile Include="Records\RecordHeader.cs" />
     <Compile Include="Records\RecordManager.cs" />
     <Compile Include="Serialization\IObjectSerializer.cs" />

@@ -2,7 +2,7 @@
 
 namespace MarcelloDB.Records
 {
-    public class EmptyRecordIndexKey : IComparable, IEquatable<EmptyRecordIndexKey>
+    internal class EmptyRecordIndexKey : IComparable, IEquatable<EmptyRecordIndexKey>
     {
         public Int64 A { get; set; } //Address, abbreviated to save storage
         public Int32 S { get; set; } //Size

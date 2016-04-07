@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace MarcelloDB.Helpers
 {
-    public class ChangeTrackingList<T>
+    internal class ChangeTrackingList<T>
     {
         List<T> _items;
 

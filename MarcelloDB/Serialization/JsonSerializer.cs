@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace MarcelloDB.Serialization
 {
-    public class JsonSerializer<T> : IObjectSerializer<T>
+    internal class JsonSerializer<T> : IObjectSerializer<T>
     {
         public JsonSerializer ()
         {

@@ -5,7 +5,7 @@ using MarcelloDB.Helpers;
 
 namespace MarcelloDB.Index
 {
-    public class AddressList : ChangeTrackingList<Int64>
+    internal class AddressList : ChangeTrackingList<Int64>
     {
         internal List<Int64> Addresses
         {

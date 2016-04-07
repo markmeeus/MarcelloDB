@@ -2,7 +2,7 @@
 
 namespace MarcelloDB.Serialization
 {
-    public class BufferReader
+    internal class BufferReader
     {
         byte[] Buffer { get; set; }
 

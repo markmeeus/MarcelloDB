@@ -2,7 +2,7 @@
 
 namespace MarcelloDB.Serialization
 {
-    public interface IObjectSerializer<T>
+    internal interface IObjectSerializer<T>
     {
         byte[] Serialize(T obj);
 
