@@ -1,5 +1,7 @@
 ﻿using MarcelloDB.Collections;
 using MarcelloDB.Platform;
+using MarcelloDB.Storage;
+using MarcelloDB.uwp.Storage;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +13,7 @@ namespace MarcelloDB.uwp
 {
     public class Platform : IPlatform
     {
-        public Storage.IStorageStreamProvider CreateStorageStreamProvider(string rootPath)
+        public IStorageStreamProvider CreateStorageStreamProvider(string rootPath)
         {
             return new FileStorageStreamProvider(GetFolderForPath(rootPath));        
         }
