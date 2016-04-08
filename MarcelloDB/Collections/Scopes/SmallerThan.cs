@@ -20,7 +20,7 @@ namespace MarcelloDB.Collections.Scopes
             this.Value = value;
             this.OrEqual = orEqual;
         }
-            
+
         internal override CollectionEnumerator<TObj, ValueWithAddressIndexKey> BuildEnumerator(bool descending)
         {
             var startKey = new ValueWithAddressIndexKey{ V = (IComparable)this.Value };

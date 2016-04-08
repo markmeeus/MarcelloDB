@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace MarcelloDB.Index.BTree
 {
-    public interface IBTree<TK, TP>
+    internal interface IBTree<TK, TP>
     {
         Entry<TK, TP> Search(TK key);
 
@@ -16,7 +16,7 @@ namespace MarcelloDB.Index.BTree
     /// <summary>
     /// B tree implementation based on https://github.com/rdcastro/btree-dotnet
     /// </summary>
-    public class BTree<TK, TP> : IBTree<TK, TP>
+    internal class BTree<TK, TP> : IBTree<TK, TP>
     {
         IBTreeDataProvider<TK, TP> DataProvider { get; set;}
 

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace MarcelloDB.Index
 {
-    public class IndexDefinitionValidator
+    internal class IndexDefinitionValidator
     {
         public IndexDefinitionValidator()
         {

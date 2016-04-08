@@ -2,6 +2,7 @@
 using MarcelloDB.Platform;
 using System.Collections.Generic;
 using MarcelloDB.Storage;
+using MarcelloDB.netfx.Storage;
 
 namespace MarcelloDB.netfx
 {

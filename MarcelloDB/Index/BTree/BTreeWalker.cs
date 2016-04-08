@@ -42,7 +42,7 @@ namespace MarcelloDB.Index.BTree
         }
     }
 
-    public class BTreeWalker<TK, TP>
+    internal class BTreeWalker<TK, TP>
     {
         class BreadCrumb
         {

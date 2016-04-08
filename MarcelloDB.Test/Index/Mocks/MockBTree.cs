@@ -5,7 +5,7 @@ using MarcelloDB.Index.BTree;
 
 namespace MarcelloDB.Test
 {
-    public class MockBTree<TK,TP> : IBTree<TK, TP>
+    internal class MockBTree<TK,TP> : IBTree<TK, TP>
     {
         public string LastAction { get; set; }
         public List<TK> Searched { get; set; }

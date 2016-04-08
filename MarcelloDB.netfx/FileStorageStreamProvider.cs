@@ -3,7 +3,7 @@ using MarcelloDB.Storage;
 using System.Collections.Generic;
 using System.IO;
 
-namespace MarcelloDB
+namespace MarcelloDB.netfx.Storage
 {
     public class FileStorageStreamProvider : IStorageStreamProvider
     {

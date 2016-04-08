@@ -2,8 +2,7 @@
 
 namespace MarcelloDB.Index
 {
-
-    public class Entry<TK, TP> : IEquatable<Entry<TK, TP>>
+    internal class Entry<TK, TP> : IEquatable<Entry<TK, TP>>
     {
         TK _key;
         public TK Key

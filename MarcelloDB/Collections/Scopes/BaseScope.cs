@@ -6,7 +6,7 @@ using MarcelloDB.Collections;
 using System.Collections;
 using MarcelloDB.Index;
 
-namespace MarcelloDB
+namespace MarcelloDB.Collections.Scopes
 {
 
     public abstract class BaseScope<TObj, TAttribute> : IEnumerable<TObj>

@@ -2,7 +2,7 @@
 using MarcelloDB.Records;
 using MarcelloDB.Collections;
 
-namespace MarcelloDB
+namespace MarcelloDB.Collections.Scopes
 {
     public class Descending<TObj, TAttribute> : BaseScope<TObj, TAttribute>
     {
