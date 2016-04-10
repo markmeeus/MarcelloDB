@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Article.cs" />
+    <Compile Include="Regression\Issue32_OutOfMemoryOnSecondPersist.cs" />
     <Compile Include="TestStream\InMemoryStream.cs" />
     <Compile Include="Classes\ClassesWithIDs.cs" />
     <Compile Include="Serialization\ObjectProxyTest.cs" />
