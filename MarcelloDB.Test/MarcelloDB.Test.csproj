@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -73,22 +73,12 @@
     <Compile Include="Records\ValueWithAddressIndexKeyTest.cs" />
     <Compile Include="Integration\BasicsTest.cs" />
     <Compile Include="Integration\IndexesTest.cs" />
+    <Compile Include="Regression\Issue31_NullReferenceWhenPersistingWithNonID.cs" />
     <Compile Include="Classes\ArticleIndexDefinition.cs" />
     <Compile Include="Index\IndexDefinitionValidatorTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Classes\" />
-    <Folder Include="TestStream\" />
-    <Folder Include="Serialization\" />
-    <Folder Include="Records\" />
-    <Folder Include="Transactions\" />
-    <Folder Include="Helpers\" />
-    <Folder Include="Index\" />
-    <Folder Include="Index\Mocks\" />
-    <Folder Include="AllocationStrategies\" />
-    <Folder Include="Integration\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\MarcelloDB.netfx\MarcelloDB.netfx.csproj">
       <Project>{F62F30FD-5473-4427-BED9-6760B2C6C0FD}</Project>

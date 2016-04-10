@@ -175,7 +175,7 @@ namespace MarcelloDB.Collections
         protected internal override object GetKey(object o, long address)
         {
             //ID Index has it's value as key
-            return base.GetValue(o);
+            return this.GetValue(o);
         }
     }
 }
