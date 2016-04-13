@@ -2,16 +2,16 @@
 
 namespace MarcelloDB.Records
 {
-    internal class ValueWithAddressIndexKey : IComparable, IEquatable<ValueWithAddressIndexKey>
+    internal class ValueWithAddressIndexKey<TValue> : IComparable, IEquatable<ValueWithAddressIndexKey<TValue>>
     {
         public Int64 A { get; set; } //Address, abbreviated to save storage
-        public IComparable V { get; set; } //Size
+        public TValue V { get; set; } //Size
 
         #region IComparable implementation
 
         public int CompareTo(object obj)
         {
-            var other = (ValueWithAddressIndexKey)obj;
+            var other = (ValueWithAddressIndexKey<TValue>)obj;
             var valueCompared = CompareValues(other);
             if(valueCompared == 0)
             {
@@ -27,14 +27,14 @@ namespace MarcelloDB.Records
 
         #region IEquatable implementation
 
-        public bool Equals(ValueWithAddressIndexKey other)
+        public bool Equals(ValueWithAddressIndexKey<TValue> other)
         {
             return this.CompareTo(other) == 0;
         }
 
         #endregion
 
-        int CompareValues(ValueWithAddressIndexKey other)
+        int CompareValues(ValueWithAddressIndexKey<TValue> other)
         {
             if (this.V == null)
             {
@@ -49,7 +49,7 @@ namespace MarcelloDB.Records
                 return 1;
             }
 
-            return V.CompareTo(other.V);
+            return ((IComparable)V).CompareTo(other.V);
         }
     }
 }

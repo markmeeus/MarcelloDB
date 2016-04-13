@@ -13,7 +13,7 @@ namespace MarcelloDB.Collections.Scopes
             this.OriginalScope = originalScope;
         }
 
-        internal override CollectionEnumerator<TObj, ValueWithAddressIndexKey> BuildEnumerator(bool descending)
+        internal override CollectionEnumerator<TObj, ValueWithAddressIndexKey<TAttribute>> BuildEnumerator(bool descending)
         {
             return OriginalScope.BuildEnumerator(true); //force descending enumerator
         }

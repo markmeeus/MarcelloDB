@@ -21,10 +21,12 @@ namespace MarcelloDB.Collections.Scopes
             this.OrEqual = orEqual;
         }
 
-        internal override CollectionEnumerator<TObj, ValueWithAddressIndexKey> BuildEnumerator(bool descending)
+        internal override CollectionEnumerator<TObj, ValueWithAddressIndexKey<TAttribute>> BuildEnumerator(bool descending)
         {
-            var startKey = new ValueWithAddressIndexKey{ V = (IComparable)this.Value };
-            var range = new BTreeWalkerRange<ValueWithAddressIndexKey>();
+            var startKey = new ValueWithAddressIndexKey<TAttribute>{
+                V = this.Value
+            };
+            var range = new BTreeWalkerRange<ValueWithAddressIndexKey<TAttribute>>();
 
             if (!descending)
             {

@@ -79,7 +79,7 @@ namespace MarcelloDB.Test.Index
         public void IndexedField_GetIndexKey_Returns_Correct_Key_For_Empty_Property()
         {
             var indexedValues = _definition.IndexedValues;
-            var indexKey = (ValueWithAddressIndexKey) indexedValues.FirstOrDefault(v => v.PropertyName == "Name")
+            var indexKey = (ValueWithAddressIndexKey<string>) indexedValues.FirstOrDefault(v => v.PropertyName == "Name")
                 .GetKey(Article.BarbieDoll, 123);
             Assert.AreEqual(Article.BarbieDoll.Name, indexKey.V);
             Assert.AreEqual(123, indexKey.A);
@@ -89,7 +89,7 @@ namespace MarcelloDB.Test.Index
         public void IndexedField_GetIndexKey_Returns_Correct_Key_For_Custom_Property()
         {
             var indexedValues = _definition.IndexedValues;
-            var indexKey = (ValueWithAddressIndexKey) indexedValues.FirstOrDefault(v => v.PropertyName == "CustomDescription")
+            var indexKey = (ValueWithAddressIndexKey<string>) indexedValues.FirstOrDefault(v => v.PropertyName == "CustomDescription")
                 .GetKey(Article.BarbieDoll, 123);
             Assert.AreEqual("Custom" + Article.BarbieDoll.Description, indexKey.V);
             Assert.AreEqual(123, indexKey.A);

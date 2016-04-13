@@ -18,7 +18,7 @@ namespace MarcelloDB.Collections.Scopes
             this.Comparer = new ObjectComparer();
         }
 
-        abstract internal CollectionEnumerator<TObj, ValueWithAddressIndexKey> BuildEnumerator(bool descending);
+        abstract internal CollectionEnumerator<TObj, ValueWithAddressIndexKey<TAttribute>> BuildEnumerator(bool descending);
 
         public Descending<TObj, TAttribute> Descending
         {
@@ -32,7 +32,7 @@ namespace MarcelloDB.Collections.Scopes
         {
             get
             {
-                var keyEnumerator = (IEnumerable<ValueWithAddressIndexKey>) BuildEnumerator(false)
+                var keyEnumerator = (IEnumerable<ValueWithAddressIndexKey<TAttribute>>) BuildEnumerator(false)
                     .GetKeyEnumerator();
 
                 IComparable previousKeyValue = null;

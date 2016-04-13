@@ -15,7 +15,7 @@ namespace MarcelloDB.Collections.Scopes
 
         }
 
-        override internal CollectionEnumerator<TObj, ValueWithAddressIndexKey> BuildEnumerator(bool descending)
+        override internal CollectionEnumerator<TObj, ValueWithAddressIndexKey<TAttribute>> BuildEnumerator(bool descending)
         {
             return this.IndexedValue
                 .BuildEnumerator(null, descending);

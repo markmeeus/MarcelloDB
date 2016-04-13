@@ -16,8 +16,8 @@ namespace MarcelloDB.Test.Records
         [Test]
         public void Can_Be_Serialized()
         {
-            var key = new ValueWithAddressIndexKey{A = 10, V = 20 };
-            var serializer = new BsonSerializer<ValueWithAddressIndexKey>();
+            var key = new ValueWithAddressIndexKey<int>{A = 10, V = 20 };
+            var serializer = new BsonSerializer<ValueWithAddressIndexKey<int>>();
             var deserialized = serializer.Deserialize(
                 serializer.Serialize(key)
             );
@@ -28,23 +28,23 @@ namespace MarcelloDB.Test.Records
         [Test]
         public void Compares_On_Value_First()
         {
-            var key1 = new ValueWithAddressIndexKey{V = 1, A = 2 };
-            var key2 = new ValueWithAddressIndexKey{V = 2, A = 1 };
+            var key1 = new ValueWithAddressIndexKey<int>{V = 1, A = 2 };
+            var key2 = new ValueWithAddressIndexKey<int>{V = 2, A = 1 };
             Assert.IsTrue(key1.CompareTo(key2) < 0);
         }
 
         [Test]
         public void Compares_On_Address_When_Size_Is_Equal()
         {
-            var key1 = new ValueWithAddressIndexKey{V = 1, A = 1 };
-            var key2 = new ValueWithAddressIndexKey{V = 1, A = 2 };
+            var key1 = new ValueWithAddressIndexKey<int>{V = 1, A = 1 };
+            var key2 = new ValueWithAddressIndexKey<int>{V = 1, A = 2 };
             Assert.IsTrue(key1.CompareTo(key2) < 0);
         }
         [Test]
         public void Considers_Equal_When_Address_Missing()
         {
-            var key1 = new ValueWithAddressIndexKey{V = 1, A = 1 };
-            var key2 = new ValueWithAddressIndexKey{V = 1};
+            var key1 = new ValueWithAddressIndexKey<int>{V = 1, A = 1 };
+            var key2 = new ValueWithAddressIndexKey<int>{V = 1};
             Assert.AreEqual(0, key1.CompareTo(key2));
             Assert.AreEqual(0, key2.CompareTo(key1));
             Assert.IsTrue(key1.Equals(key2));
