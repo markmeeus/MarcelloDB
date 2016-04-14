@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>MarcelloDB</RootNamespace>
     <AssemblyName>MarcelloDB</AssemblyName>
-    <TargetFrameworkProfile>Profile259</TargetFrameworkProfile>
+    <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
   </PropertyGroup>
@@ -102,18 +102,18 @@
     <Compile Include="Collections\IndexEntryEnumerator.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="System.Runtime" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\portable-net45+wp80+win8+wpa81+aspnetcore50\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup />
   <ItemGroup>
     <Folder Include="Platform\" />
     <Folder Include="Collections\Scopes\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>
