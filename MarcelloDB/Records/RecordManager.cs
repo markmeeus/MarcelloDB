@@ -300,8 +300,10 @@ namespace MarcelloDB.Records
 
         void SaveCollectionRoot()
         {
-            if (this.Root.IsDirty)
+            //Root record may become dirty while saving it. (Head may get updated)
+            while(this.Root.IsDirty)
             {
+                this.Root.Clean();
                 byte[] data = this.Session.SerializerResolver.SerializerFor<CollectionFileRoot>()
                     .Serialize(this.Root);
 
@@ -317,7 +319,6 @@ namespace MarcelloDB.Records
 
                 WriteRootAddress(_rootRecord.Header.Address);
             }
-            this.Root.Clean();
         }
 
         Int64 ReadRootAddress()

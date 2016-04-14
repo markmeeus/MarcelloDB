@@ -32,22 +32,22 @@ namespace MarcelloDB.Collections.Scopes
 
         #region implemented abstract members of BaseScope
 
-        internal override CollectionEnumerator<TObj, ValueWithAddressIndexKey> BuildEnumerator(bool descending)
+        internal override CollectionEnumerator<TObj, ValueWithAddressIndexKey<TAttribute>> BuildEnumerator(bool descending)
         {
-            var startKey = new ValueWithAddressIndexKey{ V = (IComparable)this.StartAt };
-            var endKey =  new ValueWithAddressIndexKey{ V = (IComparable)this.EndAt };
+            var startKey = new ValueWithAddressIndexKey<TAttribute>{ V = this.StartAt };
+            var endKey =  new ValueWithAddressIndexKey<TAttribute>{ V = this.EndAt };
 
-            BTreeWalkerRange<ValueWithAddressIndexKey> range;
+            BTreeWalkerRange<ValueWithAddressIndexKey<TAttribute>> range;
             if (!descending)
             {
-                range = new BTreeWalkerRange<ValueWithAddressIndexKey>(startKey, endKey);
+                range = new BTreeWalkerRange<ValueWithAddressIndexKey<TAttribute>>(startKey, endKey);
                 range.IncludeStartAt = this.IncludeStartAt;
                 range.IncludeEndAt = this.IncludeEndAt;
             }
             else
             {
                 //start and end are reversed
-                range = new BTreeWalkerRange<ValueWithAddressIndexKey>(endKey, startKey);
+                range = new BTreeWalkerRange<ValueWithAddressIndexKey<TAttribute>>(endKey, startKey);
                 range.IncludeStartAt = this.IncludeEndAt;
                 range.IncludeEndAt = this.IncludeStartAt;
             }

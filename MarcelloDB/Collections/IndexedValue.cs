@@ -45,8 +45,8 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<TObj> Find(TAttribute value)
         {
-            var key = new ValueWithAddressIndexKey{ V = (IComparable)value };
-            return BuildEnumerator(new BTreeWalkerRange<ValueWithAddressIndexKey>(key, key));
+            var key = new ValueWithAddressIndexKey<TAttribute>{ V = value };
+            return BuildEnumerator(new BTreeWalkerRange<ValueWithAddressIndexKey<TAttribute>>(key, key));
         }
 
         public All<TObj, TAttribute> All
@@ -89,31 +89,31 @@ namespace MarcelloDB.Collections
 
         protected internal override object GetValue(object o)
         {
-            return (object)ValueFunction((TObj)o);
+            return (TAttribute)ValueFunction((TObj)o);
         }
 
         protected internal override object GetKey(object o, Int64 address)
         {
-            return new ValueWithAddressIndexKey
+            return new ValueWithAddressIndexKey<TAttribute>
             {
-                V = (IComparable)GetValue(o),
+                V = (TAttribute)GetValue(o),
                 A = address
             };
         }
 
-        internal CollectionEnumerator<TObj, ValueWithAddressIndexKey>
-            BuildEnumerator(BTreeWalkerRange<ValueWithAddressIndexKey> range,
+        internal CollectionEnumerator<TObj, ValueWithAddressIndexKey<TAttribute>>
+        BuildEnumerator(BTreeWalkerRange<ValueWithAddressIndexKey<TAttribute>> range,
             bool IsDescending = false)
         {
 
-            var index = new RecordIndex<ValueWithAddressIndexKey>(
+            var index = new RecordIndex<ValueWithAddressIndexKey<TAttribute>>(
                 this.Session,
                 this.RecordManager,
                 RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName),
-                this.Session.SerializerResolver.SerializerFor<Node<ValueWithAddressIndexKey, Int64>>()
+                this.Session.SerializerResolver.SerializerFor<Node<ValueWithAddressIndexKey<TAttribute>, Int64>>()
             );
 
-            var enumerator =  new CollectionEnumerator<TObj, ValueWithAddressIndexKey>(
+            var enumerator =  new CollectionEnumerator<TObj, ValueWithAddressIndexKey<TAttribute>>(
                 this.Collection, Session, RecordManager, Serializer, index, IsDescending);
 
             enumerator.SetRange(range);
@@ -175,7 +175,7 @@ namespace MarcelloDB.Collections
         protected internal override object GetKey(object o, long address)
         {
             //ID Index has it's value as key
-            return base.GetValue(o);
+            return this.GetValue(o);
         }
     }
 }
