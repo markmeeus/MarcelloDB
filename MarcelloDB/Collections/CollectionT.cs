@@ -81,14 +81,11 @@ namespace MarcelloDB.Collections
         {
             get
             {
-                var index = new RecordIndex<object>(
-                    this.Session,
-                    this.RecordManager,
-                    RecordIndex.GetIndexName<T>(this.Name, this.GetIDIndexedValue().PropertyName),
-                    this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>()
-                );
-                return new CollectionEnumerator<T, object>(
-                    this, Session, RecordManager, Serializer, index);
+                var indexName =
+                    RecordIndex.GetIndexName<T>(this.Name, this.GetIDIndexedValue().PropertyName);
+
+                return new CollectionEnumerator<T, object>
+                    (this, Session, RecordManager, Serializer, indexName);
             }
         }
 
@@ -108,16 +105,16 @@ namespace MarcelloDB.Collections
 
         public void Persist(T obj)
         {
-            EnsureModificationIsAllowed();
             Transacted(() => {
+                EnsureModificationIsAllowed();
                 PersistInternal(obj);
             });
         }
 
         public void Destroy(object objectID)
         {
-            EnsureModificationIsAllowed();
             Transacted(() => {
+                EnsureModificationIsAllowed();
                 DestroyInternal(objectID);
             });
         }

@@ -319,6 +319,7 @@ namespace MarcelloDB.Records
 
                 WriteRootAddress(_rootRecord.Header.Address);
             }
+
         }
 
         Int64 ReadRootAddress()

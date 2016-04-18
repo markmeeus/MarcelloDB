@@ -21,22 +21,19 @@ namespace MarcelloDB.Index
 
     internal class RecordIndex<TNodeKey> : SessionBoundObject
     {
-        IBTree<TNodeKey, Int64> Tree { get; set; }
+        internal IRecordManager RecordManager { get; set; }
 
-        IBTreeDataProvider<TNodeKey, Int64> DataProvider { get; set; }
+        internal String IndexName { get; set; }
+
+        internal IObjectSerializer<Node<TNodeKey, Int64>> Serializer { get; set; }
 
         internal RecordIndex(Session session, IRecordManager recordManager,
             string indexName,
             IObjectSerializer<Node<TNodeKey, Int64>> serializer) : base(session)
         {
-            this.DataProvider = new RecordBTreeDataProvider<TNodeKey>(
-                this.Session,
-                recordManager,
-                serializer,
-               indexName
-            );
-
-            this.Tree = new BTree<TNodeKey, Int64>(this.DataProvider, RecordIndex.BTREE_DEGREE);
+            this.RecordManager = recordManager;
+            this.IndexName = indexName;
+            this.Serializer = serializer;
         }
 
         internal RecordIndex(Session session, IBTree<TNodeKey, Int64> btree,
@@ -44,6 +41,44 @@ namespace MarcelloDB.Index
         {
             this.DataProvider = dataProvider;
             this.Tree = btree;
+        }
+
+        IBTreeDataProvider<TNodeKey, Int64> _dataProvider;
+        IBTreeDataProvider<TNodeKey, Int64> DataProvider {
+            get
+            {
+                if (_dataProvider == null)
+                {
+                    _dataProvider = new RecordBTreeDataProvider<TNodeKey>(
+                        this.Session,
+                        this.RecordManager,
+                        this.Serializer,
+                        this.IndexName
+                    );
+                }
+                return _dataProvider;
+            }
+            set
+            {
+                _dataProvider = value;
+            }
+        }
+
+        IBTree<TNodeKey, Int64> _tree;
+        IBTree<TNodeKey, Int64> Tree {
+            get
+            {
+                if (_tree == null)
+                {
+                    _tree = new BTree<TNodeKey, Int64>(this.DataProvider, RecordIndex.BTREE_DEGREE);
+                }
+                return _tree;
+
+            }
+            set
+            {
+                _tree = value;
+            }
         }
 
         internal BTreeWalker<TNodeKey, Int64> GetWalker()
@@ -79,4 +114,3 @@ namespace MarcelloDB.Index
         }
     }
 }
-

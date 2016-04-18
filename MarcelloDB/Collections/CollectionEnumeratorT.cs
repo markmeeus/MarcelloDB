@@ -16,7 +16,7 @@ namespace MarcelloDB.Collections
 
         IObjectSerializer<T> Serializer { get; set; }
 
-        RecordIndex<TKey> Index { get; set; }
+        string IndexName { get; set; }
 
         BTreeWalkerRange<TKey> Range { get; set; }
 
@@ -29,46 +29,64 @@ namespace MarcelloDB.Collections
             Session session,
             RecordManager recordManager,
             IObjectSerializer<T> serializer,
-            RecordIndex<TKey> index,
+            string indexName,
             bool IsDescending = false
         ) : base(session)
         {
             this.Collection = collection;
             this.RecordManager = recordManager;
             this.Serializer = serializer;
-            this.Index = index;
+            this.IndexName = indexName;
             this.IsDescending = IsDescending;
         }
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
-            var indexEnumerator = new IndexEntryEnumerator<T, TKey>(
-                this.Collection,
-                this.Session,
-                this.Index,
-                this.IsDescending);
-
-            indexEnumerator.SetRange(this.Range);
-
-            foreach (var node in indexEnumerator)
+            lock (this.Session.SyncLock)
             {
-                var record = RecordManager.GetRecord(node.Pointer);
-                var obj = Serializer.Deserialize(record.Data);
-                yield return obj;
+                var index = new RecordIndex<TKey>(
+                    this.Session,
+                    this.RecordManager,
+                    this.IndexName,
+                    this.Session.SerializerResolver.SerializerFor<Node<TKey, Int64>>()
+                );
+                var indexEnumerator = new IndexEntryEnumerator<T, TKey>(
+                                      this.Collection,
+                                      this.Session,
+                                      index,
+                                      this.IsDescending);
+
+                indexEnumerator.SetRange(this.Range);
+
+                foreach (var node in indexEnumerator)
+                {
+                    var record = RecordManager.GetRecord(node.Pointer);
+                    var obj = Serializer.Deserialize(record.Data);
+                    yield return obj;
+                }
             }
         }
 
         public IEnumerable<TKey> GetKeyEnumerator()
         {
-            var keyEnumerator =  new KeysEnumerator<T, TKey>(
-               this.Collection,
-                this.Session,
-                this.Index,
-                this.IsDescending);
+            lock (this.Session.SyncLock)
+            {
+                var index = new RecordIndex<TKey>(
+                    this.Session,
+                    this.RecordManager,
+                    this.IndexName,
+                    this.Session.SerializerResolver.SerializerFor<Node<TKey, Int64>>()
+                );
+                var keyEnumerator = new KeysEnumerator<T, TKey>(
+                                    this.Collection,
+                                    this.Session,
+                                    index,
+                                    this.IsDescending);
 
-            keyEnumerator.SetRange(this.Range);
+                keyEnumerator.SetRange(this.Range);
 
-            return keyEnumerator;
+                return keyEnumerator;
+            }
         }
 
 

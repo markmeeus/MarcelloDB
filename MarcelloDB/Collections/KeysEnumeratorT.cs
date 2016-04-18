@@ -39,17 +39,20 @@ namespace MarcelloDB
         #region IEnumerable implementation
         IEnumerator<TKey> IEnumerable<TKey>.GetEnumerator()
         {
-            var indexEnumerator = new IndexEntryEnumerator<T, TKey>(
+            lock (this.Session.SyncLock)
+            {
+                var indexEnumerator = new IndexEntryEnumerator<T, TKey>(
                                       this.Collection,
                                       this.Session,
                                       this.Index,
                                       this.IsDescending);
 
-            indexEnumerator.SetRange(this.Range);
+                indexEnumerator.SetRange(this.Range);
 
-            foreach (var node in indexEnumerator)
-            {
-                yield return node.Key;
+                foreach (var node in indexEnumerator)
+                {
+                    yield return node.Key;
+                }
             }
         }
         #endregion

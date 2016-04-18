@@ -106,15 +106,10 @@ namespace MarcelloDB.Collections
             bool IsDescending = false)
         {
 
-            var index = new RecordIndex<ValueWithAddressIndexKey<TAttribute>>(
-                this.Session,
-                this.RecordManager,
-                RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName),
-                this.Session.SerializerResolver.SerializerFor<Node<ValueWithAddressIndexKey<TAttribute>, Int64>>()
-            );
+            var indexName = RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName);
 
             var enumerator =  new CollectionEnumerator<TObj, ValueWithAddressIndexKey<TAttribute>>(
-                this.Collection, Session, RecordManager, Serializer, index, IsDescending);
+                this.Collection, Session, RecordManager, Serializer, indexName, IsDescending);
 
             enumerator.SetRange(range);
 

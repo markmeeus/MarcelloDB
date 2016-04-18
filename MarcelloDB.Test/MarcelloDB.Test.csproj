@@ -77,6 +77,7 @@
     <Compile Include="Regression\Issue31_NullReferenceWhenPersistingWithNonID.cs" />
     <Compile Include="Classes\ArticleIndexDefinition.cs" />
     <Compile Include="Index\IndexDefinitionValidatorTest.cs" />
+    <Compile Include="Regression\Issue35_OutOfMemory_ConcurrentReadWrite.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
