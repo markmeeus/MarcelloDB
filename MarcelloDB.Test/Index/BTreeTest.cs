@@ -340,7 +340,7 @@ namespace MarcelloDB.Test.Index
                 Assert.Fail("Too much children in node");
             }
 
-            foreach (var childAddress in node.ChildrenAddresses.Addresses)
+            foreach (var childAddress in node.ChildrenAddresses)
             {
                 var childNode = btreeData.GetNode(childAddress);
                 CheckNode(childNode, btreeData);

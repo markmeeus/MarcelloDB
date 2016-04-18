@@ -35,7 +35,7 @@ namespace MarcelloDB.Test.Serialization
                                );
 
             Assert.AreEqual(node.Degree, deserialized.Degree);
-            Assert.AreEqual(node.ChildrenAddresses.Addresses, deserialized.ChildrenAddresses.Addresses);
+            Assert.AreEqual(node.ChildrenAddresses, deserialized.ChildrenAddresses);
             Assert.AreEqual(node.EntryList.Count, deserialized.EntryList.Count);
 
             Assert.AreEqual(node.EntryList[0].Pointer, deserialized.EntryList[0].Pointer);

@@ -240,17 +240,17 @@ namespace MarcelloDB.Index.BTree
         IEnumerable<Entry<TK, TP>> Entries(Node<TK, TP> node)
         {
             if (this.Reversed) {
-                return ((IEnumerable<Entry<TK, TP>>)node.EntryList.Entries).Reverse();
+                return ((IEnumerable<Entry<TK, TP>>)node.EntryList).Reverse();
             }
-            return node.EntryList.Entries;
+            return node.EntryList;
         }
 
         IEnumerable<Int64> ChildrenAddresses(Node<TK, TP> node)
         {
             if (this.Reversed) {
-                return ((IEnumerable<Int64> )node.ChildrenAddresses.Addresses).Reverse();
+                return ((IEnumerable<Int64> )node.ChildrenAddresses).Reverse();
             }
-            return node.ChildrenAddresses.Addresses;
+            return node.ChildrenAddresses;
         }
 
         bool EntryIsBeforeEndOfRange(Entry<TK, TP> entry)

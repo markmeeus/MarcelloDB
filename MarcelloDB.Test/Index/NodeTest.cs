@@ -50,7 +50,7 @@ namespace MarcelloDB.Test.Index
             _node.EntryList.Add(new Entry<int, int>{Key=123, Pointer=456});
             _node.ClearChanges();
             Assert.IsFalse(_node.Dirty);
-        }
+        }            
 	}
 }
 

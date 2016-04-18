@@ -1,6 +1,7 @@
 ﻿using System;
 using MarcelloDB.Index;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MarcelloDB.Serialization
 {
@@ -25,8 +26,8 @@ namespace MarcelloDB.Serialization
         public byte[] Serialize(Node<TK, TP> node)
         {
             var data = new BTreeNodeData<TK, TP>();
-            data.Entries = node.EntryList.Entries;
-            data.ChildrenAddresses = node.ChildrenAddresses.Addresses;
+            data.Entries = node.EntryList.ToList();
+            data.ChildrenAddresses = node.ChildrenAddresses.ToList();
             data.Degree = node.Degree;
             return this.DataSerializer.Serialize(data);
         }

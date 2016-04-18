@@ -117,7 +117,7 @@ namespace MarcelloDB.Index.BTree
         /// <param name="keyToDelete">Key to be deleted.</param>
         private void DeleteInternal(Node<TK, TP> node, TK keyToDelete)
         {
-            int i = node.EntryList.Entries.TakeWhile(entry => Comparer.Compare(keyToDelete, entry.Key) > 0).Count();
+            int i = node.EntryList.TakeWhile(entry => Comparer.Compare(keyToDelete, entry.Key) > 0).Count();
 
             // found key in node, so delete if from it
             if (i < node.EntryList.Count && Comparer.Compare(node.EntryList[i].Key, keyToDelete) == 0)
@@ -193,12 +193,12 @@ namespace MarcelloDB.Index.BTree
                         childNode.EntryList.Insert(0, parentNode.EntryList[subtreeIndexInNode - 1]);
                         var oldEntries = childNode.EntryList;
                         childNode.EntryList = leftSibling.EntryList;
-                        childNode.EntryList.AddRange(oldEntries.Entries);
+                        childNode.EntryList.AddRange(oldEntries);
                         if (!leftSibling.IsLeaf)
                         {
-                            var oldChildren = childNode.ChildrenAddresses;
+                            var oldChildrenAddresses = childNode.ChildrenAddresses;
                             childNode.ChildrenAddresses = leftSibling.ChildrenAddresses;
-                            childNode.ChildrenAddresses.AddRange(oldChildren.Addresses);
+                            childNode.ChildrenAddresses.AddRange(oldChildrenAddresses);
                         }
 
                         parentNode.ChildrenAddresses.RemoveAt(leftIndex);
@@ -208,10 +208,10 @@ namespace MarcelloDB.Index.BTree
                     {
                         Debug.Assert(rightSibling != null, "Node should have at least one sibling");
                         childNode.EntryList.Add(parentNode.EntryList[subtreeIndexInNode]);
-                        childNode.EntryList.AddRange(rightSibling.EntryList.Entries);
+                        childNode.EntryList.AddRange(rightSibling.EntryList);
                         if (!rightSibling.IsLeaf)
                         {
-                            childNode.ChildrenAddresses.AddRange(rightSibling.ChildrenAddresses.Addresses);
+                            childNode.ChildrenAddresses.AddRange(rightSibling.ChildrenAddresses);
                         }
 
                         parentNode.ChildrenAddresses.RemoveAt(rightIndex);
@@ -262,8 +262,8 @@ namespace MarcelloDB.Index.BTree
                 else
                 {
                     predecessorChild.EntryList.Add(node.EntryList[keyIndexInNode]);
-                    predecessorChild.EntryList.AddRange(successorChild.EntryList.Entries);
-                    predecessorChild.ChildrenAddresses.AddRange(successorChild.ChildrenAddresses.Addresses);
+                    predecessorChild.EntryList.AddRange(successorChild.EntryList);
+                    predecessorChild.ChildrenAddresses.AddRange(successorChild.ChildrenAddresses);
 
                     node.EntryList.RemoveAt(keyIndexInNode);
                     node.ChildrenAddresses.RemoveAt(keyIndexInNode + 1);
@@ -311,7 +311,7 @@ namespace MarcelloDB.Index.BTree
         /// <returns>Entry object with key information if found, null otherwise.</returns>
         private Entry<TK, TP> SearchInternal(Node<TK, TP> node, TK key)
         {
-            int i = node.EntryList.Entries.TakeWhile(entry => Comparer.Compare(key, entry.Key) > 0).Count();
+            int i = node.EntryList.TakeWhile(entry => Comparer.Compare(key, entry.Key) > 0).Count();
 
             if (i < node.EntryList.Count && Comparer.Compare(node.EntryList[i].Key, key) == 0)
             {
@@ -351,7 +351,7 @@ namespace MarcelloDB.Index.BTree
 
         private void InsertNonFull(Node<TK, TP> node, TK newKey, TP newPointer)
         {
-            int positionToInsert = node.EntryList.Entries.TakeWhile(entry => Comparer.Compare(newKey, entry.Key) >= 0).Count();
+            int positionToInsert = node.EntryList.TakeWhile(entry => Comparer.Compare(newKey, entry.Key) >= 0).Count();
 
             // leaf node
             if (node.IsLeaf)

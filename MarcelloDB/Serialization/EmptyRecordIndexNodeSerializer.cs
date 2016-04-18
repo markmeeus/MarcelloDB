@@ -34,13 +34,13 @@ namespace MarcelloDB.Serialization
             writer.WriteInt32(node.Degree);                 //Degree
 
             writer.WriteInt32(node.EntryList.Count);          //Nr of entries
-            foreach (var entry in node.EntryList.Entries)
+            foreach (var entry in node.EntryList)
             {
                 WriteEntry(writer, entry);                  //every entry
             }
 
             writer.WriteInt32(node.ChildrenAddresses.Count); //Nr of child addresses
-            foreach (var childAddress in node.ChildrenAddresses.Addresses)
+            foreach (var childAddress in node.ChildrenAddresses)
             {
                 writer.WriteInt64(childAddress);            //every child address
             }

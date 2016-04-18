@@ -45,6 +45,15 @@ namespace MarcelloDB.Serialization
             return value;
         }
 
+        public long ReadInt64At(int index)
+        {
+            var bytes = GetBytesInLittleEndianOrderAt(index, sizeof(Int64));
+
+            var value = BitConverter.ToInt64(bytes, 0);
+            this.Position += sizeof(Int64);
+            return value;
+        }
+
         void Initialize(byte[] buffer, bool isLittleEndian){
             this.Buffer = buffer;
             this.Position = 0;
@@ -53,8 +62,13 @@ namespace MarcelloDB.Serialization
 
         byte[] GetBytesInLittleEndianOrder(int size)
         {
+            return GetBytesInLittleEndianOrderAt(this.Position, size);
+        }
+
+        byte[] GetBytesInLittleEndianOrderAt(int index, int size)
+        {
             var bytes = new byte[size];
-            Array.Copy(this.Buffer, this.Position, bytes, 0, bytes.Length);
+            Array.Copy(this.Buffer, index, bytes, 0, bytes.Length);
             if (!this.IsLittleEndian)
             {
                 Array.Reverse(bytes);

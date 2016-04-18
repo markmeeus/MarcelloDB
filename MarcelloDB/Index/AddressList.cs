@@ -5,20 +5,30 @@ using MarcelloDB.Helpers;
 
 namespace MarcelloDB.Index
 {
-    internal class AddressList : ChangeTrackingList<Int64>
+    internal class AddressList : ChangeTrackingList<Int64>, IEnumerable<Int64>
     {
-        internal List<Int64> Addresses
-        {
-            get
-            {
-                return Items;
-            }
-        }
-
         internal void SetAddresses(List<Int64> addresses)
         {
             base.Items = addresses;
         }
+
+        #region IEnumerable implementation
+
+        public IEnumerator<long> GetEnumerator()
+        {
+            return base.Items.GetEnumerator();
+        }
+
+        #endregion
+
+        #region IEnumerable implementation
+
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+
+        #endregion
     }
 }
 

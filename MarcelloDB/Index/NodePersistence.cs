@@ -73,7 +73,7 @@ namespace MarcelloDB
         {
             var updatedChildAddresses = new List<Int64[]>();
 
-            foreach (var childAddress in node.ChildrenAddresses.Addresses)
+            foreach (var childAddress in node.ChildrenAddresses)
             {
                 if(loadedNodes.ContainsKey(childAddress))
                 {

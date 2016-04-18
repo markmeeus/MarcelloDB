@@ -28,12 +28,12 @@ namespace MarcelloDB.Test
             var bytes = serializer.Serialize(node);
             var deserialized = serializer.Deserialize(bytes);
 
-            Assert.AreEqual(node.EntryList.Entries[0].Key, deserialized.EntryList.Entries[0].Key);
-            Assert.AreEqual(node.EntryList.Entries[0].Pointer, deserialized.EntryList.Entries[0].Pointer);
-            Assert.AreEqual(node.EntryList.Entries[1].Key, deserialized.EntryList.Entries[1].Key);
-            Assert.AreEqual(node.EntryList.Entries[1].Pointer, deserialized.EntryList.Entries[1].Pointer);
-            Assert.AreEqual(node.ChildrenAddresses.Addresses[0], deserialized.ChildrenAddresses.Addresses[0]);
-            Assert.AreEqual(node.ChildrenAddresses.Addresses[1], deserialized.ChildrenAddresses.Addresses[1]);
+            Assert.AreEqual(node.EntryList[0].Key, deserialized.EntryList[0].Key);
+            Assert.AreEqual(node.EntryList[0].Pointer, deserialized.EntryList[0].Pointer);
+            Assert.AreEqual(node.EntryList[1].Key, deserialized.EntryList[1].Key);
+            Assert.AreEqual(node.EntryList[1].Pointer, deserialized.EntryList[1].Pointer);
+            Assert.AreEqual(node.ChildrenAddresses[0], deserialized.ChildrenAddresses[0]);
+            Assert.AreEqual(node.ChildrenAddresses[1], deserialized.ChildrenAddresses[1]);
         }
 
         [Test]
@@ -57,8 +57,8 @@ namespace MarcelloDB.Test
             var bytes = serializer.Serialize(node);
             var deserialized = serializer.Deserialize(bytes);
 
-            Assert.AreEqual(node.EntryList.Entries[0].Key.SomeValue, deserialized.EntryList.Entries[0].Key.SomeValue);
-            Assert.AreEqual(node.EntryList.Entries[1].Key.SomeValue, deserialized.EntryList.Entries[1].Key.SomeValue);
+            Assert.AreEqual(node.EntryList[0].Key.SomeValue, deserialized.EntryList[0].Key.SomeValue);
+            Assert.AreEqual(node.EntryList[1].Key.SomeValue, deserialized.EntryList[1].Key.SomeValue);
         }
 
         [Test]

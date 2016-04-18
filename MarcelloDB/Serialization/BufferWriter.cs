@@ -38,6 +38,19 @@ namespace MarcelloDB.Serialization
             return this;
         }
 
+        internal BufferWriter WriteBytes(byte[] bytes)
+        {
+            if (this.Position + bytes.Length > Buffer.Length)
+            {
+                var newBuffer = new byte[this.Position + bytes.Length];
+                this.Buffer.CopyTo(newBuffer, 0);
+                this.Buffer = newBuffer;
+            }
+            bytes.CopyTo(Buffer, this.Position);
+            this.Position += bytes.Length;
+            return this;
+        }
+
         internal byte[] GetTrimmedBuffer()
         {
             if (this.Buffer.Length == this.Position)
@@ -66,19 +79,7 @@ namespace MarcelloDB.Serialization
                 Array.Reverse(bytes);
             }
             return bytes;
-        }
-
-        void WriteBytes(byte[] bytes)
-        {
-            if (this.Position + bytes.Length > Buffer.Length)
-            {
-                var newBuffer = new byte[this.Position + bytes.Length];
-                this.Buffer.CopyTo(newBuffer, 0);
-                this.Buffer = newBuffer;
-            }
-            bytes.CopyTo(Buffer, this.Position);
-            this.Position += bytes.Length;
-        }
+        }            
     }
 }
 
