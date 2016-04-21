@@ -62,6 +62,15 @@ namespace MarcelloDB
 
         internal abstract byte GetTypeID();
 
+        internal virtual int ByteSize
+        {
+            get
+            {
+                return sizeof(byte) + this.GetValueByteSize();
+            }
+        }
+        protected abstract int GetValueByteSize();
+
         protected abstract T LoadValue(int startIndex);
     }
 }

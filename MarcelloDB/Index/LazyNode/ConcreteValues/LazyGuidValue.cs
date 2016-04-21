@@ -3,32 +3,35 @@ using MarcelloDB.Serialization;
 
 namespace MarcelloDB.Index.LazyNode.ConcreteValues
 {
-    internal class LazyInt32Value : LazyValue<Int32>
+    internal class LazyGuidValue : LazyValue<Guid>
     {
-        internal LazyInt32Value(Int32 value) : base(value)
+        internal LazyGuidValue(Guid value) : base(value)
         {
         }
 
-        internal LazyInt32Value(byte[] bytes, int firstByteIndex) : base(bytes, firstByteIndex)
+        internal LazyGuidValue(byte[] bytes, int firstByteIndex) : base(bytes, firstByteIndex)
         {
         }
 
-        protected override Int32 LoadValue(int valueIndex)
+        protected override Guid LoadValue(int valueIndex)
         {
             BufferReader reader = new BufferReader(this.Bytes);
-            return reader.ReadInt32At(valueIndex);
+            reader.MoveTo(valueIndex);
+            var bytes = reader.ReadBytes(16);
+            return new Guid(bytes);
         }
 
         internal override byte GetTypeID()
         {
-            return TYPEID_INT32;
+            return TYPEID_GUID;
         }
 
         internal override byte[] GetValueAsBytes()
         {
-            var writer = new BufferWriter(new byte[sizeof(Int32)]);
+            var writer = new BufferWriter(new byte[16]);
+
             return writer
-                .WriteInt32(this.Value)
+                .WriteBytes(this.Value.ToByteArray())
                 .GetTrimmedBuffer();
         }
 
@@ -36,7 +39,7 @@ namespace MarcelloDB.Index.LazyNode.ConcreteValues
 
         protected override int GetValueByteSize()
         {
-            return sizeof(Int32);
+            return 16;
         }
 
         #endregion

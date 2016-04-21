@@ -26,6 +26,12 @@ namespace MarcelloDB.Test.Index.LazyNode.ConcreteValues
             var bytes = new LazyInt32Value(123).ToBytes();
             Assert.AreEqual(123, new LazyInt32Value(bytes, 0).Value);
         }
+
+        [Test]
+        public void ByteSize()
+        {
+            Assert.AreEqual(sizeof(byte) + sizeof(Int32), new LazyInt32Value(123).ByteSize);
+        }
     }
 }
 

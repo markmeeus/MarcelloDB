@@ -20,6 +20,11 @@ namespace MarcelloDB.Serialization
             Initialize(buffer, isLittleEndian);
         }
 
+        public void MoveTo(int position)
+        {
+            this.Position = position;
+        }
+
         internal byte ReadByte()
         {
             var value = this.Buffer[this.Position];
@@ -59,6 +64,14 @@ namespace MarcelloDB.Serialization
 
             var value = BitConverter.ToInt64(bytes, 0);
             return value;
+        }
+
+        public byte[] ReadBytes(int length)
+        {
+            var bytes = new byte[length];
+            Array.Copy(this.Buffer, this.Position, bytes, 0, bytes.Length);
+
+            return bytes;
         }
 
         void Initialize(byte[] buffer, bool isLittleEndian){

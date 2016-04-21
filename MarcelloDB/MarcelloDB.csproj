@@ -104,6 +104,8 @@
     <Compile Include="Index\LazyNode\LazyValueT.cs" />
     <Compile Include="Index\LazyNode\ConcreteValues\LazyInt64Value.cs" />
     <Compile Include="Index\LazyNode\ConcreteValues\LazyInt32Value.cs" />
+    <Compile Include="Index\LazyNode\LazyValueListT.cs" />
+    <Compile Include="Index\LazyNode\ConcreteValues\LazyGuidValue.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Runtime" />

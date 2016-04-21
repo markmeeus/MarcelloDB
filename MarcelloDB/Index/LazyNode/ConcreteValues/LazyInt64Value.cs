@@ -29,6 +29,16 @@ namespace MarcelloDB.Index.LazyNode.ConcreteValues
         {
             return TYPEID_INT64;
         }
+
+        #region implemented abstract members of LazyValue
+
+        protected override int GetValueByteSize()
+        {
+            return sizeof(Int64);
+        }
+
+
+        #endregion
     }
 }
 
