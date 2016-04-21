@@ -1,8 +1,8 @@
 ﻿using System;
 using NUnit.Framework;
-using MarcelloDB.Index;
+using MarcelloDB.Index.LazyNode;
 
-namespace MarcelloDB.Test.Index
+namespace MarcelloDB.Test.Index.LazyNode
 {
     [TestFixture]
     public class LazyNodeTest

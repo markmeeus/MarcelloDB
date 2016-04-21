@@ -77,6 +77,9 @@
     <Compile Include="Regression\Issue31_NullReferenceWhenPersistingWithNonID.cs" />
     <Compile Include="Classes\ArticleIndexDefinition.cs" />
     <Compile Include="Index\IndexDefinitionValidatorTest.cs" />
+    <Compile Include="Index\LazyNode\LazyNodeTest.cs" />
+    <Compile Include="Index\LazyNode\LazyInt64ValueTest.cs" />
+    <Compile Include="Index\LazyNode\LazyInt32ValueTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
@@ -92,5 +95,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Index\LazyNode\" />
   </ItemGroup>
 </Project>

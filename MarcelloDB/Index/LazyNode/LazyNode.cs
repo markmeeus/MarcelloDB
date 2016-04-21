@@ -2,51 +2,11 @@
 using System.Collections.Generic;
 using MarcelloDB.Serialization;
 using System.Linq;
+using MarcelloDB.Index.LazyNode.ConcreteValues;
 
-namespace MarcelloDB.Index
+namespace MarcelloDB.Index.LazyNode
 {
-    internal class LazyValue<T>
-    {        
-        T _value;
-
-        bool _valueLoaded = false;
-
-        byte[] Bytes { get; set; }
-
-        int Index { get; set; }
-
-        internal LazyValue(T value)
-        {
-            _value = value;
-            _valueLoaded = true;
-        }    
-
-        internal LazyValue(byte[] bytes, int index)
-        {
-            this.Bytes = bytes;
-            this.Index = index;
-        }    
-
-
-        internal T Value 
-        {
-            get
-            {
-                if (!_valueLoaded)
-                {
-                    _value = LoadValue();
-                    _valueLoaded = true;
-                }
-                return _value;
-            }
-        }
-
-        T LoadValue()
-        {
-            BufferReader reader = new BufferReader(this.Bytes);
-            return (T)(object)reader.ReadInt64At(this.Index);
-        }
-    }
+    
 
     internal class LazyChildrenAddresses: IEnumerable<Int64>
     {
@@ -60,21 +20,21 @@ namespace MarcelloDB.Index
         internal LazyChildrenAddresses(byte[] bytes, int startIndex, int nrOfItemsInBytes)
         { 
             this.ChildAddresses = new List<LazyValue<Int64>>();
-            foreach (var index in Enumerable.Range(startIndex, nrOfItemsInBytes))
+            for (int i = 0; i < nrOfItemsInBytes; i++)
             {
-                this.ChildAddresses.Add(new LazyValue<Int64>(bytes, index));
+                this.ChildAddresses.Add(new LazyInt64Value(bytes, startIndex + (i * sizeof(Int64))));
             }
         }
 
         internal void Add(Int64 address)
         {
-            this.ChildAddresses.Add(new LazyValue<long>(address));
+            this.ChildAddresses.Add(new LazyInt64Value(address));
         }
 
 
         internal Int64 this [int index]
         {
-            get{ return 0; }
+            get{ return this.ChildAddresses[index].Value; }
 
         }                
 
@@ -142,15 +102,14 @@ namespace MarcelloDB.Index
         }
 
         void InitializeChildrenAddresses()
-        {
-            
+        {           
             if (this.Bytes != null)
             {
                 var reader = new BufferReader(this.Bytes);
                 var numberOfChildrenAdresses = reader.ReadInt32();
                 this.ChildrenAddresses = new LazyChildrenAddresses(
                     this.Bytes,
-                    sizeof(int) + numberOfChildrenAdresses, 
+                    sizeof(int), 
                     numberOfChildrenAdresses
                 );
             }

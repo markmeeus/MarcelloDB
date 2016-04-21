@@ -36,6 +36,14 @@ namespace MarcelloDB.Serialization
             return value;
         }
 
+        public int ReadInt32At(int index)
+        {
+            var bytes = GetBytesInLittleEndianOrderAt(index, sizeof(Int32));
+
+            var value = BitConverter.ToInt32(bytes, 0);
+            return value;
+        }
+
         internal Int64 ReadInt64()
         {
             var bytes = GetBytesInLittleEndianOrder(sizeof(Int64));
@@ -50,7 +58,6 @@ namespace MarcelloDB.Serialization
             var bytes = GetBytesInLittleEndianOrderAt(index, sizeof(Int64));
 
             var value = BitConverter.ToInt64(bytes, 0);
-            this.Position += sizeof(Int64);
             return value;
         }
 
