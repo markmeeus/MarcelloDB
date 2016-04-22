@@ -37,7 +37,6 @@ namespace MarcelloDB.Index.LazyNode.ConcreteValues
             return sizeof(Int64);
         }
 
-
         #endregion
     }
 }

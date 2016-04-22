@@ -53,25 +53,11 @@ namespace MarcelloDB
                 var itemStartByte = this.FirstByteIntex + sizeof(Int32);
                 for (int i = 0; i < nrOfItems; i++)
                 {
-                    var value = ConstructValue(itemStartByte);
+                    var value = LazyValue<T>.ConstructValue(this.Bytes, itemStartByte);
                     this.Values.Add(value);
                     itemStartByte += value.ByteSize;
                 }
             }
-        }
-
-        LazyValue<T> ConstructValue(int firstByteIndex)
-        {
-            if (typeof(T) == typeof(Int32))
-            {
-                return (LazyValue<T>)(object)new LazyInt32Value(this.Bytes, firstByteIndex);
-            }
-            if (typeof(T) == typeof(Int64))
-            {
-                return (LazyValue<T>)(object)new LazyInt64Value(this.Bytes, firstByteIndex);
-            }
-
-            throw new NotImplementedException();
         }
     }
 }

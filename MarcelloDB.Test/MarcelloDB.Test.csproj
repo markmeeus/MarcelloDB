@@ -82,6 +82,7 @@
     <Compile Include="Index\LazyNode\ConcreteValues\LazyInt64ValueTest.cs" />
     <Compile Include="Index\LazyNode\LazyValueListTTest.cs" />
     <Compile Include="Index\LazyNode\ConcreteValues\LazyGuidValueTest.cs" />
+    <Compile Include="Index\LazyNode\ConcreteValues\LazyValueWithAddressTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

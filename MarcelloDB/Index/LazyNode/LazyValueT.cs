@@ -1,5 +1,6 @@
 ﻿using System;
 using MarcelloDB.Serialization;
+using MarcelloDB.Index.LazyNode.ConcreteValues;
 
 namespace MarcelloDB
 {
@@ -9,7 +10,8 @@ namespace MarcelloDB
         internal const byte TYPEID_INT64 = 1;
         internal const byte TYPEID_INTSTRING = 2;
         internal const byte TYPEID_GUID = 3;
-        internal const byte TYPEID_ANY = 4;
+        internal const byte TYPEID_VALUE_WITH_ADDRESS_INDEX_KEY = 4;
+        internal const byte TYPEID_ANY = 5;
 
         T _value;
 
@@ -72,6 +74,35 @@ namespace MarcelloDB
         protected abstract int GetValueByteSize();
 
         protected abstract T LoadValue(int startIndex);
+
+
+        internal static LazyValue<T> ConstructValue(byte[] bytes, int firstByteIndex)
+        {
+            if (typeof(T) == typeof(Int32))
+            {
+                return (LazyValue<T>)(object)new LazyInt32Value(bytes, firstByteIndex);
+            }
+            if (typeof(T) == typeof(Int64))
+            {
+                return (LazyValue<T>)(object)new LazyInt64Value(bytes, firstByteIndex);
+            }
+
+            throw new NotImplementedException();
+        }
+
+        internal static LazyValue<T> ConstructValue(T value)
+        {
+            if (typeof(T) == typeof(Int32))
+            {
+                return (LazyValue<T>)(object)new LazyInt32Value((Int32)(object)value);
+            }
+            if (typeof(T) == typeof(Int64))
+            {
+                return (LazyValue<T>)(object)new LazyInt64Value((Int64)(object)value);
+            }
+
+            throw new NotImplementedException();
+        }
     }
 }
 
