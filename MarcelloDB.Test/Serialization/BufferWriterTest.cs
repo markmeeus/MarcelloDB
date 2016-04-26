@@ -23,6 +23,14 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void Write_Int16_Little_Endian()
+        {
+            _writer.WriteInt16((Int16)0x1122);
+            Assert.AreEqual(0x22, _writer.Buffer[0]);
+            Assert.AreEqual(0x11, _writer.Buffer[1]);
+        }
+
+        [Test]
         public void Write_Int32_Little_Endian()
         {
             _writer.WriteInt32((Int32)0x11223344);

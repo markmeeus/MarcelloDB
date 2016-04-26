@@ -107,6 +107,8 @@
     <Compile Include="Index\LazyNode\LazyValueListT.cs" />
     <Compile Include="Index\LazyNode\ConcreteValues\LazyGuidValue.cs" />
     <Compile Include="Index\LazyNode\ConcreteValues\LazyValueWithAddress.cs" />
+    <Compile Include="Index\LazyNode\ConcreteValues\LazyStringValue.cs" />
+    <Compile Include="Index\LazyNode\ConcreteValues\LazyInt16Value.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Runtime" />

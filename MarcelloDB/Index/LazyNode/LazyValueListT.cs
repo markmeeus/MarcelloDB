@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using MarcelloDB.Serialization;
 using MarcelloDB.Index.LazyNode.ConcreteValues;
+using System.Linq;
 
 namespace MarcelloDB
 {
@@ -15,12 +16,43 @@ namespace MarcelloDB
 
         int FirstByteIntex { get; set; }
 
+        internal LazyValueList()
+        {
+            _valuesLoaded = true;
+        }
+
         internal LazyValueList(byte[] bytes, int firstByteIndex)
         {
             this.Bytes = bytes;
             this.FirstByteIntex = firstByteIndex;
         }
 
+        internal byte[] ToBytes()
+        {
+            var valueBytes = new List<byte[]>();
+            foreach (var value in this.Values)
+            {
+                valueBytes.Add(value.ToBytes());
+            }
+
+            var bufferSize = sizeof(Int32) //nr of items
+                + valueBytes.Sum(b => b.Length);
+
+            var writer = new BufferWriter(new byte[bufferSize]);
+            writer.WriteInt32(valueBytes.Count);
+
+            foreach (var bytes in valueBytes)
+            {
+                writer.WriteBytes(bytes);
+            }
+
+            return writer.GetTrimmedBuffer();
+        }
+
+        internal void Add(T item)
+        {
+            this.Values.Add( LazyValue<T>.ConstructValue((dynamic)item));
+        }
         #region IEnumerable implementation
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()

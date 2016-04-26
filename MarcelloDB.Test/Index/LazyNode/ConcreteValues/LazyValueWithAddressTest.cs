@@ -38,10 +38,11 @@ namespace MarcelloDB.Test.Index.LazyNode.ConcreteValues
         [Test]
         public void ByteSize()
         {
-            var key = new ValueWithAddressIndexKey<Int32>();
+            var key = new ValueWithAddressIndexKey<string>();
             key.A = 123;
-            key.V = 456;
-            Assert.AreEqual(sizeof(byte) + sizeof(Int64), new LazyValueWithAddress<Int32>(key).ByteSize);
+            key.V = "12345";
+            Assert.AreEqual(sizeof(byte) + sizeof(Int32) + sizeof(Int64) + sizeof(byte) + 5,
+                new LazyValueWithAddress<string>(key).ByteSize);
         }
     }
 }

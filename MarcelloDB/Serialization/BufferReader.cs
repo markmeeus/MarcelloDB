@@ -32,6 +32,14 @@ namespace MarcelloDB.Serialization
             return value;
         }
 
+        public short ReadInt16At(int index)
+        {
+            var bytes = GetBytesInLittleEndianOrderAt(index, sizeof(Int16));
+
+            var value = BitConverter.ToInt16(bytes, 0);
+            return value;
+        }
+
         internal Int32 ReadInt32()
         {
             var bytes = GetBytesInLittleEndianOrder(sizeof(Int32));

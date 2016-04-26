@@ -27,6 +27,17 @@ namespace MarcelloDB.Test.Serialization
             Assert.AreEqual(2, reader.ReadByte());
         }
 
+        [Test]
+        public void ReadInt16At()
+        {
+            var reader = new BufferReader(
+                new byte[] {
+                0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18,
+                0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28
+            }, false);
+            var readInt = reader.ReadInt16At(8);
+            Assert.AreEqual(0x2122, readInt);
+        }
 
         [Test]
         public void ReadInt32_Little_Endian()

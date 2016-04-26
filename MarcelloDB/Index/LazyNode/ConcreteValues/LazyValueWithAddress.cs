@@ -45,9 +45,19 @@ namespace MarcelloDB.Index.LazyNode.ConcreteValues
 
         #region implemented abstract members of LazyValue
 
-        protected override int GetValueByteSize()
+        protected override int GetValueByteSize(int startIndex)
         {
-            return sizeof(Int64);
+            LazyValue<TValue> value;
+            if (this.Bytes != null)
+            {
+                value = LazyValue<TValue>
+                    .ConstructValue(this.Bytes, startIndex + sizeof(Int64));
+            }
+            else
+            {
+                value = LazyValue<TValue>.ConstructValue(this.Value.V);
+            }
+            return sizeof(Int64) + value.ByteSize;
         }
 
         #endregion

@@ -6,7 +6,7 @@ using MarcelloDB.Index.LazyNode.ConcreteValues;
 
 namespace MarcelloDB.Index.LazyNode
 {
-    
+
 
     internal class LazyChildrenAddresses: IEnumerable<Int64>
     {
@@ -18,7 +18,7 @@ namespace MarcelloDB.Index.LazyNode
         }
 
         internal LazyChildrenAddresses(byte[] bytes, int startIndex, int nrOfItemsInBytes)
-        { 
+        {
             this.ChildAddresses = new List<LazyValue<Int64>>();
             for (int i = 0; i < nrOfItemsInBytes; i++)
             {
@@ -36,9 +36,9 @@ namespace MarcelloDB.Index.LazyNode
         {
             get{ return this.ChildAddresses[index].Value; }
 
-        }                
+        }
 
-        internal int Count 
+        internal int Count
         {
             get
             {
@@ -82,7 +82,7 @@ namespace MarcelloDB.Index.LazyNode
 
         internal LazyChildrenAddresses ChildrenAddresses { get; set; }
 
-        internal LazyNode(int degree) 
+        internal LazyNode(int degree)
         {
             Initialize(degree, null);
         }
@@ -90,10 +90,10 @@ namespace MarcelloDB.Index.LazyNode
         LazyNode(int degree, byte[] bytes)
         {
             Initialize(degree, bytes);
-        }                        
+        }
 
         void Initialize(int degree, byte[] bytes)
-        {          
+        {
             this.Bytes = bytes;
             this.Degree = degree;
 
@@ -102,14 +102,14 @@ namespace MarcelloDB.Index.LazyNode
         }
 
         void InitializeChildrenAddresses()
-        {           
+        {
             if (this.Bytes != null)
             {
                 var reader = new BufferReader(this.Bytes);
                 var numberOfChildrenAdresses = reader.ReadInt32();
                 this.ChildrenAddresses = new LazyChildrenAddresses(
                     this.Bytes,
-                    sizeof(int), 
+                    sizeof(int),
                     numberOfChildrenAdresses
                 );
             }
@@ -141,7 +141,7 @@ namespace MarcelloDB.Index.LazyNode
                     new BufferWriter(new byte[sizeof(Int32)])
                     .WriteBytes(this.ChildrenAddresses.ToBytes())
                     .GetTrimmedBuffer()
-                );                    
+                );
             }
 
             var byteCount = bytesAsList.Select(byteFragment => byteFragment.Length).Sum();
