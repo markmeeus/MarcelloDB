@@ -27,22 +27,22 @@ namespace MarcelloDB.Test.Serialization
         public void SerializerFor_EmptyRecordIndexNode_Returns_Specific_Serializer()
         {
             var serializer = new SerializerResolver()
-                .SerializerFor<Node<EmptyRecordIndexKey, Int64>>();
+                .SerializerFor<Node<EmptyRecordIndexKey>>();
             Assert.AreEqual(typeof(EmptyRecordIndexNodeSerializer), serializer.GetType());
         }
 
         [Test]
         public void SerializerForEmptyRecordIndexNodeType_Returns_Specific_Serializer()
         {
-            var serializer = new SerializerResolver().SerializerFor<Node<EmptyRecordIndexKey, Int64>>();
+            var serializer = new SerializerResolver().SerializerFor<Node<EmptyRecordIndexKey>>();
             Assert.AreEqual(typeof(EmptyRecordIndexNodeSerializer), serializer.GetType());
         }
 
         [Test]
         public void SerializerForBtreeNodeType_Returns_Specific_Serializer()
         {
-            var serializer = new SerializerResolver().SerializerFor<Node<string, Int64>>();
-            Assert.AreEqual(typeof(BTreeNodeSerializer<string, Int64>), serializer.GetType());
+            var serializer = new SerializerResolver().SerializerFor<Node<string>>();
+            Assert.AreEqual(typeof(BTreeNodeSerializer<string>), serializer.GetType());
         }
     }
 }

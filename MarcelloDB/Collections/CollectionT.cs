@@ -210,7 +210,7 @@ namespace MarcelloDB.Collections
                 this.Session,
                 this.RecordManager,
                 RecordIndex.GetIndexName<T>(this.Name, indexName),
-                this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>());
+                this.Session.SerializerResolver.SerializerFor<Node<object>>());
         }
 
         RecordIndex<object> GetIDIndex()

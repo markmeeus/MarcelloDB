@@ -22,7 +22,7 @@ namespace MarcelloDB.Test.AllocationStrategies
         public void StrategyFor_EmptyRecordIndexNode_ReturnsFixedSizeStrategy()
         {
             var strategy = resolver.StrategyFor(
-                               new Node<EmptyRecordIndexKey, Int64>(2));
+                               new Node<EmptyRecordIndexKey>(2));
             Assert.AreEqual(typeof(ExactSizeAllocationStrategy), strategy.GetType());
         }
 
@@ -30,7 +30,7 @@ namespace MarcelloDB.Test.AllocationStrategies
         public void StrategyFor_EmptyRecordIndexNode_As_Object_ReturnsFixedSizeStrategy()
         {
             var strategy = resolver.StrategyFor(
-                (object)new Node<EmptyRecordIndexKey, Int64>(2));
+                (object)new Node<EmptyRecordIndexKey>(2));
             Assert.AreEqual(typeof(ExactSizeAllocationStrategy), strategy.GetType());
         }
 
@@ -38,8 +38,8 @@ namespace MarcelloDB.Test.AllocationStrategies
         public void StrategyFor_BTreeNodes_Returns_PredictiveBTReeNodeAllocationStrategy()
         {
             var strategy = resolver.StrategyFor(
-                new Node<int, Int64>(2));
-            Assert.AreEqual(typeof(PredictiveBTreeNodeAllocationStrategy<int, Int64>), strategy.GetType());
+                new Node<int>(2));
+            Assert.AreEqual(typeof(PredictiveBTreeNodeAllocationStrategy<int>), strategy.GetType());
         }
 
         [Test]

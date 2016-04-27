@@ -8,7 +8,7 @@ using MarcelloDB.AllocationStrategies;
 
 namespace MarcelloDB
 {
-    internal class NodePersistence<TK, TP> : SessionBoundObject
+    internal class NodePersistence<TK> : SessionBoundObject
     {
         IRecordManager RecordManager { get; set; }
 
@@ -18,21 +18,21 @@ namespace MarcelloDB
         }
 
         internal void Persist(
-            Node<TK, TP> rootNode,
-            Dictionary<Int64, Node<TK, TP>> loadedNodes,
-            IObjectSerializer<Node<TK, TP>> serializer,
+            Node<TK> rootNode,
+            Dictionary<Int64, Node<TK>> loadedNodes,
+            IObjectSerializer<Node<TK>> serializer,
             IndexMetaRecord metaRecord)
         {
-            var touchedNodes = new Dictionary<Int64, Node<TK, TP>>();
+            var touchedNodes = new Dictionary<Int64, Node<TK>>();
             Persist(rootNode, loadedNodes, serializer, touchedNodes, metaRecord);
             RecycleUntouchedNodes(loadedNodes, touchedNodes, metaRecord);
         }
 
         private void Persist(
-            Node<TK, TP> node,
-            Dictionary<Int64, Node<TK, TP>> loadedNodes,
-            IObjectSerializer<Node<TK, TP>> serializer,
-            Dictionary<Int64, Node<TK, TP>> touchedNodes,
+            Node<TK> node,
+            Dictionary<Int64, Node<TK>> loadedNodes,
+            IObjectSerializer<Node<TK>> serializer,
+            Dictionary<Int64, Node<TK>> touchedNodes,
             IndexMetaRecord metaRecord)
         {
 
@@ -65,10 +65,10 @@ namespace MarcelloDB
         }
 
         void SaveChildren(
-            Node<TK, TP> node,
-            Dictionary<long, Node<TK, TP>> loadedNodes,
-            IObjectSerializer<Node<TK, TP>> serializer,
-            Dictionary<Int64, Node<TK, TP>> touchedNodes,
+            Node<TK> node,
+            Dictionary<long, Node<TK>> loadedNodes,
+            IObjectSerializer<Node<TK>> serializer,
+            Dictionary<Int64, Node<TK>> touchedNodes,
             IndexMetaRecord metaRecord)
         {
             var updatedChildAddresses = new List<Int64[]>();
@@ -93,8 +93,8 @@ namespace MarcelloDB
         }
 
         void RecycleUntouchedNodes(
-            Dictionary<Int64, Node<TK, TP>> loadedNodes,
-            Dictionary<Int64, Node<TK, TP>> touchedNodes,
+            Dictionary<Int64, Node<TK>> loadedNodes,
+            Dictionary<Int64, Node<TK>> touchedNodes,
             IndexMetaRecord metaRecord)
         {
             foreach (var node in loadedNodes.Values)

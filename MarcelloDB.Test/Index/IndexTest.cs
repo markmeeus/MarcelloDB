@@ -8,8 +8,8 @@ namespace MarcelloDB.Test.Index
     [TestFixture]
     public class IndexTest
     {
-        MockBTree<object, Int64> _mockTree;
-        MockBTreeDataProvider<object, Int64> _mockProvider;
+        MockBTree<object> _mockTree;
+        MockBTreeDataProvider<object> _mockProvider;
 
         RecordIndex<object> _index;
         Session _session;
@@ -18,8 +18,8 @@ namespace MarcelloDB.Test.Index
         public void Initialize()
         {
             _session = new Session(new TestPlatform(), "");
-            _mockTree = new MockBTree<object, Int64>();
-            _mockProvider = new MockBTreeDataProvider<object, Int64>();
+            _mockTree = new MockBTree<object>();
+            _mockProvider = new MockBTreeDataProvider<object>();
             _index = new RecordIndex<object>(_session, _mockTree, _mockProvider);
         }
 

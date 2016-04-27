@@ -6,21 +6,21 @@ namespace MarcelloDB.AllocationStrategies
 {
     internal class AllocationStrategyResolver
     {
-        internal IAllocationStrategy StrategyFor(Node<EmptyRecordIndexKey, Int64> emptyRecordIndexNode)
+        internal IAllocationStrategy StrategyFor(Node<EmptyRecordIndexKey> emptyRecordIndexNode)
         {
             return new ExactSizeAllocationStrategy();
         }
 
-        internal  IAllocationStrategy StrategyFor<TK, TP>(Node<TK, TP> node)
+        internal  IAllocationStrategy StrategyFor<TK>(Node<TK> node)
         {
-            return new PredictiveBTreeNodeAllocationStrategy<TK, TP>(node);
+            return new PredictiveBTreeNodeAllocationStrategy<TK>(node);
         }
 
         internal IAllocationStrategy StrategyFor(object  obj)
         {
-            if(obj.GetType() == typeof(Node<EmptyRecordIndexKey, Int64>))
+            if(obj.GetType() == typeof(Node<EmptyRecordIndexKey>))
             {
-                return StrategyFor((Node<EmptyRecordIndexKey, Int64>)obj);
+                return StrategyFor((Node<EmptyRecordIndexKey>)obj);
             }
             return new DoubleSizeAllocationStrategy();
         }

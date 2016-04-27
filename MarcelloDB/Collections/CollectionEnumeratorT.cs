@@ -48,7 +48,7 @@ namespace MarcelloDB.Collections
                     this.Session,
                     this.RecordManager,
                     this.IndexName,
-                    this.Session.SerializerResolver.SerializerFor<Node<TKey, Int64>>()
+                    this.Session.SerializerResolver.SerializerFor<Node<TKey>>()
                 );
                 var indexEnumerator = new IndexEntryEnumerator<T, TKey>(
                                       this.Collection,
@@ -75,7 +75,7 @@ namespace MarcelloDB.Collections
                     this.Session,
                     this.RecordManager,
                     this.IndexName,
-                    this.Session.SerializerResolver.SerializerFor<Node<TKey, Int64>>()
+                    this.Session.SerializerResolver.SerializerFor<Node<TKey>>()
                 );
                 var keyEnumerator = new KeysEnumerator<T, TKey>(
                                     this.Collection,

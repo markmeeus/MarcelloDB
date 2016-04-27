@@ -2,7 +2,7 @@
 
 namespace MarcelloDB.Index
 {
-    internal class Entry<TK, TP> : IEquatable<Entry<TK, TP>>
+    internal class Entry<TK> : IEquatable<Entry<TK>>
     {
         TK _key;
         public TK Key
@@ -18,9 +18,9 @@ namespace MarcelloDB.Index
             }
         }
 
-        public TP Pointer { get; set; }
+        public Int64 Pointer { get; set; }
 
-        public bool Equals(Entry<TK, TP> other)
+        public bool Equals(Entry<TK> other)
         {
             return this.Key.Equals(other.Key) && this.Pointer.Equals(other.Pointer);
         }

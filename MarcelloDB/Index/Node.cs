@@ -28,14 +28,14 @@ namespace MarcelloDB.Index
         }
     }
 
-    internal class Node<TK, TP> : Node
+    internal class Node<TK> : Node
     {
 
-        public EntryList<TK, TP> EntryList { get; set; }
+        public EntryList<TK> EntryList { get; set; }
 
         public Node(int degree) : base(degree)
         {
-            this.EntryList = new EntryList<TK, TP>();
+            this.EntryList = new EntryList<TK>();
         }
 
         internal bool IsLeaf

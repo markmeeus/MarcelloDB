@@ -8,12 +8,12 @@ namespace MarcelloDB.Test.Index
     [TestFixture]
 	public class NodeTest
 	{
-        Node<int,int> _node;
+        Node<int> _node;
 
         [SetUp]
         public void Initialize()
         {
-            _node = new Node<int, int>(2);
+            _node = new Node<int>(2);
         }
 
         [Test]
@@ -40,14 +40,14 @@ namespace MarcelloDB.Test.Index
         [Test]
         public void Node_With_Added_Entries_Is_Dirty()
         {
-            _node.EntryList.Add(new Entry<int, int>{Key=123, Pointer=456});
+            _node.EntryList.Add(new Entry<int>{Key=123, Pointer=456});
             Assert.IsTrue(_node.Dirty);Assert.IsTrue(_node.Dirty);
         }
 
         [Test]
         public void Clear_Changes_Clears_EntryList_Changes()
         {
-            _node.EntryList.Add(new Entry<int, int>{Key=123, Pointer=456});
+            _node.EntryList.Add(new Entry<int>{Key=123, Pointer=456});
             _node.ClearChanges();
             Assert.IsFalse(_node.Dirty);
         }

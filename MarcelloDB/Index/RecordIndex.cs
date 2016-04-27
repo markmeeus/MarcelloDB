@@ -25,26 +25,27 @@ namespace MarcelloDB.Index
 
         internal String IndexName { get; set; }
 
-        internal IObjectSerializer<Node<TNodeKey, Int64>> Serializer { get; set; }
+        internal IObjectSerializer<Node<TNodeKey>> Serializer { get; set; }
 
         internal RecordIndex(Session session, IRecordManager recordManager,
             string indexName,
-            IObjectSerializer<Node<TNodeKey, Int64>> serializer) : base(session)
+            IObjectSerializer<Node<TNodeKey>> serializer) : base(session)
         {
             this.RecordManager = recordManager;
             this.IndexName = indexName;
             this.Serializer = serializer;
         }
 
-        internal RecordIndex(Session session, IBTree<TNodeKey, Int64> btree,
-            IBTreeDataProvider<TNodeKey, Int64> dataProvider): base(session)
+        internal RecordIndex(Session session, IBTree<TNodeKey> btree,
+            IBTreeDataProvider<TNodeKey> dataProvider): base(session)
         {
             this.DataProvider = dataProvider;
             this.Tree = btree;
         }
-
-        IBTreeDataProvider<TNodeKey, Int64> _dataProvider;
-        IBTreeDataProvider<TNodeKey, Int64> DataProvider {
+            
+        IBTreeDataProvider<TNodeKey> _dataProvider;
+        IBTreeDataProvider<TNodeKey> DataProvider 
+        {
             get
             {
                 if (_dataProvider == null)
@@ -64,13 +65,13 @@ namespace MarcelloDB.Index
             }
         }
 
-        IBTree<TNodeKey, Int64> _tree;
-        IBTree<TNodeKey, Int64> Tree {
+        IBTree<TNodeKey> _tree;
+        IBTree<TNodeKey> Tree {
             get
             {
                 if (_tree == null)
                 {
-                    _tree = new BTree<TNodeKey, Int64>(this.DataProvider, RecordIndex.BTREE_DEGREE);
+                    _tree = new BTree<TNodeKey>(this.DataProvider, RecordIndex.BTREE_DEGREE);
                 }
                 return _tree;
 
@@ -81,9 +82,9 @@ namespace MarcelloDB.Index
             }
         }
 
-        internal BTreeWalker<TNodeKey, Int64> GetWalker()
+        internal BTreeWalker<TNodeKey> GetWalker()
         {
-            return new BTreeWalker<TNodeKey, long>(RecordIndex.BTREE_DEGREE, this.DataProvider);
+            return new BTreeWalker<TNodeKey>(RecordIndex.BTREE_DEGREE, this.DataProvider);
         }
 
         internal Int64 Search(TNodeKey keyValue)

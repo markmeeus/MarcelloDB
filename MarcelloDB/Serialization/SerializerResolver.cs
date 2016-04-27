@@ -15,7 +15,7 @@ namespace MarcelloDB.Serialization
         {
             _serializers = new Dictionary<Type, object> {
                 {typeof(IndexMetaRecord),                   new  IndexMetaRecordSerializer()},
-                {typeof(Node<EmptyRecordIndexKey, Int64>),  new EmptyRecordIndexNodeSerializer()},
+                {typeof(Node<EmptyRecordIndexKey>),  new EmptyRecordIndexNodeSerializer()},
             };
         }
 
@@ -40,7 +40,7 @@ namespace MarcelloDB.Serialization
         IObjectSerializer<T> ConstructBTreeNodeSerializer<T>()
         {
             var genericTypes = typeof(T).GenericTypeArguments;
-            var typeInfo = typeof(BTreeNodeSerializer<,>).GetTypeInfo();
+            var typeInfo = typeof(BTreeNodeSerializer<>).GetTypeInfo();
             var genericType = typeInfo.MakeGenericType(genericTypes);
 
             var constructor = genericType.GetTypeInfo().DeclaredConstructors.First();

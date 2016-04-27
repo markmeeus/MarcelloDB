@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace MarcelloDB.Index.BTree
 {
-    internal interface IBTree<TK, TP>
+    internal interface IBTree<TK>
     {
-        Entry<TK, TP> Search(TK key);
+        Entry<TK> Search(TK key);
 
-        void Insert(TK newKey, TP newPointer);
+        void Insert(TK newKey, Int64 newPointer);
 
         void Delete(TK keyToDelete);
     }
@@ -16,13 +16,13 @@ namespace MarcelloDB.Index.BTree
     /// <summary>
     /// B tree implementation based on https://github.com/rdcastro/btree-dotnet
     /// </summary>
-    internal class BTree<TK, TP> : IBTree<TK, TP>
+    internal class BTree<TK> : IBTree<TK>
     {
-        IBTreeDataProvider<TK, TP> DataProvider { get; set;}
+        IBTreeDataProvider<TK> DataProvider { get; set;}
 
         ObjectComparer Comparer { get; set; }
 
-        internal Node<TK, TP> Root
+        internal Node<TK> Root
         {
             get
             {
@@ -34,7 +34,7 @@ namespace MarcelloDB.Index.BTree
             }
         }
 
-        internal BTree(IBTreeDataProvider<TK, TP> dataProvider, int degree)
+        internal BTree(IBTreeDataProvider<TK> dataProvider, int degree)
         {
             DataProvider = dataProvider;
             Comparer = new ObjectComparer();
@@ -57,7 +57,7 @@ namespace MarcelloDB.Index.BTree
         /// </summary>
         /// <param name="key">Key being searched.</param>
         /// <returns>Entry for that key, null otherwise.</returns>
-        public Entry<TK, TP> Search(TK key)
+        public Entry<TK> Search(TK key)
         {
             return this.SearchInternal(this.Root, key);
         }
@@ -68,7 +68,7 @@ namespace MarcelloDB.Index.BTree
         /// </summary>
         /// <param name="newKey">Key to be inserted.</param>
         /// <param name="newPointer">Pointer to be associated with inserted key.</param>
-        public void Insert(TK newKey, TP newPointer)
+        public void Insert(TK newKey, Int64 newPointer)
         {
             if (this.Search(newKey) != null)
             {
@@ -83,7 +83,7 @@ namespace MarcelloDB.Index.BTree
             }
 
             // need to create new node and have it split
-            Node<TK, TP> oldRoot = this.Root;
+            Node<TK> oldRoot = this.Root;
 
             this.Root = this.DataProvider.CreateNode(this.Degree);
             this.Root.ChildrenAddresses.Add(oldRoot.Address);
@@ -115,7 +115,7 @@ namespace MarcelloDB.Index.BTree
         /// </summary>
         /// <param name="node">Node to use to start search for the key.</param>
         /// <param name="keyToDelete">Key to be deleted.</param>
-        private void DeleteInternal(Node<TK, TP> node, TK keyToDelete)
+        private void DeleteInternal(Node<TK> node, TK keyToDelete)
         {
             int i = node.EntryList.Entries.TakeWhile(entry => Comparer.Compare(keyToDelete, entry.Key) > 0).Count();
 
@@ -139,9 +139,9 @@ namespace MarcelloDB.Index.BTree
         /// <param name="parentNode">Parent node used to start search for the key.</param>
         /// <param name="keyToDelete">Key to be deleted.</param>
         /// <param name="subtreeIndexInNode">Index of subtree node in the parent node.</param>
-        private void DeleteKeyFromSubtree(Node<TK, TP> parentNode, TK keyToDelete, int subtreeIndexInNode)
+        private void DeleteKeyFromSubtree(Node<TK> parentNode, TK keyToDelete, int subtreeIndexInNode)
         {
-            Node<TK, TP> childNode = this.DataProvider.GetNode(parentNode.ChildrenAddresses[subtreeIndexInNode]);
+            Node<TK> childNode = this.DataProvider.GetNode(parentNode.ChildrenAddresses[subtreeIndexInNode]);
 
             // node has reached min # of entries, and removing any from it will break the btree property,
             // so this block makes sure that the "child" has at least "degree" # of nodes by moving an
@@ -233,7 +233,7 @@ namespace MarcelloDB.Index.BTree
         /// <param name="node">Node that contains the key.</param>
         /// <param name="keyToDelete">Key to be deleted.</param>
         /// <param name="keyIndexInNode">Index of key within the node.</param>
-        private void DeleteKeyFromNode(Node<TK, TP> node, TK keyToDelete, int keyIndexInNode)
+        private void DeleteKeyFromNode(Node<TK> node, TK keyToDelete, int keyIndexInNode)
         {
             // if leaf, just remove it from the list of entries (we're guaranteed to have
             // at least "degree" # of entries, to BTree property is maintained
@@ -243,19 +243,19 @@ namespace MarcelloDB.Index.BTree
                 return;
             }
 
-            Node<TK, TP> predecessorChild = this.DataProvider.GetNode(node.ChildrenAddresses[keyIndexInNode]);
+            Node<TK> predecessorChild = this.DataProvider.GetNode(node.ChildrenAddresses[keyIndexInNode]);
             if (predecessorChild.EntryList.Count >= this.Degree)
             {
-                Entry<TK, TP> predecessorEntry = this.GetLastEntry(predecessorChild);
+                Entry<TK> predecessorEntry = this.GetLastEntry(predecessorChild);
                 this.DeleteInternal(predecessorChild, predecessorEntry.Key);
                 node.EntryList[keyIndexInNode] = predecessorEntry;
             }
             else
             {
-                Node<TK, TP> successorChild = this.DataProvider.GetNode(node.ChildrenAddresses[keyIndexInNode + 1]);
+                Node<TK> successorChild = this.DataProvider.GetNode(node.ChildrenAddresses[keyIndexInNode + 1]);
                 if (successorChild.EntryList.Count >= this.Degree)
                 {
-                    Entry<TK, TP> successorEntry = this.GetFirstEntry(successorChild);
+                    Entry<TK> successorEntry = this.GetFirstEntry(successorChild);
                     this.DeleteInternal(successorChild, successorEntry.Key);
                     node.EntryList[keyIndexInNode] = successorEntry;
                 }
@@ -276,7 +276,7 @@ namespace MarcelloDB.Index.BTree
         /// <summary>
         /// Helper method that gets the last entry (i.e. rightmost key) for a given node.
         /// </summary>
-        private Entry<TK, TP> GetLastEntry(Node<TK, TP> node)
+        private Entry<TK> GetLastEntry(Node<TK> node)
         {
             if (node.IsLeaf)
             {
@@ -291,7 +291,7 @@ namespace MarcelloDB.Index.BTree
         /// <summary>
         /// Helper method that gets the first entry (i.e. leftmost key) for a given node.
         /// </summary>
-        private Entry<TK, TP> GetFirstEntry(Node<TK, TP> node)
+        private Entry<TK> GetFirstEntry(Node<TK> node)
         {
             if (node.IsLeaf)
             {
@@ -309,7 +309,7 @@ namespace MarcelloDB.Index.BTree
         /// <param name="node">Node used to start the search.</param>
         /// <param name="key">Key to be searched.</param>
         /// <returns>Entry object with key information if found, null otherwise.</returns>
-        private Entry<TK, TP> SearchInternal(Node<TK, TP> node, TK key)
+        private Entry<TK> SearchInternal(Node<TK> node, TK key)
         {
             int i = node.EntryList.Entries.TakeWhile(entry => Comparer.Compare(key, entry.Key) > 0).Count();
 
@@ -330,7 +330,7 @@ namespace MarcelloDB.Index.BTree
         /// <param name="parentNode">Parent node that contains node to be split.</param>
         /// <param name="nodeToBeSplitIndex">Index of the node to be split within parent.</param>
         /// <param name="nodeToBeSplit">Node to be split.</param>
-        private void SplitChild(Node<TK, TP> parentNode, int nodeToBeSplitIndex, Node<TK, TP> nodeToBeSplit)
+        private void SplitChild(Node<TK> parentNode, int nodeToBeSplitIndex, Node<TK> nodeToBeSplit)
         {
             var newNode = this.DataProvider.CreateNode(this.Degree);
 
@@ -349,19 +349,19 @@ namespace MarcelloDB.Index.BTree
             }
         }
 
-        private void InsertNonFull(Node<TK, TP> node, TK newKey, TP newPointer)
+        private void InsertNonFull(Node<TK> node, TK newKey, Int64 newPointer)
         {
             int positionToInsert = node.EntryList.Entries.TakeWhile(entry => Comparer.Compare(newKey, entry.Key) >= 0).Count();
 
             // leaf node
             if (node.IsLeaf)
             {
-                node.EntryList.Insert(positionToInsert, new Entry<TK, TP>() { Key = newKey, Pointer = newPointer });
+                node.EntryList.Insert(positionToInsert, new Entry<TK>() { Key = newKey, Pointer = newPointer });
                 return;
             }
 
             // non-leaf
-            Node<TK, TP> child = this.DataProvider.GetNode(node.ChildrenAddresses[positionToInsert]);
+            Node<TK> child = this.DataProvider.GetNode(node.ChildrenAddresses[positionToInsert]);
             if (child.HasReachedMaxEntries)
             {
                 this.SplitChild(node, positionToInsert, child);

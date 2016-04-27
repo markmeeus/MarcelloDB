@@ -16,14 +16,14 @@ namespace MarcelloDB.Test
         [Test]
         public void Serializes_A_Node()
         {
-            var node = new Node<string, Int64>(2);
+            var node = new Node<string>(2);
 
-            node.EntryList.Add(new Entry<string, Int64>(){ Key = "Item 1", Pointer = 1 });
-            node.EntryList.Add(new Entry<string, Int64>(){ Key = "Item 2", Pointer = 2 });
+            node.EntryList.Add(new Entry<string>(){ Key = "Item 1", Pointer = 1 });
+            node.EntryList.Add(new Entry<string>(){ Key = "Item 2", Pointer = 2 });
             node.ChildrenAddresses.Add(1);
             node.ChildrenAddresses.Add(2);
 
-            var serializer = new BTreeNodeSerializer<string, Int64>();
+            var serializer = new BTreeNodeSerializer<string>();
 
             var bytes = serializer.Serialize(node);
             var deserialized = serializer.Deserialize(bytes);
@@ -39,20 +39,20 @@ namespace MarcelloDB.Test
         [Test]
         public void Serializes_With_Custom_Entry_Keys()
         {
-            var node = new Node<CustomEntryKey, Int64>(2);
+            var node = new Node<CustomEntryKey>(2);
             node.EntryList.Add(
-                new Entry<CustomEntryKey, long>(){
+                new Entry<CustomEntryKey>(){
                     Key = new CustomEntryKey(){SomeValue = "Some Test Value"},
                     Pointer = 1
                 });
 
                 node.EntryList.Add(
-                    new Entry<CustomEntryKey, long>(){
+                    new Entry<CustomEntryKey>(){
                         Key = new CustomEntryKey(){SomeValue = "Another Test Value"},
                         Pointer = 1
                 });
 
-            var serializer = new BTreeNodeSerializer<CustomEntryKey, Int64>();
+            var serializer = new BTreeNodeSerializer<CustomEntryKey>();
 
             var bytes = serializer.Serialize(node);
             var deserialized = serializer.Deserialize(bytes);
@@ -64,14 +64,14 @@ namespace MarcelloDB.Test
         [Test]
         public void Deserialized_Should_Not_Be_Dirty()
         {
-            var node = new Node<string, Int64>(2);
+            var node = new Node<string>(2);
 
-            node.EntryList.Add(new Entry<string, Int64>(){ Key = "Item 1", Pointer = 1 });
-            node.EntryList.Add(new Entry<string, Int64>(){ Key = "Item 2", Pointer = 2 });
+            node.EntryList.Add(new Entry<string>(){ Key = "Item 1", Pointer = 1 });
+            node.EntryList.Add(new Entry<string>(){ Key = "Item 2", Pointer = 2 });
             node.ChildrenAddresses.Add(1);
             node.ChildrenAddresses.Add(2);
 
-            var serializer = new BTreeNodeSerializer<string, Int64>();
+            var serializer = new BTreeNodeSerializer<string>();
 
             var bytes = serializer.Serialize(node);
             var deserialized = serializer.Deserialize(bytes);
