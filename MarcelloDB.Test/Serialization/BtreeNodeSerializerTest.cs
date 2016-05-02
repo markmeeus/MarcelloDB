@@ -3,7 +3,7 @@ using NUnit.Framework;
 using MarcelloDB.Index;
 using MarcelloDB.Serialization;
 
-namespace MarcelloDB.Test
+namespace MarcelloDB.Test.Serialization
 {
     public class CustomEntryKey
     {

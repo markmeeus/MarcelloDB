@@ -27,7 +27,22 @@ namespace MarcelloDB.Test.Serialization
             Assert.AreEqual(2, reader.ReadByte());
         }
 
+        [Test]
+        public void Read_Int16()
+        {
+            var reader = new BufferReader(new byte[]{0x01, 0x02, 0x03, 0x04}, true);
+            Assert.AreEqual(0x0201, reader.ReadInt16());
+            Assert.AreEqual(0x0403, reader.ReadInt16());
+        }
 
+        [Test]
+        public void Read_Int16_Twice()
+        {
+            var reader = new BufferReader(new byte[]{0x01, 0x02}, true);
+            Assert.AreEqual(1, reader.ReadByte());
+            Assert.AreEqual(2, reader.ReadByte());
+        }
+            
         [Test]
         public void ReadInt32_Little_Endian()
         {
@@ -76,6 +91,16 @@ namespace MarcelloDB.Test.Serialization
                 new byte[] {0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18}, false);
             var readInt = reader.ReadInt64();
             Assert.AreEqual(0x1112131415161718, readInt);
+        }
+
+        [Test]
+        public void ReadBytes()
+        {
+            var reader = new BufferReader(
+                new byte[] {0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18}, false);            
+            Assert.AreEqual(
+                new byte[] {0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18}, 
+                reader.ReadBytes(8));
         }
     }
 }

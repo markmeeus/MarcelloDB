@@ -26,6 +26,12 @@ namespace MarcelloDB.Serialization
             return this;
         }
 
+        public BufferWriter WriteInt16(Int16 value)
+        {
+            WriteBytes(LittleEndian(BitConverter.GetBytes(value)));
+            return this;
+        }
+
         internal BufferWriter WriteInt32(Int32 value)
         {
             WriteBytes(LittleEndian(BitConverter.GetBytes(value)));
@@ -35,6 +41,19 @@ namespace MarcelloDB.Serialization
         internal BufferWriter WriteInt64(Int64 value)
         {
             WriteBytes(LittleEndian(BitConverter.GetBytes(value)));
+            return this;
+        }
+
+        internal BufferWriter WriteBytes(byte[] bytes)
+        {
+            if (this.Position + bytes.Length > Buffer.Length)
+            {
+                var newBuffer = new byte[this.Position + bytes.Length];
+                this.Buffer.CopyTo(newBuffer, 0);
+                this.Buffer = newBuffer;
+            }
+            bytes.CopyTo(Buffer, this.Position);
+            this.Position += bytes.Length;
             return this;
         }
 
@@ -66,19 +85,7 @@ namespace MarcelloDB.Serialization
                 Array.Reverse(bytes);
             }
             return bytes;
-        }
-
-        void WriteBytes(byte[] bytes)
-        {
-            if (this.Position + bytes.Length > Buffer.Length)
-            {
-                var newBuffer = new byte[this.Position + bytes.Length];
-                this.Buffer.CopyTo(newBuffer, 0);
-                this.Buffer = newBuffer;
-            }
-            bytes.CopyTo(Buffer, this.Position);
-            this.Position += bytes.Length;
-        }
+        }            
     }
 }
 

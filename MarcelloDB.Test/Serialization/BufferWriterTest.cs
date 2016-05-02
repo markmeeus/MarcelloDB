@@ -18,8 +18,36 @@ namespace MarcelloDB.Test.Serialization
         [Test]
         public void Write_Byte()
         {
-            _writer.WriteByte(1);
-            Assert.AreEqual(0x01, _writer.Buffer[0]);
+            _writer.WriteByte(0x11);
+            Assert.AreEqual(0x11, _writer.Buffer[0]);
+        }
+
+        [Test]
+        public void Write_Two_Bytes()
+        {
+            _writer.WriteByte(0x11);
+            _writer.WriteByte(0x22);
+            Assert.AreEqual(0x11, _writer.Buffer[0]);
+            Assert.AreEqual(0x22, _writer.Buffer[1]);
+        }
+
+        [Test]
+        public void Write_Int16()
+        {
+            _writer.WriteInt16(0x1122);
+            Assert.AreEqual(0x22, _writer.Buffer[0]);
+            Assert.AreEqual(0x11, _writer.Buffer[1]);
+        }
+         
+        [Test]
+        public void Write_Two_Int16()
+        {
+            _writer.WriteInt16(0x1122);
+            _writer.WriteInt16(0x3344);
+            Assert.AreEqual(0x22, _writer.Buffer[0]);
+            Assert.AreEqual(0x11, _writer.Buffer[1]);
+            Assert.AreEqual(0x44, _writer.Buffer[2]);
+            Assert.AreEqual(0x33, _writer.Buffer[3]);
         }
 
         [Test]
@@ -33,7 +61,7 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
-        public void Write_Two_Ints()
+        public void Write_Two_Int32()
         {
             _writer.WriteInt32((Int32)0x11223344);
             _writer.WriteInt32((Int32)0x55667788);

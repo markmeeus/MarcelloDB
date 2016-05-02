@@ -100,6 +100,7 @@
     <Compile Include="Collections\Scopes\BaseScope.cs" />
     <Compile Include="Collections\KeysEnumeratorT.cs" />
     <Compile Include="Collections\IndexEntryEnumerator.cs" />
+    <Compile Include="Serialization\BinaryFormatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Runtime" />
