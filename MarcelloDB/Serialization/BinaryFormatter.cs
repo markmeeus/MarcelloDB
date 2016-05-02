@@ -68,7 +68,7 @@ namespace MarcelloDB.Serialization
 
         internal BinaryFormatter WriteBool(bool value)
         {           
-            this.WriteTypeID(TypeID.Bool);
+            WriteTypeID(TypeID.Bool);
             this.Writer.WriteByte(BoolToByte(value));
             return this;
         }
@@ -82,32 +82,20 @@ namespace MarcelloDB.Serialization
 
         public BinaryFormatter WriteNullableBool(bool? value)
         {               
-            this.WriteTypeID(TypeID.NullableBool);
-            this.Writer.WriteByte(BoolToByte(value.HasValue));
-            if (value.HasValue)
-            {
-                this.Writer.WriteByte(BoolToByte(value.Value));
-            }
+            WriteTypeID(TypeID.NullableBool);
+            WriteNullableValue(value.HasValue, () => this.Writer.WriteByte(BoolToByte(value.Value)));
             return this;
         }
 
         public bool? ReadNullableBool()
         {
             this.Reader.ReadByte(); //Read TypeID
-            var hasValueAsByte = this.Reader.ReadByte();
-            if (hasValueAsByte != 0x00)
-            {
-                return this.Reader.ReadByte() != 0x00;
-            }
-            else
-            {
-                return null;
-            }
+            return ReadNullable<bool?>(()=>this.Reader.ReadByte() != 0x00);
         }
 
         internal BinaryFormatter WriteByte(byte value)
         {
-            this.WriteTypeID(TypeID.Byte);
+            WriteTypeID(TypeID.Byte);
             this.Writer.WriteByte(value);
             return this;
         }
@@ -117,34 +105,22 @@ namespace MarcelloDB.Serialization
             return (byte)((IntValue)ReadValue()).Value;
         }
 
-        public BinaryFormatter WriteNullableByte(byte? value)
+        internal BinaryFormatter WriteNullableByte(byte? value)
         {
-            this.WriteTypeID(TypeID.NullableByte);
-            this.Writer.WriteByte(BoolToByte(value.HasValue));
-            if (value.HasValue)
-            {
-                this.Writer.WriteByte(value.Value);
-            }
+            WriteTypeID(TypeID.NullableByte);
+            WriteNullableValue(value.HasValue, () => this.Writer.WriteByte(value.Value));
             return this;       
         }
 
-        public object ReadNullableByte()
+        internal byte? ReadNullableByte()
         {
             this.Reader.ReadByte(); //Read TypeID
-            var hasValueAsByte = this.Reader.ReadByte();
-            if (hasValueAsByte != 0x00)
-            {
-                return this.Reader.ReadByte();
-            }
-            else
-            {
-                return null;
-            }
+            return ReadNullable<byte?>(()=>this.Reader.ReadByte());
         }
             
         internal BinaryFormatter WriteInt16(Int16 value)
         {
-            this.WriteTypeID(TypeID.Int16);
+            WriteTypeID(TypeID.Int16);
             this.Writer.WriteInt16(value);
             return this;
         }
@@ -154,9 +130,22 @@ namespace MarcelloDB.Serialization
             return (Int16)((IntValue)ReadValue()).Value;
         }
 
+        internal BinaryFormatter WriteNullableInt16(Int16? value)
+        {
+            WriteTypeID(TypeID.NullableInt16);
+            WriteNullableValue(value.HasValue, () => this.Writer.WriteInt16(value.Value));
+            return this;
+        }            
+
+        internal Int16? ReadNullableInt16()
+        {
+            this.Reader.ReadByte(); //Read TypeID
+            return ReadNullable<Int16?>(()=>this.Reader.ReadInt16());
+        }            
+
         internal BinaryFormatter WriteInt32(Int32 value)
         {
-            this.WriteTypeID(TypeID.Int32);
+            WriteTypeID(TypeID.Int32);
             this.Writer.WriteInt32(value);
             return this;
         }
@@ -164,6 +153,19 @@ namespace MarcelloDB.Serialization
         internal Int32 ReadInt32()
         {            
             return (Int32)((IntValue)ReadValue()).Value;
+        }
+
+        internal BinaryFormatter WriteNullableInt32(Int32? value)
+        {
+            WriteTypeID(TypeID.NullableInt32);
+            WriteNullableValue(value.HasValue, () => this.Writer.WriteInt32(value.Value));
+            return this;
+        }
+
+        internal Int32? ReadNullableInt32()
+        {
+            this.Reader.ReadByte(); //Read typeID
+            return ReadNullable<Int32?>(()=>this.Reader.ReadInt32());
         }
 
         internal BinaryFormatter WriteInt64(Int64 value)
@@ -178,6 +180,19 @@ namespace MarcelloDB.Serialization
             return ((IntValue)ReadValue()).Value;
         }
 
+        internal BinaryFormatter WriteNullableInt64(Int64? value)
+        {
+            WriteTypeID(TypeID.NullableInt64);
+            WriteNullableValue(value.HasValue, () => this.Writer.WriteInt64(value.Value));
+            return this;
+        }
+
+        internal Int64? ReadNullableInt64()
+        {
+            this.Reader.ReadByte(); //Read typeID
+            return ReadNullable<Int64?>(()=>this.Reader.ReadInt64());
+        }
+
         internal BinaryFormatter WriteDateTime(DateTime dateTime)
         {
             this.WriteTypeID(TypeID.DateTime);
@@ -189,6 +204,19 @@ namespace MarcelloDB.Serialization
         {
             this.Reader.ReadByte(); //Read Type ID
             return new DateTime(this.Reader.ReadInt64());
+        }
+
+        internal BinaryFormatter WriteNullableDateTime(DateTime? value)
+        {
+            WriteTypeID(TypeID.NullableDateTime);
+            WriteNullableValue(value.HasValue, () => this.Writer.WriteInt64(value.Value.ToBinary()));
+            return this;
+        }
+
+        internal DateTime? ReadNullableDateTime()
+        {
+            this.Reader.ReadByte(); //Read typeID
+            return ReadNullable<DateTime?>(()=>new DateTime(this.Reader.ReadInt64()));
         }
 
         internal void WriteString(string value)
@@ -303,6 +331,28 @@ namespace MarcelloDB.Serialization
 
         byte BoolToByte(bool value){
             return value ? (byte)0x01 : (byte)0x00;
+        }
+            
+        void WriteNullableValue(bool hasValue, Action writeValue)
+        {
+            this.Writer.WriteByte(BoolToByte(hasValue));
+            if (hasValue)
+            {
+                writeValue();
+            }
+        }
+
+        internal T ReadNullable<T>(Func<T> readValue)
+        {
+            var hasValueAsByte = this.Reader.ReadByte();
+            if (hasValueAsByte != 0x00)
+            {
+                return readValue();
+            }
+            else
+            {
+                return default(T);
+            }
         }
     }
 }

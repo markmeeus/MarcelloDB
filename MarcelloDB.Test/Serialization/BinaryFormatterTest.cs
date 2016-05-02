@@ -146,6 +146,34 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void ReadWriteNullableInt16Null()
+        {
+            _formatter
+                .Start()
+                .WriteNullableInt16(null);
+
+            var bytes = _writer.GetTrimmedBuffer();
+            var reader = new BufferReader(bytes);
+            var readInt = new BinaryFormatter(reader)
+                .ReadNullableInt16();                        
+            Assert.AreEqual(null, readInt);
+        }
+
+        [Test]
+        public void ReadWriteNullableInt16Value()
+        {
+            _formatter
+                .Start()
+                .WriteNullableInt16(123);
+
+            var bytes = _writer.GetTrimmedBuffer();
+            var reader = new BufferReader(bytes);
+            var readInt = new BinaryFormatter(reader)
+                .ReadNullableInt16();                        
+            Assert.AreEqual(123, readInt);
+        }
+
+        [Test]
         public void ReadWriteInt32()
         {
             _formatter
@@ -161,19 +189,64 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
-        public void ReadWriteInt64()
+        public void ReadWriteNullableInt32Null()
         {
             _formatter
                 .Start()
-                .WriteInt64(123);
+                .WriteNullableInt32(null);
 
             var bytes = _writer.GetTrimmedBuffer();
             var reader = new BufferReader(bytes);
             var readInt = new BinaryFormatter(reader)
-                .ReadInt64();            
+                .ReadNullableInt32();            
+
+            Assert.AreEqual(null, readInt);
+        }
+
+        [Test]
+        public void ReadWriteInt64()
+        {
+            _formatter
+                .Start()
+                .WriteInt32(123);
+
+            var bytes = _writer.GetTrimmedBuffer();
+            var reader = new BufferReader(bytes);
+            var readInt = new BinaryFormatter(reader)
+                .ReadInt32();            
 
             Assert.AreEqual(123, readInt);
         }
+
+        [Test]
+        public void ReadWriteNullableInt64Null()
+        {
+            _formatter
+                .Start()
+                .WriteNullableInt64(null);
+
+            var bytes = _writer.GetTrimmedBuffer();
+            var reader = new BufferReader(bytes);
+            var readInt = new BinaryFormatter(reader)
+                .ReadNullableInt64();            
+
+            Assert.AreEqual(null, readInt);
+        }
+
+        [Test]
+        public void ReadWriteNullableInt64Value()
+        {
+            _formatter
+                .Start()
+                .WriteNullableInt64(123);
+
+            var bytes = _writer.GetTrimmedBuffer();
+            var reader = new BufferReader(bytes);
+            var readInt = new BinaryFormatter(reader)
+                .ReadNullableInt64();            
+
+            Assert.AreEqual(123, readInt);
+        }         
 
         [Test]
         public void ReadWriteDateTime()
@@ -185,11 +258,42 @@ namespace MarcelloDB.Test.Serialization
 
             var bytes = _writer.GetTrimmedBuffer();
             var reader = new BufferReader(bytes);
-            var readInt = new BinaryFormatter(reader)
+            var readDate = new BinaryFormatter(reader)
                 .ReadDateTime();            
 
-            Assert.AreEqual(dateTime, readInt);
+            Assert.AreEqual(dateTime, readDate);
         }
+
+        [Test]
+        public void ReadWriteNullableDateTimeNull()
+        {
+            _formatter
+                .Start()
+                .WriteNullableDateTime(null);
+
+            var bytes = _writer.GetTrimmedBuffer();
+            var reader = new BufferReader(bytes);
+            var readDate = new BinaryFormatter(reader)
+                .ReadNullableDateTime();            
+
+            Assert.AreEqual(null, readDate);
+        }
+
+        [Test]
+        public void ReadWriteNullableDateTimeValue()
+        {
+            var dateTime = new DateTime(2016, 05, 02, 08, 03, 55);
+            _formatter
+                .Start()
+                .WriteNullableDateTime(dateTime);
+
+            var bytes = _writer.GetTrimmedBuffer();
+            var reader = new BufferReader(bytes);
+            var readInt = new BinaryFormatter(reader)
+                .ReadNullableDateTime();            
+
+            Assert.AreEqual(dateTime, readInt);
+        }   
 
         [Test]
         public void ReadInt64_From_Int32()
