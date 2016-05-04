@@ -6,338 +6,311 @@ namespace MarcelloDB.Test.Serialization
 {
     [TestFixture]
     public class BinaryFormatterTest
-    {
-        BinaryFormatter _formatter;
-        BufferWriter _writer;
-
-        [SetUp]
-        public void Initialize()
-        {
-            _writer = new BufferWriter(new byte[0]);
-            _formatter = new BinaryFormatter(_writer);
-        }
-
+    {       
         [Test]
         public void Start_Writes_Version_To_Buffer_Writer()
         {
-            _formatter
+            BinaryFormatter formatter;
+            BufferWriter writer;
+
+            writer = new BufferWriter(new byte[0]);
+            formatter = new BinaryFormatter(writer);
+
+            formatter
                 .Start();
-            var bytes = _writer.GetTrimmedBuffer();
+            var bytes = writer.GetTrimmedBuffer();
             Assert.AreEqual(BinaryFormatter.VERSION, bytes[0]);
         }                  
 
         [Test]
         public void ReadWriteBool()
         {
-            _formatter
-                .Start()
-                .WriteBool(true);
-
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readBool = new BinaryFormatter(reader)
-                .ReadBool();            
-
-            Assert.AreEqual(true, readBool);
+            TestReadWrite<bool>(true,
+                (f, v)  => f.WriteBool(v),
+                (f)     => f.ReadBool());
         }
 
         [Test]
         public void ReadWriteNullableBoolNull()
         {
-            _formatter
-                .Start()
-                .WriteNullableBool((bool?)null);
-
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readBool = new BinaryFormatter(reader)
-                .ReadNullableBool();            
-
-            Assert.AreEqual(null, readBool);
+            TestReadWrite<bool?>(null,
+                (f, v) => f.WriteNullableBool(v),
+                (f) => f.ReadNullableBool());            
         }
 
         [Test]
         public void ReadWriteNullableBoolTrue()
         {
-            _formatter
-                .Start()
-                .WriteNullableBool((bool?)true);
+            TestReadWrite<bool?>(true,
+                (f, v) => f.WriteNullableBool(v),
+                (f) => f.ReadNullableBool());
+        }
 
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readBool = new BinaryFormatter(reader)
-                .ReadNullableBool();            
-
-            Assert.AreEqual(true, readBool);
+        [Test]
+        public void AssertBool()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteString("true"),
+                (f) => f.ReadBool());
         }
 
         [Test]
         public void ReadWriteNullableBoolFalse()
         {
-            _formatter
-                .Start()
-                .WriteNullableBool((bool?)false);
-
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readBool = new BinaryFormatter(reader)
-                .ReadNullableBool();            
-
-            Assert.AreEqual(false, readBool);
+            TestReadWrite<bool?>(false,
+                (f, v)  => f.WriteNullableBool(v),
+                (f)     => f.ReadNullableBool());
         }
 
         [Test]
         public void ReadWriteByte()
         {
-            _formatter
-                .Start()
-                .WriteByte(123);
-
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readByte = new BinaryFormatter(reader)
-                .ReadByte();            
-
-            Assert.AreEqual(123, readByte);
+            TestReadWrite<byte>((byte)123,
+                (f, v)  => f.WriteByte(v),
+                (f)     => f.ReadByte());
         }
 
         [Test]
         public void ReadWriteNullableByteNull()
         {
-            _formatter
-                .Start()
-                .WriteNullableByte(null);
-
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readByte = new BinaryFormatter(reader)
-                .ReadNullableByte();            
-
-            Assert.AreEqual(null, readByte);
+            TestReadWrite<byte?>((byte?)null,
+                (f, v)  => f.WriteNullableByte(v),
+                (f)     => f.ReadNullableByte());
         }
 
         [Test]
         public void ReadWriteNullableByteValue()
         {
-            _formatter
-                .Start()
-                .WriteNullableByte(123);
-
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readByte = new BinaryFormatter(reader)
-                .ReadNullableByte();            
-
-            Assert.AreEqual(123, readByte);
+            TestReadWrite<byte?>((byte?)123,
+                (f, v)  => f.WriteNullableByte(v),
+                (f)     => f.ReadNullableByte());
         }
 
         [Test]
         public void ReadWriteInt16()
         {
-            _formatter
-                .Start()
-                .WriteInt16(123);
-
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readInt = new BinaryFormatter(reader)
-                .ReadInt16();                        
-            Assert.AreEqual(123, readInt);
+            TestReadWrite<Int16>(123,
+                (f, v)  => f.WriteInt16(v),
+                (f)     => f.ReadInt16());
         }
 
         [Test]
         public void ReadWriteNullableInt16Null()
         {
-            _formatter
-                .Start()
-                .WriteNullableInt16(null);
-
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readInt = new BinaryFormatter(reader)
-                .ReadNullableInt16();                        
-            Assert.AreEqual(null, readInt);
+            TestReadWrite<Int16?>(null,
+                (f, v)  => f.WriteNullableInt16(v),
+                (f)     => f.ReadNullableInt16());
         }
 
         [Test]
         public void ReadWriteNullableInt16Value()
         {
-            _formatter
-                .Start()
-                .WriteNullableInt16(123);
-
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readInt = new BinaryFormatter(reader)
-                .ReadNullableInt16();                        
-            Assert.AreEqual(123, readInt);
+            TestReadWrite<Int16?>(123,
+                (f, v)  => f.WriteNullableInt16(v),
+                (f)     => f.ReadNullableInt16());
         }
 
         [Test]
         public void ReadWriteInt32()
         {
-            _formatter
-                .Start()
-                .WriteInt32(123);
-            
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readInt = new BinaryFormatter(reader)
-                .ReadInt32();            
-
-            Assert.AreEqual(123, readInt);
+            TestReadWrite<Int32>(123,
+                (f, v)  => f.WriteInt32(v),
+                (f)     => f.ReadInt32());
         }
 
         [Test]
         public void ReadWriteNullableInt32Null()
         {
-            _formatter
-                .Start()
-                .WriteNullableInt32(null);
+            TestReadWrite<Int32?>(null,
+                (f, v)  => f.WriteNullableInt32(v),
+                (f)     => f.ReadNullableInt32());
+        }
 
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readInt = new BinaryFormatter(reader)
-                .ReadNullableInt32();            
-
-            Assert.AreEqual(null, readInt);
+        [Test]
+        public void ReadWriteNullableInt32Value()
+        {
+            TestReadWrite<Int32?>(123,
+                (f, v)  => f.WriteNullableInt32(v),
+                (f)     => f.ReadNullableInt32());
         }
 
         [Test]
         public void ReadWriteInt64()
         {
-            _formatter
-                .Start()
-                .WriteInt32(123);
-
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readInt = new BinaryFormatter(reader)
-                .ReadInt32();            
-
-            Assert.AreEqual(123, readInt);
+            TestReadWrite<Int64>(123,
+                (f, v)  => f.WriteInt64(v),
+                (f)     => f.ReadInt64());
         }
 
         [Test]
         public void ReadWriteNullableInt64Null()
         {
-            _formatter
-                .Start()
-                .WriteNullableInt64(null);
-
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readInt = new BinaryFormatter(reader)
-                .ReadNullableInt64();            
-
-            Assert.AreEqual(null, readInt);
+            TestReadWrite<Int64?>(null,
+                (f, v)  => f.WriteNullableInt64(v),
+                (f)     => f.ReadNullableInt64());
         }
 
         [Test]
         public void ReadWriteNullableInt64Value()
         {
-            _formatter
-                .Start()
-                .WriteNullableInt64(123);
-
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readInt = new BinaryFormatter(reader)
-                .ReadNullableInt64();            
-
-            Assert.AreEqual(123, readInt);
+            TestReadWrite<Int64?>(123,
+                (f, v)  => f.WriteNullableInt64(v),
+                (f)     => f.ReadNullableInt64());
         }         
+
+        [Test]
+        public void ReadWriteDecimal()
+        {            
+            TestReadWrite<Decimal>(0.1m, 
+                (f, v)  => f.WriteDecimal(v), 
+                (f)     => f.ReadDecimal());
+        }
+            
+        [Test]
+        public void ReadWriteNullableDecimalNull()
+        {                        
+            TestReadWrite<Decimal?>(null,
+                (f, v)  => f.WriteNullableDecimal(v),
+                (f)     => f.ReadNullableDecimal());
+        }
+
+        [Test]
+        public void ReadWriteNullableDecimalValue()
+        {            
+            TestReadWrite<Decimal?>(0.1m,
+                (f, v)  => f.WriteNullableDecimal(v),
+                (f)     => f.ReadNullableDecimal());
+        }
+
+        [Test]
+        public void ReadWriteSingle()
+        {            
+            TestReadWrite<Single>((Single)0.1, 
+                (f, v)  => f.WriteSingle(v), 
+                (f)     => f.ReadSingle());
+        }
+
+        [Test]
+        public void ReadWriteNullableSingleNull()
+        {            
+            TestReadWrite<Single?>(null, 
+                (f, v)  => f.WriteNullableSingle(v), 
+                (f)     => f.ReadNullableSingle());
+        }
+
+        [Test]
+        public void ReadWriteNullableSingleValue()
+        {            
+            TestReadWrite<Single?>((Single)0.1, 
+                (f, v)  => f.WriteNullableSingle(v), 
+                (f)     => f.ReadNullableSingle());
+        }
+
+        [Test]
+        public void ReadWriteDouble()
+        {            
+            TestReadWrite<Double>((Double)0.1, 
+                (f, v)  => f.WriteDouble(v), 
+                (f)     => f.ReadDouble());
+        }
+
+        [Test]
+        public void ReadWriteNullableDoubleNull()
+        {            
+            TestReadWrite<Double?>(null, 
+                (f, v)  => f.WriteNullableDouble(v), 
+                (f)     => f.ReadNullableDouble());
+        }
+
+        [Test]
+        public void ReadWriteNullableDoubleValue()
+        {            
+            TestReadWrite<Double?>((Double)0.1, 
+                (f, v)  => f.WriteNullableDouble(v), 
+                (f)     => f.ReadNullableDouble());
+        }
 
         [Test]
         public void ReadWriteDateTime()
         {
             var dateTime = new DateTime(2016, 05, 02, 08, 03, 55);
-            _formatter
-                .Start()
-                .WriteDateTime(dateTime);
-
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readDate = new BinaryFormatter(reader)
-                .ReadDateTime();            
-
-            Assert.AreEqual(dateTime, readDate);
+            TestReadWrite<DateTime>(dateTime,
+                (f, v) => f.WriteDateTime(dateTime),
+                (f) => f.ReadDateTime());            
         }
 
         [Test]
         public void ReadWriteNullableDateTimeNull()
         {
-            _formatter
-                .Start()
-                .WriteNullableDateTime(null);
-
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readDate = new BinaryFormatter(reader)
-                .ReadNullableDateTime();            
-
-            Assert.AreEqual(null, readDate);
+            TestReadWrite<DateTime?>(null,
+                (f, v)  => f.WriteNullableDateTime(v),
+                (f)     => f.ReadNullableDateTime());            
         }
 
         [Test]
         public void ReadWriteNullableDateTimeValue()
         {
             var dateTime = new DateTime(2016, 05, 02, 08, 03, 55);
-            _formatter
-                .Start()
-                .WriteNullableDateTime(dateTime);
-
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readInt = new BinaryFormatter(reader)
-                .ReadNullableDateTime();            
-
-            Assert.AreEqual(dateTime, readInt);
+            TestReadWrite<DateTime?>(dateTime,
+                (f, v)  => f.WriteNullableDateTime(v),
+                (f)     => f.ReadNullableDateTime());            
         }   
-
-        [Test]
-        public void ReadInt64_From_Int32()
-        {
-            _formatter
-                .Start()
-                .WriteInt32(123);
-
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readInt = new BinaryFormatter(reader)
-                .ReadInt64();            
-
-            Assert.AreEqual(123, readInt);
-        }
-
+            
         [Test]
         public void ReadWriteString()
         {
-            _formatter
-                .Start()
-                .WriteString("I'm really a string");
-
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readString = new BinaryFormatter(reader)
-                .ReadString();            
-
-            Assert.AreEqual("I'm really a string", readString);
+            TestReadWrite<string>("I'm a string",
+                (f, v) => f.WriteString(v),
+                (f) => f.ReadString());            
         }
 
         [Test]
-        public void ReadString_From_Int64()
+        public void ReadWriteStringNull()
         {
-            _formatter
-                .Start()
-                .WriteInt64(123);
+            TestReadWrite<string>(null,
+                (f, v) => f.WriteString(v),
+                (f) => f.ReadString());            
+        }
 
-            var bytes = _writer.GetTrimmedBuffer();
-            var reader = new BufferReader(bytes);
-            var readString = new BinaryFormatter(reader)
-                .ReadString();
+        void TestReadWrite<T>(T testValue, 
+            Action<BinaryFormatter, T> writeValue, 
+            Func<BinaryFormatter, T> readValue)
+        {
+            BinaryFormatter formatter;
+            BufferWriter writer;
 
-            Assert.AreEqual("123", readString);             
+            writer = new BufferWriter(new byte[0]);
+            formatter = new BinaryFormatter(writer);
+
+            formatter
+                .Start();
+            writeValue(formatter, testValue);
+
+            var bytes = writer.GetTrimmedBuffer();
+            var reader = new  BufferReader(bytes);
+            T readFromBytesValue = readValue(new BinaryFormatter(reader));
+
+            Assert.AreEqual(testValue, readFromBytesValue);
+        }
+
+        void AssertTypeMismatchThrows(
+            Action<BinaryFormatter> writeValue, 
+            Action<BinaryFormatter> readValue)
+        {
+            BinaryFormatter formatter;
+            BufferWriter writer;
+
+            writer = new BufferWriter(new byte[0]);
+            formatter = new BinaryFormatter(writer);
+
+            formatter
+                .Start();
+            writeValue(formatter);
+
+            var bytes = writer.GetTrimmedBuffer();
+            var reader = new  BufferReader(bytes);
+            formatter = new BinaryFormatter(reader);
+            Assert.Throws<InvalidOperationException>(() => readValue(formatter));
         }
     }
 }
