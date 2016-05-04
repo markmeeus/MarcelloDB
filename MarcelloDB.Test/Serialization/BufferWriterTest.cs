@@ -38,7 +38,7 @@ namespace MarcelloDB.Test.Serialization
             Assert.AreEqual(0x22, _writer.Buffer[0]);
             Assert.AreEqual(0x11, _writer.Buffer[1]);
         }
-         
+
         [Test]
         public void Write_Two_Int16()
         {

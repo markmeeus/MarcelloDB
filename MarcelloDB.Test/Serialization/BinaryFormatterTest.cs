@@ -6,7 +6,7 @@ namespace MarcelloDB.Test.Serialization
 {
     [TestFixture]
     public class BinaryFormatterTest
-    {       
+    {
         [Test]
         public void Start_Writes_Version_To_Buffer_Writer()
         {
@@ -20,7 +20,7 @@ namespace MarcelloDB.Test.Serialization
                 .Start();
             var bytes = writer.GetTrimmedBuffer();
             Assert.AreEqual(BinaryFormatter.VERSION, bytes[0]);
-        }                  
+        }
 
         [Test]
         public void ReadWriteBool()
@@ -28,22 +28,6 @@ namespace MarcelloDB.Test.Serialization
             TestReadWrite<bool>(true,
                 (f, v)  => f.WriteBool(v),
                 (f)     => f.ReadBool());
-        }
-
-        [Test]
-        public void ReadWriteNullableBoolNull()
-        {
-            TestReadWrite<bool?>(null,
-                (f, v) => f.WriteNullableBool(v),
-                (f) => f.ReadNullableBool());            
-        }
-
-        [Test]
-        public void ReadWriteNullableBoolTrue()
-        {
-            TestReadWrite<bool?>(true,
-                (f, v) => f.WriteNullableBool(v),
-                (f) => f.ReadNullableBool());
         }
 
         [Test]
@@ -55,6 +39,22 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void ReadWriteNullableBoolNull()
+        {
+            TestReadWrite<bool?>(null,
+                (f, v) => f.WriteNullableBool(v),
+                (f) => f.ReadNullableBool());
+        }
+
+        [Test]
+        public void ReadWriteNullableBoolTrue()
+        {
+            TestReadWrite<bool?>(true,
+                (f, v) => f.WriteNullableBool(v),
+                (f) => f.ReadNullableBool());
+        }
+
+        [Test]
         public void ReadWriteNullableBoolFalse()
         {
             TestReadWrite<bool?>(false,
@@ -63,11 +63,27 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void AssertNullableBool()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteString("true"),
+                (f) => f.ReadNullableBool());
+        }
+
+        [Test]
         public void ReadWriteByte()
         {
             TestReadWrite<byte>((byte)123,
                 (f, v)  => f.WriteByte(v),
                 (f)     => f.ReadByte());
+        }
+
+        [Test]
+        public void AssertByte()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteString("byte"),
+                (f) => f.ReadByte());
         }
 
         [Test]
@@ -87,11 +103,27 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void AssertNullableByte()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteString("nullable byte"),
+                (f) => f.ReadNullableByte());
+        }
+
+        [Test]
         public void ReadWriteInt16()
         {
             TestReadWrite<Int16>(123,
                 (f, v)  => f.WriteInt16(v),
                 (f)     => f.ReadInt16());
+        }
+
+        [Test]
+        public void AssertInt16()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteString("Int16"),
+                (f) => f.ReadInt16());
         }
 
         [Test]
@@ -111,11 +143,27 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void AssertNullableInt16()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteString("NullableInt16"),
+                (f) => f.ReadNullableInt16());
+        }
+
+        [Test]
         public void ReadWriteInt32()
         {
             TestReadWrite<Int32>(123,
                 (f, v)  => f.WriteInt32(v),
                 (f)     => f.ReadInt32());
+        }
+
+        [Test]
+        public void AssertInt32()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteString("Int32"),
+                (f) => f.ReadInt32());
         }
 
         [Test]
@@ -135,11 +183,27 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void AssertNullableInt32()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteString("NullableInt32"),
+                (f) => f.ReadNullableInt32());
+        }
+
+        [Test]
         public void ReadWriteInt64()
         {
             TestReadWrite<Int64>(123,
                 (f, v)  => f.WriteInt64(v),
                 (f)     => f.ReadInt64());
+        }
+
+        [Test]
+        public void AssertInt64()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteString("Int64"),
+                (f) => f.ReadInt64());
         }
 
         [Test]
@@ -156,19 +220,35 @@ namespace MarcelloDB.Test.Serialization
             TestReadWrite<Int64?>(123,
                 (f, v)  => f.WriteNullableInt64(v),
                 (f)     => f.ReadNullableInt64());
-        }         
+        }
+
+        [Test]
+        public void AssertNullableInt64()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteString("NullableInt64"),
+                (f) => f.ReadNullableInt64());
+        }
 
         [Test]
         public void ReadWriteDecimal()
-        {            
-            TestReadWrite<Decimal>(0.1m, 
-                (f, v)  => f.WriteDecimal(v), 
+        {
+            TestReadWrite<Decimal>(0.1m,
+                (f, v)  => f.WriteDecimal(v),
                 (f)     => f.ReadDecimal());
         }
-            
+
+        [Test]
+        public void AssertDecimal()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteString("Decimal"),
+                (f) => f.ReadDecimal());
+        }
+
         [Test]
         public void ReadWriteNullableDecimalNull()
-        {                        
+        {
             TestReadWrite<Decimal?>(null,
                 (f, v)  => f.WriteNullableDecimal(v),
                 (f)     => f.ReadNullableDecimal());
@@ -176,58 +256,98 @@ namespace MarcelloDB.Test.Serialization
 
         [Test]
         public void ReadWriteNullableDecimalValue()
-        {            
+        {
             TestReadWrite<Decimal?>(0.1m,
                 (f, v)  => f.WriteNullableDecimal(v),
                 (f)     => f.ReadNullableDecimal());
         }
 
         [Test]
+        public void AssertNullableDecimal()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteString("NullableDecimal"),
+                (f) => f.ReadNullableDecimal());
+        }
+
+        [Test]
         public void ReadWriteSingle()
-        {            
-            TestReadWrite<Single>((Single)0.1, 
-                (f, v)  => f.WriteSingle(v), 
+        {
+            TestReadWrite<Single>((Single)0.1,
+                (f, v)  => f.WriteSingle(v),
                 (f)     => f.ReadSingle());
         }
 
         [Test]
+        public void AssertSingle()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteString("Single"),
+                (f) => f.ReadSingle());
+        }
+
+        [Test]
         public void ReadWriteNullableSingleNull()
-        {            
-            TestReadWrite<Single?>(null, 
-                (f, v)  => f.WriteNullableSingle(v), 
+        {
+            TestReadWrite<Single?>(null,
+                (f, v)  => f.WriteNullableSingle(v),
                 (f)     => f.ReadNullableSingle());
         }
 
         [Test]
         public void ReadWriteNullableSingleValue()
-        {            
-            TestReadWrite<Single?>((Single)0.1, 
-                (f, v)  => f.WriteNullableSingle(v), 
+        {
+            TestReadWrite<Single?>((Single)0.1,
+                (f, v)  => f.WriteNullableSingle(v),
                 (f)     => f.ReadNullableSingle());
         }
 
         [Test]
+        public void AssertNullableSingle()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteString("NullableSingle"),
+                (f) => f.ReadNullableSingle());
+        }
+
+        [Test]
         public void ReadWriteDouble()
-        {            
-            TestReadWrite<Double>((Double)0.1, 
-                (f, v)  => f.WriteDouble(v), 
+        {
+            TestReadWrite<Double>((Double)0.1,
+                (f, v)  => f.WriteDouble(v),
                 (f)     => f.ReadDouble());
         }
 
         [Test]
+        public void AssertDouble()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteString("Double"),
+                (f) => f.ReadDouble());
+        }
+
+        [Test]
         public void ReadWriteNullableDoubleNull()
-        {            
-            TestReadWrite<Double?>(null, 
-                (f, v)  => f.WriteNullableDouble(v), 
+        {
+            TestReadWrite<Double?>(null,
+                (f, v)  => f.WriteNullableDouble(v),
                 (f)     => f.ReadNullableDouble());
         }
 
         [Test]
         public void ReadWriteNullableDoubleValue()
-        {            
-            TestReadWrite<Double?>((Double)0.1, 
-                (f, v)  => f.WriteNullableDouble(v), 
+        {
+            TestReadWrite<Double?>((Double)0.1,
+                (f, v)  => f.WriteNullableDouble(v),
                 (f)     => f.ReadNullableDouble());
+        }
+
+        [Test]
+        public void AssertNullableDouble()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteString("NullableDouble"),
+                (f) => f.ReadNullableDouble());
         }
 
         [Test]
@@ -236,7 +356,15 @@ namespace MarcelloDB.Test.Serialization
             var dateTime = new DateTime(2016, 05, 02, 08, 03, 55);
             TestReadWrite<DateTime>(dateTime,
                 (f, v) => f.WriteDateTime(dateTime),
-                (f) => f.ReadDateTime());            
+                (f) => f.ReadDateTime());
+        }
+
+        [Test]
+        public void AssertDateTime()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteString("Decimal"),
+                (f) => f.ReadDateTime());
         }
 
         [Test]
@@ -244,7 +372,7 @@ namespace MarcelloDB.Test.Serialization
         {
             TestReadWrite<DateTime?>(null,
                 (f, v)  => f.WriteNullableDateTime(v),
-                (f)     => f.ReadNullableDateTime());            
+                (f)     => f.ReadNullableDateTime());
         }
 
         [Test]
@@ -253,15 +381,23 @@ namespace MarcelloDB.Test.Serialization
             var dateTime = new DateTime(2016, 05, 02, 08, 03, 55);
             TestReadWrite<DateTime?>(dateTime,
                 (f, v)  => f.WriteNullableDateTime(v),
-                (f)     => f.ReadNullableDateTime());            
-        }   
-            
+                (f)     => f.ReadNullableDateTime());
+        }
+
+        [Test]
+        public void AssertNullableDateTime()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteString("NullableDateTime"),
+                (f) => f.ReadNullableDateTime());
+        }
+
         [Test]
         public void ReadWriteString()
         {
             TestReadWrite<string>("I'm a string",
                 (f, v) => f.WriteString(v),
-                (f) => f.ReadString());            
+                (f) => f.ReadString());
         }
 
         [Test]
@@ -269,11 +405,19 @@ namespace MarcelloDB.Test.Serialization
         {
             TestReadWrite<string>(null,
                 (f, v) => f.WriteString(v),
-                (f) => f.ReadString());            
+                (f) => f.ReadString());
         }
 
-        void TestReadWrite<T>(T testValue, 
-            Action<BinaryFormatter, T> writeValue, 
+        [Test]
+        public void AssertString()
+        {
+            AssertTypeMismatchThrows(
+                (f) => f.WriteInt32(123),
+                (f) => f.ReadString());
+        }
+
+        void TestReadWrite<T>(T testValue,
+            Action<BinaryFormatter, T> writeValue,
             Func<BinaryFormatter, T> readValue)
         {
             BinaryFormatter formatter;
@@ -294,7 +438,7 @@ namespace MarcelloDB.Test.Serialization
         }
 
         void AssertTypeMismatchThrows(
-            Action<BinaryFormatter> writeValue, 
+            Action<BinaryFormatter> writeValue,
             Action<BinaryFormatter> readValue)
         {
             BinaryFormatter formatter;

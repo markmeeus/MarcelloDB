@@ -82,10 +82,10 @@ namespace MarcelloDB.Serialization
 
         internal bool ReadBool()
         {
-            this.Reader.ReadByte(); //Read TypeID
+            ReadValidTypeID(TypeID.Bool);
             var boolAsByte = this.Reader.ReadByte();
             return boolAsByte != 0x00;
-        }
+        }            
 
         public BinaryFormatter WriteNullableBool(bool? value)
         {
@@ -96,7 +96,7 @@ namespace MarcelloDB.Serialization
 
         public bool? ReadNullableBool()
         {
-            this.Reader.ReadByte(); //Read TypeID
+            ReadValidTypeID(TypeID.NullableBool);
             return ReadNullable<bool?>(()=>this.Reader.ReadByte() != 0x00);
         }
 
@@ -109,7 +109,8 @@ namespace MarcelloDB.Serialization
 
         internal byte ReadByte()
         {
-            return (byte)((IntValue)ReadValue()).Value;
+            ReadValidTypeID(TypeID.Byte);
+            return this.Reader.ReadByte();
         }
 
         internal BinaryFormatter WriteNullableByte(byte? value)
@@ -121,7 +122,7 @@ namespace MarcelloDB.Serialization
 
         internal byte? ReadNullableByte()
         {
-            this.Reader.ReadByte(); //Read TypeID
+            ReadValidTypeID(TypeID.NullableByte);
             return ReadNullable<byte?>(()=>this.Reader.ReadByte());
         }
 
@@ -134,7 +135,8 @@ namespace MarcelloDB.Serialization
 
         internal Int16 ReadInt16()
         {
-            return (Int16)((IntValue)ReadValue()).Value;
+            ReadValidTypeID(TypeID.Int16);
+            return this.Reader.ReadInt16();
         }
 
         internal BinaryFormatter WriteNullableInt16(Int16? value)
@@ -146,8 +148,8 @@ namespace MarcelloDB.Serialization
 
         internal Int16? ReadNullableInt16()
         {
-            this.Reader.ReadByte(); //Read TypeID
-            return ReadNullable<Int16?>(()=>this.Reader.ReadInt16());
+            ReadValidTypeID(TypeID.NullableInt16);
+            return ReadNullable<Int16?>(() => this.Reader.ReadInt16());
         }
 
         internal BinaryFormatter WriteInt32(Int32 value)
@@ -159,7 +161,8 @@ namespace MarcelloDB.Serialization
 
         internal Int32 ReadInt32()
         {
-            return (Int32)((IntValue)ReadValue()).Value;
+            ReadValidTypeID(TypeID.Int32);
+            return this.Reader.ReadInt32();
         }
 
         internal BinaryFormatter WriteNullableInt32(Int32? value)
@@ -171,7 +174,7 @@ namespace MarcelloDB.Serialization
 
         internal Int32? ReadNullableInt32()
         {
-            this.Reader.ReadByte(); //Read typeID
+            ReadValidTypeID(TypeID.NullableInt32);
             return ReadNullable<Int32?>(()=>this.Reader.ReadInt32());
         }
 
@@ -184,7 +187,8 @@ namespace MarcelloDB.Serialization
 
         internal Int64 ReadInt64()
         {
-            return ((IntValue)ReadValue()).Value;
+            ReadValidTypeID(TypeID.Int64);
+            return this.Reader.ReadInt64();
         }
 
         internal BinaryFormatter WriteNullableInt64(Int64? value)
@@ -196,28 +200,26 @@ namespace MarcelloDB.Serialization
 
         internal Int64? ReadNullableInt64()
         {
-            this.Reader.ReadByte(); //Read typeID
+            ReadValidTypeID(TypeID.NullableInt64);
             return ReadNullable<Int64?>(()=>this.Reader.ReadInt64());
         }
 
         internal BinaryFormatter WriteDecimal(Decimal value)
         {
             WriteTypeID(TypeID.Decimal);
-
             this.Writer.WriteBytes(DecimalToBytes(value));
-
             return this;
         }            
                    
         internal Decimal ReadDecimal()
         {
-            this.Reader.ReadByte(); //read typeid
-
+            ReadValidTypeID(TypeID.Decimal);
             return BytesToDecimal(this.Reader.ReadBytes(4 * 4));
         }
 
         internal BinaryFormatter WriteNullableDecimal(Decimal? value)
         {
+            WriteTypeID(TypeID.NullableDecimal);
             WriteNullableValue(value.HasValue, 
                 () => this.Writer.WriteBytes(DecimalToBytes(value.Value)));
             return this;
@@ -225,6 +227,7 @@ namespace MarcelloDB.Serialization
 
         internal Decimal? ReadNullableDecimal()
         {
+            ReadValidTypeID(TypeID.NullableDecimal);
             return ReadNullable<Decimal?>(() => BytesToDecimal(this.Reader.ReadBytes(4 * 4)));
         }
 
@@ -237,12 +240,13 @@ namespace MarcelloDB.Serialization
 
         internal Single ReadSingle()
         {
-            this.Reader.ReadByte(); //read typeId
+            ReadValidTypeID(TypeID.Single);
             return BitConverter.ToSingle(this.Reader.ReadBytes(4), 0);
         }
 
         internal BinaryFormatter WriteNullableSingle(Single? value)
         {
+            WriteTypeID(TypeID.NullableSingle);
             WriteNullableValue(value.HasValue, 
                 () => this.Writer.WriteBytes(BitConverter.GetBytes(value.Value)));
             return this;
@@ -250,6 +254,7 @@ namespace MarcelloDB.Serialization
 
         internal Single? ReadNullableSingle()
         {
+            ReadValidTypeID(TypeID.NullableSingle);
             return ReadNullable<Single?>(() => BitConverter.ToSingle(this.Reader.ReadBytes(4), 0));
         }
 
@@ -262,12 +267,13 @@ namespace MarcelloDB.Serialization
 
         internal Double ReadDouble()
         {
-            this.Reader.ReadByte(); //read typeId
+            ReadValidTypeID(TypeID.Double);
             return BitConverter.ToDouble(this.Reader.ReadBytes(8), 0);
         }
 
         internal BinaryFormatter WriteNullableDouble(Double? value)
         {
+            WriteTypeID(TypeID.NullableDouble);
             WriteNullableValue(value.HasValue, 
                 () => this.Writer.WriteBytes(BitConverter.GetBytes(value.Value)));
             return this;
@@ -275,6 +281,7 @@ namespace MarcelloDB.Serialization
 
         internal Double? ReadNullableDouble()
         {
+            ReadValidTypeID(TypeID.NullableDouble);
             return ReadNullable<Double?>(() => BitConverter.ToDouble(this.Reader.ReadBytes(8), 0));
         }
 
@@ -287,7 +294,7 @@ namespace MarcelloDB.Serialization
 
         internal DateTime ReadDateTime()
         {
-            this.Reader.ReadByte(); //Read Type ID
+            ReadValidTypeID(TypeID.DateTime);
             return new DateTime(this.Reader.ReadInt64());
         }
 
@@ -300,7 +307,7 @@ namespace MarcelloDB.Serialization
 
         internal DateTime? ReadNullableDateTime()
         {
-            this.Reader.ReadByte(); //Read typeID
+            ReadValidTypeID(TypeID.NullableDateTime);
             return ReadNullable<DateTime?>(()=>new DateTime(this.Reader.ReadInt64()));
         }
 
@@ -469,7 +476,7 @@ namespace MarcelloDB.Serialization
             }
         }
 
-        internal T ReadNullable<T>(Func<T> readValue)
+        T ReadNullable<T>(Func<T> readValue)
         {
             var hasValueAsByte = this.Reader.ReadByte();
             if (hasValueAsByte != 0x00)
@@ -479,6 +486,17 @@ namespace MarcelloDB.Serialization
             else
             {
                 return default(T);
+            }
+        }
+
+        void ReadValidTypeID(TypeID wantedTypeID)
+        {
+            var typeID = (TypeID)this.Reader.ReadByte();
+            if (typeID != wantedTypeID)
+            {                
+                throw new InvalidOperationException(
+                    string.Format("Cannot read {0} as {1}", typeID, wantedTypeID)
+                ); 
             }
         }
     }

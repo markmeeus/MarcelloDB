@@ -9,7 +9,7 @@ namespace MarcelloDB.Test.Serialization
     {
         [SetUp]
         public void Initialize()
-        { 
+        {
         }
 
         [Test]
@@ -42,7 +42,7 @@ namespace MarcelloDB.Test.Serialization
             Assert.AreEqual(1, reader.ReadByte());
             Assert.AreEqual(2, reader.ReadByte());
         }
-            
+
         [Test]
         public void ReadInt32_Little_Endian()
         {
@@ -75,7 +75,7 @@ namespace MarcelloDB.Test.Serialization
             Int64 readInt = reader.ReadInt64();
             Assert.AreEqual(0x5544333322221111, readInt);
         }
-            
+
         [Test]
         public void ReadInt32_Little_Endian_On_Big_Endian_System()
         {
@@ -97,9 +97,9 @@ namespace MarcelloDB.Test.Serialization
         public void ReadBytes()
         {
             var reader = new BufferReader(
-                new byte[] {0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18}, false);            
+                new byte[] {0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18}, false);
             Assert.AreEqual(
-                new byte[] {0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18}, 
+                new byte[] {0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18},
                 reader.ReadBytes(8));
         }
     }
