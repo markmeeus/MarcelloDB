@@ -8,18 +8,20 @@ namespace MarcelloDB.Test.Serialization
     public class BinaryFormatterTest
     {
         [Test]
-        public void Start_Writes_Version_To_Buffer_Writer()
+        public void Constructor_Writes_Version_To_Buffer_Writer()
         {
-            BinaryFormatter formatter;
             BufferWriter writer;
+            #pragma warning disable 0219 //formatter constuctor is under test
+            BinaryFormatter formatter;
+            #pragma warning restore 0219
+
+
 
             writer = new BufferWriter(new byte[0]);
             formatter = new BinaryFormatter(writer);
 
-            formatter
-                .Start();
             var bytes = writer.GetTrimmedBuffer();
-            Assert.AreEqual(BinaryFormatter.VERSION, bytes[0]);
+            Assert.AreEqual(BinaryFormatter.FORMATTER_VERSION, bytes[0]);
         }
 
         [Test]
@@ -426,8 +428,6 @@ namespace MarcelloDB.Test.Serialization
             writer = new BufferWriter(new byte[0]);
             formatter = new BinaryFormatter(writer);
 
-            formatter
-                .Start();
             writeValue(formatter, testValue);
 
             var bytes = writer.GetTrimmedBuffer();
@@ -447,8 +447,6 @@ namespace MarcelloDB.Test.Serialization
             writer = new BufferWriter(new byte[0]);
             formatter = new BinaryFormatter(writer);
 
-            formatter
-                .Start();
             writeValue(formatter);
 
             var bytes = writer.GetTrimmedBuffer();

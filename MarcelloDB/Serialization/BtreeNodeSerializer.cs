@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MarcelloDB.Serialization
 {
-    internal class BTreeNodeSerializer<TK> : IObjectSerializer<Node<TK>>
+    internal class BTreeNodeBsonSerializer<TK> : IObjectSerializer<Node<TK>>
     {
         BsonSerializer<BTreeNodeData<TK>> DataSerializer { get; set; }
 
@@ -17,7 +17,7 @@ namespace MarcelloDB.Serialization
 
         #region IObjectSerializer implementation
 
-        internal BTreeNodeSerializer()
+        internal BTreeNodeBsonSerializer()
         {
             this.DataSerializer = new BsonSerializer<BTreeNodeData<TK>>();
         }

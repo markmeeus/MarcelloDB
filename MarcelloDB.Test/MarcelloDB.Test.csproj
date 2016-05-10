@@ -79,6 +79,7 @@
     <Compile Include="Index\IndexDefinitionValidatorTest.cs" />
     <Compile Include="Regression\Issue35_OutOfMemory_ConcurrentReadWrite.cs" />
     <Compile Include="Serialization\BinaryFormatterTest.cs" />
+    <Compile Include="Serialization\BTreeNodeBinaryFormatterSerializerTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

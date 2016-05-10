@@ -11,7 +11,7 @@ namespace MarcelloDB.Test.Serialization
     }
 
     [TestFixture]
-    public class BtreeNodeSerializerTest
+    public class BtreeNodeBsonSerializerTest
     {
         [Test]
         public void Serializes_A_Node()
@@ -23,7 +23,7 @@ namespace MarcelloDB.Test.Serialization
             node.ChildrenAddresses.Add(1);
             node.ChildrenAddresses.Add(2);
 
-            var serializer = new BTreeNodeSerializer<string>();
+            var serializer = new BTreeNodeBsonSerializer<string>();
 
             var bytes = serializer.Serialize(node);
             var deserialized = serializer.Deserialize(bytes);
@@ -52,7 +52,7 @@ namespace MarcelloDB.Test.Serialization
                         Pointer = 1
                 });
 
-            var serializer = new BTreeNodeSerializer<CustomEntryKey>();
+            var serializer = new BTreeNodeBsonSerializer<CustomEntryKey>();
 
             var bytes = serializer.Serialize(node);
             var deserialized = serializer.Deserialize(bytes);
@@ -71,7 +71,7 @@ namespace MarcelloDB.Test.Serialization
             node.ChildrenAddresses.Add(1);
             node.ChildrenAddresses.Add(2);
 
-            var serializer = new BTreeNodeSerializer<string>();
+            var serializer = new BTreeNodeBsonSerializer<string>();
 
             var bytes = serializer.Serialize(node);
             var deserialized = serializer.Deserialize(bytes);

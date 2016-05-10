@@ -42,7 +42,7 @@ namespace MarcelloDB.Test.Serialization
         public void SerializerForBtreeNodeType_Returns_Specific_Serializer()
         {
             var serializer = new SerializerResolver().SerializerFor<Node<string>>();
-            Assert.AreEqual(typeof(BTreeNodeSerializer<string>), serializer.GetType());
+            Assert.AreEqual(typeof(BTreeNodeBsonSerializer<string>), serializer.GetType());
         }
     }
 }

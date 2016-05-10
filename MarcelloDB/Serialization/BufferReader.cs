@@ -31,6 +31,7 @@ namespace MarcelloDB.Serialization
         {
             var bytes = new byte[length];
             Array.Copy(this.Buffer, this.Position, bytes, 0, bytes.Length);
+            this.Position += length;
             return bytes;
         }
 
