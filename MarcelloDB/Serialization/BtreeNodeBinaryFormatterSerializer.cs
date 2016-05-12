@@ -3,25 +3,281 @@ using MarcelloDB.Serialization;
 using MarcelloDB.Index;
 using System.Collections.Generic;
 using MarcelloDB.Records;
+using System.Reflection;
+using System.Linq;
 
-namespace MarcelloDB
+namespace MarcelloDB.Serialization
 {
-    internal class BTreeNodeBinaryFormatterSerializer<TKey> : IObjectSerializer<Node<TKey>>
-    {        
-        class ReadWriteEntryFunctions
+    abstract class ValueSerializer{}
+    abstract class ValueSerializer<TValue> : ValueSerializer
+    {
+        internal abstract void WriteValue(BinaryFormatter formatter, TValue value);
+
+        internal abstract TValue ReadValue(BinaryFormatter formatter);
+    }
+
+    class BooleanSerializer : ValueSerializer<Boolean>
+    {
+        internal override Boolean ReadValue(BinaryFormatter formatter)
         {
-            internal Action<BinaryFormatter, object> WriteEntryKey { get; set; }
-            internal Func<BinaryFormatter, object> ReadEntryKey { get; set; }
+            return formatter.ReadBool();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, Boolean value)
+        {
+            formatter.WriteBool(value);
+        }
+    }
+
+    class NullableBooleanSerializer : ValueSerializer<Boolean?>
+    {
+        internal override Boolean? ReadValue(BinaryFormatter formatter)
+        {
+            return formatter.ReadNullableBool();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, Boolean? value)
+        {
+            formatter.WriteNullableBool(value);
+        }
+    }
+
+    class ByteSerializer : ValueSerializer<Byte>
+    {
+        internal override Byte ReadValue(BinaryFormatter formatter)
+        {
+            return formatter.ReadByte();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, Byte value)
+        {
+            formatter.WriteByte(value);
+        }
+    }
+
+    class NullableByteSerializer : ValueSerializer<Byte?>
+    {
+        internal override Byte? ReadValue(BinaryFormatter formatter)
+        {
+            return formatter.ReadNullableByte();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, Byte? value)
+        {
+            formatter.WriteNullableByte(value);
+        }
+    }
+
+    class Int16Serializer : ValueSerializer<Int16>
+    {
+        internal override Int16 ReadValue(BinaryFormatter formatter)
+        {
+            return formatter.ReadInt16();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, Int16 value)
+        {
+            formatter.WriteInt16(value);
+        }
+    }
+
+    class NullableInt16Serializer : ValueSerializer<Int16?>
+    {
+        internal override Int16? ReadValue(BinaryFormatter formatter)
+        {
+            return formatter.ReadNullableInt16();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, Int16? value)
+        {
+            formatter.WriteNullableInt16(value);
+        }
+    }
+
+    class Int32Serializer : ValueSerializer<Int32>
+    {
+        internal override Int32 ReadValue(BinaryFormatter formatter)
+        {
+            return formatter.ReadInt32();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, Int32 value)
+        {
+            formatter.WriteInt32(value);
+        }
+    }
+
+    class NullableInt32Serializer : ValueSerializer<Int32?>
+    {
+        internal override Int32? ReadValue(BinaryFormatter formatter)
+        {
+            return formatter.ReadNullableInt32();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, Int32? value)
+        {
+            formatter.WriteNullableInt32(value);
+        }
+    }
+
+    class Int64Serializer : ValueSerializer<Int64>
+    {
+        internal override Int64 ReadValue(BinaryFormatter formatter)
+        {
+            return formatter.ReadInt64();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, Int64 value)
+        {
+            formatter.WriteInt64(value);
+        }
+    }
+
+    class NullableInt64Serializer : ValueSerializer<Int64?>
+    {
+        internal override Int64? ReadValue(BinaryFormatter formatter)
+        {
+            return formatter.ReadNullableInt64();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, Int64? value)
+        {
+            formatter.WriteNullableInt64(value);
+        }
+    }
+
+    class DecimalSerializer : ValueSerializer<Decimal>
+    {
+        internal override Decimal ReadValue(BinaryFormatter formatter)
+        {
+            return formatter.ReadDecimal();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, Decimal value)
+        {
+            formatter.WriteDecimal(value);
+        }
+    }
+
+    class NullableDecimalSerializer : ValueSerializer<Decimal?>
+    {
+        internal override Decimal? ReadValue(BinaryFormatter formatter)
+        {
+            return formatter.ReadNullableDecimal();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, Decimal? value)
+        {
+            formatter.WriteNullableDecimal(value);
+        }
+    }
+
+    class SingleSerializer : ValueSerializer<Single>
+    {
+        internal override Single ReadValue(BinaryFormatter formatter)
+        {
+            return formatter.ReadSingle();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, Single value)
+        {
+            formatter.WriteSingle(value);
+        }
+    }
+
+    class NullableSingleSerializer : ValueSerializer<Single?>
+    {
+        internal override Single? ReadValue(BinaryFormatter formatter)
+        {
+            return formatter.ReadNullableSingle();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, Single? value)
+        {
+            formatter.WriteNullableSingle(value);
+        }
+    }
+
+    class DoubleSerializer : ValueSerializer<Double>
+    {
+        internal override Double ReadValue(BinaryFormatter formatter)
+        {
+            return formatter.ReadDouble();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, Double value)
+        {
+            formatter.WriteDouble(value);
+        }
+    }
+
+    class NullableDoubleSerializer : ValueSerializer<Double?>
+    {
+        internal override Double? ReadValue(BinaryFormatter formatter)
+        {
+            return formatter.ReadNullableDouble();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, Double? value)
+        {
+            formatter.WriteNullableDouble(value);
+        }     
+    }
+
+    class DateTimeSerializer : ValueSerializer<DateTime>
+    {
+        internal override DateTime ReadValue(BinaryFormatter formatter)
+        {
+            return formatter.ReadDateTime();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, DateTime value)
+        {
+            formatter.WriteDateTime(value);
+        }
+    }
+
+    class NullableDateTimeSerializer : ValueSerializer<DateTime?>
+    {
+        internal override DateTime? ReadValue(BinaryFormatter formatter)
+        {
+            return formatter.ReadNullableDateTime();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, DateTime? value)
+        {
+            formatter.WriteNullableDateTime(value);
+        }     
+    }
+
+    class StringSerializer : ValueSerializer<String>
+    {
+        internal override String ReadValue(BinaryFormatter formatter)
+        {
+            return formatter.ReadString();
+        }
+        internal override void WriteValue(BinaryFormatter formatter, String value)
+        {
+            formatter.WriteString(value);
+        }
+    }
+
+
+    class ValueWithAddressSerializer<TValue> : ValueSerializer<ValueWithAddressIndexKey<TValue>>
+    {
+        ValueSerializer<TValue> ValueSerializer { get; set; }
+
+        internal ValueWithAddressSerializer(ValueSerializer<TValue> valueSerializer){
+            this.ValueSerializer = valueSerializer;
         }
 
+        internal override void WriteValue(BinaryFormatter formatter, ValueWithAddressIndexKey<TValue> value)
+        {
+            formatter.WriteInt64(value.A);
+            this.ValueSerializer.WriteValue(formatter, value.V);
+        }
 
+        internal override ValueWithAddressIndexKey<TValue> ReadValue(BinaryFormatter formatter)
+        {
+            var result = new ValueWithAddressIndexKey<TValue>();
+            result.A = formatter.ReadInt64();
+            result.V = this.ValueSerializer.ReadValue(formatter);
+            return result;
+        }
+    }   
+
+    internal class BTreeNodeBinaryFormatterSerializer<TKey> : IObjectSerializer<Node<TKey>>
+    {        
+        
         const byte BTREE_NODE_FORMAT_VERSION = 1;
 
-        ReadWriteEntryFunctions ReadWriteEntryFuncs { get; set; }
+        ValueSerializer ValueSerializer { get; set; }
 
         public BTreeNodeBinaryFormatterSerializer()
         {
-            SetReadWriteKeyFunctions();
+            SetValueSerializer();
         }
 
         #region IObjectSerializer implementation
@@ -74,7 +330,9 @@ namespace MarcelloDB
         {
             var entry = new Entry<TKey>();
             entry.Pointer = formatter.ReadInt64();
-            entry.Key = (TKey) this.ReadWriteEntryFuncs.ReadEntryKey(formatter);
+
+            entry.Key = (TKey) ((ValueSerializer<TKey>)this.ValueSerializer).ReadValue(formatter);
+
             return entry;
         }
 
@@ -90,7 +348,9 @@ namespace MarcelloDB
         void WriteEntry(BinaryFormatter formatter, Entry<TKey> entry)
         {
             formatter.WriteInt64(entry.Pointer);
-            this.ReadWriteEntryFuncs.WriteEntryKey(formatter, entry.Key);
+
+            ((ValueSerializer<TKey>)this.ValueSerializer).WriteValue(formatter, entry.Key);
+
         }
 
         void WriteConcreteEntryKey(BinaryFormatter formatter, Entry<TKey> entry)
@@ -123,143 +383,72 @@ namespace MarcelloDB
             }
         }            
 
-        void SetReadWriteKeyFunctions()
-        {         
-            this.ReadWriteEntryFuncs = ReadWriteEntryFunctionsDict[typeof(TKey)];
-        }
-
-        static void WriteValueWithAddress<TVal>(BinaryFormatter formatter, ValueWithAddressIndexKey<TVal> key)
-        {
-            formatter.WriteInt64(key.A);
-
-            var writeFunc = ReadWriteEntryFunctionsDict[typeof(TVal)].WriteEntryKey;
-            writeFunc(formatter, key.V);                
-        }
-
-        static ValueWithAddressIndexKey<TVal> ReadValueWithAddress<TVal>(BinaryFormatter formatter)
-        {
-            var result = new ValueWithAddressIndexKey<TVal>();
-            result.A = formatter.ReadInt64();
-            var readFunc = ReadWriteEntryFunctionsDict[typeof(TVal)].ReadEntryKey;
-            result.V = (TVal)readFunc(formatter);
-            return result;
-        }
-
-        static Dictionary<Type, ReadWriteEntryFunctions> _readWriteEntryFunctionsDict;
-        static Dictionary<Type, ReadWriteEntryFunctions> ReadWriteEntryFunctionsDict
-        {
-            get {
-                if (_readWriteEntryFunctionsDict == null)
+        void SetValueSerializer()
+        {   
+            
+            if(!ValueSerializers.ContainsKey(typeof(TKey))){
+                if (typeof(TKey).IsConstructedGenericType)
                 {
-                    _readWriteEntryFunctionsDict = new Dictionary<Type, ReadWriteEntryFunctions>()
+                    var genericType = typeof(TKey).GetGenericTypeDefinition();
+                    if (genericType == typeof(ValueWithAddressIndexKey<>))
                     {
-                        {typeof(Boolean), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => formatter.WriteBool((Boolean)(object)key),
-                                ReadEntryKey = (formatter) => formatter.ReadBool()
-                            }},
-                        {typeof(Boolean?), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => formatter.WriteNullableBool((Boolean?)(object)key),
-                                ReadEntryKey = (formatter) => formatter.ReadNullableBool()
-                            }},
-                        {typeof(Byte), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => formatter.WriteByte((Byte)(object)key),
-                                ReadEntryKey = (formatter) => formatter.ReadByte()
-                            }},
-                        {typeof(Byte?), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => formatter.WriteNullableByte((Byte?)(object)key),
-                                ReadEntryKey = (formatter) => formatter.ReadNullableByte()
-                            }},
-                        {typeof(Int16), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => formatter.WriteInt16((Int16)(object)key),
-                                ReadEntryKey = (formatter) => formatter.ReadInt16()
-                            }},
-                        {typeof(Int16?), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => formatter.WriteNullableInt16((Int16?)(object)key),
-                                ReadEntryKey = (formatter) => formatter.ReadNullableInt16()
-                            }},
-                        {typeof(Int32), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => formatter.WriteInt32((Int32)(object)key),
-                                ReadEntryKey = (formatter) => formatter.ReadInt32()
-                            }},
-                        {typeof(Int32?), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => formatter.WriteNullableInt32((Int32?)(object)key),
-                                ReadEntryKey = (formatter) => formatter.ReadNullableInt32()
-                            }},
-                        {typeof(Int64), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => formatter.WriteInt64((Int64)(object)key),
-                                ReadEntryKey = (formatter) => formatter.ReadInt64()
-                            }},
-                        {typeof(Int64?), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => formatter.WriteNullableInt64((Int64?)(object)key),
-                                ReadEntryKey = (formatter) => formatter.ReadNullableInt64()
-                            }},
-                        {typeof(Decimal), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => formatter.WriteDecimal((Decimal)(object)key),
-                                ReadEntryKey = (formatter) => formatter.ReadDecimal()
-                            }},
-                        {typeof(Decimal?), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) =>
-                                    formatter.WriteNullableDecimal((Decimal?)(object)key),
-                                ReadEntryKey = (formatter) =>
-                                    formatter.ReadNullableDecimal()
-                            }},
-                        {typeof(Single), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => formatter.WriteSingle((Single)(object)key),
-                                ReadEntryKey = (formatter) => formatter.ReadSingle()
-                            }},
-                        {typeof(Single?), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => formatter.WriteNullableSingle((Single?)(object)key),
-                                ReadEntryKey = (formatter) => formatter.ReadNullableSingle()
-                            }},
-                        {typeof(Double), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => formatter.WriteDouble((Double)(object)key),
-                                ReadEntryKey = (formatter) => formatter.ReadDouble()
-                            }},
-                        {typeof(Double?), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => formatter.WriteNullableDouble((Double?)(object)key),
-                                ReadEntryKey = (formatter) => formatter.ReadNullableDouble()
-                            }},
-                        {typeof(DateTime), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => formatter.WriteDateTime((DateTime)(object)key),
-                                ReadEntryKey = (formatter) => formatter.ReadDateTime()
-                            }},
-                        {typeof(DateTime?), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => formatter.WriteNullableDateTime((DateTime?)(object)key),
-                                ReadEntryKey = (formatter) => formatter.ReadNullableDateTime()
-                            }},
-                        {typeof(String), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => formatter.WriteString((String)(object)key),
-                                ReadEntryKey = (formatter) => formatter.ReadString()
-                            }},
-                        {typeof(ValueWithAddressIndexKey<Boolean>), new ReadWriteEntryFunctions
-                            {
-                                WriteEntryKey = (formatter, key) => {
-                                    WriteValueWithAddress<Boolean>(formatter, (ValueWithAddressIndexKey<Boolean>)(object)key);
-                                },
-                                ReadEntryKey = (formatter) => ReadValueWithAddress<Boolean>(formatter)                                                                        
-                            }},
-                     };
+                        
+                        ValueSerializers[typeof(TKey)] = BuildValueWithAddressSerializer(typeof(TKey));
+                    }
                 }
-                return _readWriteEntryFunctionsDict;
+            }
+
+            this.ValueSerializer = ValueSerializers[typeof(TKey)];    
+        }
+
+        ValueSerializer BuildValueWithAddressSerializer(Type valueWithAddressType)
+        {        
+            var typeOfValue = valueWithAddressType.GenericTypeArguments[0];
+            var innerValueSerializer = ValueSerializers[typeOfValue];
+
+            var valueType = typeof(TKey).GenericTypeArguments[0];
+
+            var serializerConstructor = typeof(ValueWithAddressSerializer<>).GetGenericTypeDefinition()
+                .GetTypeInfo()
+                .MakeGenericType(new Type[]{ valueType })
+                .GetTypeInfo()
+                .DeclaredConstructors.First();
+
+            var serializer = serializerConstructor.Invoke(new object[]{ innerValueSerializer });
+
+            return (ValueSerializer)serializer;           
+        }
+            
+        static Dictionary<Type, ValueSerializer> _valueSerializers;
+        static Dictionary<Type, ValueSerializer> ValueSerializers
+        {
+            get  {
+                if (_valueSerializers == null)
+                {
+                    _valueSerializers = new Dictionary<Type, ValueSerializer>
+                    {
+                        {typeof(Boolean), new BooleanSerializer()},
+                        {typeof(Boolean?), new NullableBooleanSerializer()},
+                        {typeof(Byte), new ByteSerializer()},
+                        {typeof(Byte?), new NullableByteSerializer()},
+                        {typeof(Int16), new Int16Serializer()},
+                        {typeof(Int16?), new NullableInt16Serializer()},
+                        {typeof(Int32), new Int32Serializer()},
+                        {typeof(Int32?), new NullableInt32Serializer()},
+                        {typeof(Int64), new Int64Serializer()},
+                        {typeof(Int64?), new NullableInt64Serializer()},
+                        {typeof(Decimal), new DecimalSerializer()},
+                        {typeof(Decimal?), new NullableDecimalSerializer()},
+                        {typeof(Single), new SingleSerializer()},
+                        {typeof(Single?), new NullableSingleSerializer()},
+                        {typeof(Double), new DoubleSerializer()},
+                        {typeof(Double?), new NullableDoubleSerializer()},
+                        {typeof(DateTime), new DateTimeSerializer()},
+                        {typeof(DateTime?), new NullableDateTimeSerializer()},
+                        {typeof(String), new StringSerializer()}
+                    };
+                }
+                return _valueSerializers;
             }
         }            
     }
