@@ -39,10 +39,26 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
-        public void SerializerForBtreeNodeType_Returns_Specific_Serializer()
+        public void SerializerForBtreeNodeInt64_Returns_FormatterSerializer()
         {
-            var serializer = new SerializerResolver().SerializerFor<Node<string>>();
-            Assert.AreEqual(typeof(BTreeNodeBsonSerializer<string>), serializer.GetType());
+            var serializer = new SerializerResolver().SerializerFor<Node<Int64>>();
+            Assert.AreEqual(typeof(BTreeNodeBinaryFormatterSerializer<Int64>), serializer.GetType());
+        }
+
+        [Test]
+        public void SerializerForBtreeNodeValueWithAddress_Returns_FormatterSerializer()
+        {
+            var serializer = new SerializerResolver().SerializerFor<Node<ValueWithAddressIndexKey<String>>>();
+            Assert.AreEqual(typeof(BTreeNodeBinaryFormatterSerializer<ValueWithAddressIndexKey<String>>), serializer.GetType());
+        }
+
+        class CustomIndexKey{ }
+
+        [Test]
+        public void SerializerForBtreeNodeCustomType_Returns_Bson_Serializer()
+        {
+            var serializer = new SerializerResolver().SerializerFor<Node<CustomIndexKey>>();
+            Assert.AreEqual(typeof(BTreeNodeBsonSerializer<CustomIndexKey>), serializer.GetType());
         }
     }
 }

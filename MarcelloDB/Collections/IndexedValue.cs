@@ -14,17 +14,17 @@ namespace MarcelloDB.Collections
     public abstract class IndexedValue : SessionBoundObject
     {
         public IndexedValue(Session session) : base(session){}
+               
+        protected internal abstract void Register(object o, Int64 address);
 
-        protected internal abstract object GetValue(object o);
-
-        protected internal abstract object GetKey(object o, Int64 address);
+        protected internal abstract void UnRegister(object o, Int64 address);
 
         protected internal string PropertyName { get; set; }
     }
 
     public class IndexedValue<TObj, TAttribute> : IndexedValue
     {
-        Collection<TObj> Collection { get; set; }
+        protected Collection<TObj> Collection { get; set; }
 
         RecordManager RecordManager  { get; set; }
 
@@ -33,6 +33,8 @@ namespace MarcelloDB.Collections
         Func<TObj, TAttribute> _userValueFunction;
 
         Func<TObj, TAttribute> _propValueFunction;
+
+
 
         internal IndexedValue(Func<TObj, TAttribute> valueFunction):base(null)
         {
@@ -86,26 +88,70 @@ namespace MarcelloDB.Collections
         {
             return new SmallerThan<TObj, TAttribute>(this, value, true);
         }
-
-        protected internal override object GetValue(object o)
-        {
-            return (TAttribute)ValueFunction((TObj)o);
-        }
-
-        protected internal override object GetKey(object o, Int64 address)
+                   
+        internal virtual object GetKey(object o, Int64 address)
         {
             return new ValueWithAddressIndexKey<TAttribute>
             {
-                V = (TAttribute)GetValue(o),
+                V = this.ValueFunction((TObj)o),
                 A = address
             };
+        }
+
+        protected internal override void Register(object o, Int64 address)
+        {
+            var key = this.GetKey(o, address);
+
+            var indexName = RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName);
+
+            RegisterKey(key, address, this.Session, this.RecordManager, indexName);
+        }
+
+        protected internal override void UnRegister(object o, Int64 address)
+        {
+            var key = this.GetKey(o, address);
+
+            var indexName = RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName);
+
+            UnRegisterKey(key, address, this.Session, this.RecordManager, indexName);
+        }
+
+        internal virtual void RegisterKey(object key, 
+            Int64 address, 
+            Session session, 
+            RecordManager recordManager, 
+            string indexName)
+        {
+            var index = new RecordIndex<ValueWithAddressIndexKey<TAttribute>>(
+                this.Session,
+                this.RecordManager,
+                indexName,
+                this.Session.SerializerResolver.SerializerFor<Node<ValueWithAddressIndexKey<TAttribute>>>()
+            );
+
+            index.Register((ValueWithAddressIndexKey<TAttribute>)key, address);
+        }
+
+        internal virtual void UnRegisterKey(object key, 
+            Int64 address, 
+            Session session, 
+            RecordManager recordManager, 
+            string indexName)
+        {
+            var index = new RecordIndex<ValueWithAddressIndexKey<TAttribute>>(
+                this.Session,
+                this.RecordManager,
+                indexName,
+                this.Session.SerializerResolver.SerializerFor<Node<ValueWithAddressIndexKey<TAttribute>>>()
+            );
+
+            index.UnRegister((ValueWithAddressIndexKey<TAttribute>)key);
         }
 
         internal CollectionEnumerator<TObj, ValueWithAddressIndexKey<TAttribute>>
         BuildEnumerator(BTreeWalkerRange<ValueWithAddressIndexKey<TAttribute>> range,
             bool IsDescending = false)
         {
-
             var indexName = RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName);
 
             var enumerator =  new CollectionEnumerator<TObj, ValueWithAddressIndexKey<TAttribute>>(
@@ -153,7 +199,7 @@ namespace MarcelloDB.Collections
         }
     }
 
-    internal class IndexedIDValue<T> : IndexedValue<T, object>
+    public class IndexedIDValue<TObj> : IndexedValue<TObj, object>
     {
         internal IndexedIDValue():base(null)
         {
@@ -162,16 +208,43 @@ namespace MarcelloDB.Collections
 
         internal Func<object, object> IDValueFunction { get; set; }
 
-        protected internal override object GetValue(object o)
+
+        internal override object GetKey(object o, long address)
         {
             return IDValueFunction(o);
         }
-
-        protected internal override object GetKey(object o, long address)
+            
+        internal  override void RegisterKey(object key, 
+            Int64 address, 
+            Session session, 
+            RecordManager recordManager, 
+            string indexName)
         {
-            //ID Index has it's value as key
-            return this.GetValue(o);
-        }
+            var index = new RecordIndex<object>(
+                this.Session,
+                recordManager,
+                indexName,
+                this.Session.SerializerResolver.SerializerFor<Node<object>>()
+            );
+
+            index.Register(key, address);
+        } 
+
+        internal  override void UnRegisterKey(object key, 
+            Int64 address, 
+            Session session, 
+            RecordManager recordManager, 
+            string indexName)
+        {
+            var index = new RecordIndex<object>(
+                this.Session,
+                recordManager,
+                indexName,
+                this.Session.SerializerResolver.SerializerFor<Node<object>>()
+            );
+
+            index.UnRegister(key);
+        } 
     }
 }
 

@@ -8,8 +8,36 @@ using MarcelloDB.Records;
 namespace MarcelloDB.Test.Serialization
 {
     [TestFixture]
-    public class BTreeNodeBinaryFormatterSerializerByteTest
-    {        
+    public class BTreeNodeBinaryFormatterSerializerTest
+    {
+        class CustomData{}
+
+        [Test]
+        public void Cannot_Serialize_Custom_Value()
+        {
+            Assert.IsFalse(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(CustomData)));
+        }
+
+        [Test]
+        public void Cannot_Serialize_NodeCustom_Value()
+        {
+            Assert.IsFalse(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<CustomData>)));
+        }
+
+        [Test]
+        public void Cannot_Serialize_NodeValueWithAddress()
+        {
+            Assert.IsFalse(BTreeNodeBinaryFormatterSerializer
+                .CanSerialize(typeof(Node<ValueWithAddressIndexKey<CustomData>>)));
+        }
+
+        [Test]
+        public void Can_Serialize_Boolean()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<Boolean>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<Boolean>>)));
+        }
+
         [Test]
         public void Serializes_Node_Bool()
         {
@@ -20,6 +48,13 @@ namespace MarcelloDB.Test.Serialization
         public void Serializes_Boolean_Entries()
         {
             SerializesEntries<Boolean>(true, true, false);
+        }
+
+        [Test]
+        public void Can_Serialize_NullableBoolean()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<Boolean?>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<Boolean?>>)));
         }
 
         [Test]
@@ -41,6 +76,13 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void Can_Serialize_Byte()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<Byte>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<Byte>>)));
+        }
+
+        [Test]
         public void Serializes_Node_Byte()
         {
             SerializesNode<Byte>();
@@ -50,6 +92,13 @@ namespace MarcelloDB.Test.Serialization
         public void Serializes_Byte_Entries()
         {
             SerializesEntries<Byte>(1, 2, 3);
+        }
+
+        [Test]
+        public void Can_Serialize_NullableByte()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<Byte?>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<Byte?>>)));
         }
 
         [Test]
@@ -65,9 +114,23 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void Can_Serialize_Int16()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<Int16>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<Int16>>)));
+        }
+
+        [Test]
         public void Serializes_Int16()
         {
             SerializesEntries<Int16>(1, 2, 3);
+        }
+
+        [Test]
+        public void Can_Serialize_NullableInt16()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<Int16?>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<Int16?>>)));
         }
 
         [Test]
@@ -77,9 +140,23 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void Can_Serialize_Int32()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<Int32>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<Int32>>)));
+        }
+
+        [Test]
         public void Serializes_Int32()
         {
             SerializesEntries<Int32>(1, 2, 3);
+        }
+
+        [Test]
+        public void Can_Serialize_NullableInt32()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<Int32?>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<Int32?>>)));
         }
 
         [Test]
@@ -89,9 +166,23 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void Can_Serialize_Int64()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<Int64>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<Int64>>)));
+        }
+
+        [Test]
         public void Serializes_Int64()
         {
             SerializesEntries<Int64>(1, 2, 3);
+        }
+
+        [Test]
+        public void Can_Serialize_NullableInt64()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<Int64?>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<Int64?>>)));
         }
 
         [Test]
@@ -101,9 +192,23 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void Can_Serialize_Decimal()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<Decimal>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<Decimal>>)));
+        }
+
+        [Test]
         public void Serializes_Decimal()
         {
             SerializesEntries<Decimal>(0.1m, 0.2m, 0.2m);
+        }
+
+        [Test]
+        public void Can_Serialize_NullableDecimal()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<Decimal?>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<Decimal?>>)));
         }
 
         [Test]
@@ -113,9 +218,23 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void Can_Serialize_Single()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<Single>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<Single>>)));
+        }
+
+        [Test]
         public void Serializes_Single()
         {
             SerializesEntries<Single>((Single)0.1, (Single)0.2, (Single)0.3);
+        }
+
+        [Test]
+        public void Can_Serialize_NullableSingle()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<Single?>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<Single?>>)));
         }
 
         [Test]
@@ -125,9 +244,23 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void Can_Serialize_Double()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<Double>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<Double>>)));
+        }
+
+        [Test]
         public void Serializes_Double()
         {
             SerializesEntries<Double>(0.1, 0.2, 0.3);
+        }
+
+        [Test]
+        public void Can_Serialize_NullableDouble()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<Double?>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<Double?>>)));
         }
 
         [Test]
@@ -137,8 +270,15 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void Can_Serialize_DateTime()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<DateTime>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<DateTime>>)));
+        }
+
+        [Test]
         public void Serializes_DateTime()
-        {           
+        {
             SerializesEntries<DateTime>(
                 new DateTime(2016, 5, 9, 8, 5, 10),
                 new DateTime(2016, 5, 11, 8, 5, 10),
@@ -147,8 +287,15 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void Can_Serialize_NullableDateTime()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<DateTime?>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<DateTime>>)));
+        }
+
+        [Test]
         public void Serializes_NullableDateTime()
-        {           
+        {
             SerializesEntries<DateTime?>(
                 new DateTime(2016, 5, 9, 8, 5, 10),
                 new DateTime(2016, 5, 11, 8, 5, 10),
@@ -157,55 +304,19 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void Can_Serialize_String()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<String>)));
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(Node<ValueWithAddressIndexKey<String>>)));
+        }
+
+        [Test]
         public void Serializes_String()
-        {           
+        {
             SerializesEntries<string>(
                 "String 1", " String 2", "String 3"
             );
         }
-
-        [Test]
-        public void Compare_BSon()
-        {
-            var node = new Node<String>(4);
-
-            node.EntryList.Add(new Entry<String>(){ Key = "Key 1", Pointer = 2 });
-            node.EntryList.Add(new Entry<String>(){ Key = "Key 2", Pointer = 4 });
-            node.EntryList.Add(new Entry<String>(){ Key = "Key 3", Pointer = 4 });
-            node.EntryList.Add(new Entry<String>(){ Key = "Key 4", Pointer = 4 });
-            node.EntryList.Add(new Entry<String>(){ Key = "Key 5", Pointer = 4 });
-            node.EntryList.Add(new Entry<String>(){ Key = "Key 6", Pointer = 4 });
-            node.EntryList.Add(new Entry<String>(){ Key = "Key 7", Pointer = 4 });
-
-            node.ChildrenAddresses.Add(1);
-            node.ChildrenAddresses.Add(2);
-            node.ChildrenAddresses.Add(3);
-            node.ChildrenAddresses.Add(4);
-            node.ChildrenAddresses.Add(5);
-            node.ChildrenAddresses.Add(6);
-            node.ChildrenAddresses.Add(7);
-            node.ChildrenAddresses.Add(8);
-
-            var formatterSerializer = new BTreeNodeBinaryFormatterSerializer<String>();
-            var bsonSerializer = new BTreeNodeBsonSerializer<String>();
-
-            var s = System.Diagnostics.Stopwatch.StartNew();
-            for (int i = 0; i < 10000; i++)
-            {
-                node = Reserialize(node, formatterSerializer);
-            }
-            s.Stop();
-            var formatterTime = s.ElapsedMilliseconds;
-            s.Restart();
-            for (int i = 0; i < 10000; i++)
-            {
-                node = Reserialize(node, bsonSerializer);
-            }
-            s.Stop();
-            var bsonTime = s.ElapsedMilliseconds;
-            Assert.AreEqual(formatterTime, bsonTime);
-        }
-
 
         [Test]
         public void SerializesChildren()
@@ -259,17 +370,17 @@ namespace MarcelloDB.Test.Serialization
             var node = new Node<ValueWithAddressIndexKey<TKey>>(4);
             var serializer = new BTreeNodeBinaryFormatterSerializer<ValueWithAddressIndexKey<TKey>>();
 
-            node.EntryList.Add(new Entry<ValueWithAddressIndexKey<TKey>>(){ 
-                Key = new ValueWithAddressIndexKey<TKey>(){A = 111, V = entryKey1}, 
-                Pointer = 123 
+            node.EntryList.Add(new Entry<ValueWithAddressIndexKey<TKey>>(){
+                Key = new ValueWithAddressIndexKey<TKey>(){A = 111, V = entryKey1},
+                Pointer = 123
             });
-            node.EntryList.Add(new Entry<ValueWithAddressIndexKey<TKey>>(){ 
-                Key = new ValueWithAddressIndexKey<TKey>(){A = 222, V = entryKey2}, 
-                Pointer = 456 
+            node.EntryList.Add(new Entry<ValueWithAddressIndexKey<TKey>>(){
+                Key = new ValueWithAddressIndexKey<TKey>(){A = 222, V = entryKey2},
+                Pointer = 456
             });
-            node.EntryList.Add(new Entry<ValueWithAddressIndexKey<TKey>>(){ 
-                Key = new ValueWithAddressIndexKey<TKey>(){A = 333, V = entryKey3}, 
-                Pointer = 789 
+            node.EntryList.Add(new Entry<ValueWithAddressIndexKey<TKey>>(){
+                Key = new ValueWithAddressIndexKey<TKey>(){A = 333, V = entryKey3},
+                Pointer = 789
             });
 
             node = Reserialize(node, serializer);

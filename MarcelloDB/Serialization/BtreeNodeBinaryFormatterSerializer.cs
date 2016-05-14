@@ -205,7 +205,7 @@ namespace MarcelloDB.Serialization
         internal override void WriteValue(BinaryFormatter formatter, Double? value)
         {
             formatter.WriteNullableDouble(value);
-        }     
+        }
     }
 
     class DateTimeSerializer : ValueSerializer<DateTime>
@@ -229,7 +229,7 @@ namespace MarcelloDB.Serialization
         internal override void WriteValue(BinaryFormatter formatter, DateTime? value)
         {
             formatter.WriteNullableDateTime(value);
-        }     
+        }
     }
 
     class StringSerializer : ValueSerializer<String>
@@ -266,11 +266,48 @@ namespace MarcelloDB.Serialization
             result.V = this.ValueSerializer.ReadValue(formatter);
             return result;
         }
-    }   
+    }
 
-    internal class BTreeNodeBinaryFormatterSerializer<TKey> : IObjectSerializer<Node<TKey>>
-    {        
-        
+    internal class BTreeNodeBinaryFormatterSerializer
+    {
+        internal static bool CanSerialize(Type nodeType){
+            if (nodeType.IsConstructedGenericType)
+            {
+                var genericType = nodeType.GetGenericTypeDefinition();
+                if (genericType == typeof(Node<>))
+                {
+                    var valueType = nodeType.GenericTypeArguments[0];
+                    if (valueType.IsConstructedGenericType)
+                    {
+                        if (valueType.GetGenericTypeDefinition() == typeof(ValueWithAddressIndexKey<>))
+                        {
+                            return CanSerializeValueOfType(valueType.GenericTypeArguments[0]);
+                        }
+                    }
+                    return CanSerializeValueOfType(valueType);
+                }
+            }
+            return false;
+        }
+
+        static bool CanSerializeValueOfType(Type valueType)
+        {
+            return
+                valueType == typeof(Boolean) || valueType == typeof(Boolean?)
+                || valueType == typeof(Byte) || valueType == typeof(Byte?)
+                || valueType == typeof(Int16) || valueType == typeof(Int16?)
+                || valueType == typeof(Int32) || valueType == typeof(Int32?)
+                || valueType == typeof(Int64) || valueType == typeof(Int64?)
+                || valueType == typeof(Decimal) || valueType == typeof(Decimal?)
+                || valueType == typeof(Single) || valueType == typeof(Single?)
+                || valueType == typeof(Double) || valueType == typeof(Double?)
+                || valueType == typeof(DateTime) || valueType == typeof(DateTime?)
+                || valueType == typeof(String);
+        }
+    }
+    internal class BTreeNodeBinaryFormatterSerializer<TKey> : BTreeNodeBinaryFormatterSerializer, IObjectSerializer<Node<TKey>>
+    {
+
         const byte BTREE_NODE_FORMAT_VERSION = 1;
 
         ValueSerializer ValueSerializer { get; set; }
@@ -381,28 +418,27 @@ namespace MarcelloDB.Serialization
             {
                 formatter.WriteInt64(childAddress);
             }
-        }            
+        }
 
         void SetValueSerializer()
-        {   
-            
+        {
+
             if(!ValueSerializers.ContainsKey(typeof(TKey))){
                 if (typeof(TKey).IsConstructedGenericType)
                 {
                     var genericType = typeof(TKey).GetGenericTypeDefinition();
                     if (genericType == typeof(ValueWithAddressIndexKey<>))
                     {
-                        
                         ValueSerializers[typeof(TKey)] = BuildValueWithAddressSerializer(typeof(TKey));
                     }
                 }
             }
 
-            this.ValueSerializer = ValueSerializers[typeof(TKey)];    
+            this.ValueSerializer = ValueSerializers[typeof(TKey)];
         }
 
         ValueSerializer BuildValueWithAddressSerializer(Type valueWithAddressType)
-        {        
+        {
             var typeOfValue = valueWithAddressType.GenericTypeArguments[0];
             var innerValueSerializer = ValueSerializers[typeOfValue];
 
@@ -416,9 +452,9 @@ namespace MarcelloDB.Serialization
 
             var serializer = serializerConstructor.Invoke(new object[]{ innerValueSerializer });
 
-            return (ValueSerializer)serializer;           
+            return (ValueSerializer)serializer;
         }
-            
+
         static Dictionary<Type, ValueSerializer> _valueSerializers;
         static Dictionary<Type, ValueSerializer> ValueSerializers
         {
@@ -450,7 +486,7 @@ namespace MarcelloDB.Serialization
                 }
                 return _valueSerializers;
             }
-        }            
+        }
     }
 }
 

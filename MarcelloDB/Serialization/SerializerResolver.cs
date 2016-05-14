@@ -18,7 +18,7 @@ namespace MarcelloDB.Serialization
                 {typeof(Node<EmptyRecordIndexKey>),  new EmptyRecordIndexNodeSerializer()},
             };
         }
-
+            
         internal IObjectSerializer<T> SerializerFor<T>()
         {
             if (!_serializers.ContainsKey(typeof(T)))
@@ -40,7 +40,16 @@ namespace MarcelloDB.Serialization
         IObjectSerializer<T> ConstructBTreeNodeSerializer<T>()
         {
             var genericTypes = typeof(T).GenericTypeArguments;
-            var typeInfo = typeof(BTreeNodeBsonSerializer<>).GetTypeInfo();
+            TypeInfo typeInfo;
+            if (BTreeNodeBinaryFormatterSerializer.CanSerialize(typeof(T)))
+            {
+                typeInfo = typeof(BTreeNodeBinaryFormatterSerializer<>).GetTypeInfo();
+            }
+            else
+            {
+                typeInfo = typeof(BTreeNodeBsonSerializer<>).GetTypeInfo();
+            }
+
             var genericType = typeInfo.MakeGenericType(genericTypes);
 
             var constructor = genericType.GetTypeInfo().DeclaredConstructors.First();

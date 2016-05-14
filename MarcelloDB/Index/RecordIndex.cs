@@ -42,9 +42,9 @@ namespace MarcelloDB.Index
             this.DataProvider = dataProvider;
             this.Tree = btree;
         }
-            
+
         IBTreeDataProvider<TNodeKey> _dataProvider;
-        IBTreeDataProvider<TNodeKey> DataProvider 
+        IBTreeDataProvider<TNodeKey> DataProvider
         {
             get
             {
