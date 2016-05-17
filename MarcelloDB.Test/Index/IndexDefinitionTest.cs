@@ -37,15 +37,6 @@ namespace MarcelloDB.Test.Index
         }
 
         [Test]
-        public void IndexedValues_Returns_ID_IndexedValue()
-        {
-            var indexedValues = _definition.IndexedValues;
-            var idIndexedValue = indexedValues.First(v => v is IndexedIDValue<Article>);
-            var key = idIndexedValue.GetKey(Article.BarbieDoll, 0);
-            Assert.AreEqual(Article.BarbieDoll.ID, key);
-        }
-
-        [Test]
         public void IndexedValues_Contains_IndexedValue_For_Empty_Property()
         {
             var indexedValues = _definition.IndexedValues;
@@ -57,15 +48,6 @@ namespace MarcelloDB.Test.Index
         {
             var indexedValues = _definition.IndexedValues;
             Assert.NotNull(indexedValues.FirstOrDefault(v => v.PropertyName == "CustomDescription"));
-        }
-
-        [Test]
-        public void IndexedField_GetKey_Returns_IDValue_For_IDIndexedValue()
-        {
-            var indexedValues = _definition.IndexedValues;
-            var indexKey = indexedValues.First(v => v is IndexedIDValue<Article>)
-                .GetKey(Article.BarbieDoll, 123);
-            Assert.AreEqual(Article.BarbieDoll.ID, indexKey);
         }
 
         [Test]

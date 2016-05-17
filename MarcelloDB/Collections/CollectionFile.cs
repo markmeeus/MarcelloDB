@@ -27,7 +27,7 @@ namespace MarcelloDB.Collections
                 new StorageEngine(this.Session, this.Name));
         }
 
-        public Collection<T> Collection<T>(string collectionName)
+        public Collection<T, TID> Collection<T, TID>(string collectionName, Func<T, TID> idFunc)
         {
             if (collectionName == null)
             {
@@ -35,24 +35,26 @@ namespace MarcelloDB.Collections
             }
             if(!Collections.ContainsKey(collectionName)){
                 Collections.Add (collectionName,
-                    new Collection<T> (this.Session,
+                    new Collection<T, TID> (this.Session,
                         this,
                         collectionName,
                         this.Session.SerializerResolver.SerializerFor<T>(),
-                        this.RecordManager)
+                        this.RecordManager,
+                        idFunc)
                     );
             }
 
-            var retVal = Collections[collectionName] as Collection<T>;
+            var retVal = Collections[collectionName] as Collection<T, TID>;
             if (retVal == null)
             {
                 ThrowCollectionDefinedForOtherType<T>(collectionName);
             }
-            return (Collection<T>)Collections[collectionName];
+            return (Collection<T, TID>)Collections[collectionName];
         }
 
-        public Collection<T,TIndexDef> Collection<T, TIndexDef>(string collectionName)
-            where TIndexDef: IndexDefinition<T>, new()
+        public Collection<T, TID, TIndexDef> Collection<T, TID, TIndexDef>(
+            string collectionName,
+            Func<T, TID> idFunc) where TIndexDef: IndexDefinition<T>, new()
         {
             if (collectionName == null)
             {
@@ -60,27 +62,28 @@ namespace MarcelloDB.Collections
             }
             if(!Collections.ContainsKey(collectionName)){
                 Collections.Add (collectionName,
-                    new Collection<T, TIndexDef> (this.Session,
+                    new Collection<T, TID, TIndexDef> (this.Session,
                         this,
                         collectionName,
                         this.Session.SerializerResolver.SerializerFor<T>(),
-                        this.RecordManager)
+                        this.RecordManager,
+                        idFunc)
                 );
             }
 
-            var retVal = Collections[collectionName] as Collection<T,TIndexDef>;
+            var retVal = Collections[collectionName] as Collection<T, TID, TIndexDef>;
             if (retVal == null)
             {
                 ThrowCollectionDefinedForOtherType<T>(collectionName);
             }
-            return (Collection<T, TIndexDef>)Collections[collectionName];
+            return (Collection<T, TID, TIndexDef>)Collections[collectionName];
         }
 
         void ThrowCollectionDefinedForOtherType<T>(string collectionName)
         {
             throw new InvalidOperationException(
-                string.Format("Collection with name \"{0}\" is allready defined as Collection<{1}>" +
-                    " and cannot be used as a Collection<{2}>.",
+                string.Format("Collection with name \"{0}\" is allready defined as Collection<{1}, TID>" +
+                    " and cannot be used as a Collection<{2}, TID>.",
                     collectionName,
                     Collections[collectionName].GetType().GenericTypeArguments[0].Name,
                     typeof(T).Name

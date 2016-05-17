@@ -17,7 +17,7 @@ MarcelloDB is portable code: Xamarin (iOS and Android), Windows 8.1 and Windows 
 
 #Current Status
 
-Current version: 0.3
+Current version: 0.4
 
 Although still under heavy development, both the api and the file format are already quite stable.
 
@@ -56,10 +56,10 @@ Then create the session.
 var session = new MarcelloDB.Session(platform, "/path/to/data/folder/");
 ```
 
-#CollectionFiles and Collections
+#CollectionFiles
 
 MarcelloDB organizes it's data in collection-files and collections. 
-A session can manage multiple collection-files, and a collection-file can contain multiple collection.
+A session can manage multiple collection-files, and a collection-file can contain multiple collections.
 
 You access a collection-file by it's actual filename.
 
@@ -67,27 +67,41 @@ You access a collection-file by it's actual filename.
 // products.data is the actual file name within the sessions folder
 var productsFile = session["products.data"];
 ```
+With this collection-file, you have access to collections
 
-With this collection-file, you can start accessing collections.
-Collections are a bit like tables, the main difference is that they contain entire objects, not just rows with colums.
+#Collections
+
 A collection can only handle objects of a specific type (including subclasses).
 
-You can get the collection form the collection-file like this:
+Deep down inside, MarcelloDB is a key-value store. It saves objects and allows you to retreive them back (or update/delete) by their ID.
+Since this ID is so important, it has been made part of the construction of a collection.
+
+A collection is a generic type with at least 2 generic type parameters. The first one should be the type of the objects you want to store, while the second one is the type of your object's ID value.
+
+When constructing the collection, you need to give it a name - like you give tables a name - and you have to provide a function to retrieve the ID from an object.
+
+like this:
 ```cs
-var bookCollection = productsFile.Collection<Book>("books");
-var dvdCollection = productsFile.Collection<Dvd>("dvd");
+//             Store instances of  [Book]  [with string ID]    [get ID from book]
+//                                   ||      ||                       ||
+var books = productsFile.Collection<Book, string>("books", book => book.BookId);
+
+//             Store instances of  [Dvd] [with Guid ID] [get ID from dvd]
+//                                  ||    ||                  ||                 
+var dvds = productsFile.Collection<Dvd, Guid>("dvd", dvd => dvd.id);
 ```
+
 If you use different collection-names you can have multiple collections for the same type within one collection-file.
 ```cs
-var dvdCollection = productsFile.Collection<Dvd>("dvds");
-var upcomingDvdCollection = productsFile.Collection<Dvd>("upcoming-dvds");
+var dvdCollection = productsFile.Collection<Dvd, Guid>("dvds", dvd => dvd.id);
+var newDvdCollection = productsFile.Collection<Dvd, Guid>("new-dvds", dvd => dvd.id);
 ```
 
 #Persisting objects
 
 Once you have this collection, the method Persist will add or update your object in the collection.
 ```cs
-var book = new Book(){ ID = "123",  Title = "The Girl With The Dragon Tattoo" };
+var book = new Book(){ bookId = "123",  Title = "The Girl With The Dragon Tattoo" };
 bookCollection.Persist(book);
 ```
 
@@ -101,7 +115,6 @@ foreach(var book in bookCollection.All){}
 ```
 
 #Finding objects
-Every objects needs to have an ID (more on ID's below)
 You can find a specific object by it's ID by calling 'Find' on the collection.
 
 Find uses a btree index to search for objects. Depending on the size of your collection, a Find will be way faster than iterating the collection to find it.
@@ -119,7 +132,7 @@ This allows searching for objects by an indexed value, but also iterating the co
 ##IndexDefinition
 To enable indexes on a collection, you need to create it with an index definition.
 ```cs
-productsFile.Collection<Book, BookIndexDefiniton>("books");
+productsFile.Collection<Book, string, BookIndexDefiniton>("books", book => book.Id);
 ```
 
 An index definition has to derive from `MarcelloDB.Index.IndexDefinition<T>`, where T is the same type as used for your collection.
@@ -127,9 +140,9 @@ In case of the bookCollection:
 
 ```cs
 class BookIndexDefinition : IndexDefinition<Book>{}
-//    ------------------
+//    ------------------                     ||
 //                       ||------->Book----->||
-productsFile.Collection<Book, BookIndexDefiniton>("books");
+productsFile.Collection<Book, string, BookIndexDefiniton>("books", book => book.Id);
 //                            ------------------
 ```
 
@@ -334,60 +347,6 @@ Delete your objects like this:
 bookCollection.Destroy(book.ID);
 ```
 
-#How Objects are Identified
-
-MarcelloDB needs a single property which uniquely identifies an object.
-This value is needed to build the main index and make a distinction between an insert or an update.
-
-You can use any of the following naming conventions, or add the MarcelloDB.Attributes.ID attribute.
-```cs
-class Article
-{
-  public string ID { get; set; }
-
-  public string Id { get; set; }
-
-  public string id { get; set; }
-
-  public string ArticleID { get; set; }
-
-  public string ArticleId { get; set; }
-
-  public string Articleid { get; set; }
-
-  [MarcelloDB.Attributes.ID]
-  public string CustomIDProp { get; set; }
-}
-```
-The ID, Id and id property can be defined anywhere in the class hierarchy, but the ClassID, ClassId and Classid attributes will only be used if they are defined on the class which is used as the collection class.
-
-```cs
-class Product
-{
-  public string ID { get; set; }
-}
-class Chair : Product{}
-
-//This will work
-session["data"].Collection<Product>("products").Persist(chair);
-
-//This will also work because an ID (or Id or id) property is found in the class hiërachy.
-session["data"].Collection<Chair>("chairs").Persist(chair);
-
-
-class Article
-{
-  public string ArticleID { get; set; }
-}
-class Book : Article{}
-
-//This will work
-session["data"].Collection<Article>("articles").Persist(book);
-
-//This will not work because Book doesn't define an ID and ArticleID on the parent isn't considered.
-session["data"].Collection<Book>("books").Persist(book);
-```
-
 #Transactions
 
 To avoid data corruption, all changes are written to a write ahead journal and applied as a single atomic and durable action.
@@ -445,7 +404,12 @@ Data is stored in an unencrypted format. An encryption engine is available as a 
 - ~~Iterating indexes in descending order~~
 - ~~Iterating index keys only~~
 
-0.4.0
+0.4.0 (Performance optimizations)
+-
+- ~~Use custom btree node serialization~~
+- ~~Use Generic IDs~~
+- Remove unnecessary serializations
+0.5.0
 -
 - Indexing list of values
 - Contains/ContainsAll query

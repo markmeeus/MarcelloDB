@@ -16,28 +16,50 @@ namespace MarcelloDB.Collections
 {
     public class Collection : SessionBoundObject
     {
-        internal  Collection(Session session) : base(session){}
+        public string Name { get; private set; }
+
+        internal  Collection(Session session, string name) : base(session)
+        {
+            this.Name = name;
+        }
+
+        internal bool BlockModification { get; set; }
+
+        internal void EnsureModificationIsAllowed()
+        {
+            if (this.BlockModification)
+            {
+                throw new InvalidOperationException("Cannot modify a collection while it is being enumerated");
+            }
+        }
     }
 
     internal class EmptyIndexDefinition<T>: IndexDefinition<T>
     {
     }
 
-    public class Collection<T, TIndexDef> : Collection<T> where TIndexDef : IndexDefinition<T>, new()
+    public class Collection<T, TID, TIndexDef> : Collection<T, TID> where TIndexDef : IndexDefinition<T>, new()
     {
-        public TIndexDef Indexes { get; private set; }
+        public TIndexDef Indexes { get; internal set; }
 
         internal Collection (Session session,
             CollectionFile collectionFile,
             string name,
             IObjectSerializer<T> serializer,
-            RecordManager recordManager) :
-        base(session, collectionFile, name, serializer, recordManager)
+            RecordManager recordManager,
+            Func<T, TID> idFunc) :
+        base(session, collectionFile, name, serializer, recordManager, idFunc)
         {
             IndexDefinitionValidator.Validate<T, TIndexDef>();
 
             this.Indexes = new TIndexDef();
             this.Indexes.Initialize();
+            this.Indexes.IndexedValues.Add(
+                new IndexedIDValue<T, TID>
+                {
+                    IDValueFunction = idFunc
+                });
+
             this.Indexes.SetContext(this, session, recordManager, serializer);
         }
 
@@ -47,12 +69,8 @@ namespace MarcelloDB.Collections
         }
     }
 
-    public class Collection<T> : Collection
+    public class Collection<T, TID> : Collection
     {
-        public string Name { get; set; }
-
-        internal bool BlockModification { get; set; }
-
         CollectionFile CollectionFile { get; set; }
 
         internal IObjectSerializer<T> Serializer { get; set; }
@@ -61,20 +79,30 @@ namespace MarcelloDB.Collections
 
         internal EmptyIndexDefinition<T> EmptyIndexDefinition { get; set; }
 
+        internal Func<T, TID> IDFunc { get; set; }
+
         internal Collection (Session session,
             CollectionFile collectionFile,
             string name,
             IObjectSerializer<T> serializer,
-            RecordManager recordManager) : base(session)
+            RecordManager recordManager,
+            Func<T, TID> idFunc) : base(session, name)
         {
             this.CollectionFile = collectionFile;
-            this.Name = name;
             this.Serializer = serializer;
             this.RecordManager = recordManager;
 
             this.EmptyIndexDefinition = new EmptyIndexDefinition<T>();
             this.EmptyIndexDefinition.Initialize();
+            this.EmptyIndexDefinition.IndexedValues.Add(
+                new IndexedIDValue<T, TID>
+                {
+                    IDValueFunction = idFunc
+                });
+
             this.EmptyIndexDefinition.SetContext(this, session, recordManager, serializer);
+
+            this.IDFunc = idFunc;
         }
 
         public IEnumerable<T> All
@@ -84,12 +112,12 @@ namespace MarcelloDB.Collections
                 var indexName =
                     RecordIndex.GetIndexName<T>(this.Name, this.GetIDIndexedValue().PropertyName);
 
-                return new CollectionEnumerator<T, object>
+                return new CollectionEnumerator<T, TID>
                     (this, Session, RecordManager, Serializer, indexName);
             }
         }
 
-        public T Find(object id)
+        public T Find(TID id)
         {
             T result = default(T);
 
@@ -111,7 +139,7 @@ namespace MarcelloDB.Collections
             });
         }
 
-        public void Destroy(object objectID)
+        public void Destroy(TID objectID)
         {
             Transacted(() => {
                 EnsureModificationIsAllowed();
@@ -128,7 +156,7 @@ namespace MarcelloDB.Collections
                 });
         }
 
-        Record GetRecordForObjectID(object objectID)
+        Record GetRecordForObjectID(TID objectID)
         {
             var index = GetIDIndex();
             var address = index.Search(objectID);
@@ -173,7 +201,7 @@ namespace MarcelloDB.Collections
             return RecordManager.UpdateRecord(record, bytes, this.Session.AllocationStrategyResolver.StrategyFor(obj));
         }
 
-        void DestroyInternal (object objectID)
+        void DestroyInternal (TID objectID)
         {
             //Try to load the record with object ID
             Record record = GetRecordForObjectID(objectID);
@@ -189,31 +217,26 @@ namespace MarcelloDB.Collections
             }
         }
 
-        object GetObjectIDOrThrow(T obj)
+        TID GetObjectIDOrThrow(T obj)
         {
-            var objectID = new ObjectProxy<T>(obj).ID;
-            if(objectID == null){
-                throw new IDMissingException(obj.GetType().Name +
-                    " either has no ID property, or the property returned null");
-            }
-            return objectID;
+            return this.IDFunc(obj);
         }
 
-        IndexedIDValue<T> GetIDIndexedValue()
+        IndexedIDValue<T, TID> GetIDIndexedValue()
         {
-            return (IndexedIDValue<T>) GetIndexDefinition().IndexedValues.First(v => v is IndexedIDValue<T>);
+            return (IndexedIDValue<T, TID>) GetIndexDefinition().IndexedValues.First(v => v is IndexedIDValue<T, TID>);
         }
 
-        RecordIndex<object> GetIndex(string indexName)
+        RecordIndex<TID> GetIndex(string indexName)
         {
-            return new RecordIndex<object>(
+            return new RecordIndex<TID>(
                 this.Session,
                 this.RecordManager,
                 RecordIndex.GetIndexName<T>(this.Name, indexName),
-                this.Session.SerializerResolver.SerializerFor<Node<object>>());
+                this.Session.SerializerResolver.SerializerFor<Node<TID>>());
         }
 
-        RecordIndex<object> GetIDIndex()
+        RecordIndex<TID> GetIDIndex()
         {
             return GetIndex(GetIDIndexedValue().PropertyName);
         }
@@ -241,14 +264,6 @@ namespace MarcelloDB.Collections
         internal virtual IndexDefinition<T> GetIndexDefinition()
         {
             return this.EmptyIndexDefinition;
-        }
-
-        void EnsureModificationIsAllowed()
-        {
-            if (this.BlockModification)
-            {
-                throw new InvalidOperationException("Cannot modify a collection while it is being enumerated");
-            }
         }
 
         void AddTransactors()

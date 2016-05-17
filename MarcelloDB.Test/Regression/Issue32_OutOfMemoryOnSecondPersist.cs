@@ -36,7 +36,7 @@ namespace MarcelloDB.Test.Regression.Issue32
             using(var session = new Session(_platform, "/"))
             {
                 var collectionFile = session["products"];
-                var products = collectionFile.Collection<Product>("products");
+                var products = collectionFile.Collection<Product, Guid>("products", p => p.Id);
 
                 var product = new Product();
                 product.Id = Guid.NewGuid();

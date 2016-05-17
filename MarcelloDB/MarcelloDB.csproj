@@ -38,7 +38,6 @@
     <Compile Include="Records\RecordHeader.cs" />
     <Compile Include="Records\RecordManager.cs" />
     <Compile Include="Serialization\IObjectSerializer.cs" />
-    <Compile Include="Serialization\ObjectProxy.cs" />
     <Compile Include="Storage\IStorageStream.cs" />
     <Compile Include="Storage\IStorageStreamProvider.cs" />
     <Compile Include="Session.cs" />

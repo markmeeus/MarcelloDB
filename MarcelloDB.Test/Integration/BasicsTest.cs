@@ -18,7 +18,7 @@ namespace MarcelloDB.Test.Integration
     {
         Session _session;
         CollectionFile _collectionFile;
-        Collection<Article> _articles;
+        Collection<Article, int> _articles;
         TestPlatform _platform;
         InMemoryStreamProvider _provider;
 
@@ -29,7 +29,7 @@ namespace MarcelloDB.Test.Integration
             _session = new Session(_platform, "/");
             _provider = (InMemoryStreamProvider)_session.StreamProvider;
             _collectionFile = _session["articles"];
-            _articles = _collectionFile.Collection<Article>("articles");
+            _articles = _collectionFile.Collection<Article, int>("articles", a => a.ID);
         }
 
         [Test]
@@ -48,13 +48,15 @@ namespace MarcelloDB.Test.Integration
         [Test]
         public void Collections_Are_Reused_Per_File()
         {
-            Assert.AreSame(_session["data"].Collection<Article>("articles"), _session["data"].Collection<Article>("articles"));
+            Assert.AreSame(_session["data"].Collection<Article, int>("articles", a => a.ID),
+                _session["data"].Collection<Article, int>("articles", a => a.ID));
         }
 
         [Test]
         public void Collections_Are_Not_Reused_Over_Different_Files()
         {
-            Assert.AreNotSame(_session["data"].Collection<Article>("articles"), _session["data_copy"].Collection<Article>("articles"));
+            Assert.AreNotSame(_session["data"].Collection<Article, int>("articles", a => a.ID),
+                _session["data_copy"].Collection<Article, int>("articles", a => a.ID));
         }
 
         [Test]
@@ -359,7 +361,7 @@ namespace MarcelloDB.Test.Integration
 
             using(var session = new Session(platform, "./data/"))
             {
-                var articles = session["data"].Collection<Article>("articles");
+                var articles = session["data"].Collection<Article, int>("articles", a => a.ID);
 
                 var toiletPaper = Article.ToiletPaper;
                 var spinalTapDvd = Article.SpinalTapDvd;
@@ -382,7 +384,7 @@ namespace MarcelloDB.Test.Integration
             var platform =  new MarcelloDB.netfx.Platform();
             using (var session = new Session(platform, "./data/"))
             {
-                var articles = session["data"].Collection<Article>("articles");
+                var articles = session["data"].Collection<Article, int>("articles", a => a.ID);
                 var ids = new List<int>();
                 for (int i = 1; i < 1000; i++)
                 {
@@ -407,7 +409,7 @@ namespace MarcelloDB.Test.Integration
         public void Add_And_Remove_1000()
         {
 
-            var articles = _session["data"].Collection<Article>("articles");
+            var articles = _session["data"].Collection<Article, int>("articles", a => a.ID);
 
             for (int i = 1; i < 1000; i++)
             {
@@ -443,7 +445,7 @@ namespace MarcelloDB.Test.Integration
         public void Add_100_And_Remove_Backwards()
         {
 
-            var articles = _session["data"].Collection<Article>("articles");
+            var articles = _session["data"].Collection<Article, int>("articles", a => a.ID);
 
             for (int i = 1; i < 1000; i++)
             {
@@ -479,7 +481,7 @@ namespace MarcelloDB.Test.Integration
         public void Add_And_Remove_Random_1000()
         {
             var rand = new Random();
-            var articles = _session["data"].Collection<Article>("articles");
+            var articles = _session["data"].Collection<Article, int>("articles", a => a.ID);
             var articleIDs = new List<int>();
             for (int i = 1; i < 1000; i++)
             {
@@ -500,7 +502,7 @@ namespace MarcelloDB.Test.Integration
         [Test]
         public void Can_Use_Multiple_Collections()
         {
-            var locations = _collectionFile.Collection<Location>("locations");
+            var locations = _collectionFile.Collection<Location, string>("locations", l => l.ID);
             _articles.Persist(Article.SpinalTapDvd);
             locations.Persist(Location.Harrods);
             _articles.Persist(Article.BarbieDoll);
@@ -524,8 +526,8 @@ namespace MarcelloDB.Test.Integration
         [Test]
         public void Can_Use_Multiple_Collections_Of_Same_Type()
         {
-            var _articles1 = _collectionFile.Collection<Article>("articles1");
-            var _articles2 = _collectionFile.Collection<Article>("articles2");
+            var _articles1 = _collectionFile.Collection<Article, int>("articles1", a => a.ID);
+            var _articles2 = _collectionFile.Collection<Article, int>("articles2", a => a.ID);
             _articles1.Persist(Article.BarbieDoll);
             _articles1.Persist(Article.ToiletPaper);
             _articles2.Persist(Article.SpinalTapDvd);
@@ -548,21 +550,13 @@ namespace MarcelloDB.Test.Integration
             Assert.Null(_articles2.Find(Article.ToiletPaper.ID));
         }
 
-        [Test]
-        public void Throw_IDMissingException_When_Object_Has_No_ID_Property()
-        {
-            Assert.Throws(typeof(IDMissingException), () =>
-                {
-                    _session["data"].Collection<object>("objects").Persist(new {Name = "Object Without ID"});
-                });
-        }
 
         [Test]
         public void Throw_ObjectNotFoundException_When_Deleting_Non_Existing_Object()
         {
             Assert.Throws(typeof(ObjectNotFoundException), () =>
                 {
-                    _session["data"].Collection<object>("objects").Destroy("123");
+                    _collectionFile.Collection<Article, int>("articles1", a => a.ID).Destroy(456);
                 });
         }
 
@@ -572,17 +566,17 @@ namespace MarcelloDB.Test.Integration
         {
             Assert.Throws(typeof(ArgumentException), () =>
             {
-                _session[Journal.JOURNAL_COLLECTION_NAME].Collection<object>("objects");
+                _session[Journal.JOURNAL_COLLECTION_NAME].Collection<Article, int>("articles", a => a.ID);
             });
 
             Assert.Throws(typeof(ArgumentException), () =>
             {
-                _session[Journal.JOURNAL_COLLECTION_NAME.ToLower()].Collection<object>("objects");
+                _session[Journal.JOURNAL_COLLECTION_NAME.ToLower()].Collection<Article, int>("articles", a => a.ID);
             });
 
             Assert.Throws(typeof(ArgumentException), () =>
             {
-                _session[Journal.JOURNAL_COLLECTION_NAME.ToUpper()].Collection<object>("objects");
+                _session[Journal.JOURNAL_COLLECTION_NAME.ToUpper()].Collection<Article, int>("articles", a => a.ID);
             });
         }
 
@@ -609,10 +603,10 @@ namespace MarcelloDB.Test.Integration
         [Test]
         public void Throws_InvalidOperation_When_A_Collection_Exists_For_Another_Type()
         {
-            _collectionFile.Collection<Article>("articles");
+            _collectionFile.Collection<Article, int>("articles", a => a.ID);
             Assert.Throws(typeof(InvalidOperationException), () =>
                 {
-                    _collectionFile.Collection<object>("articles");
+                    _collectionFile.Collection<Location, string>("articles", l => l.ID);
                 });
         }
 
@@ -660,7 +654,7 @@ namespace MarcelloDB.Test.Integration
         {
             _articles.Persist(Article.BarbieDoll);
             _session.Dispose();
-            Assert.Throws<ObjectDisposedException>(() => _articles.Destroy(Article.BarbieDoll));
+            Assert.Throws<ObjectDisposedException>(() => _articles.Destroy(Article.BarbieDoll.ID));
         }
 
         private void EnsureFolder(string path)

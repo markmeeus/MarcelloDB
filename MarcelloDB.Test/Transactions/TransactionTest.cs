@@ -10,15 +10,15 @@ namespace MarcelloDB.Test.Transactions
     public class TransactionTest
     {
         Session _session;
-        Collection<Article> _articles;
-        Collection<Location> _locations;
+        Collection<Article, int> _articles;
+        Collection<Location, string> _locations;
 
         [SetUp]
         public void Setup()
         {
             _session = new Session(new TestPlatform(), "/");
-            _articles = _session["articles_data"].Collection<Article>("articles");
-            _locations = _session["locations_data"].Collection<Location>("locations");
+            _articles = _session["articles_data"].Collection<Article, int>("articles", a => a.ID);
+            _locations = _session["locations_data"].Collection<Location, string>("locations", l => l.ID);
         }
 
         [Test]

@@ -11,7 +11,7 @@ namespace MarcelloDB
     {
         BTreeWalkerRange<TKey> Range { get; set; }
 
-        Collection<T> Collection { get; set; }
+        Collection Collection { get; set; }
 
         RecordIndex<TKey> Index { get; set; }
 
@@ -20,7 +20,7 @@ namespace MarcelloDB
         bool IsDescending { get; set; }
 
         internal KeysEnumerator(
-            Collection<T> collection,
+            Collection collection,
             Session session,
             RecordIndex<TKey> index,
             bool isDescending = false

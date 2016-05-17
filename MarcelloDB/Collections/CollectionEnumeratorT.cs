@@ -10,7 +10,7 @@ namespace MarcelloDB.Collections
 {
     internal class CollectionEnumerator<T, TKey> : SessionBoundObject, IEnumerable<T>
 	{
-        Collection<T> Collection { get; set; }
+        Collection Collection { get; set; }
 
         RecordManager RecordManager  { get; set; }
 
@@ -25,7 +25,7 @@ namespace MarcelloDB.Collections
         bool IsDescending { get; set; }
 
         public CollectionEnumerator(
-            Collection<T> collection,
+            Collection collection,
             Session session,
             RecordManager recordManager,
             IObjectSerializer<T> serializer,

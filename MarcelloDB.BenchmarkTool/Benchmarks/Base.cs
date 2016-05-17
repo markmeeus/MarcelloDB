@@ -8,7 +8,7 @@ namespace MarcelloDB.BenchmarkTool.Benchmarks
 {
     public class Base
     {
-        protected MarcelloDB.Collections.Collection<Person, PersonIndexes> Collection {get; set;}
+        protected MarcelloDB.Collections.Collection<Person, int, PersonIndexes> Collection {get; set;}
 
         public Base()
         {
@@ -19,23 +19,23 @@ namespace MarcelloDB.BenchmarkTool.Benchmarks
 
         protected virtual void OnRun()
         {
-        }            
+        }
 
         public TimeSpan Run()
-        {           
+        {
             Stopwatch w;
             var dataPath = Path.Combine(Environment.CurrentDirectory, "data");
             EnsureFolder(dataPath);
             var platform = new MarcelloDB.netfx.Platform();
             using (var session = new Session(platform, dataPath))
             {
-                this.Collection = session["data"].Collection<Person, PersonIndexes>("persons");
+                this.Collection = session["data"].Collection<Person, int, PersonIndexes>("persons", p => p.ID);
                 OnSetup();
 
                 w = Stopwatch.StartNew();
-                OnRun();  
+                OnRun();
             }
-            
+
             w.Stop();
             return w.Elapsed;
         }

@@ -13,7 +13,7 @@ namespace MarcelloDB.Test.Integration
     {
         Session _session;
         CollectionFile _collectionFile;
-        Collection<Article, ArticleIndexes> _articles;
+        Collection<Article, int, ArticleIndexes> _articles;
         TestPlatform _platform;
 
         [SetUp]
@@ -22,7 +22,7 @@ namespace MarcelloDB.Test.Integration
             _platform = new TestPlatform();
             _session = new Session(_platform, "/");
             _collectionFile = _session["articles"];
-            _articles = _collectionFile.Collection<Article, ArticleIndexes>("articles");
+            _articles = _collectionFile.Collection<Article, int, ArticleIndexes>("articles", a => a.ID);
         }
 
         [Test]
@@ -235,7 +235,7 @@ namespace MarcelloDB.Test.Integration
 
             Assert.AreEqual(
                 new List<int>{1, 2},
-                articles.Select(a => a.ID));
+                articles.Select(a => a.ID).OrderBy( id => id));
         }
 
         [Test]
@@ -370,7 +370,7 @@ namespace MarcelloDB.Test.Integration
 
             var found = _articles.Indexes.Description.BetweenIncluding(null).And("Desc 4").ToList();
             Assert.AreEqual(
-                new List<int>{ 1, 2, 3}, found.Select(a => a.ID));
+                new List<int>{ 1, 2, 3}, found.Select(a => a.ID).OrderBy(id => id));
         }
 
         [Test]
@@ -388,7 +388,6 @@ namespace MarcelloDB.Test.Integration
                 new List<string>{ null, "Desc 3"}, found);
         }
 
-
         [Test]
         public void Between_Including_Start_With_Null_Values_Descending()
         {
@@ -401,7 +400,7 @@ namespace MarcelloDB.Test.Integration
 
             var found = _articles.Indexes.Description.BetweenIncluding(null).And("Desc 4").Descending.ToList();
             Assert.AreEqual(
-                new List<int>{3, 2, 1}, found.Select(a => a.ID));
+                new List<int>{1, 2, 3}, found.Select(a => a.ID).OrderBy(id => id));
         }
 
         [Test]
@@ -816,7 +815,7 @@ namespace MarcelloDB.Test.Integration
         {
             Assert.Throws<InvalidOperationException>(() =>
                 {
-                    _collectionFile.Collection<Article, UnexpectedIndexedAttributeDefinition>("unexpected");
+                    _collectionFile.Collection<Article, int, UnexpectedIndexedAttributeDefinition>("articles", a => a.ID);
                 });
         }
     }

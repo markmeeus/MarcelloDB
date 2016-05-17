@@ -28,7 +28,7 @@ namespace MarcelloDB.Index
             this.Building = false;
         }
 
-        internal void SetContext(Collection<T> collection,
+        internal void SetContext(Collection collection,
             Session session,
             RecordManager recordManager,
             IObjectSerializer<T> serializer)
@@ -55,12 +55,6 @@ namespace MarcelloDB.Index
 
         protected void BuildIndexedValues()
         {
-            this.IndexedValues.Add(new IndexedIDValue<T>() {
-                IDValueFunction = o =>
-                    {
-                        return new ObjectProxy<T>((T)o).ID;
-                    }
-            });
             foreach (var prop in this.GetType().GetRuntimeProperties())
             {
                 var propertyType = prop.PropertyType;

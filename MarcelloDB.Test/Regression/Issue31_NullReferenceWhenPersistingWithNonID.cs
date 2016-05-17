@@ -20,7 +20,7 @@ namespace MarcelloDB.Test.Regression.Issue31
 
         Session _session;
         CollectionFile _collectionFile;
-        Collection<Product> _products;
+        Collection<Product, Guid> _products;
         TestPlatform _platform;
 
         [SetUp]
@@ -29,7 +29,7 @@ namespace MarcelloDB.Test.Regression.Issue31
             _platform = new TestPlatform();
             _session = new Session(_platform, "/");
             _collectionFile = _session["articles"];
-            _products = _collectionFile.Collection<Product>("products");
+            _products = _collectionFile.Collection<Product, Guid>("products", p => p.Id);
         }
 
         [Test]

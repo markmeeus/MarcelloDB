@@ -25,11 +25,11 @@ namespace MarcelloDB.Test.Regression.Issue35
     {
         bool Running { get; set; }
 
-        Collection<Article> Articles { get; set; }
+        Collection<Article, int> Articles { get; set; }
 
         int CurrentID { get; set; }
 
-        public Writer(Collection<Article> articles, int startID)
+        public Writer(Collection<Article, int> articles, int startID)
         {
             this.Articles = articles;
             this.CurrentID = startID;
@@ -71,7 +71,7 @@ namespace MarcelloDB.Test.Regression.Issue35
         public void ShouldNotThrow_When_Multiple_Threads_Are_Writing_While_Reading_ID_Index()
         {
             var session = new Session(_platform, "/");
-            var articles = session["data"].Collection<Article, ArticleIndexes>("articles");
+            var articles = session["data"].Collection<Article, int, ArticleIndexes>("articles", a => a.ID);
 
             var writer1 = new Writer(articles, 1);
             var writer2 = new Writer(articles, int.MaxValue / 2);
@@ -93,7 +93,7 @@ namespace MarcelloDB.Test.Regression.Issue35
         public void ShouldNotThrow_When_Multiple_Threads_Are_Writing_While_Reading_Custom_Index()
         {
             var session = new Session(_platform, "/");
-            var articles = session["data"].Collection<Article, ArticleIndexes>("articles");
+            var articles = session["data"].Collection<Article, int, ArticleIndexes>("articles", a => a.ID);
 
             var writer1 = new Writer(articles, 1);
             var writer2 = new Writer(articles, int.MaxValue / 2);
@@ -115,7 +115,7 @@ namespace MarcelloDB.Test.Regression.Issue35
         public void ShouldNotThrow_When_Multiple_Threads_Are_Writing_While_Reading_Custom_Index_Keys()
         {
             var session = new Session(_platform, "/");
-            var articles = session["data"].Collection<Article, ArticleIndexes>("articles");
+            var articles = session["data"].Collection<Article, int, ArticleIndexes>("articles", a => a.ID);
 
             var writer1 = new Writer(articles, 1);
             var writer2 = new Writer(articles, int.MaxValue / 2);
@@ -137,7 +137,7 @@ namespace MarcelloDB.Test.Regression.Issue35
         public void ShouldNotThrow_When_Enumerable_Changed_Due_To_Rolled_Back_Transaction()
         {
             var session = new Session(_platform, "/");
-            var articles = session["data"].Collection<Article>("articles");
+            var articles = session["data"].Collection<Article, int>("articles", a => a.ID);
 
             Assert.DoesNotThrow(() =>
                 {

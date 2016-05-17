@@ -26,7 +26,7 @@ namespace MarcelloDB.Collections
 
     public class IndexedValue<TObj, TAttribute> : IndexedValue
     {
-        protected Collection<TObj> Collection { get; set; }
+        protected Collection Collection { get; set; }
 
         RecordManager RecordManager  { get; set; }
 
@@ -186,7 +186,7 @@ namespace MarcelloDB.Collections
             return new IndexedValue<TObj, TAttribute>();
         }
 
-        internal void SetContext(Collection<TObj> collection,
+        internal void SetContext(Collection collection,
             Session session,
             RecordManager recordManager,
             IObjectSerializer<TObj> serializer,
@@ -200,18 +200,18 @@ namespace MarcelloDB.Collections
         }
     }
 
-    public class IndexedIDValue<TObj> : IndexedValue<TObj, object>
+    public class IndexedIDValue<TObj, TID> : IndexedValue<TObj, TID>
     {
         internal IndexedIDValue():base(null)
         {
             this.PropertyName = "ID";
         }
 
-        internal Func<object, object> IDValueFunction { get; set; }
+        internal Func<TObj, TID> IDValueFunction { get; set; }
 
         internal override object GetKey(object o, long address)
         {
-            return IDValueFunction(o);
+            return IDValueFunction((TObj)o);
         }
 
         internal  override void RegisterKey(object key,
@@ -220,14 +220,14 @@ namespace MarcelloDB.Collections
             RecordManager recordManager,
             string indexName)
         {
-            var index = new RecordIndex<object>(
+            var index = new RecordIndex<TID>(
                 this.Session,
                 recordManager,
                 indexName,
-                this.Session.SerializerResolver.SerializerFor<Node<object>>()
+                this.Session.SerializerResolver.SerializerFor<Node<TID>>()
             );
 
-            index.Register(key, address);
+            index.Register((TID)key, address);
         }
 
         internal  override void UnRegisterKey(object key,
@@ -236,14 +236,14 @@ namespace MarcelloDB.Collections
             RecordManager recordManager,
             string indexName)
         {
-            var index = new RecordIndex<object>(
+            var index = new RecordIndex<TID>(
                 this.Session,
                 recordManager,
                 indexName,
-                this.Session.SerializerResolver.SerializerFor<Node<object>>()
+                this.Session.SerializerResolver.SerializerFor<Node<TID>>()
             );
 
-            index.UnRegister(key);
+            index.UnRegister((TID)key);
         }
     }
 }

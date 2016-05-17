@@ -9,7 +9,7 @@ namespace MarcelloDB
 {
     internal class IndexEntryEnumerator<T, TKey>  : SessionBoundObject, IEnumerable<Entry<TKey>>
     {
-        Collection<T> Collection { get; set; }
+        Collection Collection { get; set; }
 
         RecordIndex<TKey> Index { get; set; }
 
@@ -20,7 +20,7 @@ namespace MarcelloDB
         bool IsDescending { get; set; }
 
         public IndexEntryEnumerator(
-            Collection<T> collection,
+            Collection collection,
             Session session,
             RecordIndex<TKey> index,
             bool isDescending = false

@@ -21,7 +21,7 @@ namespace MarcelloDB.Test
             }
         }
 
-        public static Location MandS 
+        public static Location MandS
         {
             get
             {
