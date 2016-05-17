@@ -409,6 +409,7 @@ Data is stored in an unencrypted format. An encryption engine is available as a 
 - ~~Use custom btree node serialization~~
 - ~~Use Generic IDs~~
 - Remove unnecessary serializations
+
 0.5.0
 -
 - Indexing list of values
