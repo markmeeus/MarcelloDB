@@ -133,20 +133,21 @@ namespace MarcelloDB.Records
 
         public void RegisterNamedRecordAddress(string name, Int64 recordAddress)
         {
-            var namedRecordIndexRecord = GetNamedRecordIndexRecord();
+            var namedRecordIndex = GetNamedRecordIndex();
+            if (!namedRecordIndex.NamedRecordIndexes.ContainsKey(name)
+               || namedRecordIndex.NamedRecordIndexes[name] != recordAddress)
+            {
+                var namedRecordIndexRecord = GetNamedRecordIndexRecord();
+                namedRecordIndex.NamedRecordIndexes.Remove(name);
+                namedRecordIndex.NamedRecordIndexes.Add(name, recordAddress);
+                var allocationStrategy = this.Session.AllocationStrategyResolver.StrategyFor(namedRecordIndex);
+                var updateRecord = UpdateRecord(
+                    namedRecordIndexRecord,
+                    this.Session.SerializerResolver.SerializerFor<NamedRecordsIndex>().Serialize(namedRecordIndex),
+                    allocationStrategy);
 
-            var namedRecordIndex = this.Session.SerializerResolver.SerializerFor<NamedRecordsIndex>()
-                .Deserialize(namedRecordIndexRecord.Data);
-
-            namedRecordIndex.NamedRecordIndexes.Remove(name);
-            namedRecordIndex.NamedRecordIndexes.Add(name, recordAddress);
-            var allocationStrategy = this.Session.AllocationStrategyResolver.StrategyFor(namedRecordIndex);
-            var updateRecord = UpdateRecord(
-                namedRecordIndexRecord,
-                this.Session.SerializerResolver.SerializerFor<NamedRecordsIndex>().Serialize(namedRecordIndex),
-                allocationStrategy);
-
-            this.Root.NamedRecordIndexAddress = updateRecord.Header.Address;
+                this.Root.NamedRecordIndexAddress = updateRecord.Header.Address;
+            }
         }
 
         public Int64 GetNamedRecordAddress(string name)
@@ -203,10 +204,16 @@ namespace MarcelloDB.Records
             StorageEngine.Write (record.Header.Address,bytes );
         }
 
+        NamedRecordsIndex _namedRecordIndex;
         NamedRecordsIndex GetNamedRecordIndex()
         {
-            return this.Session.SerializerResolver.SerializerFor<NamedRecordsIndex>()
-                .Deserialize(GetNamedRecordIndexRecord().Data);
+            if (_namedRecordIndex == null)
+            {
+                _namedRecordIndex = this.Session.SerializerResolver.SerializerFor<NamedRecordsIndex>()
+                    .Deserialize(GetNamedRecordIndexRecord().Data);
+            }
+            return _namedRecordIndex;
+
         }
 
         Record GetNamedRecordIndexRecord()
