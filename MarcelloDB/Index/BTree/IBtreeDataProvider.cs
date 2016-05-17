@@ -4,15 +4,15 @@ using MarcelloDB.AllocationStrategies;
 
 namespace MarcelloDB.Index.BTree
 {
-    internal interface IBTreeDataProvider<TK, TP>
+    internal interface IBTreeDataProvider<TK>
     {
-        Node<TK, TP> GetRootNode(int degree);
+        Node<TK> GetRootNode(int degree);
 
-        void SetRootNode(Node<TK, TP> node);
+        void SetRootNode(Node<TK> node);
 
-        Node<TK, TP> GetNode(Int64 address);
+        Node<TK> GetNode(Int64 address);
 
-        Node<TK, TP> CreateNode(int degree);
+        Node<TK> CreateNode(int degree);
 
         void Flush();
     }

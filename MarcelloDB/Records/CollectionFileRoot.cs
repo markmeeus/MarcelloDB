@@ -12,7 +12,7 @@ namespace MarcelloDB
         internal const int INITIAL_HEAD = sizeof(Int64);
 
         //Defines the format of file structure. Only change this value if backwards compatibility is broken.
-        internal const int CURRENT_FORMAT_VERSION = 1;
+        internal const int CURRENT_FORMAT_VERSION = 2;
 
         //to make it serializable
         public Dictionary<string, Int64> CollectionRootAddresses { get; set; }

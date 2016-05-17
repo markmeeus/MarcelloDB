@@ -141,7 +141,7 @@ namespace MarcelloDB.Test.Records
         [Test]
         public void Sets_FormatVersion()
         {
-            Assert.AreEqual(1, CollectionFileRoot.Create().FormatVersion);
+            Assert.AreEqual(2, CollectionFileRoot.Create().FormatVersion);
         }
 
         [Test]

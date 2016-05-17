@@ -41,7 +41,8 @@ namespace MarcelloDB.Test.Index
         {
             var indexedValues = _definition.IndexedValues;
             var idIndexedValue = indexedValues.First(v => v is IndexedIDValue<Article>);
-            Assert.AreEqual(Article.BarbieDoll.ID, idIndexedValue.GetValue(Article.BarbieDoll));
+            var key = idIndexedValue.GetKey(Article.BarbieDoll, 0);
+            Assert.AreEqual(Article.BarbieDoll.ID, key);
         }
 
         [Test]
@@ -59,15 +60,7 @@ namespace MarcelloDB.Test.Index
         }
 
         [Test]
-        public void IndexedField_GetValue_Returns_Correct_Value_For_Empty_Property()
-        {
-            var indexedValues = _definition.IndexedValues;
-            var indexValue = indexedValues.FirstOrDefault(v => v.PropertyName == "Name");
-            Assert.AreEqual(Article.BarbieDoll.Name, indexValue.GetValue(Article.BarbieDoll));
-        }
-
-        [Test]
-        public void IndexedField_GetIndexKey_Returns_IDValue_For_IDIndexedValue()
+        public void IndexedField_GetKey_Returns_IDValue_For_IDIndexedValue()
         {
             var indexedValues = _definition.IndexedValues;
             var indexKey = indexedValues.First(v => v is IndexedIDValue<Article>)
@@ -76,7 +69,7 @@ namespace MarcelloDB.Test.Index
         }
 
         [Test]
-        public void IndexedField_GetIndexKey_Returns_Correct_Key_For_Empty_Property()
+        public void IndexedField_GetKey_Returns_Correct_Key_For_Empty_Property()
         {
             var indexedValues = _definition.IndexedValues;
             var indexKey = (ValueWithAddressIndexKey<string>) indexedValues.FirstOrDefault(v => v.PropertyName == "Name")
@@ -86,21 +79,13 @@ namespace MarcelloDB.Test.Index
         }
 
         [Test]
-        public void IndexedField_GetIndexKey_Returns_Correct_Key_For_Custom_Property()
+        public void IndexedField_GetKey_Returns_Correct_Key_For_Custom_Property()
         {
             var indexedValues = _definition.IndexedValues;
             var indexKey = (ValueWithAddressIndexKey<string>) indexedValues.FirstOrDefault(v => v.PropertyName == "CustomDescription")
                 .GetKey(Article.BarbieDoll, 123);
             Assert.AreEqual("Custom" + Article.BarbieDoll.Description, indexKey.V);
             Assert.AreEqual(123, indexKey.A);
-        }
-
-        [Test]
-        public void IndexedField_GetValue_Returns_Correct_Value_For_Implemented_Property()
-        {
-            var indexedValues = _definition.IndexedValues;
-            var indexValue = indexedValues.FirstOrDefault(v => v.PropertyName == "CustomDescription");
-            Assert.AreEqual("Custom" + Article.BarbieDoll.Description, indexValue.GetValue(Article.BarbieDoll));
         }
     }
 }

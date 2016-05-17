@@ -326,7 +326,7 @@ namespace MarcelloDB.Test.Integration
             var found = _articles.Indexes.Category.BetweenIncluding("Cat2").And("Cat4").Keys.ToList();
             Assert.AreEqual(
                 new List<string>{ "Cat2", "Cat3"}, found);
-        }            
+        }
 
         [Test]
         public void Between_Including_Start_Descending()
@@ -628,7 +628,7 @@ namespace MarcelloDB.Test.Integration
             Assert.AreEqual(
                 new List<string>{"Cat2", "Cat3", "Cat4"}, found);
         }
-            
+
         [Test]
         public void GreaterThanOrEql_Descending()
         {
@@ -673,7 +673,7 @@ namespace MarcelloDB.Test.Integration
             Assert.AreEqual(
                 new List<int>{1, 2 ,3, 4, 5}, found.Select(a => a.ID));
         }
-            
+
         [Test]
         public void SmallerThan_Keys()
         {

@@ -7,7 +7,7 @@ using System.Collections;
 
 namespace MarcelloDB
 {
-    internal class IndexEntryEnumerator<T, TKey>  : SessionBoundObject, IEnumerable<Entry<TKey, Int64>>
+    internal class IndexEntryEnumerator<T, TKey>  : SessionBoundObject, IEnumerable<Entry<TKey>>
     {
         Collection<T> Collection { get; set; }
 
@@ -37,7 +37,7 @@ namespace MarcelloDB
         }
 
         #region IEnumerable implementation
-        IEnumerator<Entry<TKey, Int64>> IEnumerable<Entry<TKey, Int64>>.GetEnumerator()
+        IEnumerator<Entry<TKey>> IEnumerable<Entry<TKey>>.GetEnumerator()
         {
             Session.AssertValid();
             lock(Session.SyncLock){

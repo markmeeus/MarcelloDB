@@ -13,7 +13,7 @@ namespace MarcelloDB.Index
             Session session,
             IRecordManager recordManager,
             string indexName,
-            IObjectSerializer<Node<EmptyRecordIndexKey, Int64>> serializer
+            IObjectSerializer<Node<EmptyRecordIndexKey>> serializer
         ):base(session, recordManager, indexName, serializer)
         {}
     }

@@ -27,6 +27,23 @@ namespace MarcelloDB.Serialization
             return value;
         }
 
+        internal byte[] ReadBytes(int length)
+        {
+            var bytes = new byte[length];
+            Array.Copy(this.Buffer, this.Position, bytes, 0, bytes.Length);
+            this.Position += length;
+            return bytes;
+        }
+
+        public Int16 ReadInt16()
+        {
+            var bytes = GetBytesInLittleEndianOrder(sizeof(Int16));
+
+            var value = BitConverter.ToInt16(bytes, 0);
+            this.Position += sizeof(Int16);
+            return value;
+        }
+
         internal Int32 ReadInt32()
         {
             var bytes = GetBytesInLittleEndianOrder(sizeof(Int32));

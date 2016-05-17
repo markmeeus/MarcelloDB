@@ -42,21 +42,21 @@ namespace MarcelloDB.Index.BTree
         }
     }
 
-    internal class BTreeWalker<TK, TP>
+    internal class BTreeWalker<TK>
     {
         class BreadCrumb
         {
             internal int CurrentEntryIndex { get; set;}
-            internal Node<TK, TP> Node { get; set; }
+            internal Node<TK> Node { get; set; }
         }
 
-        IBTreeDataProvider<TK, TP> DataProvider { get; set; }
+        IBTreeDataProvider<TK> DataProvider { get; set; }
 
         int Degree { get; set; }
 
         int CurrentEntryIndex { get; set; }
 
-        Node<TK, TP> CurrentNode { get; set; }
+        Node<TK> CurrentNode { get; set; }
 
         Stack<BreadCrumb> BreadCrumbs { get; set; }
 
@@ -66,7 +66,7 @@ namespace MarcelloDB.Index.BTree
 
         bool Reversed { get; set; }
 
-        internal BTreeWalker(int degree, IBTreeDataProvider<TK, TP> dataProvider)
+        internal BTreeWalker(int degree, IBTreeDataProvider<TK> dataProvider)
         {
             this.Comparer = new ObjectComparer();
 
@@ -97,7 +97,7 @@ namespace MarcelloDB.Index.BTree
             this.Range = range;
         }
 
-        public Entry<TK, TP> Next()
+        public Entry<TK> Next()
         {
             if (this.Range != null && this.Range.HasStartAt
                 && this.CurrentEntryIndex < 0 && this.BreadCrumbs.Count == 0)
@@ -150,7 +150,7 @@ namespace MarcelloDB.Index.BTree
         void MoveTo(TK key, bool backwards)
         {
 
-            var entries = Entries(this.CurrentNode) as IEnumerable<Entry<TK, TP>>;
+            var entries = Entries(this.CurrentNode) as IEnumerable<Entry<TK>>;
 
             var childrenAddresses = ChildrenAddresses(this.CurrentNode) as IEnumerable<Int64>;
 
@@ -237,15 +237,15 @@ namespace MarcelloDB.Index.BTree
             }
         }
 
-        IEnumerable<Entry<TK, TP>> Entries(Node<TK, TP> node)
+        IEnumerable<Entry<TK>> Entries(Node<TK> node)
         {
             if (this.Reversed) {
-                return ((IEnumerable<Entry<TK, TP>>)node.EntryList.Entries).Reverse();
+                return ((IEnumerable<Entry<TK>>)node.EntryList.Entries).Reverse();
             }
             return node.EntryList.Entries;
         }
 
-        IEnumerable<Int64> ChildrenAddresses(Node<TK, TP> node)
+        IEnumerable<Int64> ChildrenAddresses(Node<TK> node)
         {
             if (this.Reversed) {
                 return ((IEnumerable<Int64> )node.ChildrenAddresses.Addresses).Reverse();
@@ -253,7 +253,7 @@ namespace MarcelloDB.Index.BTree
             return node.ChildrenAddresses.Addresses;
         }
 
-        bool EntryIsBeforeEndOfRange(Entry<TK, TP> entry)
+        bool EntryIsBeforeEndOfRange(Entry<TK> entry)
         {
             if (this.Range == null)
                 return true;

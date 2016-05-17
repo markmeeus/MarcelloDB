@@ -4,11 +4,11 @@ using System.Reflection;
 
 namespace MarcelloDB.AllocationStrategies
 {
-    internal class PredictiveBTreeNodeAllocationStrategy<TK, TP> : IAllocationStrategy
+    internal class PredictiveBTreeNodeAllocationStrategy<TK> : IAllocationStrategy
     {
-        Node<TK, TP> Node {  get; set; }
+        Node<TK> Node {  get; set; }
 
-        internal PredictiveBTreeNodeAllocationStrategy(Node<TK, TP> node)
+        internal PredictiveBTreeNodeAllocationStrategy(Node<TK> node)
         {
             this.Node = node;
         }

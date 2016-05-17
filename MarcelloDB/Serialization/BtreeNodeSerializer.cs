@@ -4,37 +4,37 @@ using System.Collections.Generic;
 
 namespace MarcelloDB.Serialization
 {
-    internal class BTreeNodeSerializer<TK, TP> : IObjectSerializer<Node<TK, TP>>
+    internal class BTreeNodeBsonSerializer<TK> : IObjectSerializer<Node<TK>>
     {
-        BsonSerializer<BTreeNodeData<TK, TP>> DataSerializer { get; set; }
+        BsonSerializer<BTreeNodeData<TK>> DataSerializer { get; set; }
 
-        public class BTreeNodeData<TKey,TPointer>
+        public class BTreeNodeData<TKey>
         {
-            public List<Entry<TKey,TPointer>> Entries { get; set; }
+            public List<Entry<TKey>> Entries { get; set; }
             public List<Int64> ChildrenAddresses { get; set; }
             public int Degree { get; set; }
         }
 
         #region IObjectSerializer implementation
 
-        internal BTreeNodeSerializer()
+        internal BTreeNodeBsonSerializer()
         {
-            this.DataSerializer = new BsonSerializer<BTreeNodeData<TK, TP>>();
+            this.DataSerializer = new BsonSerializer<BTreeNodeData<TK>>();
         }
 
-        public byte[] Serialize(Node<TK, TP> node)
+        public byte[] Serialize(Node<TK> node)
         {
-            var data = new BTreeNodeData<TK, TP>();
+            var data = new BTreeNodeData<TK>();
             data.Entries = node.EntryList.Entries;
             data.ChildrenAddresses = node.ChildrenAddresses.Addresses;
             data.Degree = node.Degree;
             return this.DataSerializer.Serialize(data);
         }
 
-        public Node<TK, TP> Deserialize(byte[] bytes)
+        public Node<TK> Deserialize(byte[] bytes)
         {
             var data = this.DataSerializer.Deserialize(bytes);
-            var node = new Node<TK,TP>(data.Degree);
+            var node = new Node<TK>(data.Degree);
             node.EntryList.SetEntries(data.Entries);
             node.ChildrenAddresses.SetAddresses(data.ChildrenAddresses);
 

@@ -5,48 +5,48 @@ using MarcelloDB.Index.BTree;
 
 namespace MarcelloDB.Test
 {
-    internal class MockBTreeDataProvider<TK, TP> : IBTreeDataProvider<TK, TP>
+    internal class MockBTreeDataProvider<TK> : IBTreeDataProvider<TK>
     {
         public bool WasFlushed { get; set; }
 
         Int64 _lastAddress = 1;
-        Dictionary<Int64, Node<TK, TP>> _nodes = new Dictionary<long, Node<TK, TP>>();
+        Dictionary<Int64, Node<TK>> _nodes = new Dictionary<long, Node<TK>>();
 
-        Node<TK, TP> _rootNode;
+        Node<TK> _rootNode;
 
         public Int64 RootNodeAddress { get; set; }
 
-        Node<TK, TP> IBTreeDataProvider<TK, TP>.GetRootNode(int degree)
+        Node<TK> IBTreeDataProvider<TK>.GetRootNode(int degree)
         {
             if (_rootNode == null)
             {
-                _rootNode = new Node<TK, TP>(degree);
+                _rootNode = new Node<TK>(degree);
                 _rootNode.Address = 0;
                 AddNode(_rootNode);
             }
             return _rootNode;
         }
 
-        void IBTreeDataProvider<TK, TP>.SetRootNode(Node<TK, TP> rootNode)
+        void IBTreeDataProvider<TK>.SetRootNode(Node<TK> rootNode)
         {
             _rootNode = rootNode;
             this.RootNodeAddress = rootNode.Address;
         }
 
-        Node<TK, TP> IBTreeDataProvider<TK, TP>.GetNode(Int64 address)
+        Node<TK> IBTreeDataProvider<TK>.GetNode(Int64 address)
         {
             return _nodes[address];
         }
 
-        Node<TK, TP> IBTreeDataProvider<TK, TP>.CreateNode(int degree)
+        Node<TK> IBTreeDataProvider<TK>.CreateNode(int degree)
         {
-            var node = new Node<TK, TP>(degree);
+            var node = new Node<TK>(degree);
             node.Address = _lastAddress++;
             AddNode(node);
             return node;
         }
 
-        void AddNode(Node<TK, TP> node)
+        void AddNode(Node<TK> node)
         {
             _nodes.Add(node.Address, node);
         }

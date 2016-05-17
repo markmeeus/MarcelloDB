@@ -210,7 +210,7 @@ namespace MarcelloDB.Collections
                 this.Session,
                 this.RecordManager,
                 RecordIndex.GetIndexName<T>(this.Name, indexName),
-                this.Session.SerializerResolver.SerializerFor<Node<object, Int64>>());
+                this.Session.SerializerResolver.SerializerFor<Node<object>>());
         }
 
         RecordIndex<object> GetIDIndex()
@@ -222,16 +222,11 @@ namespace MarcelloDB.Collections
         {
             foreach (var indexedValue in this.GetIndexDefinition().IndexedValues)
             {
-                var index = GetIndex(indexedValue.PropertyName);
-                object indexKey = indexedValue.GetKey(o, record.Header.Address);
-
                 if (originalAddress > 0)
                 {
-                    var originalIndexKey = indexedValue.GetKey(originalObject, originalAddress);
-                    index.UnRegister(originalIndexKey);
+                    indexedValue.UnRegister(originalObject, originalAddress);
                 }
-
-                index.Register(indexKey, record.Header.Address);
+                indexedValue.Register(o, record.Header.Address);
             }
         }
 
@@ -239,9 +234,7 @@ namespace MarcelloDB.Collections
         {
             foreach (var indexedValue in this.GetIndexDefinition().IndexedValues)
             {
-                var index = GetIndex(indexedValue.PropertyName);
-                object indexKey = indexedValue.GetKey(o, record.Header.Address);
-                index.UnRegister(indexKey);
+                indexedValue.UnRegister(o, record.Header.Address);
             }
         }
 

@@ -4,7 +4,7 @@ using MarcelloDB.Index;
 
 namespace MarcelloDB.Serialization
 {
-    internal class EmptyRecordIndexNodeSerializer : IObjectSerializer<Node<EmptyRecordIndexKey, Int64>>
+    internal class EmptyRecordIndexNodeSerializer : IObjectSerializer<Node<EmptyRecordIndexKey>>
     {
         internal EmptyRecordIndexNodeSerializer()
         {
@@ -15,9 +15,9 @@ namespace MarcelloDB.Serialization
             var sizeOfDegree = sizeof(Int32);
             var sizeOfEntryListCount = sizeof(Int32);
             var maxSizeOfEntry = sizeof(Int64) + sizeof(Int64) + sizeof(Int32); //(Key, Address, Size)
-            var maxSizeOfEntries = maxSizeOfEntry * Node<int,int>.MaxEntriesForDegree(degree);
+            var maxSizeOfEntries = maxSizeOfEntry * Node<int>.MaxEntriesForDegree(degree);
             var sizeOfChildrenAddressessCount = sizeof(Int32);
-            var maxSizeOfChildAddresses = sizeof(Int64) * Node<int,int>.MaxChildrenForDegree(degree);
+            var maxSizeOfChildAddresses = sizeof(Int64) * Node<int>.MaxChildrenForDegree(degree);
 
             return sizeOfDegree +
                 sizeOfEntryListCount +
@@ -27,7 +27,7 @@ namespace MarcelloDB.Serialization
         }
         #region IObjectSerializer implementation
 
-        public byte[] Serialize(Node<EmptyRecordIndexKey, Int64> node)
+        public byte[] Serialize(Node<EmptyRecordIndexKey> node)
         {
             var bytes = new byte[MaxSizeForDegree(node.Degree)];
             var writer = new BufferWriter(bytes);
@@ -48,11 +48,11 @@ namespace MarcelloDB.Serialization
             return writer.Buffer;
         }
 
-        public Node<EmptyRecordIndexKey, Int64> Deserialize(byte[] bytes)
+        public Node<EmptyRecordIndexKey> Deserialize(byte[] bytes)
         {
             var reader = new BufferReader(bytes);
             var degree = reader.ReadInt32();
-            var node = new Node<EmptyRecordIndexKey, Int64>(degree);
+            var node = new Node<EmptyRecordIndexKey>(degree);
 
             var nrOfEntries = reader.ReadInt32();
             for(int i = 0; i< nrOfEntries; i++)
@@ -71,19 +71,19 @@ namespace MarcelloDB.Serialization
 
         #endregion
 
-        void WriteEntry(BufferWriter writer, Entry<EmptyRecordIndexKey, long> entry)
+        void WriteEntry(BufferWriter writer, Entry<EmptyRecordIndexKey> entry)
         {
             writer.WriteInt32(entry.Key.S);     //Size
             writer.WriteInt64(entry.Key.A);     //Address
             writer.WriteInt64(entry.Pointer);   //Pointer (which is address too);
         }
 
-        Entry<EmptyRecordIndexKey, long> ReadEntry(BufferReader reader)
+        Entry<EmptyRecordIndexKey> ReadEntry(BufferReader reader)
         {
             var s = reader.ReadInt32();
             var a = reader.ReadInt64();
             var pointer = reader.ReadInt64();
-            return new Entry<EmptyRecordIndexKey, long>
+            return new Entry<EmptyRecordIndexKey>
             {
                 Key = new EmptyRecordIndexKey{ S = s, A = a },
                 Pointer = pointer

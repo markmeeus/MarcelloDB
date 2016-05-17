@@ -4,9 +4,10 @@ using System.Collections.Generic;
 
 namespace MarcelloDB.Index
 {
-    internal class EntryList<TKey, TAddress> : ChangeTrackingList<Entry<TKey, TAddress>>
+
+    internal class EntryList<TKey> : ChangeTrackingList<Entry<TKey>>
     {
-        public  List<Entry<TKey, TAddress>> Entries
+        public  List<Entry<TKey>> Entries
         {
             get
             {
@@ -14,7 +15,7 @@ namespace MarcelloDB.Index
             }
         }
 
-        internal void SetEntries(List<Entry<TKey, TAddress>> entries)
+        internal void SetEntries(List<Entry<TKey>> entries)
         {
             base.Items = entries;
         }
