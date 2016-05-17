@@ -3,6 +3,7 @@ using NUnit.Framework;
 using MarcelloDB.Serialization;
 using MarcelloDB.Records;
 using MarcelloDB.Index;
+using MarcelloDB.Transactions;
 
 namespace MarcelloDB.Test.Serialization
 {
@@ -36,6 +37,13 @@ namespace MarcelloDB.Test.Serialization
         {
             var serializer = new SerializerResolver().SerializerFor<Node<EmptyRecordIndexKey>>();
             Assert.AreEqual(typeof(EmptyRecordIndexNodeSerializer), serializer.GetType());
+        }
+
+        [Test]
+        public void SerializerForTransasctionJournal_Returns_Specific_Serializer()
+        {
+            var serializer = new SerializerResolver().SerializerFor<TransactionJournal>();
+            Assert.AreEqual(typeof(TransactionJournalSerializer), serializer.GetType());
         }
 
         [Test]

@@ -4,6 +4,7 @@ using MarcelloDB.Index;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
+using MarcelloDB.Transactions;
 
 namespace MarcelloDB.Serialization
 {
@@ -16,6 +17,7 @@ namespace MarcelloDB.Serialization
             _serializers = new Dictionary<Type, object> {
                 {typeof(IndexMetaRecord),                   new  IndexMetaRecordSerializer()},
                 {typeof(Node<EmptyRecordIndexKey>),  new EmptyRecordIndexNodeSerializer()},
+                {typeof(TransactionJournal), new TransactionJournalSerializer()}
             };
         }
 

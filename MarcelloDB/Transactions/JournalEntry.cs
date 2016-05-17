@@ -14,17 +14,11 @@ namespace MarcelloDB.Transactions
 
     internal class TransactionJournal
     {
-        public String ID { get; set;}
-
-        public long Stamp{ get; set;}
-
         public List<JournalEntry> Entries { get; set; }
 
         public TransactionJournal()
         {
             this.Entries = new List<JournalEntry>();
-            this.ID = Guid.NewGuid().ToString();
-            this.Stamp = TimeStamp.Next();
         }
     }
 

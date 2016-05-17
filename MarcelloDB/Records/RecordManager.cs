@@ -177,6 +177,7 @@ namespace MarcelloDB.Records
             _root = null;
             _rootRecord = null;
             _emptyRecordIndex = null;
+            _namedRecordIndex = null;
             _recordsToRecycle.Clear();
         }
         #endregion

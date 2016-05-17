@@ -66,7 +66,7 @@ namespace MarcelloDB.Serialization
             else
             {
                 var trimmed = new byte[this.Position];
-                Array.Copy(this.Buffer, trimmed, this.Position - 1);
+                Array.Copy(this.Buffer, trimmed, this.Position);
                 return trimmed;
             }
         }

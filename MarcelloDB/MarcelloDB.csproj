@@ -45,7 +45,6 @@
     <Compile Include="AllocationStrategies\IAllocationStrategy.cs" />
     <Compile Include="AllocationStrategies\DoubleSizeAllocationStrategy.cs" />
     <Compile Include="Storage\StorageEngine.cs" />
-    <Compile Include="Attributes\IDAttribute.cs" />
     <Compile Include="Transactions\Transaction.cs" />
     <Compile Include="Transactions\Journal.cs" />
     <Compile Include="Transactions\JournalEntry.cs" />
@@ -101,6 +100,7 @@
     <Compile Include="Collections\IndexEntryEnumerator.cs" />
     <Compile Include="Serialization\BinaryFormatter.cs" />
     <Compile Include="Serialization\BtreeNodeBinaryFormatterSerializer.cs" />
+    <Compile Include="Serialization\TransactionJournalSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Runtime" />

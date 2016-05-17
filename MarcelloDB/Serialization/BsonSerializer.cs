@@ -24,7 +24,6 @@ namespace MarcelloDB.Serialization
 
         public byte[] Serialize(T o)
         {
-
             var memoryStream = new MemoryStream();
             var bsonWriter = new BsonWriter(memoryStream);
 
