@@ -101,6 +101,7 @@
     <Compile Include="Serialization\BinaryFormatter.cs" />
     <Compile Include="Serialization\BtreeNodeBinaryFormatterSerializer.cs" />
     <Compile Include="Serialization\TransactionJournalSerializer.cs" />
+    <Compile Include="Serialization\CollectionFileRootSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Runtime" />

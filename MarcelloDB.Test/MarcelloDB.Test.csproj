@@ -79,6 +79,7 @@
     <Compile Include="Serialization\BinaryFormatterTest.cs" />
     <Compile Include="Serialization\BTreeNodeBinaryFormatterSerializerTest.cs" />
     <Compile Include="Serialization\TransactionJournalSerializerTest.cs" />
+    <Compile Include="Serialization\CollectionFileRootSerializerTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

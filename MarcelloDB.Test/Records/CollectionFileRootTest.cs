@@ -23,23 +23,6 @@ namespace MarcelloDB.Test.Records
         }
 
         [Test]
-        public void Set_Collection_Root_Adds_Collection_Root_Address()
-        {
-            var collectionFileRoot = CollectionFileRoot.Create();
-            collectionFileRoot.SetCollectionRootAddress("collection", 123);
-            Assert.AreEqual(123, collectionFileRoot.CollectionRootAddress("collection"));
-        }
-
-        [Test]
-        public void Set_Collection_Root_Updates_Collection_Root_Address()
-        {
-            var collectionFileRoot = CollectionFileRoot.Create();
-            collectionFileRoot.SetCollectionRootAddress("collection", 123);
-            collectionFileRoot.SetCollectionRootAddress("collection", 456);
-            Assert.AreEqual(456, collectionFileRoot.CollectionRootAddress("collection"));
-        }
-
-        [Test]
         public void Is_Dirty_When_New()
         {
             var collectionFileRoot = CollectionFileRoot.Create();
@@ -88,54 +71,11 @@ namespace MarcelloDB.Test.Records
         }
 
         [Test]
-        public void Set_Collection_Root_Makes_Dirty_If_New()
-        {
-            var collectionFileRoot = CollectionFileRoot.Create();
-            collectionFileRoot.Clean();
-            collectionFileRoot.SetCollectionRootAddress("collection", 123);
-            Assert.IsTrue(collectionFileRoot.IsDirty);
-        }
-
-        [Test]
-        public void Set_Collection_Root_Makes_Dirty_If_Changed()
-        {
-            var collectionFileRoot = CollectionFileRoot.Create();
-            collectionFileRoot.Clean();
-            collectionFileRoot.SetCollectionRootAddress("collection", 123);
-            collectionFileRoot.SetCollectionRootAddress("collection", 456);
-            Assert.IsTrue(collectionFileRoot.IsDirty);
-        }
-
-        [Test]
-        public void Set_Collection_Root_Stays_Clean_If_Not_Changed()
-        {
-            var collectionFileRoot = CollectionFileRoot.Create();
-            collectionFileRoot.SetCollectionRootAddress("collection", 123);
-            collectionFileRoot.Clean();
-            collectionFileRoot.SetCollectionRootAddress("collection", 123);
-            Assert.IsFalse(collectionFileRoot.IsDirty);
-        }
-
-        [Test]
         public void Clean_Resets_IsDirty()
         {
             var collectionFileRoot = CollectionFileRoot.Create();
             collectionFileRoot.Clean();
             Assert.IsFalse(collectionFileRoot.IsDirty);
-        }
-
-        [Test]
-        public void Serializes_Ok()
-        {
-            var collectionFileRoot = CollectionFileRoot.Create();
-            collectionFileRoot.SetCollectionRootAddress("123", 123);
-            collectionFileRoot.SetCollectionRootAddress("456", 456);
-
-            var serializer = new SerializerResolver().SerializerFor<CollectionFileRoot>();
-            var deserialized =   serializer.Deserialize(serializer.Serialize(collectionFileRoot));
-
-            Assert.AreEqual(123, deserialized.CollectionRootAddress("123"));
-            Assert.AreEqual(456, deserialized.CollectionRootAddress("456"));
         }
 
         [Test]

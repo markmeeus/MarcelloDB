@@ -47,6 +47,13 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void SerializerFor_CollectionFileRoot_Returns_Specific_Serializer()
+        {
+            var serializer = new SerializerResolver().SerializerFor<CollectionFileRoot>();
+            Assert.AreEqual(typeof(CollectionFileRootSerializer), serializer.GetType());
+        }
+
+        [Test]
         public void SerializerForBtreeNodeInt64_Returns_FormatterSerializer()
         {
             var serializer = new SerializerResolver().SerializerFor<Node<Int64>>();

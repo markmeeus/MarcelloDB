@@ -14,9 +14,6 @@ namespace MarcelloDB
         //Defines the format of file structure. Only change this value if backwards compatibility is broken.
         internal const int CURRENT_FORMAT_VERSION = 2;
 
-        //to make it serializable
-        public Dictionary<string, Int64> CollectionRootAddresses { get; set; }
-
         public int FormatVersion { get; set; }
 
         internal bool IsDirty { get; private set;}
@@ -24,7 +21,6 @@ namespace MarcelloDB
         internal CollectionFileRoot()
         {
             this.Head = INITIAL_HEAD;
-            this.CollectionRootAddresses = new Dictionary<string, long>();
             this.FormatVersion = CURRENT_FORMAT_VERSION;
             this.IsDirty = true;
         }
@@ -68,21 +64,6 @@ namespace MarcelloDB
                     string.Format("This collectionfile was created with a previous and unsupported version of MarcellodB")
                 );
             }
-        }
-
-        internal void SetCollectionRootAddress(string collectionName, Int64 address)
-        {
-            if (!this.CollectionRootAddresses.ContainsKey(collectionName)
-                || this.CollectionRootAddresses[collectionName] != address)
-            {
-                this.IsDirty = true;
-                this.CollectionRootAddresses[collectionName] = address;
-            }
-        }
-
-        internal Int64 CollectionRootAddress(string collectionName)
-        {
-            return this.CollectionRootAddresses[collectionName];
         }
 
         internal void Clean()

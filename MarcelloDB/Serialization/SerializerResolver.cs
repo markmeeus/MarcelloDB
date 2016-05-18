@@ -17,7 +17,8 @@ namespace MarcelloDB.Serialization
             _serializers = new Dictionary<Type, object> {
                 {typeof(IndexMetaRecord),                   new  IndexMetaRecordSerializer()},
                 {typeof(Node<EmptyRecordIndexKey>),  new EmptyRecordIndexNodeSerializer()},
-                {typeof(TransactionJournal), new TransactionJournalSerializer()}
+                {typeof(TransactionJournal), new TransactionJournalSerializer()},
+                {typeof(CollectionFileRoot), new CollectionFileRootSerializer()},
             };
         }
 
