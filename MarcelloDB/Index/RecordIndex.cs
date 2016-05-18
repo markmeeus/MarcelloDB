@@ -9,7 +9,7 @@ namespace MarcelloDB.Index
     internal class RecordIndex
     {
         internal const string EMPTY_RECORDS_BY_SIZE = "__EMPTY_RECORDS_BY_SIZE__";
-        internal const int BTREE_DEGREE = 12;
+        internal const int BTREE_DEGREE = 8;
 
         internal static string GetIndexName<T>(string collectionName, string indexName)
         {
