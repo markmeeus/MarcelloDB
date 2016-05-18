@@ -15,7 +15,11 @@ namespace MarcelloDB.Serialization
 
         public byte[] Serialize(CollectionFileRoot root)
         {
-            var writer = new BufferWriter(new byte[0]);
+            var expectedSize = sizeof(byte)
+                               + sizeof(Int32)
+                               + sizeof(Int64)
+                               + sizeof(Int64);
+            var writer = new BufferWriter(new byte[expectedSize]);
             writer.WriteByte(SERIALIZATION_VERSION);
             writer.WriteInt32(root.FormatVersion);
             writer.WriteInt64(root.Head);
