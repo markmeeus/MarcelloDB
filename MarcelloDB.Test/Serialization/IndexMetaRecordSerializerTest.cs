@@ -57,6 +57,19 @@ namespace MarcelloDB.Test.Serialization
         {
             Assert.AreEqual(_record.TotalAllocatedDataSize, _deserializedRecord.TotalAllocatedDataSize);
         }
+
+        [Test]
+        public void Deserialized_Should_Not_Be_Dirty()
+        {
+            var record = new IndexMetaRecord();
+            record.RootNodeAddress = 1;
+
+            var serializer = new IndexMetaRecordSerializer();
+            var deserializedRecord = serializer.Deserialize(
+                serializer.Serialize(_record));
+
+            Assert.IsFalse(deserializedRecord.IsDirty);
+        }
     }
 }
 

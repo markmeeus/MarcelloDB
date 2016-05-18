@@ -162,12 +162,17 @@ namespace MarcelloDB.Index.BTree
 
         private void SaveMetaRecord()
         {
-            var serializer = this.Session.SerializerResolver.SerializerFor<IndexMetaRecord>();
-            var bytes = serializer.Serialize(this.MetaRecord);
-            this.RecordManager.UpdateRecord(this.MetaRecord.Record,bytes, null);
-            this.RecordManager.RegisterNamedRecordAddress(
-                this.RootRecordName,
-                this.MetaRecord.Record.Header.Address);
+            if (this.MetaRecord.IsDirty)
+            {
+                var serializer = this.Session.SerializerResolver.SerializerFor<IndexMetaRecord>();
+                var bytes = serializer.Serialize(this.MetaRecord);
+                this.RecordManager.UpdateRecord(this.MetaRecord.Record,bytes, null);
+                this.RecordManager.RegisterNamedRecordAddress(
+                    this.RootRecordName,
+                    this.MetaRecord.Record.Header.Address);
+                this.MetaRecord.Clean();
+            }
+
         }
     }
 }

@@ -28,6 +28,8 @@ namespace MarcelloDB.Serialization
             deserializedRecord.NumberOfNodes = reader.ReadInt64();
             deserializedRecord.TotalAllocatedSize = reader.ReadInt64();
             deserializedRecord.TotalAllocatedDataSize = reader.ReadInt64();
+
+            deserializedRecord.Clean();
             return deserializedRecord;
         }
 
