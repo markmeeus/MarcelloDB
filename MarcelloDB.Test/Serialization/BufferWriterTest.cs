@@ -98,21 +98,21 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
-        public void Buffer_Grows_When_Overrun()
+        public void Buffer_Doubles_When_Overrun()
         {
             var writer = new BufferWriter(new byte[12], true);
             writer.WriteInt64((Int64)123); //position at 8
-            writer.WriteInt64((Int64)456);
-            Assert.AreEqual(16, writer.Buffer.Length);
+            writer.WriteInt64((Int64)456); //position at 16
+            Assert.AreEqual(32, writer.Buffer.Length);
         }
 
         [Test]
-        public void Buffer_Grows_When_Overrun_Edge_Case()
+        public void Buffer_Doubles_When_Overrun_Edge_Case()
         {
             var writer = new BufferWriter(new byte[8], true);
             writer.WriteInt64((Int64)123); //position at 8
-            writer.WriteInt64((Int64)456);
-            Assert.AreEqual(16, writer.Buffer.Length);
+            writer.WriteInt64((Int64)456); //position at 16
+            Assert.AreEqual(32, writer.Buffer.Length);
         }
 
         [Test]

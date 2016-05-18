@@ -48,7 +48,9 @@ namespace MarcelloDB.Serialization
         {
             if (this.Position + bytes.Length > Buffer.Length)
             {
-                var newBuffer = new byte[this.Position + bytes.Length];
+                //Double buffer
+                var doubleSize = (this.Position + bytes.Length) * 2;
+                var newBuffer = new byte[(int)doubleSize];
                 this.Buffer.CopyTo(newBuffer, 0);
                 this.Buffer = newBuffer;
             }
