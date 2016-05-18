@@ -328,8 +328,6 @@ namespace MarcelloDB.Serialization
             //avoiding incompatibility issues if formatting needs to change
             formatter.WriteByte(BTREE_NODE_FORMAT_VERSION);
 
-            formatter.WriteInt32(node.Degree);
-
             WriteEntries(formatter, node.EntryList.Entries);
             WriteChildrenAddresses(formatter, node.ChildrenAddresses);
 
@@ -343,8 +341,7 @@ namespace MarcelloDB.Serialization
 
             formatter.ReadByte(); //Read format version;
 
-            var degree = formatter.ReadInt32();
-            var node = new Node<TKey>(degree);
+            var node = new Node<TKey>(RecordIndex.BTREE_DEGREE);
 
             node.EntryList.SetEntries(ReadEntries(formatter));
             node.ChildrenAddresses.SetAddresses(ReadChildrenAddresses(formatter));

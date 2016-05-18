@@ -12,7 +12,6 @@ namespace MarcelloDB.Serialization
         {
             public List<Entry<TKey>> Entries { get; set; }
             public List<Int64> ChildrenAddresses { get; set; }
-            public int Degree { get; set; }
         }
 
         #region IObjectSerializer implementation
@@ -27,14 +26,13 @@ namespace MarcelloDB.Serialization
             var data = new BTreeNodeData<TK>();
             data.Entries = node.EntryList.Entries;
             data.ChildrenAddresses = node.ChildrenAddresses.Addresses;
-            data.Degree = node.Degree;
             return this.DataSerializer.Serialize(data);
         }
 
         public Node<TK> Deserialize(byte[] bytes)
         {
             var data = this.DataSerializer.Deserialize(bytes);
-            var node = new Node<TK>(data.Degree);
+            var node = new Node<TK>(RecordIndex.BTREE_DEGREE);
             node.EntryList.SetEntries(data.Entries);
             node.ChildrenAddresses.SetAddresses(data.ChildrenAddresses);
 
