@@ -61,7 +61,8 @@ namespace MarcelloDB
             if (this.FormatVersion != CURRENT_FORMAT_VERSION)
             {
                 throw new InvalidOperationException(
-                    string.Format("This collectionfile was created with a previous and unsupported version of MarcellodB")
+                    string.Format("This collectionfile was created with a previous and unsupported version of MarcellodB. " +
+                        "More info: https://github.com/markmeeus/MarcelloDB")
                 );
             }
         }
