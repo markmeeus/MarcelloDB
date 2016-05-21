@@ -25,6 +25,27 @@ See roadmap at the bottom of this page.
 
 Be carefull. Backwards compatibility with existing data will not be guaranteed untill v1.x
 
+#Upgrading to 0.4
+Version 0.4 contains a refactor which causes data files created with older version to be unreadable. 
+So to upgrade, you'll have to delete your data files.
+If you really need your data, you should get it out of of MarcelloDB 0.3, put it in a json file, and recreate your data again with 0.4
+
+There is also a code-level incompatibility.
+From 0.4 on, it is required to specify the type of your ID property, along with a function on how to get the ID when creating the collection.
+
+Before 0.4:
+```cs
+session['products'].Collection<Product>("My-Products-Collection");
+````
+
+From 0.4:
+```cs
+session['products'].Collection<Product, Guid>("My-Products-Collection", p => p.ID);
+````
+
+You are now free to name your ID property as you wish.
+The ID attribute has also been removed as there was no use for it anymore.
+
 #Installation
 ````
 PM > Install-Package MarcelloDB
@@ -408,7 +429,7 @@ Data is stored in an unencrypted format. An encryption engine is available as a 
 -
 - ~~Use custom btree node serialization~~
 - ~~Use Generic IDs~~
-- Remove unnecessary serializations
+- ~~Remove unnecessary serializations~~
 
 0.5.0
 -
