@@ -41,14 +41,14 @@ namespace UniversalTest
 
             var dataFolderPath = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
             var session = new MarcelloDB.Session(new Platform(), dataFolderPath);
-            var collection = session["data"].Collection<Article, ArticleIndex>("articles");
+            var collection = session["data"].Collection<Article, int, ArticleIndex>("articles", a => a.ID);
 
             for (int i = 0; i < 1000; i++)
             {
                 collection.Persist(new Article { ID = i, Name = string.Format("Article_{0}", i) });
             }
             for (int i = 0; i < 1000; i++)
-            {
+           {
                 var article = collection.Find(i);
                 System.Diagnostics.Debug.Assert(article != null);
             }
