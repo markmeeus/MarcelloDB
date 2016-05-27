@@ -1,0 +1,74 @@
+template:
+  # Name of the directory containing the website template (default is "website")
+  directory: docs/template
+
+  # Name of the index file (default is "README.md")
+  index: README.md
+
+# List of directories to include in the processing (by default it's empty, so all markdown files are parsed)
+# Paths are relative to the optional source path given when generating the website, repository root by default
+include:
+  - docs
+
+# List of directories to exclude from the processing (default contains "vendor" and "website")
+# Paths are relative to the optional include paths given when generating the website, repository root by default
+exclude:
+
+
+scripts:
+  # Scripts to execute before generating the website
+  before:
+#        - cp bin/couscous.phar website/
+  # Scripts to execute after generating the website
+  after:
+#        - rm website/couscous.phar
+
+# Set this variable to use a Custom Domain
+# The content of this variable will be directly inserted into the CNAME file
+#cname: docs.yourdomain.com
+
+# Set the target branch in which to deploy the generated website
+branch: gh-pages
+github:
+  user: markmeeus
+  repo: marcellodb
+# Any variable you put in this file is also available in the Twig layouts:
+title: MarcelloDB
+logo: http://markmeeus.github.io/MarcelloDB/images/logo/logo_blue.svg
+subTitle: NoSQL Data Storage for Xamarin/Mono/.NET Apps
+# Base URL of the published website (no "/" at the end!)
+# You are advised to set and use this variable to write your links in the HTML layouts
+baseUrl: http://markmeeus.github.io/MarcelloDB
+
+menu:
+  sections:
+    main:
+      name: Main documentation
+      items:
+        home:
+          text: home
+          relativeUrl:
+        quickstart:
+          text: Quickstart Guide
+          relativeUrl: quickstart.html
+        # sessions:
+        #   text: Sessions
+        #   relativeUrl: sessions.html
+        # collections:
+        #   text: CollectionFiles and Collections
+        #   relativeUrl: collections.html
+        # persisting:
+        #   text: Persist and Delete
+        #   relativeUrl: persisting.html
+        # serialization:
+        #   text: Serialization
+        #   relativeUrl: serialization.html
+        # indexes:
+        #   text: Indexes
+        #   relativeUrl: indexes.html
+        # contributing:
+        #   text: Contributing
+        #   relativeUrl: contributing.html
+        roadmap:
+          text: Roadmap
+          relativeUrl: roadmap.html

@@ -26,7 +26,7 @@ See roadmap at the bottom of this page.
 Be carefull. Backwards compatibility with existing data will not be guaranteed untill v1.x
 
 #Upgrading to 0.4
-Version 0.4 contains a refactor which causes data files created with older version to be unreadable. 
+Version 0.4 contains a refactor which causes data files created with older version to be unreadable.
 So to upgrade, you'll have to delete your data files.
 If you really need your data, you should get it out of of MarcelloDB 0.3, put it in a json file, and recreate your data again with 0.4
 
@@ -79,7 +79,7 @@ var session = new MarcelloDB.Session(platform, "/path/to/data/folder/");
 
 #CollectionFiles
 
-MarcelloDB organizes it's data in collection-files and collections. 
+MarcelloDB organizes it's data in collection-files and collections.
 A session can manage multiple collection-files, and a collection-file can contain multiple collections.
 
 You access a collection-file by it's actual filename.
@@ -108,7 +108,7 @@ like this:
 var books = productsFile.Collection<Book, string>("books", book => book.BookId);
 
 //             Store instances of  [Dvd] [with Guid ID] [get ID from dvd]
-//                                  ||    ||                  ||                 
+//                                  ||    ||                  ||
 var dvds = productsFile.Collection<Dvd, Guid>("dvd", dvd => dvd.id);
 ```
 
@@ -169,14 +169,14 @@ productsFile.Collection<Book, string, BookIndexDefiniton>("books", book => book.
 
 ##Indexing properties
 
-Indexed values are defined by declaring properties on the index definition. 
+Indexed values are defined by declaring properties on the index definition.
 
 You can add as many of these properties as needed, but be aware that there is a perfomance and storage-size pricetag with every index you add.
 
 The simplest type of index is one based on a property of the objects you are storing.
 In this scenario, a corresponding property on the index definition is all that is needed.
 
-This property has to 
+This property has to
 * have the same name as the property you want to index
 * be of type `IndexedValue<T, TAttribute>`
 * have the same type for TAttribute as the type of the property you want to index
@@ -191,7 +191,7 @@ Once you have this collection, all index functionality is typed correctly. The c
 An example:
 ```cs
 ///
-/// This IndexDefinition can be used to index 
+/// This IndexDefinition can be used to index
 //                            instances of Book
 ///                                        ||
 class DvdIndexDefinition : IndexDefinition<Book>
@@ -200,12 +200,12 @@ class DvdIndexDefinition : IndexDefinition<Book>
    //                                 ||
    public  IndexedValue<Book, string> Title { get; set; }
    //                   ||     ||
-   //             of Book which is a string 
+   //             of Book which is a string
 }
 ```
 
 If indexing a property is not enough, you can define custom indexes.
-In this case you also define a property like above, except you return an instance of IndexedValue. 
+In this case you also define a property like above, except you return an instance of IndexedValue.
 And a setter is not needed (nor usefull).
 
 ```cs
@@ -215,13 +215,13 @@ And a setter is not needed (nor usefull).
 class BookIndexDefinition : IndexDefinition<Book>
 {
    public  IndexedValue<Book, string> MainAuthorName
-   { 
+   {
       get{
         //index the name of the first autor
         return base.IndexedValue<Book, string>((book)=>{
           return book.Authors.First().Name;
         });
-      }      
+      }
    }
 }
 ```
@@ -237,7 +237,7 @@ class AuthorNameAndTitle : IComparable
   public string AuthorName { get; set; }
   public string Title { get; set; }
   public bool IgnoreTitle { get; set;}
-	
+
   //Sort by AuthorName, Then by Title
   public int CompareTo(object obj)
   {
@@ -258,8 +258,8 @@ class AuthorNameAndTitle : IComparable
 ```cs
 class BookIndexDefinition : IndexDefinition<Book>
 {
-  public  IndexedValue<Book, AuthorNameAndTitle> AuthorNameAndTitle 
-  { 
+  public  IndexedValue<Book, AuthorNameAndTitle> AuthorNameAndTitle
+  {
     get{
       return base.IndexedValue<Book, AuthorNameAndTitle>((book)=>{
         return new AuthorNameAndTitle{AuthorName = book.Author.Name, Title = Book.Title};
@@ -291,7 +291,7 @@ A collection created with an index definition has a property named 'Indexes'. Th
 Every index on that definition is now able to iterate (and search) the data sorted by the indexed value.
 
 All enumerations are implemented in a lazy fashion. The next object is only loaded when actually requested by the iteration.
-So don't worry if you have a really large amount of data, Marcello never loads all that data in memory. 
+So don't worry if you have a really large amount of data, Marcello never loads all that data in memory.
 
 ###All
 Find returns an IEnumerable<T> of all objects sorted by the indexed value.
@@ -347,11 +347,11 @@ bookCollection.Indexes.AgeRecommendation.SmallerThanOrEqual(12)
 Every index scope can be reversed to iterate your objects in a descending order
 ```cs
 //starting from 12 down to 0
-bookCollection.Indexes.AgeRecommendation.SmallerThan(12).Descending 
+bookCollection.Indexes.AgeRecommendation.SmallerThan(12).Descending
 //starting from the max value down to 12
-bookCollection.Indexes.AgeRecommendation.GreaterThan(12).Descending 
+bookCollection.Indexes.AgeRecommendation.GreaterThan(12).Descending
 //from 16 down to 12
-bookCollection.Indexes.AgeRecommendation.Between(12).And(16).Descending 
+bookCollection.Indexes.AgeRecommendation.Between(12).And(16).Descending
 ```
 ##Iterating the keys of an index
 You can iterate all keys of an index:
@@ -436,15 +436,18 @@ Data is stored in an unencrypted format. An encryption engine is available as a 
 - Indexing list of values
 - Contains/ContainsAll query
 
-0.5.0
+0.6.0
 -
-- Unique index attribute
-- IncludeNull index attribute
+- Unique indexes
+- IgnoreNull index attribute
 
 1.0.0
 -
 - Stable file format, to be supported in all future 1.x versions
 
+1.1.0
+-
+- Synch and PubSub.
 
 
 
