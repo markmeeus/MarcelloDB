@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>MarcelloDB</title>
+
+        <link rel="stylesheet" href="http://markmeeus.github.io/MarcelloDB/css/bootstrap.min.css">
+        <link rel="stylesheet" href="http://markmeeus.github.io/MarcelloDB/css/font-awesome.min.css">
+        <link rel="stylesheet" href="http://markmeeus.github.io/MarcelloDB/css/highlight.tomorrow-night.css">
+        <link rel="stylesheet" href="http://markmeeus.github.io/MarcelloDB/css/main.css">
+    </head>
+    <body>
+
+        <header class="navbar navbar-default navbar-fixed-top" style='background:#FFF;height:60px;'>
+
+            <a class="navbar-brand" href="http://markmeeus.github.io/MarcelloDB/" style="position:relative;top:-40px;">
+                <img style="width:240px;" src="http://markmeeus.github.io/MarcelloDB/images/logo/logo_blue.svg">
+                <small class="hidden-xs hidden-sm" style="position:relative;top:4px; color:#000; font-size:30px;">
+                    NoSQL Data Storage for Xamarin/Mono/.NET Apps
+                </small>
+            </a>
+
+                            <a href="https://github.com/markmeeus/marcellodb">
+                    <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://camo.githubusercontent.com/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png">
+                </a>
+            
+        </header>
+
+        <main class="container-fluid">
+            <div class="row">
+
+                
+                    <nav id="sidebar" class="col-sm-3 col-lg-2" role="navigation">
+
+                                                    <p class="text-muted">
+                                Main documentation
+                            </p>
+
+                            <ul class="nav nav-pills nav-stacked">
+                                                                    <li class="">
+                                        <a href="http://markmeeus.github.io/MarcelloDB/">
+                                            home
+                                        </a>
+                                    </li>
+                                                                    <li class="">
+                                        <a href="http://markmeeus.github.io/MarcelloDB/quickstart.html">
+                                            Quickstart Guide
+                                        </a>
+                                    </li>
+                                                                    <li class="">
+                                        <a href="http://markmeeus.github.io/MarcelloDB/roadmap.html">
+                                            Roadmap
+                                        </a>
+                                    </li>
+                                                            </ul>
+                        
+                    </nav>
+
+                
+                <section class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
+                    <h2 id="quickstart-guide">Quickstart Guide</h2>
+<h3 id="step-1-install--marcellodb-using-nuget">Step 1: Install  MarcelloDB using nuget.</h3>
+<p>MarcelloDB is released on nuget.org, so it is pretty easy to install.</p>
+<pre><code class="language-cs">PM &gt; Install-Package MarcelloDB</code></pre>
+<p>Alternatively, you can use your IDE to install the package. It is called 'MarcelloDB'.</p>
+<h3 id="step-2-create-a-platform-object">Step 2: Create a platform object.</h3>
+<p>MarcelloDB needs a specific Platform object to interact with the specific OS.</p>
+<p>You should create it in your platform specific code.</p>
+<p>For instance, if you are building an iOS app, you need to instantiate the platform in the iOS code.</p>
+<pre><code class="language-cs">  //On Android, iOS and regular .net or mono:
+  IPlatform platform =  new MarcelloDB.netfx.Platform();
+
+  //In a windows (or phone) 8.1/10
+  IPlatform platform =  new MarcelloDB.uwp.Platform();
+</code></pre>
+<h3 id="step-3-its-open-a-session-time">Step 3: It's open-a-session-time!</h3>
+<p>You access all your data - in that specific folder - via a Session instance.
+Without a sesion, there is little you can do.</p>
+<p>Opening a session requires the platform instance and a directory path.</p>
+<p>MarcelloDB will store all data in this directory.</p>
+<p>This code is platform independent and can be implemented in a PCL.</p>
+<pre><code class="language-cs">var session = new MarcelloDB.Session(platform, dataPath);</code></pre>
+<p>Sessions are designed to be long-lived. It's ok to open the session when your app starts, and keep it open until your app closes.</p>
+<p>A static or singleton is perfectly fine, it also makes sense to register it in an IOC container.</p>
+<h3 id="step-4-uncork-a-collection">Step 4: Uncork a collection</h3>
+<p>A collection is the MarcelloDB equivalent of a table.</p>
+<p>The session manages one or more collection-files. A collection-file manages one or more collections.</p>
+<p>First you need some entities</p>
+<pre><code class="language-cs">public class Address
+{
+  public string City    { get; set; }
+  public string Street  { get; set; }
+  public string Number  { get; set; }
+}
+
+public class Person
+{
+  public string         Id        { get; set; }
+  public string         Name      { get; set; }
+  public string         FirstName { get; set; }
+  public List&lt;Address&gt;  Addresses { get; set; }
+}</code></pre>
+<p>Get a collection-file from the session</p>
+<pre><code class="language-cs">//                        File in the datafolder
+//                              ||
+var personsFile = session["persons.dat"];</code></pre>
+<p>Then, get a collection from the collection-file. It needs a name, and an Object-To-ID mapping function.</p>
+<pre><code class="language-cs">//                        Store instances of  [Person][ID is a string] [map Person to ID]
+//                                               ||      ||   Collection name   ||
+//                                               ||      ||        ||           ||
+var personsCollection = personsFile.Collection&lt;Person, string&gt;("persons", p =&gt; p.Id);
+</code></pre>
+<p>The two generic arguments are there so that the compiler will protect you from mistakes. The first one (Person) is the type of objects you can store in the collection. The second one (string) is the type of the ID. The Object-To-ID mapper takes a Person and should return a string.</p>
+<blockquote>
+<p>This collection will happily store subclasses Person too.</p>
+<p>Also, the entire object is stored, including child objects, lists and dictionaries.</p>
+<p>Bson serialization is done with json.net. If json.net can serialize it, MarcelloDB can store it.</p>
+</blockquote>
+<h3 id="step-5-save-you-an-object">Step 5: Save you an object</h3>
+<p>Get you hands on some data</p>
+<pre><code class="language-cs">var person = new Person{
+  id = "1",
+  Name = "Snow",
+  FirstName = "Jon",
+  Addresses = new List&lt;Address&gt;{
+    new Address{ City = "Castle Black" },
+    new Address{ City = "Winterfell" }
+  }
+}</code></pre>
+<p>And save it in the collection</p>
+<pre><code class="language-cs">personsCollection.Persist(person);</code></pre>
+<h3 id="step-6-find-your-data">Step 6: Find your data</h3>
+<p>The simplest way to find data is by it's ID. The find method does just that.</p>
+<pre><code class="language-cs">var jon = personsCollection.Find("1");</code></pre>
+<blockquote>
+<p>Remember the Collection<em>&lt;Person, string&gt;</em> ?</p>
+<p>Find now takes a <em>string</em> and returns a <em>Person</em>.</p>
+</blockquote>
+<p>You can also find your data using custom indexes, find out more on the indexing page. (coming soon.)</p>
+<h3 id="step-7-delete-your-data">Step 7: Delete your data</h3>
+<p>If you are really sure Jon won't come back...</p>
+<pre><code class="language-cs">personsCollection.Delete("1");</code></pre>
+                </section>
+
+            </div>
+        </main>
+
+        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="//yandex.st/highlightjs/7.5/highlight.min.js"></script>
+
+        <script>
+            $(function() {
+                $("section>h1").wrap('<div class="page-header" />');
+                // Syntax highlighting
+                hljs.initHighlightingOnLoad();
+            });
+        </script>
+
+    </body>
+</html>
