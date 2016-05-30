@@ -41,7 +41,7 @@
                             <ul class="nav nav-pills nav-stacked">
                                                                     <li class="">
                                         <a href="http://markmeeus.github.io/MarcelloDB/">
-                                            home
+                                            Home
                                         </a>
                                     </li>
                                                                     <li class="">
@@ -50,8 +50,18 @@
                                         </a>
                                     </li>
                                                                     <li class="">
+                                        <a href="http://markmeeus.github.io/MarcelloDB/upgrade04.html">
+                                            Upgrading to 0.4
+                                        </a>
+                                    </li>
+                                                                    <li class="">
                                         <a href="http://markmeeus.github.io/MarcelloDB/roadmap.html">
-                                            Roadmap
+                                            Roadmap to 1.0
+                                        </a>
+                                    </li>
+                                                                    <li class="">
+                                        <a href="http://markmeeus.github.io/MarcelloDB/longterm.html">
+                                            After 1.0
                                         </a>
                                     </li>
                                                             </ul>
@@ -75,7 +85,7 @@
   //In a windows (or phone) 8.1/10
   IPlatform platform =  new MarcelloDB.uwp.Platform();
 </code></pre>
-<h3 id="step-3-its-open-a-session-time">Step 3: It's open-a-session-time!</h3>
+<h3 id="step-3-open-a-session">Step 3: Open a session</h3>
 <p>You access all your data - in that specific folder - via a Session instance.
 Without a sesion, there is little you can do.</p>
 <p>Opening a session requires the platform instance and a directory path.</p>
@@ -84,24 +94,9 @@ Without a sesion, there is little you can do.</p>
 <pre><code class="language-cs">var session = new MarcelloDB.Session(platform, dataPath);</code></pre>
 <p>Sessions are designed to be long-lived. It's ok to open the session when your app starts, and keep it open until your app closes.</p>
 <p>A static or singleton is perfectly fine, it also makes sense to register it in an IOC container.</p>
-<h3 id="step-4-uncork-a-collection">Step 4: Uncork a collection</h3>
+<h3 id="step-4-access-a-collection">Step 4: Access a collection</h3>
 <p>A collection is the MarcelloDB equivalent of a table.</p>
 <p>The session manages one or more collection-files. A collection-file manages one or more collections.</p>
-<p>First you need some entities</p>
-<pre><code class="language-cs">public class Address
-{
-  public string City    { get; set; }
-  public string Street  { get; set; }
-  public string Number  { get; set; }
-}
-
-public class Person
-{
-  public string         Id        { get; set; }
-  public string         Name      { get; set; }
-  public string         FirstName { get; set; }
-  public List&lt;Address&gt;  Addresses { get; set; }
-}</code></pre>
 <p>Get a collection-file from the session</p>
 <pre><code class="language-cs">//                        File in the datafolder
 //                              ||

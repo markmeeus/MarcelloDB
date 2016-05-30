@@ -70,7 +70,27 @@
 
                 
                 <section class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
-                    <p>serialization.md</p>
+                    <h2 id="a-few-long-term-ideas">A few long-term ideas.</h2>
+<p>Right now I'm working on getting 1.0 out the door.</p>
+<p>Some ideas for MarcelloDB after 1.0:</p>
+<h3 id="pub-sub">Pub-Sub</h3>
+<p>After deploying a pubsub server (to be developed).
+One would be able to do this:</p>
+<pre><code class="language-cs">//on the publishing side
+session['products.dat'].Publish("marcellodb://user:pass@someserver.tld/products.dat");</code></pre>
+<pre><code class="language-cs">//on the receiving side
+session['products.dat'].Subscribe("marcellodb://user:pass@someserver.tld/products.dat");</code></pre>
+<p>Supports 1 Publisher, and many Subscribers per collection-file.</p>
+<h3 id="full-text-indexes">Full Text indexes</h3>
+<pre><code class="language-cs">class BookIndexDefinition : IndexDefinition&lt;Book&gt;
+{
+  public  FullTextIndexedValue&lt;Book&gt; AllFullText { get;set; }
+}</code></pre>
+<p>The FullTextIndexedValue will create a full-text index for every String.
+When using the auto-implemented get-set, it will use the instance of the persisted object.</p>
+<p>It will also be possible to implement a mapper if only a specific set of properties needs to be indexed.</p>
+<p>Find will return a FullTextResult:</p>
+<pre><code class="language-cs">  bookCollection.AllFullText.Find("for dummies");</code></pre>
                 </section>
 
             </div>
