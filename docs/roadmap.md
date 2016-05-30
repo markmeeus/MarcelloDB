@@ -38,16 +38,15 @@
 0.6.0
 -
 - Unique indexes
-- IncludeNull index attribute
+- IgnoreNull index attribute
 
 1.0.0
 -
 - Stable file format, to be supported in all future 1.x versions
 
-1.1.0
--
-- Synch and PubSub.
 
+
+Read [after 1.0](longterm.md) to see what may be comming later.
 
 
 

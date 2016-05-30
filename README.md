@@ -194,7 +194,7 @@ An example:
 /// This IndexDefinition can be used to index
 //                            instances of Book
 ///                                        ||
-class DvdIndexDefinition : IndexDefinition<Book>
+class BookIndexDefinition : IndexDefinition<Book>
 {
    //          Create an index on property Title
    //                                 ||

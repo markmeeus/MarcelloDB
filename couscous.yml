@@ -46,11 +46,14 @@ menu:
       name: Main documentation
       items:
         home:
-          text: home
+          text: Home
           relativeUrl:
         quickstart:
           text: Quickstart Guide
           relativeUrl: quickstart.html
+        upgrade04:
+          text: Upgrading to 0.4
+          relativeUrl: upgrade04.html
         # sessions:
         #   text: Sessions
         #   relativeUrl: sessions.html
@@ -70,5 +73,8 @@ menu:
         #   text: Contributing
         #   relativeUrl: contributing.html
         roadmap:
-          text: Roadmap
+          text: Roadmap to 1.0
           relativeUrl: roadmap.html
+        longterm:
+          text: After 1.0
+          relativeUrl: longterm.html

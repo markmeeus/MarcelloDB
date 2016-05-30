@@ -24,7 +24,7 @@ For instance, if you are building an iOS app, you need to instantiate the platfo
 
 ```
 
-###Step 3: It's open-a-session-time!
+###Step 3: Open a session
 You access all your data - in that specific folder - via a Session instance.
 Without a sesion, there is little you can do.
 
@@ -42,28 +42,11 @@ Sessions are designed to be long-lived. It's ok to open the session when your ap
 A static or singleton is perfectly fine, it also makes sense to register it in an IOC container.
 
 
-###Step 4: Uncork a collection
+###Step 4: Access a collection
 A collection is the MarcelloDB equivalent of a table.
 
 The session manages one or more collection-files. A collection-file manages one or more collections.
 
-First you need some entities
-```cs
-public class Address
-{
-  public string City    { get; set; }
-  public string Street  { get; set; }
-  public string Number  { get; set; }
-}
-
-public class Person
-{
-  public string         Id        { get; set; }
-  public string         Name      { get; set; }
-  public string         FirstName { get; set; }
-  public List<Address>  Addresses { get; set; }
-}
-```
 Get a collection-file from the session
 ```cs
 //                        File in the datafolder
