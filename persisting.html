@@ -55,6 +55,21 @@
                                         </a>
                                     </li>
                                                                     <li class="">
+                                        <a href="http://markmeeus.github.io/MarcelloDB/persisting.html">
+                                            Persist and Destroy
+                                        </a>
+                                    </li>
+                                                                    <li class="">
+                                        <a href="http://markmeeus.github.io/MarcelloDB/indexes.html">
+                                            Indexes
+                                        </a>
+                                    </li>
+                                                                    <li class="">
+                                        <a href="http://markmeeus.github.io/MarcelloDB/transactions.html">
+                                            Transactions
+                                        </a>
+                                    </li>
+                                                                    <li class="">
                                         <a href="http://markmeeus.github.io/MarcelloDB/upgrade04.html">
                                             Upgrading to 0.4
                                         </a>
@@ -75,7 +90,14 @@
 
                 
                 <section class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
-                    <p>persisting.md</p>
+                    <h2 id="persisting-objects">Persisting objects</h2>
+<p>Once you have a collection, you can save your objects using the Persis method.</p>
+<pre><code class="language-cs">var book = new Book(){ bookId = "123",  Title = "The Girl With The Dragon Tattoo" };
+bookCollection.Persist(book);</code></pre>
+<p>Persist inserts if there is no object associated with the ID. Otherwise it will perform an update.</p>
+<h2 id="destroying-objects">Destroying objects</h2>
+<p>The Destroy method will remove the object with the given ID from the collection.</p>
+<pre><code class="language-cs">bookCollection.Destroy("123");</code></pre>
                 </section>
 
             </div>
