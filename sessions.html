@@ -18,7 +18,7 @@
             <a class="navbar-brand" href="http://markmeeus.github.io/MarcelloDB/" style="position:relative;top:-40px;">
                 <img style="width:240px;" src="http://markmeeus.github.io/MarcelloDB/images/logo/logo_blue.svg">
                 <small class="hidden-xs hidden-sm" style="position:relative;top:4px; color:#000; font-size:30px;">
-                    NoSQL Data Storage for Xamarin/Mono/.NET Apps
+                    NoSQL Data Storage for Xamarin and Windows Apps
                 </small>
             </a>
 
@@ -50,6 +50,11 @@
                                         </a>
                                     </li>
                                                                     <li class="">
+                                        <a href="http://markmeeus.github.io/MarcelloDB/sessions.html">
+                                            Sessions, CollectionFiles and Collections
+                                        </a>
+                                    </li>
+                                                                    <li class="">
                                         <a href="http://markmeeus.github.io/MarcelloDB/upgrade04.html">
                                             Upgrading to 0.4
                                         </a>
@@ -70,7 +75,50 @@
 
                 
                 <section class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
-                    <p>sessions.md</p>
+                    <h2 id="sessions">Sessions</h2>
+<p>Using MarcelloDB starts with the creation of a session.</p>
+<p>The session manages access to the filesystem as well as transactions and concurrency.
+Interaction with MarcelloDB always requires a valid session.</p>
+<p>MarcelloDB is a portable class library, but requires injection of implementations of platform specific features.
+(Currently, MarcelloDB only relies on a platform specific implementation for reading and writing files.)
+These platform specifics are implemented in <code>Platform</code></p>
+<p>The Platform implementation for mono/.net (for Xamarin iOS and Android, and regular mono/.net) can be found in the Marcello.netfx assembly.</p>
+<p>The implementation for Windows Phone 8.1 and Windows 8.1/10 Apps can be found in the Marcello.uwp assembly.</p>
+<h3 id="creating-a-session-requires-a-platform">Creating a session requires a platform</h3>
+<p>Create the platform object</p>
+<pre><code class="language-cs">var platform =  new Platform();</code></pre>
+<p>Then create the session using the platform and a path to a folder. MarcelloDB will read and write it's data to and from this folder.</p>
+<p>(You can do this in a portable class library)</p>
+<pre><code class="language-cs">var session = new MarcelloDB.Session(platform, "/path/to/data/folder/");</code></pre>
+<h2 id="collectionfiles">CollectionFiles</h2>
+<p>MarcelloDB organizes it's data in collection-files and collections.
+A session manages one or more collection-files. A collection-file contains one or more collections.</p>
+<p>A collection-file maps directly to a file in the sessions folder.</p>
+<p>This file contains the data and indexes of all collections in that collection-file.</p>
+<blockquote>
+<p>If it makes sense in your use-case - <em>a product catalog for instance</em> - you could generate a collection-file on the server and download it to your clients.</p>
+</blockquote>
+<p>You access a collection-file by it's actual filename.</p>
+<pre><code class="language-cs">// products.data is the actual file name within the sessions folder
+var productsFile = session["products.data"];</code></pre>
+<h2 id="collections">Collections</h2>
+<p>A collection is a bit like a table in a SQL Database.</p>
+<p>It manages objects of a specific type, including subclasses.</p>
+<p>Deep down inside, MarcelloDB is a key-value store. It saves objects and allows you to retreive them back (or update/delete) by their ID.
+Since this ID is so important, it has been made part of the construction of a collection.</p>
+<p>A collection is a generic type with at least 2 generic type parameters. The first one is the type of the objects you want to store, the second one is the type of your object's ID value.</p>
+<p>When constructing the collection, you need to give it a name - like you give tables a name - and you have to provide a function to retrieve the ID from an object.</p>
+<p>like this:</p>
+<pre><code class="language-cs">//             Store instances of  [Book]  [with string ID]    [get ID from book]
+//                                   ||      ||                       ||
+var books = productsFile.Collection&lt;Book, string&gt;("books", book =&gt; book.BookId);
+
+//             Store instances of  [Dvd] [with Guid ID] [get ID from dvd]
+//                                  ||    ||                  ||
+var dvds = productsFile.Collection&lt;Dvd, Guid&gt;("dvd", dvd =&gt; dvd.id);</code></pre>
+<p>If you use different collection-names you can have multiple collections for the same type within one collection-file.</p>
+<pre><code class="language-cs">var dvdCollection = productsFile.Collection&lt;Dvd, Guid&gt;("dvds", dvd =&gt; dvd.id);
+var newDvdCollection = productsFile.Collection&lt;Dvd, Guid&gt;("new-dvds", dvd =&gt; dvd.id);</code></pre>
                 </section>
 
             </div>
