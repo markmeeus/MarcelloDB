@@ -54,18 +54,18 @@ menu:
         sessions:
           text: Sessions, CollectionFiles and Collections
           relativeUrl: sessions.html
+        persisting:
+          text: Persist and Destroy
+          relativeUrl: persisting.html
+        indexes:
+          text: Indexes
+          relativeUrl: indexes.html
+        transactions:
+          text: Transactions
+          relativeUrl: transactions.html
         upgrade04:
           text: Upgrading to 0.4
           relativeUrl: upgrade04.html
-        # sessions:
-        #   text: Sessions
-        #   relativeUrl: sessions.html
-        # collections:
-        #   text: CollectionFiles and Collections
-        #   relativeUrl: collections.html
-        # persisting:
-        #   text: Persist and Delete
-        #   relativeUrl: persisting.html
         # serialization:
         #   text: Serialization
         #   relativeUrl: serialization.html
