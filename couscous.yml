@@ -35,7 +35,7 @@ github:
 # Any variable you put in this file is also available in the Twig layouts:
 title: MarcelloDB
 logo: http://markmeeus.github.io/MarcelloDB/images/logo/logo_blue.svg
-subTitle: NoSQL Data Storage for Xamarin/Mono/.NET Apps
+subTitle: NoSQL Data Storage for Xamarin and Windows Apps
 # Base URL of the published website (no "/" at the end!)
 # You are advised to set and use this variable to write your links in the HTML layouts
 baseUrl: http://markmeeus.github.io/MarcelloDB
@@ -51,6 +51,9 @@ menu:
         quickstart:
           text: Quickstart Guide
           relativeUrl: quickstart.html
+        sessions:
+          text: Sessions, CollectionFiles and Collections
+          relativeUrl: sessions.html
         upgrade04:
           text: Upgrading to 0.4
           relativeUrl: upgrade04.html

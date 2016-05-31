@@ -6,7 +6,7 @@
 MarcelloDB is a mobile NoSql database.
 It is very light-weight with minimal memory footprint.
 
-MarcelloDB saves plain C# objects, including child objects, lists and collections.
+MarcelloDB saves plain C# objects, including child objects, lists and dictionaries.
 Not having to map your objects to the relational model can save you hundreds of lines of code.
 
 MarcelloDB is a pure C# implementation, so there is no need to package other binaries.
