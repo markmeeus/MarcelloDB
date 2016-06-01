@@ -22,9 +22,9 @@ productsFile.Collection<Book, string, BookIndexDefiniton>("books", book => book.
 
 ##Indexing properties
 
-Indexed values are defined by declaring properties on the index definition.
+Indexedes are defined by declaring properties on the index definition.
 
-You can add as many of these properties as needed, but be aware that there is a perfomance and storage-size pricetag with every index you add.
+You can define as many indexes as needed, but be aware that there is a perfomance and storage-size pricetag with every index you add.
 
 The simplest type of index is one based on a property of the objects you are storing.
 In this scenario, a corresponding property on the index definition is all that is needed.
@@ -32,8 +32,8 @@ In this scenario, a corresponding property on the index definition is all that i
 This property has to
 * have the same name as the property you want to index
 * be of type `IndexedValue<T, TAttribute>`
-* have the same type for TAttribute as the type of the property you want to index
 * have the same type for  T as the type of the objects in the collection
+* have the same type for TAttribute as the type of the property you want to index
 * has to defined as ```{ get; set; }``` (or at least behave similar)
 
 If any of these requirements is not met, the Collection method on the collection-file will throw as soon as you try to get a reference to it. So, you either get a collection with valid and working indexes, or you get an error.
@@ -138,16 +138,15 @@ var books = bookCollection
 
 
 ##Using indexes
-A collection created with an index definition has a property named 'Indexes'. This property has a property for every index available. In fact, it is just an instance of the index definition used to create the collection.
-
-Every index on that definition is now able to iterate (and search) the data sorted by the indexed value.
+A collection created with an index definition has a property named 'Indexes'.
+This Indexes property returns an instance of the IndexDefinition used to construct the collection.
+Every index on that definition can now be used to iterate, and search the data sorted by the indexed value.
 
 All enumerations are implemented in a lazy fashion. The next object is only loaded when actually requested by the iteration.
-So don't worry if you have a really large amount of data, Marcello never loads all that data in memory.
+So don't worry if you have a really large amount of data, MarcelloDB never loads all that data in memory.
 
 ###All
-Find returns an IEnumerable<T> of all objects sorted by the indexed value.
-(In later versions you'll also be able to iterate the index backwards)
+All returns an IEnumerable<T> of all objects sorted by the indexed value.
 ```cs
 bookCollection.Indexes.Title.All; //sorted by Title
 ```

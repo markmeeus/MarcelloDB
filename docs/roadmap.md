@@ -32,6 +32,7 @@
 
 0.5.0
 -
+- Compound indexes
 - Indexing list of values
 - Contains/ContainsAll query
 

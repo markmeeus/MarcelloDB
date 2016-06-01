@@ -28,3 +28,7 @@ The API and data format are getting more stable with every release. However Marc
 In other words: **not ready for production apps yet.**
 We hope to be production ready at the end of 2016.
 
+##Need Support?
+After 1.0 is released, you'll be able to get developer support as part of the Pro/Support Package. This package will also include [MarcelloDB.Encryption](encryption.html).
+
+Please contact mark.meeus@gmail.com if interested.
