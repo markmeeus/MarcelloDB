@@ -11,27 +11,26 @@ Not having to map your objects to the relational model can save you hundreds of 
 
 It's a pure C# implementation, no need to package other binaries.
 
+#Documentation
+Read the docs here: [http://www.marcellodb.org](http://www.marcellodb.org)
+
 #Current Status
 
-Current version: 0.4
+Current version: 0.4.0. See [the roadmap](http://www.marcellodb.org/roadmap.html).
 
 Although still under heavy development, both the api and the file format are already quite stable.
 
-See [roadmap](http://www.marcellodb.org/roadmap.html).
-
 Be carefull. Backwards compatibility with existing data will not be guaranteed untill v1.x
 
-##Upgrading to 0.4
+###Upgrading to 0.4
 There are a few breaking changes from 0.3 to 0.4, read about them [here](http://www.marcellodb.org/upgrade04.html)
 
-MarcelloDB is documented on [http://www.marcellodb.org](http://www.marcellodb.org)
-
-
+###Installation
 ```cs
 PM > Install-Package MarcelloDB
 ```
 
-##A simple console app to get you started.
+###A simple console app to get you started.
 
 ```cs
 
@@ -56,15 +55,17 @@ PM > Install-Package MarcelloDB
 
           bookCollection.Persist(newBook);
 
-          Console.WriteLine ("Enumerating all books");
+          Console.WriteLine("Enumerating all books");
           foreach(var book in bookCollection.All)
           {
-              Console.WriteLine (book.Title);
+              Console.WriteLine(book.Title);
           }
 
-          var theBook = bookCollection.Find ("123");
-          Console.WriteLine ("Found book: " + theBook.Title);
+          var theBook = bookCollection.Find("123");
+          Console.WriteLine("Found book: " + theBook.Title);
+          
           bookCollection.Destroy("123");
+          
           Console.ReadKey();
       }
   }
