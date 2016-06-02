@@ -115,14 +115,14 @@ These platform specifics are implemented in <code>Platform</code></p>
 <p>Then create the session using the platform and a path to a folder. MarcelloDB will read and write it's data to and from this folder.</p>
 <p>(You can do this in a portable class library)</p>
 <pre><code class="language-cs">var session = new MarcelloDB.Session(platform, "/path/to/data/folder/");</code></pre>
-<p>The session will remain valid until it is garbage collection, or Disposed. A good approach would be to keep it around for a long time. Attach it to your App instance, keep it in a static or singleton or inside a IOC.</p>
+<p>The session will remain valid until it is garbage collected or disposed. A good approach would be to keep it around for a long time. Attach it to your App instance, keep it in a static or singleton or inside a IOC Container.</p>
 <h2 id="collectionfiles">CollectionFiles</h2>
 <p>MarcelloDB organizes it's data in collection-files and collections.
 A session manages one or more collection-files. A collection-file contains one or more collections.</p>
 <p>A collection-file maps directly to a file in the sessions folder.</p>
 <p>This file contains the data and indexes of all collections in that collection-file.</p>
 <blockquote>
-<p>If it makes sense in your use-case - <em>a product catalog for instance</em> - you could generate a collection-file on the server and download it to your clients.</p>
+<p>If it makes sense in your use-case - <em>a product catalog for instance</em> - you could generate a collection-file on the server and download it from your clients.</p>
 </blockquote>
 <p>You access a collection-file by it's actual filename.</p>
 <pre><code class="language-cs">// products.data is the actual file name within the sessions folder
@@ -133,6 +133,9 @@ var productsFile = session["products.data"];</code></pre>
 <p>Deep down inside, MarcelloDB is a key-value store. It saves objects and allows you to retreive them back (or update/delete) by their ID.
 Since this ID is so important, it has been made part of the construction of a collection.</p>
 <p>A collection is a generic type with at least 2 generic type parameters. The first one is the type of the objects you want to store, the second one is the type of your object's ID value.</p>
+<blockquote>
+<p>The third generic parameter is the index definition. Read about <a href="indexes.html">indexes</a></p>
+</blockquote>
 <p>When constructing the collection, you need to give it a name - like you give tables a name - and you have to provide a function to retrieve the ID from an object.</p>
 <p>like this:</p>
 <pre><code class="language-cs">//             Store instances of  [Book]  [with string ID]    [get ID from book]
