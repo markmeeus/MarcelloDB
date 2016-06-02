@@ -43,4 +43,4 @@ var thrillers = bookCollection.Indexes.Category.Find(Categories.Thriller);
 ###Why no Linq-To-MarcelloDB
 Linq-To-MarcelloDB would certainly be possible. The expression could be evaluated and when an index exists, it could be used.
 However, the philosofy of MarcelloDB is to be always explicit, allowing the compiler to protect you as much as possible.
-Using this expressive api, it is obvious that an index is used.
+Using this expressive api, it is obvious that an index is used. No need for debugging here.

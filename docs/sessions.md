@@ -26,7 +26,7 @@ Then create the session using the platform and a path to a folder. MarcelloDB wi
 var session = new MarcelloDB.Session(platform, "/path/to/data/folder/");
 ```
 
-The session will remain valid until it is garbage collection, or Disposed. A good approach would be to keep it around for a long time. Attach it to your App instance, keep it in a static or singleton or inside a IOC.
+The session will remain valid until it is garbage collected or disposed. A good approach would be to keep it around for a long time. Attach it to your App instance, keep it in a static or singleton or inside a IOC Container.
 
 ##CollectionFiles
 
@@ -37,7 +37,7 @@ A collection-file maps directly to a file in the sessions folder.
 
 This file contains the data and indexes of all collections in that collection-file.
 
-> If it makes sense in your use-case - *a product catalog for instance* - you could generate a collection-file on the server and download it to your clients.
+> If it makes sense in your use-case - *a product catalog for instance* - you could generate a collection-file on the server and download it from your clients.
 
 You access a collection-file by it's actual filename.
 
@@ -56,6 +56,8 @@ Deep down inside, MarcelloDB is a key-value store. It saves objects and allows y
 Since this ID is so important, it has been made part of the construction of a collection.
 
 A collection is a generic type with at least 2 generic type parameters. The first one is the type of the objects you want to store, the second one is the type of your object's ID value.
+  > The third generic parameter is the index definition. Read about [indexes](indexes.html)
+
 
 When constructing the collection, you need to give it a name - like you give tables a name - and you have to provide a function to retrieve the ID from an object.
 
