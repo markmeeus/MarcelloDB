@@ -60,6 +60,11 @@
                                         </a>
                                     </li>
                                                                     <li class="">
+                                        <a href="http://markmeeus.github.io/MarcelloDB/reading.html">
+                                            Find and Enumerate
+                                        </a>
+                                    </li>
+                                                                    <li class="">
                                         <a href="http://markmeeus.github.io/MarcelloDB/indexes.html">
                                             Indexes
                                         </a>
@@ -67,6 +72,11 @@
                                                                     <li class="">
                                         <a href="http://markmeeus.github.io/MarcelloDB/transactions.html">
                                             Transactions
+                                        </a>
+                                    </li>
+                                                                    <li class="">
+                                        <a href="http://markmeeus.github.io/MarcelloDB/encryption.html">
+                                            Encryption
                                         </a>
                                     </li>
                                                                     <li class="">
@@ -90,7 +100,31 @@
 
                 
                 <section class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
-                    <p>serialization.md</p>
+                    <h2 id="finding-an-object">Finding an object</h2>
+<p>MarcelloDB keeps track of all objects in a collection using it's ID. The ID's of a collection are stored in a BTree structure inside the same collection-file.</p>
+<p>Finding an object by it's ID is very performant, even for very large collections.</p>
+<pre><code class="language-cs">bookCollection.Find(123);</code></pre>
+<p>The Find method uses the generic type for the ID as parameter. This way, the compiler will protect you from trivial type mistakes.</p>
+<h2 id="enumerating-a-collection">Enumerating a collection</h2>
+<p>Using the collections All property you can enumerate all objects in the collection.</p>
+<pre><code class="language-cs">foreach(var book in bookCollection.All){}</code></pre>
+<p>MarcelloDB loads only the current object in memory, so even for large collections, enumerating would be quite safe to do memory-wise.</p>
+<blockquote>
+<p>To avoid data corruption, enumerating a collection locks the collection for other threads write operations untill the enumeration is done.</p>
+<p>MarcelloDB will throw an exception when the enumerating thread tries to write.</p>
+</blockquote>
+<h2 id="a-note-about-linq">A note about Linq</h2>
+<p>Since All is an IEnumerable&lt;T&gt; (T is the type of your objects) you can use Linq on it.</p>
+<p>However, there is no such thing as Linq-To-MarcelloDB. Some Linq expressions will still enumerate all objects. Which may be fine for a small collection.</p>
+<p>For instance, to get all trillers from a book collection, this will work.</p>
+<pre><code class="language-cs">var thrillers = bookCollection.All.Where(b =&gt; b.Category == Categories.Thriller);</code></pre>
+<p>However you are much better of using an index.
+<a href="indexes.html">(More about indexes ...)</a></p>
+<pre><code class="language-cs">var thrillers = bookCollection.Indexes.Category.Find(Categories.Thriller);</code></pre>
+<h3 id="why-no-linq-to-marcellodb">Why no Linq-To-MarcelloDB</h3>
+<p>Linq-To-MarcelloDB would certainly be possible. The expression could be evaluated and when an index exists, it could be used.
+However, the philosofy of MarcelloDB is to be always explicit, allowing the compiler to protect you as much as possible.
+Using this expressive api, it is obvious that an index is used.</p>
                 </section>
 
             </div>

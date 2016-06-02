@@ -60,6 +60,11 @@
                                         </a>
                                     </li>
                                                                     <li class="">
+                                        <a href="http://markmeeus.github.io/MarcelloDB/reading.html">
+                                            Find and Enumerate
+                                        </a>
+                                    </li>
+                                                                    <li class="">
                                         <a href="http://markmeeus.github.io/MarcelloDB/indexes.html">
                                             Indexes
                                         </a>
@@ -67,6 +72,11 @@
                                                                     <li class="">
                                         <a href="http://markmeeus.github.io/MarcelloDB/transactions.html">
                                             Transactions
+                                        </a>
+                                    </li>
+                                                                    <li class="">
+                                        <a href="http://markmeeus.github.io/MarcelloDB/encryption.html">
+                                            Encryption
                                         </a>
                                     </li>
                                                                     <li class="">
@@ -105,16 +115,16 @@ In case of the bookCollection:</p>
 productsFile.Collection&lt;Book, string, BookIndexDefiniton&gt;("books", book =&gt; book.Id);
 //                            ------------------</code></pre>
 <h2 id="indexing-properties">Indexing properties</h2>
-<p>Indexed values are defined by declaring properties on the index definition.</p>
-<p>You can add as many of these properties as needed, but be aware that there is a perfomance and storage-size pricetag with every index you add.</p>
+<p>Indexedes are defined by declaring properties on the index definition.</p>
+<p>You can define as many indexes as needed, but be aware that there is a perfomance and storage-size pricetag with every index you add.</p>
 <p>The simplest type of index is one based on a property of the objects you are storing.
 In this scenario, a corresponding property on the index definition is all that is needed.</p>
 <p>This property has to</p>
 <ul>
 <li>have the same name as the property you want to index</li>
 <li>be of type <code>IndexedValue&lt;T, TAttribute&gt;</code></li>
-<li>have the same type for TAttribute as the type of the property you want to index</li>
 <li>have the same type for  T as the type of the objects in the collection</li>
+<li>have the same type for TAttribute as the type of the property you want to index</li>
 <li>has to defined as <code>{ get; set; }</code> (or at least behave similar)</li>
 </ul>
 <p>If any of these requirements is not met, the Collection method on the collection-file will throw as soon as you try to get a reference to it. So, you either get a collection with valid and working indexes, or you get an error.</p>
@@ -197,13 +207,13 @@ var books = bookCollection
   );
 </code></pre>
 <h2 id="using-indexes">Using indexes</h2>
-<p>A collection created with an index definition has a property named 'Indexes'. This property has a property for every index available. In fact, it is just an instance of the index definition used to create the collection.</p>
-<p>Every index on that definition is now able to iterate (and search) the data sorted by the indexed value.</p>
+<p>A collection created with an index definition has a property named 'Indexes'.
+This Indexes property returns an instance of the IndexDefinition used to construct the collection.
+Every index on that definition can now be used to iterate, and search the data sorted by the indexed value.</p>
 <p>All enumerations are implemented in a lazy fashion. The next object is only loaded when actually requested by the iteration.
-So don't worry if you have a really large amount of data, Marcello never loads all that data in memory.</p>
+So don't worry if you have a really large amount of data, MarcelloDB never loads all that data in memory.</p>
 <h3 id="all">All</h3>
-<p>Find returns an IEnumerable<T> of all objects sorted by the indexed value.
-(In later versions you'll also be able to iterate the index backwards)</p>
+<p>All returns an IEnumerable<T> of all objects sorted by the indexed value.</p>
 <pre><code class="language-cs">bookCollection.Indexes.Title.All; //sorted by Title</code></pre>
 <h3 id="find">Find</h3>
 <p>Find returns an IEnumerable<T> of all objects that have the specific value for the indexed value.</p>

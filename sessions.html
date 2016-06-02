@@ -60,6 +60,11 @@
                                         </a>
                                     </li>
                                                                     <li class="">
+                                        <a href="http://markmeeus.github.io/MarcelloDB/reading.html">
+                                            Find and Enumerate
+                                        </a>
+                                    </li>
+                                                                    <li class="">
                                         <a href="http://markmeeus.github.io/MarcelloDB/indexes.html">
                                             Indexes
                                         </a>
@@ -67,6 +72,11 @@
                                                                     <li class="">
                                         <a href="http://markmeeus.github.io/MarcelloDB/transactions.html">
                                             Transactions
+                                        </a>
+                                    </li>
+                                                                    <li class="">
+                                        <a href="http://markmeeus.github.io/MarcelloDB/encryption.html">
+                                            Encryption
                                         </a>
                                     </li>
                                                                     <li class="">
@@ -105,6 +115,7 @@ These platform specifics are implemented in <code>Platform</code></p>
 <p>Then create the session using the platform and a path to a folder. MarcelloDB will read and write it's data to and from this folder.</p>
 <p>(You can do this in a portable class library)</p>
 <pre><code class="language-cs">var session = new MarcelloDB.Session(platform, "/path/to/data/folder/");</code></pre>
+<p>The session will remain valid until it is garbage collection, or Disposed. A good approach would be to keep it around for a long time. Attach it to your App instance, keep it in a static or singleton or inside a IOC.</p>
 <h2 id="collectionfiles">CollectionFiles</h2>
 <p>MarcelloDB organizes it's data in collection-files and collections.
 A session manages one or more collection-files. A collection-file contains one or more collections.</p>

@@ -60,6 +60,11 @@
                                         </a>
                                     </li>
                                                                     <li class="">
+                                        <a href="http://markmeeus.github.io/MarcelloDB/reading.html">
+                                            Find and Enumerate
+                                        </a>
+                                    </li>
+                                                                    <li class="">
                                         <a href="http://markmeeus.github.io/MarcelloDB/indexes.html">
                                             Indexes
                                         </a>
@@ -67,6 +72,11 @@
                                                                     <li class="">
                                         <a href="http://markmeeus.github.io/MarcelloDB/transactions.html">
                                             Transactions
+                                        </a>
+                                    </li>
+                                                                    <li class="">
+                                        <a href="http://markmeeus.github.io/MarcelloDB/encryption.html">
+                                            Encryption
                                         </a>
                                     </li>
                                                                     <li class="">
@@ -91,11 +101,11 @@
                 
                 <section class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
                     <h2 id="quickstart-guide">Quickstart Guide</h2>
-<h3 id="step-1-install--marcellodb-using-nuget">Step 1: Install  MarcelloDB using nuget.</h3>
+<h3 id="install--marcellodb-using-nuget">Install  MarcelloDB using nuget.</h3>
 <p>MarcelloDB is released on nuget.org, so it is pretty easy to install.</p>
 <pre><code class="language-cs">PM &gt; Install-Package MarcelloDB</code></pre>
 <p>Alternatively, you can use your IDE to install the package. It is called 'MarcelloDB'.</p>
-<h3 id="step-2-create-a-platform-object">Step 2: Create a platform object.</h3>
+<h3 id="create-a-platform-object">Create a platform object.</h3>
 <p>MarcelloDB needs a specific Platform object to interact with the specific OS.</p>
 <p>You should create it in your platform specific code.</p>
 <p>For instance, if you are building an iOS app, you need to instantiate the platform in the iOS code.</p>
@@ -105,7 +115,7 @@
   //In a windows (or phone) 8.1/10
   IPlatform platform =  new MarcelloDB.uwp.Platform();
 </code></pre>
-<h3 id="step-3-open-a-session">Step 3: Open a session</h3>
+<h3 id="open-a-session">Open a session</h3>
 <p>You access all your data - in that specific folder - via a Session instance.
 Without a sesion, there is little you can do.</p>
 <p>Opening a session requires the platform instance and a directory path.</p>
@@ -114,7 +124,7 @@ Without a sesion, there is little you can do.</p>
 <pre><code class="language-cs">var session = new MarcelloDB.Session(platform, dataPath);</code></pre>
 <p>Sessions are designed to be long-lived. It's ok to open the session when your app starts, and keep it open until your app closes.</p>
 <p>A static or singleton is perfectly fine, it also makes sense to register it in an IOC container.</p>
-<h3 id="step-4-access-a-collection">Step 4: Access a collection</h3>
+<h3 id="access-a-collection">Access a collection</h3>
 <p>A collection is the MarcelloDB equivalent of a table.</p>
 <p>The session manages one or more collection-files. A collection-file manages one or more collections.</p>
 <p>Get a collection-file from the session</p>
@@ -133,7 +143,7 @@ var personsCollection = personsFile.Collection&lt;Person, string&gt;("persons", 
 <p>Also, the entire object is stored, including child objects, lists and dictionaries.</p>
 <p>Bson serialization is done with json.net. If json.net can serialize it, MarcelloDB can store it.</p>
 </blockquote>
-<h3 id="step-5-save-you-an-object">Step 5: Save you an object</h3>
+<h3 id="save-you-an-object">Save you an object</h3>
 <p>Get you hands on some data</p>
 <pre><code class="language-cs">var person = new Person{
   id = "1",
@@ -146,7 +156,7 @@ var personsCollection = personsFile.Collection&lt;Person, string&gt;("persons", 
 }</code></pre>
 <p>And save it in the collection</p>
 <pre><code class="language-cs">personsCollection.Persist(person);</code></pre>
-<h3 id="step-6-find-your-data">Step 6: Find your data</h3>
+<h3 id="find-your-data">Find your data</h3>
 <p>The simplest way to find data is by it's ID. The find method does just that.</p>
 <pre><code class="language-cs">var jon = personsCollection.Find("1");</code></pre>
 <blockquote>
@@ -154,7 +164,7 @@ var personsCollection = personsFile.Collection&lt;Person, string&gt;("persons", 
 <p>Find now takes a <em>string</em> and returns a <em>Person</em>.</p>
 </blockquote>
 <p>You can also find your data using custom indexes, find out more on the indexing page. (coming soon.)</p>
-<h3 id="step-7-delete-your-data">Step 7: Delete your data</h3>
+<h3 id="delete-your-data">Delete your data</h3>
 <p>If you are really sure Jon won't come back...</p>
 <pre><code class="language-cs">personsCollection.Delete("1");</code></pre>
                 </section>
