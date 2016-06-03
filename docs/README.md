@@ -16,7 +16,7 @@ It's a portable class library: Xamarin (iOS and Android), Windows(Phone) 8.1 and
 
 Read the [Quickstart Guide](quickstart.md) to get up to speed quickly.
 
-A lot of thought went into the API design, we you'll like it.
+A lot of thought went into the API design, we hope you'll like it.
 
 If you have any questions, thoughts or remarks. Please open an issue on [github.](https://github.com/markmeeus/marcellodb/issues)
 

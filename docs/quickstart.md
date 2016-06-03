@@ -97,7 +97,7 @@ var jon = personsCollection.Find("1");
 
 > Find now takes a *string* and returns a *Person*.
 
-You can also find your data using custom indexes, find out more on the indexing page. (coming soon.)
+You can also find your data using [indexes](indexes.html).
 
 
 ###Delete your data
