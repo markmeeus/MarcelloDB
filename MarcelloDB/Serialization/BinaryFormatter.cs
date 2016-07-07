@@ -288,7 +288,7 @@ namespace MarcelloDB.Serialization
         internal DateTime? ReadNullableDateTime()
         {
             ReadValidTypeID(TypeID.NullableDateTime);
-            return ReadNullable<DateTime?>(()=>new DateTime(this.Reader.ReadInt64()));
+            return ReadNullable<DateTime?>(()=>DateTime.FromBinary(this.Reader.ReadInt64()));
         }
 
         internal void WriteString(string value)
