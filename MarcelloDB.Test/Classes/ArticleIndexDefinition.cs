@@ -20,6 +20,18 @@ namespace MarcelloDB.Test.Classes
                     });
             }
         }
+
+        public IndexedValue<Article, CompoundValue<string, string>> CodeAndName {
+            get{
+                return IndexedValue((article) =>
+                    {
+                        return CompoundValue.Build(
+                            article.Code,
+                            article.Name
+                         );
+                    });
+            }
+        }
     }
 }
 

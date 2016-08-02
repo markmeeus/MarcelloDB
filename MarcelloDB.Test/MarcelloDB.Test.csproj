@@ -33,6 +33,10 @@
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Article.cs" />
@@ -81,6 +85,7 @@
     <Compile Include="Serialization\TransactionJournalSerializerTest.cs" />
     <Compile Include="Serialization\CollectionFileRootSerializerTest.cs" />
     <Compile Include="Records\IndexMetaRecordTest.cs" />
+    <Compile Include="Index\CompoundValueTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

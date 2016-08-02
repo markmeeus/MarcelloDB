@@ -50,6 +50,19 @@ namespace MarcelloDB.Test.Integration
         }
 
         [Test]
+        public void Insert_Object_Updates_Custom_Compound_Index()
+        {
+            var toiletPaper = Article.ToiletPaper;
+
+            _articles.Persist(toiletPaper);
+
+            var papers = _articles.Indexes.CodeAndName
+                .Find(CompoundValue.Build(Article.ToiletPaper.Code, Article.ToiletPaper.Name));
+
+            Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
+        }
+
+        [Test]
         public void Update_Object_Removes_From_Property_Index()
         {
             var toiletPaper = Article.ToiletPaper;

@@ -12,15 +12,19 @@ namespace MarcelloDB.Test.Classes
 
         public string Description { get; set; }
 
-        public int ID{ get; set;}
+        public int ID { get; set;}
+
+        public string Code { get; set; }
 
         public string Category { get; set; }
+
         public static Article ToiletPaper
         {
             get
             {
                 return new Article(){
                     ID = 1,
+                    Code = "001",
                     Name = "Toilet Paper",
                     Description = "The finest paper money can buy",
                     Category = "Hygiene"
@@ -34,6 +38,7 @@ namespace MarcelloDB.Test.Classes
             {
                 return new Article(){
                     ID = 2,
+                    Code = "002",
                     Name = "DVD: This is Spinal Tap",
                     Description = "Best dvd ever",
                     Category = "Entertainment"
@@ -47,6 +52,7 @@ namespace MarcelloDB.Test.Classes
             {
                 return new Article(){
                     ID = 3,
+                    Code = "003",
                     Name = "Barbie Doll",
                     Description = "Some doll",
                     Category = "Toys"
@@ -66,6 +72,7 @@ namespace MarcelloDB.Test.Classes
             {
                 return new Food{
                     ID = 4,
+                    Code = "004",
                     Expires = DateTime.Now.AddDays(2),
                     Name = "Bread",
                     Description = "White Bread",
