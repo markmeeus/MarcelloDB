@@ -3,7 +3,7 @@
 
 [![Build Status](https://travis-ci.org/markmeeus/MarcelloDB.svg?branch=master)](https://travis-ci.org/markmeeus/MarcelloDB)
 
-MarcelloDB is a mobile NoSql database for Xamarin, Windows(Phone) 8.1/10 and regular .net/mono.
+MarcelloDB is a mobile NoSql database for Xamarin iOS and Android, Windows(Phone) 8.1/10 and regular .net/mono.
 It is very light-weight with minimal memory footprint.
 
 MarcelloDB saves plain C# objects, including child objects, lists and dictionaries.
