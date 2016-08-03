@@ -12,7 +12,7 @@ namespace MarcelloDB.Test.Classes
 
         public IndexedValue<Article, string> Category { get; set; }
 
-        public IndexedValue<Article, string> NameAndDescription {
+        public IndexedValue<Article, string> FullDescription {
             get {
                 return IndexedValue((Article article) =>
                     {

@@ -43,7 +43,7 @@ namespace MarcelloDB.Test.Integration
 
             _articles.Persist(toiletPaper);
 
-            var papers = _articles.Indexes.NameAndDescription
+            var papers = _articles.Indexes.FullDescription
                 .Find(String.Format("{0}-{1}", Article.ToiletPaper.Name, Article.ToiletPaper.Description));
 
             Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
@@ -86,7 +86,7 @@ namespace MarcelloDB.Test.Integration
             toiletPaper.Name = "Papier de toilette";
             _articles.Persist(toiletPaper);
 
-            var papers = _articles.Indexes.NameAndDescription
+            var papers = _articles.Indexes.FullDescription
                 .Find(String.Format("{0}-{1}", originalName, Article.ToiletPaper.Description));
 
             Assert.IsEmpty(papers);
@@ -116,7 +116,7 @@ namespace MarcelloDB.Test.Integration
             toiletPaper.Name = new string('a', 10000);
             _articles.Persist(toiletPaper);
 
-            var papers = _articles.Indexes.NameAndDescription
+            var papers = _articles.Indexes.FullDescription
                 .Find(String.Format("{0}-{1}", toiletPaper.Name,toiletPaper.Description));
 
             Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
@@ -142,7 +142,7 @@ namespace MarcelloDB.Test.Integration
             _articles.Persist(toiletPaper);
             _articles.Destroy(toiletPaper.ID);
 
-            var papers = _articles.Indexes.NameAndDescription
+            var papers = _articles.Indexes.FullDescription
                 .Find(String.Format("{0}-{1}", Article.ToiletPaper.Name, Article.ToiletPaper.Description));
             Assert.IsEmpty(papers);
         }
