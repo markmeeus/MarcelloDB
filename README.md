@@ -43,31 +43,29 @@ PM > Install-Package MarcelloDB
   {
       public static void Main (string[] args)
       {
-          //Create a session
-          var platform =  new Platform();
+          var platform =  new MarcelloDB.netfx.Platform();
           var session = new MarcelloDB.Session(platform, ".");
 
           var productsFile = session["products.data"];
 
           var bookCollection = productsFile.Collection<Book, string>("books", book => book.BookId);
 
-          var newBook = new Book(){ BookId = "123",  Title = "The Girl With The Dragon Tattoo" };
+          var newBook = new Book{ BookId = "123",  Title = "The Girl With The Dragon Tattoo" };
 
           bookCollection.Persist(newBook);
 
-          Console.WriteLine("Enumerating all books");
           foreach(var book in bookCollection.All)
           {
               Console.WriteLine(book.Title);
           }
 
           var theBook = bookCollection.Find("123");
+          
           Console.WriteLine("Found book: " + theBook.Title);
           
           bookCollection.Destroy("123");
-          
-          Console.ReadKey();
       }
   }
 
 ```
+### Learn more: www.marcellodb.org
