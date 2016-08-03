@@ -54,10 +54,12 @@ namespace MarcelloDB.Test.Integration
         {
             var toiletPaper = Article.ToiletPaper;
 
-            _articles.Persist(toiletPaper);
+            _articles.Persist(Article.BarbieDoll);
+            _articles.Persist(Article.SpinalTapDvd);
+            _articles.Persist(Article.ToiletPaper);
 
             var papers = _articles.Indexes.CodeAndName
-                .Find(CompoundValue.Build(Article.ToiletPaper.Code, Article.ToiletPaper.Name));
+                .Find(Article.ToiletPaper.Code, Article.ToiletPaper.Name);
 
             Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
         }

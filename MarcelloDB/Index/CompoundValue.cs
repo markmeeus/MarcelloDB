@@ -19,7 +19,7 @@ namespace MarcelloDB.Index
         }
         #endregion
 
-        public static CompoundValue<T1, T2> Build<T1, T2>(T1 value1, T2 value2)
+        internal static CompoundValue<T1, T2> Build<T1, T2>(T1 value1, T2 value2)
         {
             return new CompoundValue<T1, T2>(value1, value2);
         }

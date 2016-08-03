@@ -27,18 +27,11 @@ namespace MarcelloDB.Index
             if (prop.DeclaringType == definitionType)
             {
                 var propertyType = prop.PropertyType;
-                if (propertyType.IsConstructedGenericType)
+                if (!typeof(IndexedValue).GetTypeInfo().IsAssignableFrom(propertyType.GetTypeInfo()))
                 {
-                    if (propertyType.GetGenericTypeDefinition() != typeof(IndexedValue<, >))
-                    {
-                        UnexpectedPropertyTypeError(definitionType.Name,prop.Name, prop.PropertyType.Name);
-                    }
-                    ValidateAttribute(definition, definitionType, targetType, prop, propertyType.GenericTypeArguments[1]);
+                    UnexpectedPropertyTypeError(definitionType.Name,prop.Name, prop.PropertyType.Name);
                 }
-                else
-                {
-                    UnexpectedPropertyTypeError(definitionType.Name, prop.Name, prop.PropertyType.Name);
-                }
+                ValidateAttribute(definition, definitionType, targetType, prop, propertyType.GenericTypeArguments[1]);
             }
         }
 

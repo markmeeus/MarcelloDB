@@ -21,14 +21,12 @@ namespace MarcelloDB.Test.Classes
             }
         }
 
-        public IndexedValue<Article, CompoundValue<string, string>> CodeAndName {
+        public CompoundIndexedValue<Article, string, string> CodeAndName
+        {
             get{
-                return IndexedValue((article) =>
+                return CompoundIndexedValue((article) =>
                     {
-                        return CompoundValue.Build(
-                            article.Code,
-                            article.Name
-                         );
+                        return CompoundValue.Build(article.Code, article.Name);
                     });
             }
         }

@@ -53,17 +53,26 @@ namespace MarcelloDB.Index
             }
         }
 
+        protected CompoundIndexedValue<T, TAtt1, TAtt2> CompoundIndexedValue<TAtt1, TAtt2>
+            (Func<T, CompoundValue<TAtt1, TAtt2>> valueFunc, [CallerMemberName] string callerMember = "")
+        {
+            if (this.Building)
+            {
+                return new CompoundIndexedValue<T, TAtt1, TAtt2>(valueFunc);
+            }
+            else
+            {
+                return (CompoundIndexedValue<T, TAtt1, TAtt2>)IndexedValues.First(v => v.PropertyName == callerMember);
+            }
+        }
+
         protected void BuildIndexedValues()
         {
             foreach (var prop in this.GetType().GetRuntimeProperties())
             {
-                var propertyType = prop.PropertyType;
-                if (propertyType.IsConstructedGenericType)
-                {
-                    if (propertyType.GetGenericTypeDefinition() == typeof(IndexedValue<, >))
-                    {
-                        this.IndexedValues.Add(BuildIndexedValue(prop));
-                    }
+                if(prop.DeclaringType == this.GetType()){
+                    var propertyType = prop.PropertyType;
+                    this.IndexedValues.Add(BuildIndexedValue(prop));
                 }
             }
         }

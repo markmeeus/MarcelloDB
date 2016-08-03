@@ -103,6 +103,10 @@
     <Compile Include="Serialization\TransactionJournalSerializer.cs" />
     <Compile Include="Serialization\CollectionFileRootSerializer.cs" />
     <Compile Include="Index\CompoundValue.cs" />
+    <Compile Include="Collections\IndexedValueTypes\IndexedValueTT.cs" />
+    <Compile Include="Collections\IndexedValueTypes\IndexedIDValue.cs" />
+    <Compile Include="Collections\IndexedValueTypes\CompoundIndexedValue.cs" />
+    <Compile Include="Collections\IndexedValueTypes\BaseIndexedValueTT.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Runtime" />
@@ -115,6 +119,7 @@
   <ItemGroup>
     <Folder Include="Platform\" />
     <Folder Include="Collections\Scopes\" />
+    <Folder Include="Collections\IndexedValueTypes\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
