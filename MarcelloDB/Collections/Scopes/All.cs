@@ -7,9 +7,9 @@ namespace MarcelloDB.Collections.Scopes
 {
     public class All<TObj, TAttribute> : BaseScope<TObj, TAttribute>
     {
-        IndexedValue<TObj, TAttribute> IndexedValue { get; set; }
+        BaseIndexedValue<TObj, TAttribute> IndexedValue { get; set; }
 
-        internal All(IndexedValue<TObj, TAttribute> indexedValue)
+        internal All(BaseIndexedValue<TObj, TAttribute> indexedValue)
         {
             this.IndexedValue = indexedValue;
 

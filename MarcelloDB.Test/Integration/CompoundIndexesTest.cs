@@ -132,6 +132,24 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
             var item2 = indexables.Indexes.Compound1And2And3And4.Find(2, 2, 2, "2").First();
             Assert.AreEqual(2, item2.ID);
         }
+
+        [Test]
+        public void TestAll()
+        {
+            var indexables =
+                _collectionFile.Collection<Indexable, int, IndexableIndexDefinition4>("indexables3", i => i.ID);
+
+            indexables.Persist(Indexable.CreateIndexable(3));
+            indexables.Persist(Indexable.CreateIndexable(2));
+            indexables.Persist(Indexable.CreateIndexable(1));
+
+            var items = indexables.Indexes.Compound1And2And3And4.All.ToList();
+                Assert.AreEqual(3, items.Count);
+
+            Assert.AreEqual(1, items[0].ID);
+            Assert.AreEqual(2, items[1].ID);
+            Assert.AreEqual(3, items[2].ID);
+        }
     }
 }
 

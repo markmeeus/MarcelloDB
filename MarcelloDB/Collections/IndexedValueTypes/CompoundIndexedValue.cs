@@ -47,6 +47,7 @@ namespace MarcelloDB.Collections
         {
             return base.FindInternal(CompoundValue.Build(val1, val2, val3, val4));
         }
+
     }
 }
 

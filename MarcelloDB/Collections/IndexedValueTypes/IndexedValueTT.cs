@@ -28,14 +28,6 @@ namespace MarcelloDB.Collections
             return base.FindInternal(value);
         }
 
-        public All<TObj, TAttribute> All
-        {
-            get
-            {
-                return new All<TObj, TAttribute>(this);
-            }
-        }
-
         public BetweenBuilder<TObj, TAttribute> Between(TAttribute startValue)
         {
             return new BetweenBuilder<TObj, TAttribute>(this, startValue, false);

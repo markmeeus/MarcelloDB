@@ -5,6 +5,7 @@ using MarcelloDB.Index;
 using MarcelloDB.Index.BTree;
 using System.Reflection;
 using System.Collections.Generic;
+using MarcelloDB.Collections.Scopes;
 
 namespace MarcelloDB.Collections
 {
@@ -132,6 +133,13 @@ namespace MarcelloDB.Collections
         }
 
         #region scope operations
+        public All<TObj, TAttribute> All
+        {
+            get
+            {
+                return new All<TObj, TAttribute>(this);
+            }
+        }
         internal IEnumerable<TObj> FindInternal(TAttribute value)
         {
             var key = new ValueWithAddressIndexKey<TAttribute>{ V = value };
