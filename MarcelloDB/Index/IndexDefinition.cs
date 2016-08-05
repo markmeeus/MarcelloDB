@@ -40,32 +40,6 @@ namespace MarcelloDB.Index
             }
         }
 
-        protected IndexedValue<T, TAttribute> IndexedValue<TAttribute>
-            (Func<T, TAttribute> valueFunc, [CallerMemberName] string callerMember = "")
-        {
-            if (this.Building)
-            {
-                return new IndexedValue<T, TAttribute>(valueFunc);
-            }
-            else
-            {
-                return (IndexedValue<T, TAttribute>)IndexedValues.First(v => v.PropertyName == callerMember);
-            }
-        }
-
-        protected CompoundIndexedValue<T, TAtt1, TAtt2> CompoundIndexedValue<TAtt1, TAtt2>
-            (Func<T, CompoundValue<TAtt1, TAtt2>> valueFunc, [CallerMemberName] string callerMember = "")
-        {
-            if (this.Building)
-            {
-                return new CompoundIndexedValue<T, TAtt1, TAtt2>(valueFunc);
-            }
-            else
-            {
-                return (CompoundIndexedValue<T, TAtt1, TAtt2>)IndexedValues.First(v => v.PropertyName == callerMember);
-            }
-        }
-
         protected void BuildIndexedValues()
         {
             foreach (var prop in this.GetType().GetRuntimeProperties())
@@ -92,6 +66,48 @@ namespace MarcelloDB.Index
             indexedValue.PropertyName = prop.Name;
             return indexedValue;
         }
+
+        #region protected, but public api
+        protected IndexedValue<T, TAttribute> IndexedValue<TAttribute>
+        (Func<T, TAttribute> valueFunc, [CallerMemberName] string callerMember = "")
+        {
+            if (this.Building)
+            {
+                return new IndexedValue<T, TAttribute>(valueFunc);
+            }
+            else
+            {
+                return (IndexedValue<T, TAttribute>)IndexedValues.First(v => v.PropertyName == callerMember);
+            }
+        }
+
+        protected CompoundIndexedValue<T, TAtt1, TAtt2> CompoundIndexedValue<TAtt1, TAtt2>
+        (Func<T, CompoundValue<TAtt1, TAtt2>> valueFunc, [CallerMemberName] string callerMember = "")
+        {
+            if (this.Building)
+            {
+                return new CompoundIndexedValue<T, TAtt1, TAtt2>(valueFunc);
+            }
+            else
+            {
+                return (CompoundIndexedValue<T, TAtt1, TAtt2>)IndexedValues.First(v => v.PropertyName == callerMember);
+            }
+        }
+
+        protected CompoundIndexedValue<T, TAtt1, TAtt2, TAtt3> CompoundIndexedValue<TAtt1, TAtt2, TAtt3>
+        (Func<T, CompoundValue<TAtt1, TAtt2, TAtt3>> valueFunc, [CallerMemberName] string callerMember = "")
+        {
+            if (this.Building)
+            {
+                return new CompoundIndexedValue<T, TAtt1, TAtt2, TAtt3>(valueFunc);
+            }
+            else
+            {
+                return (CompoundIndexedValue<T, TAtt1, TAtt2, TAtt3>)IndexedValues.First(v => v.PropertyName == callerMember);
+            }
+        }
+
+        #endregion
     }
 }
 

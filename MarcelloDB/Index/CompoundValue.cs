@@ -24,6 +24,11 @@ namespace MarcelloDB.Index
             return new CompoundValue<T1, T2>(value1, value2);
         }
 
+        internal static CompoundValue<T1, T2, T3> Build<T1, T2, T3>(T1 value1, T2 value2, T3 value3)
+        {
+            return new CompoundValue<T1, T2, T3>(value1, value2, value3);
+        }
+
         int CompareValues(IEnumerable<object> valuesA, IEnumerable<object> valuesB)
         {
             if (valuesA.Count() == 0)
@@ -59,22 +64,30 @@ namespace MarcelloDB.Index
 
     public class CompoundValue<T1, T2> : CompoundValue{
 
-        public T1 P1 { get; set; }
-        public T2 P2 { get; set; }
+        public T1 P1 { get; set; } public T2 P2 { get; set; }
 
-        internal CompoundValue(){
-        }
+        internal CompoundValue(){}
 
-        internal CompoundValue(T1 p1, T2 p2){
-            this.P1 = p1;
-            this.P2 = p2;
-        }
+        internal CompoundValue(T1 p1, T2 p2){this.P1 = p1;this.P2 = p2;}
 
         internal override IEnumerable<object> GetValues()
         {
             return new object[]{ this.P1, this.P2 };
         }
+    }
 
+    public class CompoundValue<T1, T2, T3> : CompoundValue{
+
+        public T1 P1 { get; set; } public T2 P2 { get; set; } public T3 P3 { get; set; }
+
+        internal CompoundValue(){}
+
+        internal CompoundValue(T1 p1, T2 p2, T3 p3) {this.P1 = p1;this.P2 = p2; this.P3 = p3;}
+
+        internal override IEnumerable<object> GetValues()
+        {
+            return new object[]{ this.P1, this.P2, this.P3};
+        }
     }
 }
 
