@@ -107,6 +107,19 @@ namespace MarcelloDB.Index
             }
         }
 
+        protected CompoundIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4> CompoundIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4>
+        (Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4>> valueFunc, [CallerMemberName] string callerMember = "")
+        {
+            if (this.Building)
+            {
+                return new CompoundIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4>(valueFunc);
+            }
+            else
+            {
+                return (CompoundIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4>)IndexedValues.First(v => v.PropertyName == callerMember);
+            }
+        }
+
         #endregion
     }
 }

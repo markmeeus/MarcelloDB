@@ -33,5 +33,20 @@ namespace MarcelloDB.Collections
             return base.FindInternal(CompoundValue.Build(val1, val2, val3));
         }
     }
+
+    public class CompoundIndexedValue<TObj, TAtt1, TAtt2, TAtt3, TAtt4>
+        : BaseIndexedValue<TObj, CompoundValue<TAtt1 ,TAtt2, TAtt3, TAtt4>>
+    {
+        CompoundIndexedValue(): base(null){
+        }
+
+        internal CompoundIndexedValue(Func<TObj, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4>> valueFunction)
+            :base(valueFunction){}
+
+        public IEnumerable<TObj> Find(TAtt1 val1, TAtt2 val2, TAtt3 val3,TAtt4 val4)
+        {
+            return base.FindInternal(CompoundValue.Build(val1, val2, val3, val4));
+        }
+    }
 }
 
