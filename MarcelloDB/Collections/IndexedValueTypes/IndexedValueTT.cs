@@ -40,7 +40,7 @@ namespace MarcelloDB.Collections
 
         public GreaterThan<TObj, TAttribute> GreaterThan(TAttribute value)
         {
-            return new GreaterThan<TObj, TAttribute>(this, value, false);
+            return base.GreaterThanInternal(value);
         }
 
         public GreaterThan<TObj, TAttribute> GreaterThanOrEqual(TAttribute value)

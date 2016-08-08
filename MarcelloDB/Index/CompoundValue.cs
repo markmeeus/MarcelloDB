@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MarcelloDB.Index
 {
-    public abstract class CompoundValue : IComparable
+    public abstract partial class CompoundValue : IComparable
     {
         internal abstract IEnumerable<object> GetValues();
 
@@ -18,21 +18,6 @@ namespace MarcelloDB.Index
             return CompareValues(valuesA, valuesB);
         }
         #endregion
-
-        internal static CompoundValue<T1, T2> Build<T1, T2>(T1 value1, T2 value2)
-        {
-            return new CompoundValue<T1, T2>(value1, value2);
-        }
-
-        internal static CompoundValue<T1, T2, T3> Build<T1, T2, T3>(T1 value1, T2 value2, T3 value3)
-        {
-            return new CompoundValue<T1, T2, T3>(value1, value2, value3);
-        }
-
-        internal static CompoundValue<T1, T2, T3, T4> Build<T1, T2, T3, T4>(T1 value1, T2 value2, T3 value3, T4 value4)
-        {
-            return new CompoundValue<T1, T2, T3, T4>(value1, value2, value3, value4);
-        }
 
         int CompareValues(IEnumerable<object> valuesA, IEnumerable<object> valuesB)
         {
@@ -66,47 +51,4 @@ namespace MarcelloDB.Index
             return ((IComparable)valA).CompareTo(valB);
         }
     }
-
-    public class CompoundValue<T1, T2> : CompoundValue{
-
-        public T1 P1 { get; set; } public T2 P2 { get; set; }
-
-        internal CompoundValue(){}
-
-        internal CompoundValue(T1 p1, T2 p2){this.P1 = p1;this.P2 = p2;}
-
-        internal override IEnumerable<object> GetValues()
-        {
-            return new object[]{ this.P1, this.P2 };
-        }
-    }
-
-    public class CompoundValue<T1, T2, T3> : CompoundValue{
-
-        public T1 P1 { get; set; } public T2 P2 { get; set; } public T3 P3 { get; set; }
-
-        internal CompoundValue(){}
-
-        internal CompoundValue(T1 p1, T2 p2, T3 p3) {this.P1 = p1;this.P2 = p2; this.P3 = p3;}
-
-        internal override IEnumerable<object> GetValues()
-        {
-            return new object[]{ this.P1, this.P2, this.P3};
-        }
-    }
-
-    public class CompoundValue<T1, T2, T3, T4> : CompoundValue{
-
-        public T1 P1 { get; set; } public T2 P2 { get; set; } public T3 P3 { get; set; } public T4 P4 { get; set; }
-
-        internal CompoundValue(){}
-
-        internal CompoundValue(T1 p1, T2 p2, T3 p3, T4 p4) {this.P1 = p1;this.P2 = p2; this.P3 = p3; this.P4 = p4;}
-
-        internal override IEnumerable<object> GetValues()
-        {
-            return new object[]{ this.P1, this.P2, this.P3, this.P4};
-        }
-    }
 }
-

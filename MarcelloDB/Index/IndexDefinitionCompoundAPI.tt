@@ -1,0 +1,49 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+
+using MarcelloDB.Collections;
+using System.Runtime.CompilerServices;
+using System.Linq;
+using System;
+
+namespace MarcelloDB.Index
+{
+    public partial class IndexDefinition<T>
+    {
+	    <#
+	    int maxCompoundLength = 8;
+	    for (int i = 2; i<=maxCompoundLength; i++)
+		{
+			var genericAttributes = new List<string>();
+			for (int j = 1; j<=i; j++)
+			{
+				genericAttributes.Add("TAtt" + j.ToString());
+			}
+
+			var genericAttributeList = string.Join(", ", genericAttributes);
+			#>
+
+		protected CompoundIndexedValue<T, <#=genericAttributeList#>> CompoundIndexedValue<<#=genericAttributeList#>>
+	        (Func<T, CompoundValue<<#=genericAttributeList#>>> valueFunc, [CallerMemberName] string callerMember = "")
+        {
+            if (this.Building)
+            {
+                return new CompoundIndexedValue<T, <#=genericAttributeList#>>(valueFunc);
+            }
+            else
+            {
+                return (CompoundIndexedValue<T, <#=genericAttributeList#>>)IndexedValues.First(v => v.PropertyName == callerMember);
+            }
+        }
+
+			<#
+		}
+
+		#>
+
+
+ 	}
+}

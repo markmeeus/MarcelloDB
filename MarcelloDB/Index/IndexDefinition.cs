@@ -10,7 +10,7 @@ using System.Runtime.CompilerServices;
 
 namespace MarcelloDB.Index
 {
-    public class IndexDefinition<T>
+    public partial class IndexDefinition<T>
     {
         internal List<IndexedValue> IndexedValues { get; set; }
 
@@ -67,7 +67,7 @@ namespace MarcelloDB.Index
             return indexedValue;
         }
 
-        #region protected, but public api
+        #region protected but part of public api
         protected IndexedValue<T, TAttribute> IndexedValue<TAttribute>
         (Func<T, TAttribute> valueFunc, [CallerMemberName] string callerMember = "")
         {
@@ -80,46 +80,6 @@ namespace MarcelloDB.Index
                 return (IndexedValue<T, TAttribute>)IndexedValues.First(v => v.PropertyName == callerMember);
             }
         }
-
-        protected CompoundIndexedValue<T, TAtt1, TAtt2> CompoundIndexedValue<TAtt1, TAtt2>
-        (Func<T, CompoundValue<TAtt1, TAtt2>> valueFunc, [CallerMemberName] string callerMember = "")
-        {
-            if (this.Building)
-            {
-                return new CompoundIndexedValue<T, TAtt1, TAtt2>(valueFunc);
-            }
-            else
-            {
-                return (CompoundIndexedValue<T, TAtt1, TAtt2>)IndexedValues.First(v => v.PropertyName == callerMember);
-            }
-        }
-
-        protected CompoundIndexedValue<T, TAtt1, TAtt2, TAtt3> CompoundIndexedValue<TAtt1, TAtt2, TAtt3>
-        (Func<T, CompoundValue<TAtt1, TAtt2, TAtt3>> valueFunc, [CallerMemberName] string callerMember = "")
-        {
-            if (this.Building)
-            {
-                return new CompoundIndexedValue<T, TAtt1, TAtt2, TAtt3>(valueFunc);
-            }
-            else
-            {
-                return (CompoundIndexedValue<T, TAtt1, TAtt2, TAtt3>)IndexedValues.First(v => v.PropertyName == callerMember);
-            }
-        }
-
-        protected CompoundIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4> CompoundIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4>
-        (Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4>> valueFunc, [CallerMemberName] string callerMember = "")
-        {
-            if (this.Building)
-            {
-                return new CompoundIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4>(valueFunc);
-            }
-            else
-            {
-                return (CompoundIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4>)IndexedValues.First(v => v.PropertyName == callerMember);
-            }
-        }
-
         #endregion
     }
 }

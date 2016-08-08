@@ -145,6 +145,11 @@ namespace MarcelloDB.Collections
             var key = new ValueWithAddressIndexKey<TAttribute>{ V = value };
             return BuildEnumerator(new BTreeWalkerRange<ValueWithAddressIndexKey<TAttribute>>(key, key));
         }
+
+        internal GreaterThan<TObj, TAttribute> GreaterThanInternal(TAttribute value){
+            return new GreaterThan<TObj, TAttribute>(this, value, false);
+        }
+
         #endregion
     }
 }

@@ -102,11 +102,19 @@
     <Compile Include="Serialization\BtreeNodeBinaryFormatterSerializer.cs" />
     <Compile Include="Serialization\TransactionJournalSerializer.cs" />
     <Compile Include="Serialization\CollectionFileRootSerializer.cs" />
-    <Compile Include="Index\CompoundValue.cs" />
     <Compile Include="Collections\IndexedValueTypes\IndexedValueTT.cs" />
     <Compile Include="Collections\IndexedValueTypes\IndexedIDValue.cs" />
-    <Compile Include="Collections\IndexedValueTypes\CompoundIndexedValue.cs" />
     <Compile Include="Collections\IndexedValueTypes\BaseIndexedValueTT.cs" />
+    <Compile Include="Index\IndexDefinitionCompoundAPI.cs">
+      <DependentUpon>IndexDefinitionCompoundAPI.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Collections\IndexedValueTypes\CompoundIndexedValue.cs">
+      <DependentUpon>CompoundIndexedValue.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Index\CompoundValueCodeGen.cs">
+      <DependentUpon>CompoundValueCodeGen.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Index\CompoundValue.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Runtime" />
@@ -123,5 +131,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="Index\IndexDefinitionCompoundAPI.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>IndexDefinitionCompoundAPI.cs</LastGenOutput>
+    </None>
+    <None Include="Collections\IndexedValueTypes\CompoundIndexedValue.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>CompoundIndexedValue.cs</LastGenOutput>
+    </None>
+    <None Include="Index\CompoundValueCodeGen.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>CompoundValueCodeGen.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 </Project>

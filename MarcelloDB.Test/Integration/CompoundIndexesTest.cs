@@ -137,7 +137,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
         public void TestAll()
         {
             var indexables =
-                _collectionFile.Collection<Indexable, int, IndexableIndexDefinition4>("indexables3", i => i.ID);
+                _collectionFile.Collection<Indexable, int, IndexableIndexDefinition4>("indexables4", i => i.ID);
 
             indexables.Persist(Indexable.CreateIndexable(3));
             indexables.Persist(Indexable.CreateIndexable(2));
@@ -149,6 +149,22 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
             Assert.AreEqual(1, items[0].ID);
             Assert.AreEqual(2, items[1].ID);
             Assert.AreEqual(3, items[2].ID);
+        }
+
+        [Test]
+        public void TestGreaterThan3Compound_3Params()
+        {
+            var indexables =
+                _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
+            indexables.Persist(Indexable.CreateIndexable(1));
+            indexables.Persist(Indexable.CreateIndexable(2));
+            indexables.Persist(Indexable.CreateIndexable(3));
+
+            var items = indexables.Indexes.Compound1And2And3.GreaterThan(2, 2, 1).ToList();
+
+            Assert.AreEqual(2, items.Count);
+            Assert.AreEqual(2, items[0].ID);
+            Assert.AreEqual(3, items[1].ID);
         }
     }
 }
