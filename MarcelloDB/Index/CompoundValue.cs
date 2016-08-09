@@ -21,8 +21,12 @@ namespace MarcelloDB.Index
 
         int CompareValues(IEnumerable<object> valuesA, IEnumerable<object> valuesB)
         {
-            if (valuesA.Count() == 0)
+            if (valuesA.Count() == 0 || valuesB.Count() == 0)
                 return 0;
+
+            if (valuesB.Count() == 0)
+                return 1;
+
             var firstA = valuesA.First();
             var firstB = valuesB.First();
             var compareResult = CompareValue(firstA, firstB);

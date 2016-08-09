@@ -15,12 +15,13 @@ namespace MarcelloDB.Index
     {
 	    <#
 	    int maxCompoundLength = 8;
-	    for (int i = 2; i<=maxCompoundLength; i++)
+	    for (int compoundLength = 2; compoundLength <= maxCompoundLength; compoundLength++)
 		{
 			var genericAttributes = new List<string>();
-			for (int j = 1; j<=i; j++)
+			for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
 			{
-				genericAttributes.Add("TAtt" + j.ToString());
+				var nr = genericArgNr.ToString();
+				genericAttributes.Add("TAtt" + nr);
 			}
 
 			var genericAttributeList = string.Join(", ", genericAttributes);

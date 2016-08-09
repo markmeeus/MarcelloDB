@@ -15,16 +15,17 @@ namespace MarcelloDB.Collections
 {
     <#
     int maxCompoundLength = 8;
-    for (int i = 2; i<=maxCompoundLength; i++)
+    for (int compoundLength = 2; compoundLength <= maxCompoundLength; compoundLength++)
 	{
 		var genericAttributes = new List<string>();
 		var paramsDeclarations = new List<string>();
 		var arguments = new List<string>();
-		for (int j = 1; j<=i; j++)
+		for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
 		{
-			genericAttributes.Add("TAtt" + j.ToString());
-			paramsDeclarations.Add("TAtt" + j.ToString() + " val" + j.ToString());
-			arguments.Add("val" + j.ToString());
+		    var nr = genericArgNr.ToString();
+			genericAttributes.Add("T" + nr);
+			paramsDeclarations.Add("T" + nr + " val" + nr);
+			arguments.Add("val" + nr);
 		}
 
 		var genericAttributeList = string.Join(", ", genericAttributes);
@@ -32,7 +33,7 @@ namespace MarcelloDB.Collections
 		var argumentsList = string.Join(", ", arguments);
 		#>
 
-	public class CompoundIndexedValue<TObj, <#=genericAttributeList#>> : BaseIndexedValue<TObj, CompoundValue<<#=genericAttributeList#>>>
+	public class CompoundIndexedValue<TObj, <#=genericAttributeList#>> : BaseIndexedValue<TObj, CompoundValue>
     {
         CompoundIndexedValue(): base(null){
         }
@@ -45,10 +46,30 @@ namespace MarcelloDB.Collections
             return base.FindInternal(CompoundValue.Build(<#=argumentsList#>));
         }
 
-        public IEnumerable<TObj> GreaterThan(<#=paramsDeclarationList#>)
+        <#
+		for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
+		{
+			var methodParamsDeclarations = new List<string>();
+			var paramsAsArgs = new List<string>();
+			for(int i = 1; i <= genericArgNr; i++){
+				var nr = i.ToString();
+				methodParamsDeclarations.Add("T" + nr + " p" + nr);
+				paramsAsArgs.Add("p" + nr);
+			}
+			var methodParamsDeclarationsList = string.Join(", ", methodParamsDeclarations);
+			var paramsAsArgsList = string.Join(", ", paramsAsArgs);
+			#>
+
+			public IEnumerable<TObj> GreaterThan(<#=methodParamsDeclarationsList#>)
         {
-            return base.GreaterThanInternal(CompoundValue.Build(<#=argumentsList#>));
+            return base.GreaterThanInternal(CompoundValue.Build(<#=paramsAsArgsList#>));
         }
+
+
+			<#
+
+		}#>
+
     }
 
 	<#}#>

@@ -60,6 +60,35 @@ namespace MarcelloDB.Test.Index
             Assert.AreEqual(0, comp1.CompareTo(comp2));
             Assert.AreEqual(0, comp2.CompareTo(comp1));
         }
+
+        [Test]
+        public void Compares_Compounds_With_Lesser_Amount_Of_Values()
+        {
+            var comp1 = new CompoundValue<int, int, int>(1, 1);
+            var comp2 = new CompoundValue<int, int, int>(1, 1, 2);
+            Assert.AreEqual(0, comp1.CompareTo(comp2));
+            Assert.AreEqual(0, comp2.CompareTo(comp1));
+
+            comp1 = new CompoundValue<int, int, int>(1, 1, -1);
+            comp2 = new CompoundValue<int, int, int>(1, 1);
+            Assert.AreEqual(0, comp1.CompareTo(comp2));
+            Assert.AreEqual(0, comp2.CompareTo(comp1));
+
+            comp1 = new CompoundValue<int, int, int>(1, 1);
+            comp2 = new CompoundValue<int, int, int>(1, 1, -1);
+            Assert.AreEqual(0, comp1.CompareTo(comp2));
+            Assert.AreEqual(0, comp2.CompareTo(comp1));
+
+            comp1 = new CompoundValue<int, int, int>(1, 2);
+            comp2 = new CompoundValue<int, int, int>(1, -1, 0);
+            Assert.AreEqual(1, comp1.CompareTo(comp2));
+            Assert.AreEqual(-1, comp2.CompareTo(comp1));
+
+            comp1 = new CompoundValue<int, int, int>(1, -1, 0);
+            comp2 = new CompoundValue<int, int, int>(1, 2);
+            Assert.AreEqual(-1, comp1.CompareTo(comp2));
+            Assert.AreEqual(1, comp2.CompareTo(comp1));
+        }
     }
 }
 
