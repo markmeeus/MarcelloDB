@@ -65,6 +65,12 @@ namespace MarcelloDB.Collections
         {
             return base.GreaterThanInternal(CompoundValue.Build(<#=paramsAsArgsList#>));
         }
+
+        public IEnumerable<TObj> GreaterThanOrEqual(<#=methodParamsDeclarationsList#>)
+        {
+            return base.GreaterThanOrEqualInternal(CompoundValue.Build(<#=paramsAsArgsList#>));
+        }
+
         <#
 
 		}#>

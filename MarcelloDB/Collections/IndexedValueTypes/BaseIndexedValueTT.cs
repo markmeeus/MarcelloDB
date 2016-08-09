@@ -150,6 +150,10 @@ namespace MarcelloDB.Collections
             return new GreaterThan<TObj, TAttribute>(this, value, false);
         }
 
+        internal GreaterThan<TObj, TAttribute> GreaterThanOrEqualInternal(TAttribute value){
+            return new GreaterThan<TObj, TAttribute>(this, value, true);
+        }
+
         #endregion
     }
 }

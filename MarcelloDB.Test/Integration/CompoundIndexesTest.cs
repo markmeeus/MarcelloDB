@@ -181,6 +181,38 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
             Assert.AreEqual(1, items.Count);
             Assert.AreEqual(3, items[0].ID);
         }
+
+        [Test]
+        public void TestGreaterOrEqualThan3Compound_3Params()
+        {
+            var indexables =
+                _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
+            indexables.Persist(Indexable.CreateIndexable(1));
+            indexables.Persist(Indexable.CreateIndexable(2));
+            indexables.Persist(Indexable.CreateIndexable(3));
+
+            var items = indexables.Indexes.Compound1And2And3.GreaterThanOrEqual(2, 2, 1).ToList();
+
+            Assert.AreEqual(2, items.Count);
+            Assert.AreEqual(2, items[0].ID);
+            Assert.AreEqual(3, items[1].ID);
+        }
+
+        [Test]
+        public void TestGreaterThanOrEqual3Compound_2Params()
+        {
+            var indexables =
+                _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
+            indexables.Persist(Indexable.CreateIndexable(1));
+            indexables.Persist(Indexable.CreateIndexable(2));
+            indexables.Persist(Indexable.CreateIndexable(3));
+
+            var items = indexables.Indexes.Compound1And2And3.GreaterThanOrEqual(2, 2).ToList();
+
+            Assert.AreEqual(2, items.Count);
+            Assert.AreEqual(2, items[0].ID);
+            Assert.AreEqual(3, items[1].ID);
+        }
     }
 }
 
