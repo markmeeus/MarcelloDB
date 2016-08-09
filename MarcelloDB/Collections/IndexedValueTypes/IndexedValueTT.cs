@@ -50,12 +50,12 @@ namespace MarcelloDB.Collections
 
         public SmallerThan<TObj, TAttribute> SmallerThan(TAttribute value)
         {
-            return new SmallerThan<TObj, TAttribute>(this, value, false);
+            return base.SmallerThanInternal(value);
         }
 
         public SmallerThan<TObj, TAttribute> SmallerThanOrEqual(TAttribute value)
         {
-            return new SmallerThan<TObj, TAttribute>(this, value, true);
+            return base.SmallerThanOrEqualInternal(value);
         }
     }
 }

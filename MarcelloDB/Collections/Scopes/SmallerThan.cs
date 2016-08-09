@@ -8,13 +8,13 @@ namespace MarcelloDB.Collections.Scopes
 {
     public class SmallerThan<TObj, TAttribute> : BaseScope<TObj, TAttribute>
     {
-        IndexedValue<TObj, TAttribute> IndexedValue { get; set; }
+        BaseIndexedValue<TObj, TAttribute> IndexedValue { get; set; }
 
         TAttribute Value { get; set; }
 
         bool OrEqual { get; set; }
 
-        internal SmallerThan(IndexedValue<TObj, TAttribute> indexedValue, TAttribute value, bool orEqual)
+        internal SmallerThan(BaseIndexedValue<TObj, TAttribute> indexedValue, TAttribute value, bool orEqual)
         {
             this.IndexedValue = indexedValue;
             this.Value = value;
