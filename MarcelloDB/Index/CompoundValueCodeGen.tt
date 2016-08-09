@@ -37,7 +37,9 @@ namespace MarcelloDB.Index
 		#>
 
 	public class CompoundValue<<#=genericAttributeList#>> : CompoundValue{
+
 		public int ConstructedWithCount { get; set; }
+
 		<#=  propDeclarationList #>
 
 		internal CompoundValue(){

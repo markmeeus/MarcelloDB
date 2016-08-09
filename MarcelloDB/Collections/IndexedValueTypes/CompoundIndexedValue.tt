@@ -58,15 +58,14 @@ namespace MarcelloDB.Collections
 			}
 			var methodParamsDeclarationsList = string.Join(", ", methodParamsDeclarations);
 			var paramsAsArgsList = string.Join(", ", paramsAsArgs);
-			#>
 
-			public IEnumerable<TObj> GreaterThan(<#=methodParamsDeclarationsList#>)
+		#>
+
+		public IEnumerable<TObj> GreaterThan(<#=methodParamsDeclarationsList#>)
         {
             return base.GreaterThanInternal(CompoundValue.Build(<#=paramsAsArgsList#>));
         }
-
-
-			<#
+        <#
 
 		}#>
 

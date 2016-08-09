@@ -6,7 +6,9 @@ namespace MarcelloDB.Index
 {
 
 	public class CompoundValue<T1> : CompoundValue{
+
 		public int ConstructedWithCount { get; set; }
+
 		public T1 P1{ get; set; }
 
 		internal CompoundValue(){
@@ -34,7 +36,9 @@ namespace MarcelloDB.Index
     }
 		
 	public class CompoundValue<T1, T2> : CompoundValue{
+
 		public int ConstructedWithCount { get; set; }
+
 		public T1 P1{ get; set; } public T2 P2{ get; set; }
 
 		internal CompoundValue(){
@@ -68,7 +72,9 @@ namespace MarcelloDB.Index
     }
 		
 	public class CompoundValue<T1, T2, T3> : CompoundValue{
+
 		public int ConstructedWithCount { get; set; }
+
 		public T1 P1{ get; set; } public T2 P2{ get; set; } public T3 P3{ get; set; }
 
 		internal CompoundValue(){
@@ -108,7 +114,9 @@ namespace MarcelloDB.Index
     }
 		
 	public class CompoundValue<T1, T2, T3, T4> : CompoundValue{
+
 		public int ConstructedWithCount { get; set; }
+
 		public T1 P1{ get; set; } public T2 P2{ get; set; } public T3 P3{ get; set; } public T4 P4{ get; set; }
 
 		internal CompoundValue(){
@@ -154,7 +162,9 @@ namespace MarcelloDB.Index
     }
 		
 	public class CompoundValue<T1, T2, T3, T4, T5> : CompoundValue{
+
 		public int ConstructedWithCount { get; set; }
+
 		public T1 P1{ get; set; } public T2 P2{ get; set; } public T3 P3{ get; set; } public T4 P4{ get; set; } public T5 P5{ get; set; }
 
 		internal CompoundValue(){
@@ -206,7 +216,9 @@ namespace MarcelloDB.Index
     }
 		
 	public class CompoundValue<T1, T2, T3, T4, T5, T6> : CompoundValue{
+
 		public int ConstructedWithCount { get; set; }
+
 		public T1 P1{ get; set; } public T2 P2{ get; set; } public T3 P3{ get; set; } public T4 P4{ get; set; } public T5 P5{ get; set; } public T6 P6{ get; set; }
 
 		internal CompoundValue(){
@@ -264,7 +276,9 @@ namespace MarcelloDB.Index
     }
 		
 	public class CompoundValue<T1, T2, T3, T4, T5, T6, T7> : CompoundValue{
+
 		public int ConstructedWithCount { get; set; }
+
 		public T1 P1{ get; set; } public T2 P2{ get; set; } public T3 P3{ get; set; } public T4 P4{ get; set; } public T5 P5{ get; set; } public T6 P6{ get; set; } public T7 P7{ get; set; }
 
 		internal CompoundValue(){
@@ -328,7 +342,9 @@ namespace MarcelloDB.Index
     }
 		
 	public class CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8> : CompoundValue{
+
 		public int ConstructedWithCount { get; set; }
+
 		public T1 P1{ get; set; } public T2 P2{ get; set; } public T3 P3{ get; set; } public T4 P4{ get; set; } public T5 P5{ get; set; } public T6 P6{ get; set; } public T7 P7{ get; set; } public T8 P8{ get; set; }
 
 		internal CompoundValue(){
