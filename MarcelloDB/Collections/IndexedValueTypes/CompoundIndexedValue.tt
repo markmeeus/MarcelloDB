@@ -83,6 +83,13 @@ namespace MarcelloDB.Collections
             var start = CompoundValue.Build(<#=paramsAsArgsList#>);
             return new BetweenBuilder<TObj, <#=genericAttributeList#>>(this, start, false);
         }
+
+        public BetweenBuilder<TObj, <#=genericAttributeList#>> BetweenIncluding(<#=methodParamsDeclarationsList#>)
+        {
+            var start = CompoundValue.Build(<#=paramsAsArgsList#>);
+            return new BetweenBuilder<TObj, <#=genericAttributeList#>>(this, start, true);
+        }
+
 <#      }#>
     }
 

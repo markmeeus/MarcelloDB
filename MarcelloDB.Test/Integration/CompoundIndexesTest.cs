@@ -78,7 +78,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
         }
 
         class IndexableIndexDefinition3 : IndexDefinition<Indexable>
-        {
+        {            
             public CompoundIndexedValue<Indexable, int, long, double> Compound1And2And3
             {
                 get{
@@ -305,6 +305,39 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
 
             Assert.AreEqual(1, items.Count);
             Assert.AreEqual(2, items[0].ID);
+        }
+
+        [Test]
+        public void BetweenIncluding3Compound_3Params()
+        {
+            var indexables =
+                _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
+            indexables.Persist(Indexable.CreateIndexable(1));
+            indexables.Persist(Indexable.CreateIndexable(2));
+            indexables.Persist(Indexable.CreateIndexable(3));
+
+            var items = indexables.Indexes.Compound1And2And3.BetweenIncluding(1, 1, 1).AndIncluding(3,3,3).ToList();
+
+            Assert.AreEqual(3, items.Count);
+            Assert.AreEqual(1, items[0].ID);
+            Assert.AreEqual(2, items[1].ID);
+            Assert.AreEqual(3, items[2].ID);
+        }
+
+        [Test]
+        public void BetweenIncluding3Compound_2Params()
+        {
+            var indexables =
+                _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
+            indexables.Persist(Indexable.CreateIndexable(1));
+            indexables.Persist(Indexable.CreateIndexable(2));
+            indexables.Persist(Indexable.CreateIndexable(3));
+            var items = indexables.Indexes.Compound1And2And3.BetweenIncluding(1, 1).AndIncluding(3,3).ToList();
+
+            Assert.AreEqual(3, items.Count);
+            Assert.AreEqual(1, items[0].ID);
+            Assert.AreEqual(2, items[1].ID);
+            Assert.AreEqual(3, items[2].ID);
         }
     }
 }
