@@ -9,6 +9,7 @@ using System.Linq;
 using System;
 using System.Collections.Generic;
 using MarcelloDB.Collections;
+using MarcelloDB.Collections.Scopes;
 using MarcelloDB.Index;
 
 namespace MarcelloDB.Collections
@@ -81,6 +82,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(<#=paramsAsArgsList#>));
         }
 
+        public BetweenBuilder<TObj, <#=genericAttributeList#>> Between(<#=methodParamsDeclarationsList#>)
+        {
+        	var start = CompoundValue.Build(<#=paramsAsArgsList#>);
+        	return new BetweenBuilder<TObj, <#=genericAttributeList#>>(this, start, false);
+        }
         <#
 
 		}#>

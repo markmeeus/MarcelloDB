@@ -4,6 +4,7 @@ using System.Linq;
 using System;
 using System.Collections.Generic;
 using MarcelloDB.Collections;
+using MarcelloDB.Collections.Scopes;
 using MarcelloDB.Index;
 
 namespace MarcelloDB.Collections
@@ -43,6 +44,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1));
         }
 
+        public BetweenBuilder<TObj, T1, T2> Between(T1 p1)
+        {
+        	var start = CompoundValue.Build(p1);
+        	return new BetweenBuilder<TObj, T1, T2>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2)
         {
@@ -64,6 +70,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2));
         }
 
+        public BetweenBuilder<TObj, T1, T2> Between(T1 p1, T2 p2)
+        {
+        	var start = CompoundValue.Build(p1, p2);
+        	return new BetweenBuilder<TObj, T1, T2>(this, start, false);
+        }
         
     }
 
@@ -102,6 +113,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3> Between(T1 p1)
+        {
+        	var start = CompoundValue.Build(p1);
+        	return new BetweenBuilder<TObj, T1, T2, T3>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2)
         {
@@ -123,6 +139,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3> Between(T1 p1, T2 p2)
+        {
+        	var start = CompoundValue.Build(p1, p2);
+        	return new BetweenBuilder<TObj, T1, T2, T3>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3)
         {
@@ -144,6 +165,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3> Between(T1 p1, T2 p2, T3 p3)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3);
+        	return new BetweenBuilder<TObj, T1, T2, T3>(this, start, false);
+        }
         
     }
 
@@ -182,6 +208,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4> Between(T1 p1)
+        {
+        	var start = CompoundValue.Build(p1);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2)
         {
@@ -203,6 +234,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4> Between(T1 p1, T2 p2)
+        {
+        	var start = CompoundValue.Build(p1, p2);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3)
         {
@@ -224,6 +260,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4> Between(T1 p1, T2 p2, T3 p3)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3, T4 p4)
         {
@@ -245,6 +286,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3, p4));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4> Between(T1 p1, T2 p2, T3 p3, T4 p4)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3, p4);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4>(this, start, false);
+        }
         
     }
 
@@ -283,6 +329,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5> Between(T1 p1)
+        {
+        	var start = CompoundValue.Build(p1);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2)
         {
@@ -304,6 +355,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5> Between(T1 p1, T2 p2)
+        {
+        	var start = CompoundValue.Build(p1, p2);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3)
         {
@@ -325,6 +381,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5> Between(T1 p1, T2 p2, T3 p3)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3, T4 p4)
         {
@@ -346,6 +407,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3, p4));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5> Between(T1 p1, T2 p2, T3 p3, T4 p4)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3, p4);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5)
         {
@@ -367,6 +433,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3, p4, p5));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5> Between(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3, p4, p5);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5>(this, start, false);
+        }
         
     }
 
@@ -405,6 +476,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6> Between(T1 p1)
+        {
+        	var start = CompoundValue.Build(p1);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2)
         {
@@ -426,6 +502,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6> Between(T1 p1, T2 p2)
+        {
+        	var start = CompoundValue.Build(p1, p2);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3)
         {
@@ -447,6 +528,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6> Between(T1 p1, T2 p2, T3 p3)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3, T4 p4)
         {
@@ -468,6 +554,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3, p4));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6> Between(T1 p1, T2 p2, T3 p3, T4 p4)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3, p4);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5)
         {
@@ -489,6 +580,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3, p4, p5));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6> Between(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3, p4, p5);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6)
         {
@@ -510,6 +606,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3, p4, p5, p6));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6> Between(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3, p4, p5, p6);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6>(this, start, false);
+        }
         
     }
 
@@ -548,6 +649,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7> Between(T1 p1)
+        {
+        	var start = CompoundValue.Build(p1);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2)
         {
@@ -569,6 +675,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7> Between(T1 p1, T2 p2)
+        {
+        	var start = CompoundValue.Build(p1, p2);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3)
         {
@@ -590,6 +701,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7> Between(T1 p1, T2 p2, T3 p3)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3, T4 p4)
         {
@@ -611,6 +727,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3, p4));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7> Between(T1 p1, T2 p2, T3 p3, T4 p4)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3, p4);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5)
         {
@@ -632,6 +753,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3, p4, p5));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7> Between(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3, p4, p5);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6)
         {
@@ -653,6 +779,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3, p4, p5, p6));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7> Between(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3, p4, p5, p6);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7)
         {
@@ -674,6 +805,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3, p4, p5, p6, p7));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7> Between(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3, p4, p5, p6, p7);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7>(this, start, false);
+        }
         
     }
 
@@ -712,6 +848,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7, T8> Between(T1 p1)
+        {
+        	var start = CompoundValue.Build(p1);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7, T8>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2)
         {
@@ -733,6 +874,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7, T8> Between(T1 p1, T2 p2)
+        {
+        	var start = CompoundValue.Build(p1, p2);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7, T8>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3)
         {
@@ -754,6 +900,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7, T8> Between(T1 p1, T2 p2, T3 p3)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7, T8>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3, T4 p4)
         {
@@ -775,6 +926,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3, p4));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7, T8> Between(T1 p1, T2 p2, T3 p3, T4 p4)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3, p4);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7, T8>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5)
         {
@@ -796,6 +952,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3, p4, p5));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7, T8> Between(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3, p4, p5);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7, T8>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6)
         {
@@ -817,6 +978,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3, p4, p5, p6));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7, T8> Between(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3, p4, p5, p6);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7, T8>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7)
         {
@@ -838,6 +1004,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3, p4, p5, p6, p7));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7, T8> Between(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3, p4, p5, p6, p7);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7, T8>(this, start, false);
+        }
         
 		public IEnumerable<TObj> GreaterThan(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8)
         {
@@ -859,6 +1030,11 @@ namespace MarcelloDB.Collections
             return base.SmallerThanOrEqualInternal(CompoundValue.Build(p1, p2, p3, p4, p5, p6, p7, p8));
         }
 
+        public BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7, T8> Between(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8)
+        {
+        	var start = CompoundValue.Build(p1, p2, p3, p4, p5, p6, p7, p8);
+        	return new BetweenBuilder<TObj, T1, T2, T3, T4, T5, T6, T7, T8>(this, start, false);
+        }
         
     }
 

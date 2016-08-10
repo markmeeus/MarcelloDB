@@ -8,7 +8,7 @@ namespace MarcelloDB.Collections.Scopes
 {
     public class Between<TObj, TAttribute> : BaseScope<TObj, TAttribute>
     {
-        IndexedValue<TObj, TAttribute> IndexedValue { get; set; }
+        BaseIndexedValue<TObj, TAttribute> IndexedValue { get; set; }
 
         TAttribute StartAt { get; set; }
 
@@ -19,7 +19,7 @@ namespace MarcelloDB.Collections.Scopes
         bool IncludeEndAt { get; set; }
 
         internal Between(
-            IndexedValue<TObj, TAttribute> indexedValue,
+            BaseIndexedValue<TObj, TAttribute> indexedValue,
             TAttribute startAt, bool includeStartAt,
             TAttribute endAt, bool includeEndAt)
         {

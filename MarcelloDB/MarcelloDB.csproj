@@ -115,6 +115,9 @@
       <DependentUpon>CompoundValueCodeGen.tt</DependentUpon>
     </Compile>
     <Compile Include="Index\CompoundValue.cs" />
+    <Compile Include="Collections\Scopes\CompoundBetweenBuilder.cs">
+      <DependentUpon>CompoundBetweenBuilder.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Runtime" />
@@ -142,6 +145,10 @@
     <None Include="Index\CompoundValueCodeGen.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>CompoundValueCodeGen.cs</LastGenOutput>
+    </None>
+    <None Include="Collections\Scopes\CompoundBetweenBuilder.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>CompoundBetweenBuilder.cs</LastGenOutput>
     </None>
   </ItemGroup>
 </Project>

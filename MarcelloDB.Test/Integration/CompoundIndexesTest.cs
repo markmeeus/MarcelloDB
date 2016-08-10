@@ -65,7 +65,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
         }
 
         [Test]
-        public void TestInsertCompoundOf2()
+        public void InsertCompoundOf2()
         {
             var indexables =
                 _collectionFile.Collection<Indexable, int, IndexableIndexDefinition2>("indexables2", i => i.ID);
@@ -90,7 +90,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
             }
         }
         [Test]
-        public void TestInsertCompoundOf3()
+        public void InsertCompoundOf3()
         {
             var indexables =
                 _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
@@ -121,7 +121,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
         }
 
         [Test]
-        public void TestInsertCompoundOf4()
+        public void InsertCompoundOf4()
         {
             var indexables =
                 _collectionFile.Collection<Indexable, int, IndexableIndexDefinition4>("indexables3", i => i.ID);
@@ -134,7 +134,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
         }
 
         [Test]
-        public void TestAll()
+        public void All()
         {
             var indexables =
                 _collectionFile.Collection<Indexable, int, IndexableIndexDefinition4>("indexables4", i => i.ID);
@@ -152,7 +152,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
         }
 
         [Test]
-        public void TestGreaterThan3Compound_3Params()
+        public void GreaterThan3Compound_3Params()
         {
             var indexables =
                 _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
@@ -168,7 +168,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
         }
 
         [Test]
-        public void TestGreaterThan3Compound_2Params()
+        public void GreaterThan3Compound_2Params()
         {
             var indexables =
                 _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
@@ -183,7 +183,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
         }
 
         [Test]
-        public void TestGreaterOrEqualThan3Compound_3Params()
+        public void GreaterOrEqualThan3Compound_3Params()
         {
             var indexables =
                 _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
@@ -199,7 +199,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
         }
 
         [Test]
-        public void TestGreaterThanOrEqual3Compound_2Params()
+        public void GreaterThanOrEqual3Compound_2Params()
         {
             var indexables =
                 _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
@@ -215,7 +215,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
         }
 
         [Test]
-        public void TestSmallerThan3Compound_3Params()
+        public void SmallerThan3Compound_3Params()
         {
             var indexables =
                 _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
@@ -231,7 +231,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
         }
 
         [Test]
-        public void TestSmallerThan3Compound_2Params()
+        public void SmallerThan3Compound_2Params()
         {
             var indexables =
                 _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
@@ -246,7 +246,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
         }
 
         [Test]
-        public void TestSmallerOrEqualThan3Compound_3Params()
+        public void SmallerOrEqualThan3Compound_3Params()
         {
             var indexables =
                 _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
@@ -262,7 +262,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
         }
 
         [Test]
-        public void TestSmallerThanOrEqual3Compound_2Params()
+        public void SmallerThanOrEqual3Compound_2Params()
         {
             var indexables =
                 _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
@@ -275,6 +275,36 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
             Assert.AreEqual(2, items.Count);
             Assert.AreEqual(1, items[0].ID);
             Assert.AreEqual(2, items[1].ID);
+        }
+
+        [Test]
+        public void Between3Compound_3Params()
+        {
+            var indexables =
+                _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
+            indexables.Persist(Indexable.CreateIndexable(1));
+            indexables.Persist(Indexable.CreateIndexable(2));
+            indexables.Persist(Indexable.CreateIndexable(3));
+
+            var items = indexables.Indexes.Compound1And2And3.Between(1, 1, 1).And(3,3,3).ToList();
+
+            Assert.AreEqual(1, items.Count);
+            Assert.AreEqual(2, items[0].ID);
+        }
+
+        [Test]
+        public void Between3Compound_2Params()
+        {
+            var indexables =
+                _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
+            indexables.Persist(Indexable.CreateIndexable(1));
+            indexables.Persist(Indexable.CreateIndexable(2));
+            indexables.Persist(Indexable.CreateIndexable(3));
+
+            var items = indexables.Indexes.Compound1And2And3.Between(1, 1).And(3,3).ToList();
+
+            Assert.AreEqual(1, items.Count);
+            Assert.AreEqual(2, items[0].ID);
         }
     }
 }
