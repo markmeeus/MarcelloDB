@@ -13,22 +13,21 @@ namespace MarcelloDB.Index
 {
     public partial class IndexDefinition<T>
     {
-	    <#
-	    int maxCompoundLength = 8;
-	    for (int compoundLength = 2; compoundLength <= maxCompoundLength; compoundLength++)
-		{
-			var genericAttributes = new List<string>();
-			for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
-			{
-				var nr = genericArgNr.ToString();
-				genericAttributes.Add("TAtt" + nr);
-			}
+<#
+        int maxCompoundLength = 8;
+        for (int compoundLength = 2; compoundLength <= maxCompoundLength; compoundLength++)
+        {
+            var genericAttributes = new List<string>();
+            for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
+            {
+                var nr = genericArgNr.ToString();
+                genericAttributes.Add("TAtt" + nr);
+            }
 
-			var genericAttributeList = string.Join(", ", genericAttributes);
-			#>
-
-		protected CompoundIndexedValue<T, <#=genericAttributeList#>> CompoundIndexedValue<<#=genericAttributeList#>>
-	        (Func<T, CompoundValue<<#=genericAttributeList#>>> valueFunc, [CallerMemberName] string callerMember = "")
+            var genericAttributeList = string.Join(", ", genericAttributes);
+#>
+        protected CompoundIndexedValue<T, <#=genericAttributeList#>> CompoundIndexedValue<<#=genericAttributeList#>>
+            (Func<T, CompoundValue<<#=genericAttributeList#>>> valueFunc, [CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
@@ -40,11 +39,6 @@ namespace MarcelloDB.Index
             }
         }
 
-			<#
-		}
-
-		#>
-
-
- 	}
+<#      }#>
+    }
 }

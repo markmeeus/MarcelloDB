@@ -12,62 +12,57 @@ namespace MarcelloDB.Index
 <#
     int maxCompoundLength = 8;
     for (int compoundLength = 1; compoundLength <= maxCompoundLength; compoundLength++)
-	{
-		var genericAttributes = new List<string>();
-		var propDeclarations = new List<string>();
-		var paramsDeclarations = new List<string>();
-		var propsAsParams = new List<string>();
-		var paramsAsParams = new List<string>();
-		var arguments = new List<string>();
-		for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
-		{
-			var nr = genericArgNr.ToString();
-			genericAttributes.Add("T" + nr);
-			paramsDeclarations.Add("T" + nr + " p" + nr);
-			propDeclarations.Add("public T" + nr + " P" + nr + "{ get; set; }");
-			paramsAsParams.Add("p" + nr);
-			propsAsParams.Add("this.P" + nr);
-			arguments.Add("val" + nr);
-		}
-		var paramsDeclarationList = string.Join(", ", paramsDeclarations);
-		var genericAttributeList = string.Join(", ", genericAttributes);
-		var propDeclarationList = string.Join(" ", propDeclarations);
-		var paramsAsParamsList = string.Join(", ", paramsAsParams);
-		var propsAsParamsList = string.Join(", ", propsAsParams);
-		#>
+    {
+        var genericAttributes = new List<string>();
+        var propDeclarations = new List<string>();
+        var paramsDeclarations = new List<string>();
+        var propsAsParams = new List<string>();
+        var paramsAsParams = new List<string>();
+        var arguments = new List<string>();
+        for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
+        {
+            var nr = genericArgNr.ToString();
+            genericAttributes.Add("T" + nr);
+            paramsDeclarations.Add("T" + nr + " p" + nr);
+            propDeclarations.Add("public T" + nr + " P" + nr + "{ get; set; }");
+            paramsAsParams.Add("p" + nr);
+            propsAsParams.Add("this.P" + nr);
+            arguments.Add("val" + nr);
+        }
+        var paramsDeclarationList = string.Join(", ", paramsDeclarations);
+        var genericAttributeList = string.Join(", ", genericAttributes);
+        var propDeclarationList = string.Join(" ", propDeclarations);
+        var paramsAsParamsList = string.Join(", ", paramsAsParams);
+        var propsAsParamsList = string.Join(", ", propsAsParams);
+#>
+    public class CompoundValue<<#=genericAttributeList#>> : CompoundValue{
 
-	public class CompoundValue<<#=genericAttributeList#>> : CompoundValue{
+        public int ConstructedWithCount { get; set; }
 
-		public int ConstructedWithCount { get; set; }
+        <#=  propDeclarationList #>
 
-		<#=  propDeclarationList #>
+        internal CompoundValue(){
+            this.ConstructedWithCount = 0;
+        }
+<#
+        for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
+        {
+            var constructorParamsDeclarations = new List<string>();
+            var propAssignments = new List<string>();
+            for(int i = 1; i <= genericArgNr; i++){
+                var nr = i.ToString();
+                constructorParamsDeclarations.Add("T" + nr + " p" + nr);
+                propAssignments.Add("this.P" + nr + " = p" + nr + ";");
+            }
+            var constructorParamsDeclarationsList = string.Join(", ", constructorParamsDeclarations);
+            var propAssignmentList = string.Join(" ", propAssignments);
+#>
 
-		internal CompoundValue(){
-    		this.ConstructedWithCount = 0;
-    	}
-
-        <#
-		for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
-		{
-			var constructorParamsDeclarations = new List<string>();
-			var propAssignments = new List<string>();
-			for(int i = 1; i <= genericArgNr; i++){
-				var nr = i.ToString();
-				constructorParamsDeclarations.Add("T" + nr + " p" + nr);
-				propAssignments.Add("this.P" + nr + " = p" + nr + ";");
-			}
-			var constructorParamsDeclarationsList = string.Join(", ", constructorParamsDeclarations);
-			var propAssignmentList = string.Join(" ", propAssignments);
-			#>
-
-		internal CompoundValue(<#=constructorParamsDeclarationsList#>){
-    		<#=propAssignmentList#>
-    		this.ConstructedWithCount = <#=genericArgNr.ToString()#>;
-    	}
-
-			<#
-
-		}#>
+        internal CompoundValue(<#=constructorParamsDeclarationsList#>){
+            <#=propAssignmentList#>
+            this.ConstructedWithCount = <#=genericArgNr.ToString()#>;
+        }
+<#      }#>
 
         internal override IEnumerable<object> GetValues()
         {
@@ -76,13 +71,11 @@ namespace MarcelloDB.Index
     }
 
     public abstract partial class CompoundValue {
-		internal static CompoundValue<<#=genericAttributeList#>> Build<<#=genericAttributeList#>>(<#=paramsDeclarationList#>)
+        internal static CompoundValue<<#=genericAttributeList#>> Build<<#=genericAttributeList#>>(<#=paramsDeclarationList#>)
         {
             return new CompoundValue<<#=genericAttributeList#>>(<#=paramsAsParamsList#>);
         }
     }
-		<#
-	}
 
-	#>
+<#  }#>
 }

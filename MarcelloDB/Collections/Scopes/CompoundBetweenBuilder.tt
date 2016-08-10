@@ -8,27 +8,26 @@ using MarcelloDB.Index;
 
 namespace MarcelloDB.Collections.Scopes
 {
-    <#
+<#
     int maxCompoundLength = 8;
     for (int compoundLength = 2; compoundLength <= maxCompoundLength; compoundLength++)
-	{
-		var genericAttributes = new List<string>();
-		var paramsDeclarations = new List<string>();
-		var arguments = new List<string>();
-		for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
-		{
-		    var nr = genericArgNr.ToString();
-			genericAttributes.Add("T" + nr);
-			paramsDeclarations.Add("T" + nr + " val" + nr);
-			arguments.Add("val" + nr);
-		}
+    {
+	    var genericAttributes = new List<string>();
+	    var paramsDeclarations = new List<string>();
+	    var arguments = new List<string>();
+	    for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
+	    {
+	        var nr = genericArgNr.ToString();
+	      genericAttributes.Add("T" + nr);
+	      paramsDeclarations.Add("T" + nr + " val" + nr);
+	      arguments.Add("val" + nr);
+	    }
 
-		var genericAttributeList = string.Join(", ", genericAttributes);
-		var paramsDeclarationList = string.Join(", ", paramsDeclarations);
-		var argumentsList = string.Join(", ", arguments);
-		#>
-
-	public class BetweenBuilder<TObj, <#=genericAttributeList#>>
+	    var genericAttributeList = string.Join(", ", genericAttributes);
+	    var paramsDeclarationList = string.Join(", ", paramsDeclarations);
+	    var argumentsList = string.Join(", ", arguments);
+#>
+    public class BetweenBuilder<TObj, <#=genericAttributeList#>>
     {
         BaseIndexedValue<TObj, CompoundValue> IndexedValue { get; set; }
 
@@ -43,40 +42,39 @@ namespace MarcelloDB.Collections.Scopes
             this.IncludeStartAt = includeStartAt;
         }
 
-                <#
-		for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
-		{
-			var methodParamsDeclarations = new List<string>();
-			var paramsAsArgs = new List<string>();
-			for(int i = 1; i <= genericArgNr; i++){
-				var nr = i.ToString();
-				methodParamsDeclarations.Add("T" + nr + " p" + nr);
-				paramsAsArgs.Add("p" + nr);
-			}
-			var methodParamsDeclarationsList = string.Join(", ", methodParamsDeclarations);
-			var paramsAsArgsList = string.Join(", ", paramsAsArgs);
+<#
+	    for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
+	    {
+	      var methodParamsDeclarations = new List<string>();
+	      var paramsAsArgs = new List<string>();
+	      for(int i = 1; i <= genericArgNr; i++){
+	        var nr = i.ToString();
+	        methodParamsDeclarations.Add("T" + nr + " p" + nr);
+	        paramsAsArgs.Add("p" + nr);
+	      }
+	      var methodParamsDeclarationsList = string.Join(", ", methodParamsDeclarations);
+	      var paramsAsArgsList = string.Join(", ", paramsAsArgs);
 
-		#>
+#>
+        public Between<TObj, CompoundValue> And(<#=methodParamsDeclarationsList#>)
+        {
+          var endAt = CompoundValue.Build(<#=paramsAsArgsList#>);
+            return new Between<TObj, CompoundValue>(this.IndexedValue, this.StartAt, this.IncludeStartAt, endAt, false);
+        }
 
-		public Between<TObj, CompoundValue> And(<#=methodParamsDeclarationsList#>)
-		{
-			var endAt = CompoundValue.Build(<#=paramsAsArgsList#>);
-		    return new Between<TObj, CompoundValue>(this.IndexedValue, this.StartAt, this.IncludeStartAt, endAt, false);
-		}
-
-		public Between<TObj, CompoundValue> AndIncluding(<#=methodParamsDeclarationsList#>)
-		{
-			var endAt = CompoundValue.Build(p1);
-		    return new Between<TObj, CompoundValue>(this.IndexedValue, this.StartAt, this.IncludeStartAt, endAt, true);
-		}
-        <#
-
-		}#>
-
+        public Between<TObj, CompoundValue> AndIncluding(<#=methodParamsDeclarationsList#>)
+        {
+          var endAt = CompoundValue.Build(p1);
+            return new Between<TObj, CompoundValue>(this.IndexedValue, this.StartAt, this.IncludeStartAt, endAt, true);
+        }
+<#
+    	}
+#>
     }
 
+<#
+ 	}
+#>
 
-
-	<#}#>
 
 }

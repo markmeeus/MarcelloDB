@@ -14,30 +14,28 @@ using MarcelloDB.Index;
 
 namespace MarcelloDB.Collections
 {
-    <#
+<#
     int maxCompoundLength = 8;
     for (int compoundLength = 2; compoundLength <= maxCompoundLength; compoundLength++)
-	{
-		var genericAttributes = new List<string>();
-		var paramsDeclarations = new List<string>();
-		var arguments = new List<string>();
-		for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
-		{
-		    var nr = genericArgNr.ToString();
-			genericAttributes.Add("T" + nr);
-			paramsDeclarations.Add("T" + nr + " val" + nr);
-			arguments.Add("val" + nr);
-		}
-
-		var genericAttributeList = string.Join(", ", genericAttributes);
-		var paramsDeclarationList = string.Join(", ", paramsDeclarations);
-		var argumentsList = string.Join(", ", arguments);
-		#>
-
-	public class CompoundIndexedValue<TObj, <#=genericAttributeList#>> : BaseIndexedValue<TObj, CompoundValue>
     {
-        CompoundIndexedValue(): base(null){
+        var genericAttributes = new List<string>();
+        var paramsDeclarations = new List<string>();
+        var arguments = new List<string>();
+        for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
+        {
+            var nr = genericArgNr.ToString();
+            genericAttributes.Add("T" + nr);
+            paramsDeclarations.Add("T" + nr + " val" + nr);
+            arguments.Add("val" + nr);
         }
+
+        var genericAttributeList = string.Join(", ", genericAttributes);
+        var paramsDeclarationList = string.Join(", ", paramsDeclarations);
+        var argumentsList = string.Join(", ", arguments);
+#>
+    public class CompoundIndexedValue<TObj, <#=genericAttributeList#>> : BaseIndexedValue<TObj, CompoundValue>
+    {
+        CompoundIndexedValue(): base(null){}
 
         internal CompoundIndexedValue(Func<TObj, CompoundValue<<#=genericAttributeList#>>> valueFunction)
             :base(valueFunction){}
@@ -47,22 +45,20 @@ namespace MarcelloDB.Collections
             return base.FindInternal(CompoundValue.Build(<#=argumentsList#>));
         }
 
-        <#
-		for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
-		{
-			var methodParamsDeclarations = new List<string>();
-			var paramsAsArgs = new List<string>();
-			for(int i = 1; i <= genericArgNr; i++){
-				var nr = i.ToString();
-				methodParamsDeclarations.Add("T" + nr + " p" + nr);
-				paramsAsArgs.Add("p" + nr);
-			}
-			var methodParamsDeclarationsList = string.Join(", ", methodParamsDeclarations);
-			var paramsAsArgsList = string.Join(", ", paramsAsArgs);
-
-		#>
-
-		public IEnumerable<TObj> GreaterThan(<#=methodParamsDeclarationsList#>)
+<#
+        for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
+        {
+            var methodParamsDeclarations = new List<string>();
+            var paramsAsArgs = new List<string>();
+            for(int i = 1; i <= genericArgNr; i++){
+                var nr = i.ToString();
+                methodParamsDeclarations.Add("T" + nr + " p" + nr);
+                paramsAsArgs.Add("p" + nr);
+            }
+            var methodParamsDeclarationsList = string.Join(", ", methodParamsDeclarations);
+            var paramsAsArgsList = string.Join(", ", paramsAsArgs);
+#>
+        public IEnumerable<TObj> GreaterThan(<#=methodParamsDeclarationsList#>)
         {
             return base.GreaterThanInternal(CompoundValue.Build(<#=paramsAsArgsList#>));
         }
@@ -84,15 +80,11 @@ namespace MarcelloDB.Collections
 
         public BetweenBuilder<TObj, <#=genericAttributeList#>> Between(<#=methodParamsDeclarationsList#>)
         {
-        	var start = CompoundValue.Build(<#=paramsAsArgsList#>);
-        	return new BetweenBuilder<TObj, <#=genericAttributeList#>>(this, start, false);
+            var start = CompoundValue.Build(<#=paramsAsArgsList#>);
+            return new BetweenBuilder<TObj, <#=genericAttributeList#>>(this, start, false);
         }
-        <#
-
-		}#>
-
+<#      }#>
     }
 
-	<#}#>
-
+<#  }#>
 }
