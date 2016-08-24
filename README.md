@@ -16,7 +16,7 @@ Read the docs here: [http://www.marcellodb.org](http://www.marcellodb.org)
 
 #Current Status
 
-Current version: 0.4.2. See [the roadmap](http://www.marcellodb.org/roadmap.html).
+Current version: 0.4.3. See [the roadmap](http://www.marcellodb.org/roadmap.html).
 
 Although still under heavy development, both the api and the file format are already quite stable.
 
@@ -60,9 +60,9 @@ PM > Install-Package MarcelloDB
           }
 
           var theBook = bookCollection.Find("123");
-          
+
           Console.WriteLine("Found book: " + theBook.Title);
-          
+
           bookCollection.Destroy("123");
       }
   }
