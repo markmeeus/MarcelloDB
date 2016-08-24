@@ -3,13 +3,13 @@
   <metadata>
     <id>MarcelloDB</id>
     <title>MarcelloDB, Mobile Object Database.</title>
-    <version>0.4.2</version>
+    <version>0.4.3</version>
     <authors>Mark Meeus</authors>
     <owners>Mark Meeus</owners>
     <projectUrl>https://github.com/markmeeus/MarcelloDB</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>MarcelloDB is a pure .net/mono embeddable object database. MarcelloDB saves plain C# objects, including child objects, lists and collections. Supported on Xamarin (Android and iOS) and Windows (8.1-10 and Phone 8.1-10).</description>
-    <releaseNotes>0.4.2: Fixes a serialization bug when using DateTime in indexes.</releaseNotes>
+    <description>NoSql for Xamarin and .net. Saves plain C# objects, including child objects, lists and collections. Supported on Xamarin (Android and iOS) and Windows (8.1-10 and Phone 8.1-10).</description>
+    <releaseNotes>0.4.3: Update package dependencies to use Json.Net 9.0.1.</releaseNotes>
     <copyright>Copyright 2015-2016</copyright>
     <tags>Database NoSql Mobile Xamarin Windows</tags>
     <iconUrl>http://markmeeus.github.io/MarcelloDB/images/logo/icon_blue_512x512.png</iconUrl>
