@@ -118,6 +118,14 @@
     <Compile Include="Collections\Scopes\CompoundBetweenBuilder.cs">
       <DependentUpon>CompoundBetweenBuilder.tt</DependentUpon>
     </Compile>
+    <Compile Include="Serialization\ValueSerializers\ValueSerializer.cs" />
+    <Compile Include="Serialization\ValueSerializers\BooleanSerializers.cs" />
+    <Compile Include="Serialization\ValueSerializers\ByteSerializer.cs" />
+    <Compile Include="Serialization\ValueSerializers\IntSerializer.cs" />
+    <Compile Include="Serialization\ValueSerializers\FloatSerializer.cs" />
+    <Compile Include="Serialization\ValueSerializers\DateTimeSerializer.cs" />
+    <Compile Include="Serialization\ValueSerializers\StringSerializer.cs" />
+    <Compile Include="Serialization\ValueSerializers\ValueWithAddressIndexKeySerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Runtime" />
@@ -131,6 +139,7 @@
     <Folder Include="Platform\" />
     <Folder Include="Collections\Scopes\" />
     <Folder Include="Collections\IndexedValueTypes\" />
+    <Folder Include="Serialization\ValueSerializers\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
