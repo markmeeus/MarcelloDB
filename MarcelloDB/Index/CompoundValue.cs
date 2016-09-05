@@ -19,6 +19,11 @@ namespace MarcelloDB.Index
         }
         #endregion
 
+        public override bool Equals(object objB)
+        {
+            return this.CompareTo(objB) == 0;
+        }
+
         int CompareValues(IEnumerable<object> valuesA, IEnumerable<object> valuesB)
         {
             if (valuesA.Count() == 0 || valuesB.Count() == 0)

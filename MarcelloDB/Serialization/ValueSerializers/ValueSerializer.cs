@@ -25,7 +25,13 @@ namespace MarcelloDB.Serialization.ValueSerializers
                     {
                         ValueSerializerCache[valueType] = BuildValueWithAddressSerializer(valueType);
                     }
+                    else if(genericType.Name.StartsWith("CompoundValue")){
+                        ValueSerializerCache[valueType] = BuildCompoundValueSerializer(valueType);
+                    }
                 }
+            }
+            if(!ValueSerializerCache.ContainsKey(valueType)){
+                System.Diagnostics.Debug.WriteLine("?");
             }
             return ValueSerializer.ValueSerializerCache[valueType];
 
@@ -49,6 +55,20 @@ namespace MarcelloDB.Serialization.ValueSerializers
             var serializer = serializerConstructor.Invoke(new object[]{ innerValueSerializer });
 
             return (ValueSerializer)serializer;
+        }
+
+        static ValueSerializer BuildCompoundValueSerializer(Type compoundType)
+        {
+            var valueTypes = compoundType.GenericTypeArguments;
+            var valueSerializers = valueTypes.Select(
+                t => Instance(t));
+
+            var serializerConstructor = CompoundValueSerializer.GetGenericConstructorWithTypes(valueTypes);
+
+            var serializer = serializerConstructor.Invoke(new object[]{valueSerializers});
+
+            return (ValueSerializer)serializer;
+
         }
 
         static Dictionary<Type, ValueSerializer> CreateCacheWithPrimitiveSerializers()

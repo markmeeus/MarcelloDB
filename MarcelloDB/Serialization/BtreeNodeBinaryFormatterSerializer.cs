@@ -33,6 +33,10 @@ namespace MarcelloDB.Serialization
 
         static bool CanSerializeValueOfType(Type valueType)
         {
+            if(valueType.Name.StartsWith("CompoundValue"))
+            {
+                return valueType.GenericTypeArguments.All(t => CanSerializeValueOfType(t));
+            }
             return
                 valueType == typeof(Boolean) || valueType == typeof(Boolean?)
                 || valueType == typeof(Byte) || valueType == typeof(Byte?)

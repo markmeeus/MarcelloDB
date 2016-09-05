@@ -126,6 +126,10 @@
     <Compile Include="Serialization\ValueSerializers\DateTimeSerializer.cs" />
     <Compile Include="Serialization\ValueSerializers\StringSerializer.cs" />
     <Compile Include="Serialization\ValueSerializers\ValueWithAddressIndexKeySerializer.cs" />
+    <Compile Include="Serialization\ValueSerializers\CompoundValueSerializerNG.cs" />
+    <Compile Include="Serialization\ValueSerializers\CompoundValueSerializer.cs">
+      <DependentUpon>CompoundValueSerializer.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Runtime" />
@@ -158,6 +162,10 @@
     <None Include="Collections\Scopes\CompoundBetweenBuilder.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>CompoundBetweenBuilder.cs</LastGenOutput>
+    </None>
+    <None Include="Serialization\ValueSerializers\CompoundValueSerializer.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>CompoundValueSerializer.cs</LastGenOutput>
     </None>
   </ItemGroup>
 </Project>

@@ -26,16 +26,17 @@ namespace MarcelloDB.Collections.Scopes
 	    var genericAttributeList = string.Join(", ", genericAttributes);
 	    var paramsDeclarationList = string.Join(", ", paramsDeclarations);
 	    var argumentsList = string.Join(", ", arguments);
+	    var compoundType = "CompoundValue<" + genericAttributeList + ">";
 #>
     public class BetweenBuilder<TObj, <#=genericAttributeList#>>
     {
-        BaseIndexedValue<TObj, CompoundValue> IndexedValue { get; set; }
+        BaseIndexedValue<TObj, <#=compoundType#>> IndexedValue { get; set; }
 
-        CompoundValue StartAt { get; set; }
+        <#=compoundType#> StartAt { get; set; }
 
         bool IncludeStartAt { get; set; }
 
-        internal BetweenBuilder(BaseIndexedValue<TObj, CompoundValue> indexedValue, CompoundValue startAt, bool includeStartAt)
+        internal BetweenBuilder(BaseIndexedValue<TObj, <#=compoundType#>> indexedValue, <#=compoundType#> startAt, bool includeStartAt)
         {
             this.IndexedValue = indexedValue;
             this.StartAt = startAt;
@@ -56,16 +57,16 @@ namespace MarcelloDB.Collections.Scopes
 	      var paramsAsArgsList = string.Join(", ", paramsAsArgs);
 
 #>
-        public Between<TObj, CompoundValue> And(<#=methodParamsDeclarationsList#>)
+        public Between<TObj, <#=compoundType#>> And(<#=methodParamsDeclarationsList#>)
         {
-          var endAt = CompoundValue.Build(<#=paramsAsArgsList#>);
-            return new Between<TObj, CompoundValue>(this.IndexedValue, this.StartAt, this.IncludeStartAt, endAt, false);
+          var endAt = new <#=compoundType#>(<#=paramsAsArgsList#>);
+            return new Between<TObj, <#=compoundType#>>(this.IndexedValue, this.StartAt, this.IncludeStartAt, endAt, false);
         }
 
-        public Between<TObj, CompoundValue> AndIncluding(<#=methodParamsDeclarationsList#>)
+        public Between<TObj, <#=compoundType#>> AndIncluding(<#=methodParamsDeclarationsList#>)
         {
-          var endAt = CompoundValue.Build(p1);
-            return new Between<TObj, CompoundValue>(this.IndexedValue, this.StartAt, this.IncludeStartAt, endAt, true);
+          var endAt = new <#=compoundType#>(p1);
+            return new Between<TObj, <#=compoundType#>>(this.IndexedValue, this.StartAt, this.IncludeStartAt, endAt, true);
         }
 <#
     	}

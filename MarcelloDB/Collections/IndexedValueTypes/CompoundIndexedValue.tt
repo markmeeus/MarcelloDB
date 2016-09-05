@@ -33,7 +33,7 @@ namespace MarcelloDB.Collections
         var paramsDeclarationList = string.Join(", ", paramsDeclarations);
         var argumentsList = string.Join(", ", arguments);
 #>
-    public class CompoundIndexedValue<TObj, <#=genericAttributeList#>> : BaseIndexedValue<TObj, CompoundValue>
+    public class CompoundIndexedValue<TObj, <#=genericAttributeList#>> : BaseIndexedValue<TObj, CompoundValue<<#=genericAttributeList#>>>
     {
         CompoundIndexedValue(): base(null){}
 
@@ -42,7 +42,7 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<TObj> Find(<#=paramsDeclarationList#>)
         {
-            return base.FindInternal(CompoundValue.Build(<#=argumentsList#>));
+            return base.FindInternal(new CompoundValue<<#=genericAttributeList#>>(<#=argumentsList#>));
         }
 
 <#
@@ -60,33 +60,33 @@ namespace MarcelloDB.Collections
 #>
         public IEnumerable<TObj> GreaterThan(<#=methodParamsDeclarationsList#>)
         {
-            return base.GreaterThanInternal(CompoundValue.Build(<#=paramsAsArgsList#>));
+            return base.GreaterThanInternal(new CompoundValue<<#=genericAttributeList#>>(<#=paramsAsArgsList#>));
         }
 
         public IEnumerable<TObj> GreaterThanOrEqual(<#=methodParamsDeclarationsList#>)
         {
-            return base.GreaterThanOrEqualInternal(CompoundValue.Build(<#=paramsAsArgsList#>));
+            return base.GreaterThanOrEqualInternal(new CompoundValue<<#=genericAttributeList#>>(<#=paramsAsArgsList#>));
         }
 
         public IEnumerable<TObj> SmallerThan(<#=methodParamsDeclarationsList#>)
         {
-            return base.SmallerThanInternal(CompoundValue.Build(<#=paramsAsArgsList#>));
+            return base.SmallerThanInternal(new CompoundValue<<#=genericAttributeList#>>(<#=paramsAsArgsList#>));
         }
 
         public IEnumerable<TObj> SmallerThanOrEqual(<#=methodParamsDeclarationsList#>)
         {
-            return base.SmallerThanOrEqualInternal(CompoundValue.Build(<#=paramsAsArgsList#>));
+            return base.SmallerThanOrEqualInternal(new CompoundValue<<#=genericAttributeList#>>(<#=paramsAsArgsList#>));
         }
 
         public BetweenBuilder<TObj, <#=genericAttributeList#>> Between(<#=methodParamsDeclarationsList#>)
         {
-            var start = CompoundValue.Build(<#=paramsAsArgsList#>);
+            var start = new CompoundValue<<#=genericAttributeList#>>(<#=paramsAsArgsList#>);
             return new BetweenBuilder<TObj, <#=genericAttributeList#>>(this, start, false);
         }
 
         public BetweenBuilder<TObj, <#=genericAttributeList#>> BetweenIncluding(<#=methodParamsDeclarationsList#>)
         {
-            var start = CompoundValue.Build(<#=paramsAsArgsList#>);
+            var start = new CompoundValue<<#=genericAttributeList#>>(<#=paramsAsArgsList#>);
             return new BetweenBuilder<TObj, <#=genericAttributeList#>>(this, start, true);
         }
 

@@ -1,0 +1,87 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+
+using System;
+using System.Linq;
+using System.Reflection;
+using System.Collections.Generic;
+using MarcelloDB.Index;
+
+namespace MarcelloDB.Serialization.ValueSerializers
+{
+    static class CompoundValueSerializer
+    {
+    	public static ConstructorInfo GetGenericConstructorWithTypes(Type[] valueTypes)
+        {
+        	switch(valueTypes.Length){
+<#		var maxCompoundLength = 8;
+		for (int compoundLength = 1; compoundLength <= maxCompoundLength; compoundLength++)
+    	{
+#>
+        	case <#=compoundLength #>:
+	            return typeof(CompoundValueSerializer<<#=new String(',', compoundLength - 1)#>>)
+	                .GetTypeInfo()
+	                .MakeGenericType(valueTypes)
+	                .GetTypeInfo()
+	                .DeclaredConstructors.First();
+<#
+		}
+#>			default:
+				throw new InvalidOperationException("Compound values support upto <#= maxCompoundLength#> values");
+			}
+		}
+    }
+
+<#
+		for (int compoundLength = 1; compoundLength <= maxCompoundLength; compoundLength++)
+	    {
+	    	var genericAttributes = new List<string>();
+	    	var writeValues = new List<string>();
+	    	var readValues = new List<string>();
+	        for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
+	        {
+	            var nr = genericArgNr.ToString();
+	            genericAttributes.Add("T" + nr);
+	            writeValues.Add(
+	            	String.Format("((ValueSerializer<T{0}>)Serializers[{1}]).WriteValue(formatter, value.P{0});", genericArgNr, genericArgNr-1));
+	            readValues.Add(
+	            	String.Format("((ValueSerializer<T{0}>)this.Serializers[{1}]).ReadValue(formatter)", genericArgNr, genericArgNr-1));
+	        }
+	        var genericAttributeList = string.Join(", ", genericAttributes);
+	        var writeValueBlock = string.Join("\n\t\t\t", writeValues);
+	        var readValueBlock = string.Join(",\n\t\t\t\t", readValues);
+#>
+    internal class CompoundValueSerializer<<#=genericAttributeList#>> : ValueSerializer<CompoundValue<<#=genericAttributeList#>>>
+    {
+        List<ValueSerializer> Serializers { get; set; }
+
+        public CompoundValueSerializer(IEnumerable<ValueSerializer> serializers)
+        {
+            this.Serializers = serializers.ToList();
+        }
+
+        #region implemented abstract members of ValueSerializer
+
+        internal override void WriteValue(BinaryFormatter formatter, CompoundValue<<#=genericAttributeList#>> value)
+        {
+            <#=writeValueBlock#>
+        }
+
+        internal override CompoundValue<<#=genericAttributeList#>> ReadValue(BinaryFormatter formatter)
+        {
+            return new CompoundValue<<#=genericAttributeList#>>(
+            	<#=readValueBlock#>
+            );
+        }
+
+        #endregion
+    }
+
+<#
+		}
+#>
+
+}

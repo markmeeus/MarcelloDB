@@ -319,6 +319,41 @@ namespace MarcelloDB.Test.Serialization
         }
 
         [Test]
+        public void Can_Serialize_CompoundValue_1()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(
+                typeof(Node<ValueWithAddressIndexKey<CompoundValue<int>>>)));
+        }
+
+        [Test]
+        public void Serializes_CompoundValue_1()
+        {
+            SerializesEntries<CompoundValue<Int32>>(
+                CompoundValue.Build(1), CompoundValue.Build(2), CompoundValue.Build(3));
+        }
+
+        [Test]
+        public void Can_Serialize_CompoundValue_2()
+        {
+            Assert.IsTrue(BTreeNodeBinaryFormatterSerializer.CanSerialize(
+                typeof(Node<ValueWithAddressIndexKey<CompoundValue<int, string>>>)));
+        }
+
+        [Test]
+        public void Serializes_CompoundValue_2()
+        {
+            SerializesEntries<CompoundValue<Int32, string>>(
+                CompoundValue.Build(1, "a"), CompoundValue.Build(2, "b"), CompoundValue.Build(3, "c"));
+        }
+        [Test]
+        public void Cannot_Serialize_CompoundValue_Custom()
+        {
+            Assert.IsFalse(BTreeNodeBinaryFormatterSerializer.CanSerialize(
+                typeof(Node<ValueWithAddressIndexKey<CompoundValue<int, CustomData>>>)));
+        }
+
+
+        [Test]
         public void SerializesChildren()
         {
             var serializer = new BTreeNodeBinaryFormatterSerializer<Byte>();
