@@ -292,6 +292,69 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
         }
 
         [Test]
+        public void SmallerThan_Descending()
+        {
+            var indexables =
+                _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
+            indexables.Persist(Indexable.CreateIndexable(1));
+            indexables.Persist(Indexable.CreateIndexable(2));
+            indexables.Persist(Indexable.CreateIndexable(3));
+
+            var items = indexables.Indexes.Compound1And2And3.SmallerThan(3).Descending.ToList();
+
+            Assert.AreEqual(2, items.Count);
+            Assert.AreEqual(2, items[0].ID);
+            Assert.AreEqual(1, items[1].ID);
+        }
+
+        [Test]
+        public void SmallerThan_Keys()
+        {
+            var indexables =
+                _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
+            indexables.Persist(Indexable.CreateIndexable(1));
+            indexables.Persist(Indexable.CreateIndexable(2));
+            indexables.Persist(Indexable.CreateIndexable(3));
+
+            var keys = indexables.Indexes.Compound1And2And3.SmallerThan(3).Keys.ToList();
+
+            Assert.AreEqual(2, keys.Count);
+            Assert.AreEqual(1, keys[0].P1);
+            Assert.AreEqual(2, keys[1].P1);
+        }
+
+        [Test]
+        public void GreaterThan_Descending()
+        {
+            var indexables =
+                _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
+            indexables.Persist(Indexable.CreateIndexable(1));
+            indexables.Persist(Indexable.CreateIndexable(2));
+            indexables.Persist(Indexable.CreateIndexable(3));
+
+            var items = indexables.Indexes.Compound1And2And3.GreaterThan(1).Descending.ToList();
+
+            Assert.AreEqual(2, items.Count);
+            Assert.AreEqual(3, items[0].ID);
+            Assert.AreEqual(2, items[1].ID);
+        }
+
+        [Test]
+        public void GreaterThan_Keys()
+        {
+            var indexables =
+                _collectionFile.Collection<Indexable, int, IndexableIndexDefinition3>("indexables3", i => i.ID);
+            indexables.Persist(Indexable.CreateIndexable(1));
+            indexables.Persist(Indexable.CreateIndexable(2));
+            indexables.Persist(Indexable.CreateIndexable(3));
+
+            var keys = indexables.Indexes.Compound1And2And3.GreaterThanOrEqual(2).Keys.ToList();
+
+            Assert.AreEqual(2, keys.Count);
+            Assert.AreEqual(2, keys[0].P1);
+            Assert.AreEqual(3, keys[1].P1);
+        }
+        [Test]
         public void Between3Compound_2Params()
         {
             var indexables =

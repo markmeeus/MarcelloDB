@@ -58,22 +58,22 @@ namespace MarcelloDB.Collections
             var methodParamsDeclarationsList = string.Join(", ", methodParamsDeclarations);
             var paramsAsArgsList = string.Join(", ", paramsAsArgs);
 #>
-        public IEnumerable<TObj> GreaterThan(<#=methodParamsDeclarationsList#>)
+        public GreaterThan<TObj, CompoundValue<<#=genericAttributeList#>>> GreaterThan(<#=methodParamsDeclarationsList#>)
         {
             return base.GreaterThanInternal(new CompoundValue<<#=genericAttributeList#>>(<#=paramsAsArgsList#>));
         }
 
-        public IEnumerable<TObj> GreaterThanOrEqual(<#=methodParamsDeclarationsList#>)
+        public GreaterThan<TObj, CompoundValue<<#=genericAttributeList#>>> GreaterThanOrEqual(<#=methodParamsDeclarationsList#>)
         {
             return base.GreaterThanOrEqualInternal(new CompoundValue<<#=genericAttributeList#>>(<#=paramsAsArgsList#>));
         }
 
-        public IEnumerable<TObj> SmallerThan(<#=methodParamsDeclarationsList#>)
+        public SmallerThan<TObj, CompoundValue<<#=genericAttributeList#>>> SmallerThan(<#=methodParamsDeclarationsList#>)
         {
             return base.SmallerThanInternal(new CompoundValue<<#=genericAttributeList#>>(<#=paramsAsArgsList#>));
         }
 
-        public IEnumerable<TObj> SmallerThanOrEqual(<#=methodParamsDeclarationsList#>)
+        public SmallerThan<TObj, CompoundValue<<#=genericAttributeList#>>> SmallerThanOrEqual(<#=methodParamsDeclarationsList#>)
         {
             return base.SmallerThanOrEqualInternal(new CompoundValue<<#=genericAttributeList#>>(<#=paramsAsArgsList#>));
         }
