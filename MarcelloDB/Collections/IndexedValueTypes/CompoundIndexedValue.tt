@@ -33,11 +33,11 @@ namespace MarcelloDB.Collections
         var paramsDeclarationList = string.Join(", ", paramsDeclarations);
         var argumentsList = string.Join(", ", arguments);
 #>
-    public class CompoundIndexedValue<TObj, <#=genericAttributeList#>> : BaseIndexedValue<TObj, CompoundValue<<#=genericAttributeList#>>>
+    public class IndexedValue<TObj, <#=genericAttributeList#>> : BaseIndexedValue<TObj, CompoundValue<<#=genericAttributeList#>>>
     {
-        CompoundIndexedValue(): base(null){}
+        IndexedValue(): base(null){}
 
-        internal CompoundIndexedValue(Func<TObj, CompoundValue<<#=genericAttributeList#>>> valueFunction)
+        internal IndexedValue(Func<TObj, CompoundValue<<#=genericAttributeList#>>> valueFunction)
             :base(valueFunction){}
 
         public IEnumerable<TObj> Find(<#=paramsDeclarationList#>)

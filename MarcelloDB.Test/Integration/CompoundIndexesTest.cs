@@ -53,10 +53,10 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
 
         class IndexableIndexDefinition2 : IndexDefinition<Indexable>
         {
-            public CompoundIndexedValue<Indexable, int, long> Compound1And2
+            public IndexedValue<Indexable, int, long> Compound1And2
             {
                 get{
-                    return CompoundIndexedValue((indexable) =>
+                    return IndexedValue((indexable) =>
                         {
                             return CompoundValue.Build(indexable.Prop1, indexable.Prop2);
                         });
@@ -78,11 +78,11 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
         }
 
         class IndexableIndexDefinition3 : IndexDefinition<Indexable>
-        {            
-            public CompoundIndexedValue<Indexable, int, long, double> Compound1And2And3
+        {
+            public IndexedValue<Indexable, int, long, double> Compound1And2And3
             {
                 get{
-                    return CompoundIndexedValue((indexable) =>
+                    return IndexedValue((indexable) =>
                         {
                             return CompoundValue.Build(indexable.Prop1, indexable.Prop2, indexable.Prop3);
                         });
@@ -104,10 +104,10 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
 
         class IndexableIndexDefinition4 : IndexDefinition<Indexable>
         {
-            public CompoundIndexedValue<Indexable, int, long, double, string> Compound1And2And3And4
+            public IndexedValue<Indexable, int, long, double, string> Compound1And2And3And4
             {
                 get{
-                    return CompoundIndexedValue((indexable) =>
+                    return IndexedValue((indexable) =>
                         {
                             return CompoundValue.Build(
                                 indexable.Prop1,
@@ -271,7 +271,6 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
             indexables.Persist(Indexable.CreateIndexable(3));
 
             var items = indexables.Indexes.Compound1And2And3.SmallerThanOrEqual(2, 2).ToList();
-
             Assert.AreEqual(2, items.Count);
             Assert.AreEqual(1, items[0].ID);
             Assert.AreEqual(2, items[1].ID);

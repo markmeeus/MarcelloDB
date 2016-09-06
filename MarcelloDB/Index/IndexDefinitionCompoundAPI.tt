@@ -26,16 +26,16 @@ namespace MarcelloDB.Index
 
             var genericAttributeList = string.Join(", ", genericAttributes);
 #>
-        protected CompoundIndexedValue<T, <#=genericAttributeList#>> CompoundIndexedValue<<#=genericAttributeList#>>
+        protected IndexedValue<T, <#=genericAttributeList#>> IndexedValue<<#=genericAttributeList#>>
             (Func<T, CompoundValue<<#=genericAttributeList#>>> valueFunc, [CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new CompoundIndexedValue<T, <#=genericAttributeList#>>(valueFunc);
+                return new IndexedValue<T, <#=genericAttributeList#>>(valueFunc);
             }
             else
             {
-                return (CompoundIndexedValue<T, <#=genericAttributeList#>>)IndexedValues.First(v => v.PropertyName == callerMember);
+                return (IndexedValue<T, <#=genericAttributeList#>>)IndexedValues.First(v => v.PropertyName == callerMember);
             }
         }
 
