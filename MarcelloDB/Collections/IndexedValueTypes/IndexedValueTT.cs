@@ -4,19 +4,42 @@ using System.Collections.Generic;
 using MarcelloDB.Collections.Scopes;
 using MarcelloDB.Index.BTree;
 using MarcelloDB.Records;
+using System.Reflection;
 
 namespace MarcelloDB.Collections
 {
     public class IndexedValue<TObj, TAttribute> : BaseIndexedValue<TObj, TAttribute>
     {
+        Func<TObj, IEnumerable<TAttribute>> _propValueFunction;
 
-        internal IndexedValue(Func<TObj, TAttribute> valueFunction):base(valueFunction)
+        internal IndexedValue(Func<TObj, TAttribute> valueFunction)
+            :base( (o)=>new TAttribute[]{valueFunction(o)} )
         {
         }
 
         IndexedValue():base(null)
         {
         }
+
+        internal override Func<TObj, IEnumerable<TAttribute>> ValueFunction
+        {
+            get
+            {
+                if (base.UserValueFunction != null)
+                {
+                    return UserValueFunction;
+                }
+                else
+                {
+                    return _propValueFunction = _propValueFunction ?? (_propValueFunction = ((TObj o) => {
+                        var value = (TAttribute)(typeof(TObj).GetRuntimeProperty(this.PropertyName)
+                            .GetMethod.Invoke(o, new object[0]));
+                        return new TAttribute[]{value};
+                    }));
+                }
+            }
+        }
+
 
         internal static IndexedValue<TObj, TAttribute> Build()
         {

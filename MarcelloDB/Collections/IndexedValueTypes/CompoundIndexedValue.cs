@@ -14,7 +14,7 @@ namespace MarcelloDB.Collections
         IndexedValue(): base(null){}
 
         internal IndexedValue(Func<TObj, CompoundValue<T1, T2>> valueFunction)
-            :base(valueFunction){}
+            :base((o)=>new CompoundValue<T1, T2>[]{valueFunction(o)}){}
 
         public IEnumerable<TObj> Find(T1 val1, T2 val2)
         {
@@ -92,7 +92,7 @@ namespace MarcelloDB.Collections
         IndexedValue(): base(null){}
 
         internal IndexedValue(Func<TObj, CompoundValue<T1, T2, T3>> valueFunction)
-            :base(valueFunction){}
+            :base((o)=>new CompoundValue<T1, T2, T3>[]{valueFunction(o)}){}
 
         public IEnumerable<TObj> Find(T1 val1, T2 val2, T3 val3)
         {
@@ -202,7 +202,7 @@ namespace MarcelloDB.Collections
         IndexedValue(): base(null){}
 
         internal IndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4>> valueFunction)
-            :base(valueFunction){}
+            :base((o)=>new CompoundValue<T1, T2, T3, T4>[]{valueFunction(o)}){}
 
         public IEnumerable<TObj> Find(T1 val1, T2 val2, T3 val3, T4 val4)
         {
@@ -344,7 +344,7 @@ namespace MarcelloDB.Collections
         IndexedValue(): base(null){}
 
         internal IndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5>> valueFunction)
-            :base(valueFunction){}
+            :base((o)=>new CompoundValue<T1, T2, T3, T4, T5>[]{valueFunction(o)}){}
 
         public IEnumerable<TObj> Find(T1 val1, T2 val2, T3 val3, T4 val4, T5 val5)
         {
@@ -518,7 +518,7 @@ namespace MarcelloDB.Collections
         IndexedValue(): base(null){}
 
         internal IndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6>> valueFunction)
-            :base(valueFunction){}
+            :base((o)=>new CompoundValue<T1, T2, T3, T4, T5, T6>[]{valueFunction(o)}){}
 
         public IEnumerable<TObj> Find(T1 val1, T2 val2, T3 val3, T4 val4, T5 val5, T6 val6)
         {
@@ -724,7 +724,7 @@ namespace MarcelloDB.Collections
         IndexedValue(): base(null){}
 
         internal IndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7>> valueFunction)
-            :base(valueFunction){}
+            :base((o)=>new CompoundValue<T1, T2, T3, T4, T5, T6, T7>[]{valueFunction(o)}){}
 
         public IEnumerable<TObj> Find(T1 val1, T2 val2, T3 val3, T4 val4, T5 val5, T6 val6, T7 val7)
         {
@@ -962,7 +962,7 @@ namespace MarcelloDB.Collections
         IndexedValue(): base(null){}
 
         internal IndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>> valueFunction)
-            :base(valueFunction){}
+            :base((o)=>new CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>[]{valueFunction(o)}){}
 
         public IEnumerable<TObj> Find(T1 val1, T2 val2, T3 val3, T4 val4, T5 val5, T6 val6, T7 val7, T8 val8)
         {

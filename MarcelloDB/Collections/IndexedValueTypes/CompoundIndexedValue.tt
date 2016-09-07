@@ -38,7 +38,7 @@ namespace MarcelloDB.Collections
         IndexedValue(): base(null){}
 
         internal IndexedValue(Func<TObj, CompoundValue<<#=genericAttributeList#>>> valueFunction)
-            :base(valueFunction){}
+            :base((o)=>new CompoundValue<<#=genericAttributeList#>>[]{valueFunction(o)}){}
 
         public IEnumerable<TObj> Find(<#=paramsDeclarationList#>)
         {

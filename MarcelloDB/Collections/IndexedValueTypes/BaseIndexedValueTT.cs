@@ -10,34 +10,32 @@ using System.Linq;
 
 namespace MarcelloDB.Collections
 {
-    public class BaseIndexedValue<TObj, TAttribute> : IndexedValue
+    public abstract class BaseIndexedValue<TObj, TAttribute> : IndexedValue
     {
         protected Collection Collection { get; set; }
+
+        protected Func<TObj, IEnumerable<TAttribute>> UserValueFunction { get; set; }
 
         RecordManager RecordManager  { get; set; }
 
         IObjectSerializer<TObj> Serializer { get; set; }
 
-        Func<TObj, TAttribute> _userValueFunction;
-
-        Func<TObj, TAttribute> _propValueFunction;
-
-        internal BaseIndexedValue(Func<TObj, TAttribute> valueFunction):base(null)
+        internal BaseIndexedValue(Func<TObj, IEnumerable<TAttribute>> valueFunction):base(null)
         {
-            this._userValueFunction = valueFunction;
+            this.UserValueFunction = valueFunction;
         }
 
         BaseIndexedValue() : base(null){}
 
         internal override IEnumerable<object> GetKeys(object o, Int64 address)
         {
-            return new ValueWithAddressIndexKey<TAttribute>[]{
-                new ValueWithAddressIndexKey<TAttribute>
+            return this.ValueFunction((TObj)o)
+                .Select((v) => new ValueWithAddressIndexKey<TAttribute>
                 {
-                    V = this.ValueFunction((TObj)o),
+                    V = v,
                     A = address
                 }
-            };
+            );
         }
 
         protected internal override void Register(object o, Int64 address)
@@ -107,21 +105,9 @@ namespace MarcelloDB.Collections
             return enumerator;
         }
 
-        internal Func<TObj, TAttribute> ValueFunction
-        {
-            get
-            {
-                if (_userValueFunction != null)
-                {
-                    return _userValueFunction;
-                }
-                else
-                {
-                    return _propValueFunction = _propValueFunction ?? (_propValueFunction = ((TObj o) => {
-                        return (TAttribute)(typeof(TObj).GetRuntimeProperty(this.PropertyName)
-                            .GetMethod.Invoke(o, new object[0]));
-                    }));
-                }
+        internal virtual Func<TObj, IEnumerable<TAttribute>> ValueFunction {
+            get{
+                return this.UserValueFunction;
             }
         }
 
