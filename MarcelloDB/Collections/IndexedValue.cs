@@ -15,7 +15,7 @@ namespace MarcelloDB.Collections
     {
         public IndexedValue(Session session) : base(session){}
 
-        internal abstract object GetKey(object o, Int64 address);
+        internal abstract IEnumerable<object> GetKeys(object o, Int64 address);
 
         protected internal abstract void Register(object o, Int64 address);
 

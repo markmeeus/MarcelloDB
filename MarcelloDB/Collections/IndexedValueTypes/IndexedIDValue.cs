@@ -2,6 +2,7 @@
 using MarcelloDB.Collections;
 using MarcelloDB.Records;
 using MarcelloDB.Index;
+using System.Collections.Generic;
 
 namespace MarcelloDB.Collections
 {
@@ -14,9 +15,9 @@ namespace MarcelloDB.Collections
 
         internal Func<TObj, TID> IDValueFunction { get; set; }
 
-        internal override object GetKey(object o, long address)
+        internal override IEnumerable<object> GetKeys(object o, long address)
         {
-            return IDValueFunction((TObj)o);
+            return new object[]{IDValueFunction((TObj)o)};
         }
 
         internal  override void RegisterKey(object key,

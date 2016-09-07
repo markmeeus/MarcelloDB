@@ -6,6 +6,7 @@ using MarcelloDB.Index.BTree;
 using System.Reflection;
 using System.Collections.Generic;
 using MarcelloDB.Collections.Scopes;
+using System.Linq;
 
 namespace MarcelloDB.Collections
 {
@@ -28,31 +29,36 @@ namespace MarcelloDB.Collections
 
         BaseIndexedValue() : base(null){}
 
-        internal override object GetKey(object o, Int64 address)
+        internal override IEnumerable<object> GetKeys(object o, Int64 address)
         {
-            return new ValueWithAddressIndexKey<TAttribute>
-            {
-                V = this.ValueFunction((TObj)o),
-                A = address
+            return new ValueWithAddressIndexKey<TAttribute>[]{
+                new ValueWithAddressIndexKey<TAttribute>
+                {
+                    V = this.ValueFunction((TObj)o),
+                    A = address
+                }
             };
         }
 
         protected internal override void Register(object o, Int64 address)
         {
-            var key = this.GetKey(o, address);
-
             var indexName = RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName);
-
-            RegisterKey(key, address, this.Session, this.RecordManager, indexName);
+            var keys = this.GetKeys(o, address);
+            foreach (var key in keys)
+            {
+                RegisterKey(key, address, this.Session, this.RecordManager, indexName);
+            }
         }
 
         protected internal override void UnRegister(object o, Int64 address)
         {
-            var key = this.GetKey(o, address);
-
             var indexName = RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName);
+            var keys = this.GetKeys(o, address);
+            foreach (var key in keys)
+            {
+                UnRegisterKey(key, address, this.Session, this.RecordManager, indexName);
+            }
 
-            UnRegisterKey(key, address, this.Session, this.RecordManager, indexName);
         }
 
         internal virtual void RegisterKey(object key,

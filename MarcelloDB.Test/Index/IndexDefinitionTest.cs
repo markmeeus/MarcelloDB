@@ -55,7 +55,7 @@ namespace MarcelloDB.Test.Index
         {
             var indexedValues = _definition.IndexedValues;
             var indexKey = (ValueWithAddressIndexKey<string>) indexedValues.FirstOrDefault(v => v.PropertyName == "Name")
-                .GetKey(Article.BarbieDoll, 123);
+                .GetKeys(Article.BarbieDoll, 123).First();
             Assert.AreEqual(Article.BarbieDoll.Name, indexKey.V);
             Assert.AreEqual(123, indexKey.A);
         }
@@ -65,7 +65,7 @@ namespace MarcelloDB.Test.Index
         {
             var indexedValues = _definition.IndexedValues;
             var indexKey = (ValueWithAddressIndexKey<string>) indexedValues.FirstOrDefault(v => v.PropertyName == "CustomDescription")
-                .GetKey(Article.BarbieDoll, 123);
+                .GetKeys(Article.BarbieDoll, 123).First();
             Assert.AreEqual("Custom" + Article.BarbieDoll.Description, indexKey.V);
             Assert.AreEqual(123, indexKey.A);
         }
