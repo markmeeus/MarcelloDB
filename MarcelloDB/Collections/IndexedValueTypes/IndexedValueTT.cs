@@ -31,11 +31,16 @@ namespace MarcelloDB.Collections
                 }
                 else
                 {
-                    return _propValueFunction = _propValueFunction ?? (_propValueFunction = ((TObj o) => {
-                        var value = (TAttribute)(typeof(TObj).GetRuntimeProperty(this.PropertyName)
-                            .GetMethod.Invoke(o, new object[0]));
-                        return new TAttribute[]{value};
-                    }));
+                    if (_propValueFunction == null)
+                    {
+                        var getMethod = typeof(TObj).GetRuntimeProperty(this.PropertyName).GetMethod;
+                        _propValueFunction = (TObj o) =>
+                        {
+                            var value = (TAttribute)getMethod.Invoke(o, new object[0]);
+                            return new TAttribute[]{ value };
+                        };
+                    }
+                    return _propValueFunction;
                 }
             }
         }
