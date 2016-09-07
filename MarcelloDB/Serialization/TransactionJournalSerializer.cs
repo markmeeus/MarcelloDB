@@ -31,7 +31,6 @@ namespace MarcelloDB.Serialization
             writer.WriteByte(FORMAT_VERSION);
             writer.WriteInt32(journal.Entries.Count);
 
-            int count = 0;
             foreach (var entry in journal.Entries)
             {
                 WriteEntry(writer, entry);

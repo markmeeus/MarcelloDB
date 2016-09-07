@@ -24,6 +24,11 @@ namespace MarcelloDB.Index
             return this.CompareTo(objB) == 0;
         }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         int CompareValues(IEnumerable<object> valuesA, IEnumerable<object> valuesB)
         {
             if (valuesA.Count() == 0 || valuesB.Count() == 0)
