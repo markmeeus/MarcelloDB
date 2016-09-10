@@ -130,6 +130,7 @@
     <Compile Include="Serialization\ValueSerializers\CompoundValueSerializer.cs">
       <DependentUpon>CompoundValueSerializer.tt</DependentUpon>
     </Compile>
+    <Compile Include="Collections\IndexedValueTypes\IndexedRange.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Runtime" />

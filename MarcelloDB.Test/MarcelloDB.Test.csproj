@@ -84,6 +84,7 @@
     <Compile Include="Records\IndexMetaRecordTest.cs" />
     <Compile Include="Index\CompoundValueTest.cs" />
     <Compile Include="Integration\CompoundIndexesTest.cs" />
+    <Compile Include="Integration\IndexRangeTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />
