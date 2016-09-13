@@ -44,6 +44,7 @@ namespace MarcelloDB.Collections
         {
             lock (this.Session.SyncLock)
             {
+                var yieldedObjectAddresses = new HashSet<Int64>();
                 foreach (var range in this.Ranges)
                 {
                     var index = new RecordIndex<TKey>(
@@ -62,9 +63,13 @@ namespace MarcelloDB.Collections
 
                     foreach (var node in indexEnumerator)
                     {
-                        var record = RecordManager.GetRecord(node.Pointer);
-                        var obj = Serializer.Deserialize(record.Data);
-                        yield return obj;
+                        if(!yieldedObjectAddresses.Contains(node.Pointer))
+                        {
+                            var record = RecordManager.GetRecord(node.Pointer);
+                            var obj = Serializer.Deserialize(record.Data);
+                            yield return obj;
+                            yieldedObjectAddresses.Add(node.Pointer);
+                        }
                     }
                 }
             }

@@ -81,16 +81,16 @@ namespace MarcelloDB.Index
             }
         }
 
-        protected IndexedRange<T, TAttribute> IndexedRange<TAttribute>
+        protected IndexedList<T, TAttribute> IndexedList<TAttribute>
         (Func<T, IEnumerable<TAttribute>> valueFunc, [CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new IndexedRange<T, TAttribute>(valueFunc);
+                return new IndexedList<T, TAttribute>(valueFunc);
             }
             else
             {
-                return (IndexedRange<T, TAttribute>)IndexedValues.First(v => v.PropertyName == callerMember);
+                return (IndexedList<T, TAttribute>)IndexedValues.First(v => v.PropertyName == callerMember);
             }
         }
 
