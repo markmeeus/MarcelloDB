@@ -18,7 +18,9 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<TObj> Find(T1 val1, T2 val2)
         {
-            return base.FindInternal(new CompoundValue<T1, T2>(val1, val2));
+            return base.FindInternal(new CompoundValue<T1, T2>[]{
+            	new CompoundValue<T1, T2>(val1, val2)
+            });
         }
 
         public GreaterThan<TObj, CompoundValue<T1, T2>> GreaterThan(T1 p1)
@@ -96,7 +98,9 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<TObj> Find(T1 val1, T2 val2, T3 val3)
         {
-            return base.FindInternal(new CompoundValue<T1, T2, T3>(val1, val2, val3));
+            return base.FindInternal(new CompoundValue<T1, T2, T3>[]{
+            	new CompoundValue<T1, T2, T3>(val1, val2, val3)
+            });
         }
 
         public GreaterThan<TObj, CompoundValue<T1, T2, T3>> GreaterThan(T1 p1)
@@ -206,7 +210,9 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<TObj> Find(T1 val1, T2 val2, T3 val3, T4 val4)
         {
-            return base.FindInternal(new CompoundValue<T1, T2, T3, T4>(val1, val2, val3, val4));
+            return base.FindInternal(new CompoundValue<T1, T2, T3, T4>[]{
+            	new CompoundValue<T1, T2, T3, T4>(val1, val2, val3, val4)
+            });
         }
 
         public GreaterThan<TObj, CompoundValue<T1, T2, T3, T4>> GreaterThan(T1 p1)
@@ -348,7 +354,9 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<TObj> Find(T1 val1, T2 val2, T3 val3, T4 val4, T5 val5)
         {
-            return base.FindInternal(new CompoundValue<T1, T2, T3, T4, T5>(val1, val2, val3, val4, val5));
+            return base.FindInternal(new CompoundValue<T1, T2, T3, T4, T5>[]{
+            	new CompoundValue<T1, T2, T3, T4, T5>(val1, val2, val3, val4, val5)
+            });
         }
 
         public GreaterThan<TObj, CompoundValue<T1, T2, T3, T4, T5>> GreaterThan(T1 p1)
@@ -522,7 +530,9 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<TObj> Find(T1 val1, T2 val2, T3 val3, T4 val4, T5 val5, T6 val6)
         {
-            return base.FindInternal(new CompoundValue<T1, T2, T3, T4, T5, T6>(val1, val2, val3, val4, val5, val6));
+            return base.FindInternal(new CompoundValue<T1, T2, T3, T4, T5, T6>[]{
+            	new CompoundValue<T1, T2, T3, T4, T5, T6>(val1, val2, val3, val4, val5, val6)
+            });
         }
 
         public GreaterThan<TObj, CompoundValue<T1, T2, T3, T4, T5, T6>> GreaterThan(T1 p1)
@@ -728,7 +738,9 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<TObj> Find(T1 val1, T2 val2, T3 val3, T4 val4, T5 val5, T6 val6, T7 val7)
         {
-            return base.FindInternal(new CompoundValue<T1, T2, T3, T4, T5, T6, T7>(val1, val2, val3, val4, val5, val6, val7));
+            return base.FindInternal(new CompoundValue<T1, T2, T3, T4, T5, T6, T7>[]{
+            	new CompoundValue<T1, T2, T3, T4, T5, T6, T7>(val1, val2, val3, val4, val5, val6, val7)
+            });
         }
 
         public GreaterThan<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7>> GreaterThan(T1 p1)
@@ -966,7 +978,9 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<TObj> Find(T1 val1, T2 val2, T3 val3, T4 val4, T5 val5, T6 val6, T7 val7, T8 val8)
         {
-            return base.FindInternal(new CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>(val1, val2, val3, val4, val5, val6, val7, val8));
+            return base.FindInternal(new CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>[]{
+            	new CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>(val1, val2, val3, val4, val5, val6, val7, val8)
+            });
         }
 
         public GreaterThan<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>> GreaterThan(T1 p1)

@@ -142,7 +142,6 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
             indexables.Persist(Indexable.CreateIndexable(3));
             indexables.Persist(Indexable.CreateIndexable(2));
             indexables.Persist(Indexable.CreateIndexable(1));
-
             var items = indexables.Indexes.Compound1And2And3And4.All.ToList();
                 Assert.AreEqual(3, items.Count);
 

@@ -2,6 +2,7 @@
 using MarcelloDB.Records;
 using System.Collections;
 using System.Collections.Generic;
+using MarcelloDB.Index.BTree;
 
 namespace MarcelloDB.Collections.Scopes
 {
@@ -18,7 +19,7 @@ namespace MarcelloDB.Collections.Scopes
         override internal CollectionEnumerator<TObj, ValueWithAddressIndexKey<TAttribute>> BuildEnumerator(bool descending)
         {
             return this.IndexedValue
-                .BuildEnumerator(null, descending);
+                .BuildEnumerator(new BTreeWalkerRange<ValueWithAddressIndexKey<TAttribute>>[]{null}, descending);
         }
     }
 }

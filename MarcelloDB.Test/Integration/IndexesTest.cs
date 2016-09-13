@@ -238,6 +238,23 @@ namespace MarcelloDB.Test.Integration
         }
 
         [Test]
+        public void Find_Multiple_Objects()
+        {
+            var toiletPaper = Article.ToiletPaper;
+            var spinalTapDvd = Article.SpinalTapDvd;
+            var barbieDoll = Article.BarbieDoll;
+
+            _articles.Persist(toiletPaper);
+            _articles.Persist(spinalTapDvd);
+            _articles.Persist(barbieDoll);
+
+            var categories = new List<string>{ toiletPaper.Category, barbieDoll.Category };
+            var articles = _articles.Indexes.Category.Find(categories).ToList();
+
+            Assert.AreEqual(new List<int>{ toiletPaper.ID, barbieDoll.ID }, articles.Select((a)=>a.ID));
+        }
+
+        [Test]
         public void Find_Finds_Null_Values()
         {
             var article1 = new Article{ID = 1, Name = "Article1", Description = null};
@@ -246,7 +263,7 @@ namespace MarcelloDB.Test.Integration
             _articles.Persist(article1);
             _articles.Persist(article2);
 
-            var articles = _articles.Indexes.Category.Find(null).ToList();
+            var articles = _articles.Indexes.Category.Find((string)null).ToList();
 
             Assert.AreEqual(
                 new List<int>{1, 2},

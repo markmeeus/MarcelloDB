@@ -12,7 +12,7 @@ namespace MarcelloDB.Collections
         }
 
         public IEnumerable<TObj> Contains(TAttribute value){
-            return base.FindInternal(value);
+            return base.FindInternal(new TAttribute[]{value});
         }
 
     }

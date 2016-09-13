@@ -53,7 +53,12 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<TObj> Find(TAttribute value)
         {
-            return base.FindInternal(value);
+            return base.FindInternal(new TAttribute[]{ value });
+        }
+
+        public IEnumerable<TObj> Find(IEnumerable<TAttribute> values)
+        {
+            return base.FindInternal(values);
         }
 
         public BetweenBuilder<TObj, TAttribute> Between(TAttribute startValue)

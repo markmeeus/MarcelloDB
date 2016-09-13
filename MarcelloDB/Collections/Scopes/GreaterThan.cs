@@ -36,7 +36,7 @@ namespace MarcelloDB.Collections.Scopes
                 range.IncludeEndAt = this.OrEqual;
             }
 
-            return this.IndexedValue.BuildEnumerator(range, descending);
+            return this.IndexedValue.BuildEnumerator(new BTreeWalkerRange<ValueWithAddressIndexKey<TAttribute>>[]{range}, descending);
         }
     }
 }

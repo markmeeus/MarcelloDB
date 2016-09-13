@@ -131,6 +131,11 @@ namespace MarcelloDB.Collections
             return result;
         }
 
+        public IEnumerable<T> Find(IEnumerable<TID> ids)
+        {
+            return new ObjectByIDEnumerator<T, TID>(this, ids);
+        }
+
         public void Persist(T obj)
         {
             Transacted(() => {

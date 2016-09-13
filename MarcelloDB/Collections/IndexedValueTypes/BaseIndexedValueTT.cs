@@ -92,7 +92,7 @@ namespace MarcelloDB.Collections
         }
 
         internal CollectionEnumerator<TObj, ValueWithAddressIndexKey<TAttribute>>
-        BuildEnumerator(BTreeWalkerRange<ValueWithAddressIndexKey<TAttribute>> range,
+        BuildEnumerator(IEnumerable<BTreeWalkerRange<ValueWithAddressIndexKey<TAttribute>>> ranges,
             bool IsDescending = false)
         {
             var indexName = RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName);
@@ -100,7 +100,7 @@ namespace MarcelloDB.Collections
             var enumerator =  new CollectionEnumerator<TObj, ValueWithAddressIndexKey<TAttribute>>(
                 this.Collection, Session, RecordManager, Serializer, indexName, IsDescending);
 
-            enumerator.SetRange(range);
+            enumerator.SetRanges(ranges);
 
             return enumerator;
         }
@@ -132,10 +132,14 @@ namespace MarcelloDB.Collections
                 return new All<TObj, TAttribute>(this);
             }
         }
-        internal IEnumerable<TObj> FindInternal(TAttribute value)
+        internal IEnumerable<TObj> FindInternal(IEnumerable<TAttribute> values)
         {
-            var key = new ValueWithAddressIndexKey<TAttribute>{ V = value };
-            return BuildEnumerator(new BTreeWalkerRange<ValueWithAddressIndexKey<TAttribute>>(key, key));
+            var ranges = values.Select((value) => {
+                var key = new ValueWithAddressIndexKey<TAttribute>{ V = value };
+                return new BTreeWalkerRange<ValueWithAddressIndexKey<TAttribute>>(key, key);
+            });
+
+            return BuildEnumerator(ranges);
         }
 
         internal GreaterThan<TObj, TAttribute> GreaterThanInternal(TAttribute value){

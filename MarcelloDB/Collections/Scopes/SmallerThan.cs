@@ -40,7 +40,7 @@ namespace MarcelloDB.Collections.Scopes
             }
 
             return this.IndexedValue
-                .BuildEnumerator(range, descending);
+                .BuildEnumerator(new BTreeWalkerRange<ValueWithAddressIndexKey<TAttribute>>[]{range}, descending);
         }
     }
 }

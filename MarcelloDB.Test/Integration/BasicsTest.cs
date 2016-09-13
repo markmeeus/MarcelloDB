@@ -98,6 +98,23 @@ namespace MarcelloDB.Test.Integration
             Assert.AreEqual(new List<string>{toiletPaper.Name, spinalTapDvd.Name, barbieDoll.Name}, articleNames, "Should return multiple article names");
         }
 
+
+        [Test()]
+        public void Find_Multiple_Objects()
+        {
+            var toiletPaper = Article.ToiletPaper;
+            var spinalTapDvd = Article.SpinalTapDvd;
+            var barbieDoll = Article.BarbieDoll;
+
+            _articles.Persist(toiletPaper);
+            _articles.Persist(spinalTapDvd);
+            _articles.Persist(barbieDoll);
+
+            var ids = new List<int>{ spinalTapDvd.ID, barbieDoll.ID };
+            var articleNames = _articles.Find(ids).Select((a)=>a.Name);
+            Assert.AreEqual(new List<string>{spinalTapDvd.Name, barbieDoll.Name}, articleNames, "Find should find multiple objects");
+        }
+
         [Test]
         public void Update()
         {

@@ -18,9 +18,7 @@ namespace MarcelloDB.Collections
 
         string IndexName { get; set; }
 
-        BTreeWalkerRange<TKey> Range { get; set; }
-
-        bool HasRange{ get { return this.Range != null; } }
+        IEnumerable<BTreeWalkerRange<TKey>> Ranges { get; set; }
 
         bool IsDescending { get; set; }
 
@@ -38,31 +36,36 @@ namespace MarcelloDB.Collections
             this.Serializer = serializer;
             this.IndexName = indexName;
             this.IsDescending = IsDescending;
+
+            this.Ranges = new BTreeWalkerRange<TKey>[]{ null };
         }
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
             lock (this.Session.SyncLock)
             {
-                var index = new RecordIndex<TKey>(
-                    this.Session,
-                    this.RecordManager,
-                    this.IndexName,
-                    this.Session.SerializerResolver.SerializerFor<Node<TKey>>()
-                );
-                var indexEnumerator = new IndexEntryEnumerator<T, TKey>(
-                                      this.Collection,
-                                      this.Session,
-                                      index,
-                                      this.IsDescending);
-
-                indexEnumerator.SetRange(this.Range);
-
-                foreach (var node in indexEnumerator)
+                foreach (var range in this.Ranges)
                 {
-                    var record = RecordManager.GetRecord(node.Pointer);
-                    var obj = Serializer.Deserialize(record.Data);
-                    yield return obj;
+                    var index = new RecordIndex<TKey>(
+                        this.Session,
+                        this.RecordManager,
+                        this.IndexName,
+                        this.Session.SerializerResolver.SerializerFor<Node<TKey>>()
+                    );
+                    var indexEnumerator = new IndexEntryEnumerator<T, TKey>(
+                        this.Collection,
+                        this.Session,
+                        index,
+                        this.IsDescending);
+
+                    indexEnumerator.SetRange(range);
+
+                    foreach (var node in indexEnumerator)
+                    {
+                        var record = RecordManager.GetRecord(node.Pointer);
+                        var obj = Serializer.Deserialize(record.Data);
+                        yield return obj;
+                    }
                 }
             }
         }
@@ -71,21 +74,27 @@ namespace MarcelloDB.Collections
         {
             lock (this.Session.SyncLock)
             {
-                var index = new RecordIndex<TKey>(
-                    this.Session,
-                    this.RecordManager,
-                    this.IndexName,
-                    this.Session.SerializerResolver.SerializerFor<Node<TKey>>()
-                );
-                var keyEnumerator = new KeysEnumerator<T, TKey>(
-                                    this.Collection,
-                                    this.Session,
-                                    index,
-                                    this.IsDescending);
+                foreach (var range in this.Ranges)
+                {
+                    var index = new RecordIndex<TKey>(
+                        this.Session,
+                        this.RecordManager,
+                        this.IndexName,
+                        this.Session.SerializerResolver.SerializerFor<Node<TKey>>()
+                    );
+                    var keyEnumerator = new KeysEnumerator<T, TKey>(
+                        this.Collection,
+                        this.Session,
+                        index,
+                        this.IsDescending);
 
-                keyEnumerator.SetRange(this.Range);
+                    keyEnumerator.SetRange(range);
+                    foreach (var key in keyEnumerator)
+                    {
+                        yield return key;
+                    }
 
-                return keyEnumerator;
+                }
             }
         }
 
@@ -95,9 +104,9 @@ namespace MarcelloDB.Collections
             return ((IEnumerable<T>)this).GetEnumerator();
         }
 
-        internal void SetRange(BTreeWalkerRange<TKey> range)
+        internal void SetRanges(IEnumerable<BTreeWalkerRange<TKey>> ranges)
         {
-            this.Range = range;
+            this.Ranges = ranges;
         }
     }
 }

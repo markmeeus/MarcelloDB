@@ -42,7 +42,9 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<TObj> Find(<#=paramsDeclarationList#>)
         {
-            return base.FindInternal(new CompoundValue<<#=genericAttributeList#>>(<#=argumentsList#>));
+            return base.FindInternal(new CompoundValue<<#=genericAttributeList#>>[]{
+            	new CompoundValue<<#=genericAttributeList#>>(<#=argumentsList#>)
+            });
         }
 
 <#
