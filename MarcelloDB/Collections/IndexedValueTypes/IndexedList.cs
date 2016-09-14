@@ -11,12 +11,27 @@ namespace MarcelloDB.Collections
         {
         }
 
-        public IEnumerable<TObj> ContainsAny(TAttribute value){
+        public IEnumerable<TObj> ContainsAny(TAttribute value)
+        {
             return base.FindInternal(new TAttribute[]{value});
         }
 
-        public IEnumerable<TObj> ContainsAnyOf(IEnumerable<TAttribute> values){
-            return base.FindInternal(values);
+        public IEnumerable<TObj> ContainsAnyOf(IEnumerable<TAttribute> values)
+        {
+            var enumerator = base.FindInternal(values);
+            //enumerator will match the same object every time one of the values is in the index.
+            //enumeratedAddresses tracks the enumerated addresses and filters the objects.
+            var enumeratedAddresses = new HashSet<Int64>();
+            enumerator.ShouldYieldObjectWithAddress = (Int64 address) =>
+                {
+                    if (enumeratedAddresses.Contains(address))
+                    {
+                        return false;
+                    }
+                    enumeratedAddresses.Add(address);
+                    return true;
+                };
+            return enumerator;
         }
 
     }

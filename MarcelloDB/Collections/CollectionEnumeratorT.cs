@@ -10,6 +10,8 @@ namespace MarcelloDB.Collections
 {
     internal class CollectionEnumerator<T, TKey> : SessionBoundObject, IEnumerable<T>
 	{
+        internal Func<Int64, bool> ShouldYieldObjectWithAddress { get; set; }
+
         Collection Collection { get; set; }
 
         RecordManager RecordManager  { get; set; }
@@ -44,7 +46,6 @@ namespace MarcelloDB.Collections
         {
             lock (this.Session.SyncLock)
             {
-                var yieldedObjectAddresses = new HashSet<Int64>();
                 foreach (var range in this.Ranges)
                 {
                     var index = new RecordIndex<TKey>(
@@ -63,12 +64,12 @@ namespace MarcelloDB.Collections
 
                     foreach (var node in indexEnumerator)
                     {
-                        if(!yieldedObjectAddresses.Contains(node.Pointer))
+                        if(this.ShouldYieldObjectWithAddress == null
+                            || this.ShouldYieldObjectWithAddress(node.Pointer))
                         {
                             var record = RecordManager.GetRecord(node.Pointer);
                             var obj = Serializer.Deserialize(record.Data);
                             yield return obj;
-                            yieldedObjectAddresses.Add(node.Pointer);
                         }
                     }
                 }

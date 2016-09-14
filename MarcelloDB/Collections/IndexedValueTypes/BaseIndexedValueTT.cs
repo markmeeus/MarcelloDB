@@ -132,7 +132,7 @@ namespace MarcelloDB.Collections
                 return new All<TObj, TAttribute>(this);
             }
         }
-        internal IEnumerable<TObj> FindInternal(IEnumerable<TAttribute> values)
+        internal CollectionEnumerator<TObj, ValueWithAddressIndexKey<TAttribute>> FindInternal(IEnumerable<TAttribute> values)
         {
             var ranges = values.Select((value) => {
                 var key = new ValueWithAddressIndexKey<TAttribute>{ V = value };
