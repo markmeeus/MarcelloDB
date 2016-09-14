@@ -54,7 +54,7 @@ namespace MarcelloDB.Test.Integration
             var indexables =
                 _collectionFile.Collection<Indexable, int, TestIndexDefinition>("indexables", i => i.ID);
             indexables.Persist(Indexable.Create(1));
-            var tagged1 = indexables.Indexes.Tags.ContainsAny("Tag1").ToList();
+            var tagged1 = indexables.Indexes.Tags.Contains("Tag1").ToList();
             Assert.AreEqual(1, tagged1[0].ID);
         }
 
@@ -65,7 +65,9 @@ namespace MarcelloDB.Test.Integration
                 _collectionFile.Collection<Indexable, int, TestIndexDefinition>("indexables", i => i.ID);
             indexables.Persist(Indexable.Create(1));
             indexables.Persist(Indexable.Create(2));
-            var tagged1 = indexables.Indexes.Tags.ContainsAny("Tag1").ToList();
+
+            var tagged1 = indexables.Indexes.Tags.Contains("Tag1").ToList();
+
             Assert.IsTrue(tagged1.Select((t) => t.ID).Contains(1));
             Assert.IsTrue(tagged1.Select((t) => t.ID).Contains(2));
         }
@@ -84,7 +86,7 @@ namespace MarcelloDB.Test.Integration
 
             indexables.Persist(indexable);
 
-            var tagged1 = indexables.Indexes.Tags.ContainsAny("Tag1").ToList();
+            var tagged1 = indexables.Indexes.Tags.Contains("Tag1").ToList();
 
             Assert.AreEqual(1, tagged1.Count);
             Assert.AreEqual(1, tagged1[0].ID);
@@ -112,7 +114,7 @@ namespace MarcelloDB.Test.Integration
                     Tags = new List<string>{ "Tag3", "anyother" }
                 });
 
-            var result = indexables.Indexes.Tags.ContainsAnyOf(new string[]{"Tag2", "Tag3"}).ToList();
+            var result = indexables.Indexes.Tags.ContainsAny(new string[]{"Tag2", "Tag3"}).ToList();
 
             Assert.AreEqual(2, result.Count);
             Assert.AreEqual(new int[]{2,3}, result.Select((a)=>a.ID));
@@ -140,7 +142,7 @@ namespace MarcelloDB.Test.Integration
                     Tags = new List<string>{ "Tag3", "anyother" }
                 });
 
-            var result = indexables.Indexes.Tags.ContainsAnyOf(new string[]{"Tag2", "Tag3"}).ToList();
+            var result = indexables.Indexes.Tags.ContainsAny(new string[]{"Tag2", "Tag3"}).ToList();
 
             Assert.AreEqual(2, result.Count);
             Assert.AreEqual(new int[]{2,3}, result.Select((a)=>a.ID));

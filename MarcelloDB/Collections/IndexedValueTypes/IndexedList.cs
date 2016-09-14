@@ -11,12 +11,12 @@ namespace MarcelloDB.Collections
         {
         }
 
-        public IEnumerable<TObj> ContainsAny(TAttribute value)
+        public IEnumerable<TObj> Contains(TAttribute value)
         {
             return base.FindInternal(new TAttribute[]{value});
         }
 
-        public IEnumerable<TObj> ContainsAnyOf(IEnumerable<TAttribute> values)
+        public IEnumerable<TObj> ContainsAny(IEnumerable<TAttribute> values)
         {
             var enumerator = base.FindInternal(values);
             //enumerator will match the same object every time one of the values is in the index.
