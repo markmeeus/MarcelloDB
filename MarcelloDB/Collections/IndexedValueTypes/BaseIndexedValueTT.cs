@@ -124,6 +124,20 @@ namespace MarcelloDB.Collections
             this.PropertyName = propertyName;
         }
 
+        protected Func<long, bool> CreateDuplicateAddressFilter()
+        {
+            var enumeratedAddresses = new HashSet<Int64>();
+            return (Int64 address) =>
+            {
+                if (enumeratedAddresses.Contains(address))
+                {
+                    return false;
+                }
+                enumeratedAddresses.Add(address);
+                return true;
+            };
+        }
+
         #region scope operations
         public All<TObj, TAttribute> All
         {

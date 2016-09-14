@@ -255,6 +255,23 @@ namespace MarcelloDB.Test.Integration
         }
 
         [Test]
+        public void Find_Multiple_Objects_Returns_Distinct_Objects()
+        {
+            var toiletPaper = Article.ToiletPaper;
+            var spinalTapDvd = Article.SpinalTapDvd;
+            var barbieDoll = Article.BarbieDoll;
+
+            _articles.Persist(toiletPaper);
+            _articles.Persist(spinalTapDvd);
+            _articles.Persist(barbieDoll);
+
+            var categories = new List<string>{ toiletPaper.Category, toiletPaper.Category };
+            var articles = _articles.Indexes.Category.Find(categories).ToList();
+
+            Assert.AreEqual(new List<int>{ toiletPaper.ID }, articles.Select((a)=>a.ID));
+        }
+
+        [Test]
         public void Find_Finds_Null_Values()
         {
             var article1 = new Article{ID = 1, Name = "Article1", Description = null};

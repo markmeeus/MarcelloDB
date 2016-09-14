@@ -5,6 +5,7 @@ using MarcelloDB.Collections.Scopes;
 using MarcelloDB.Index.BTree;
 using MarcelloDB.Records;
 using System.Reflection;
+using System.Linq;
 
 namespace MarcelloDB.Collections
 {
@@ -45,7 +46,6 @@ namespace MarcelloDB.Collections
             }
         }
 
-
         internal static IndexedValue<TObj, TAttribute> Build()
         {
             return new IndexedValue<TObj, TAttribute>();
@@ -58,7 +58,7 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<TObj> Find(IEnumerable<TAttribute> values)
         {
-            return base.FindInternal(values);
+            return base.FindInternal(values.Distinct());
         }
 
         public BetweenBuilder<TObj, TAttribute> Between(TAttribute startValue)
