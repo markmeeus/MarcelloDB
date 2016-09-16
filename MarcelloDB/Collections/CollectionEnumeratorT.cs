@@ -42,6 +42,10 @@ namespace MarcelloDB.Collections
             this.IsDescending = IsDescending;
 
             this.Ranges = new BTreeWalkerRange<TKey>[]{ null };
+
+            //Yield all records and objects by default.
+            this.ShouldYieldObject = (o) => true;
+            this.ShouldYieldObjectWithAddress = (a) => true;
         }
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
@@ -66,13 +70,12 @@ namespace MarcelloDB.Collections
 
                     foreach (var node in indexEnumerator)
                     {
-                        if(this.ShouldYieldObjectWithAddress == null
-                            || this.ShouldYieldObjectWithAddress(node.Pointer))
+                        if(this.ShouldYieldObjectWithAddress(node.Pointer))
                         {
                             var record = RecordManager.GetRecord(node.Pointer);
                             var obj = Serializer.Deserialize(record.Data);
-                            if(this.ShouldYieldObject == null
-                                || this.ShouldYieldObject(obj)){
+                            if(this.ShouldYieldObject(obj))
+                            {
                                 yield return obj;
                             }
                         }
