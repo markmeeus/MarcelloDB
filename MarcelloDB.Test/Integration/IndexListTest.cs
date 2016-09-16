@@ -73,6 +73,24 @@ namespace MarcelloDB.Test.Integration
         }
 
         [Test]
+        public void Destroy_Removes_All_Entries()
+        {
+            var indexables =
+                _collectionFile.Collection<Indexable, int, TestIndexDefinition>("indexables", i => i.ID);
+            indexables.Persist(Indexable.Create(1));
+            indexables.Persist(Indexable.Create(2));
+            indexables.Persist(Indexable.Create(3));
+
+            indexables.Destroy(3);
+            var tagged2 = indexables.Indexes.Tags.Contains("Tag2").ToList();
+            var tagged3 = indexables.Indexes.Tags.Contains("Tag3").ToList();
+
+            Assert.AreEqual(1, tagged2.Count);
+            Assert.AreEqual(2, tagged2.First().ID); //Item with ID 2
+            Assert.AreEqual(0, tagged3.Count);
+        }
+
+        [Test]
         public void Contains_Returns_Only_Distinct_Objects()
         {
             var indexables =
