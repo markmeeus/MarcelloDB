@@ -40,7 +40,7 @@ namespace MarcelloDB.Collections
 
         protected internal override void Register(object o, Int64 address)
         {
-            var indexName = RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName);
+            var indexName = RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName, typeof(TAttribute));
             var keys = this.GetKeys(o, address);
             foreach (var key in keys)
             {
@@ -50,7 +50,7 @@ namespace MarcelloDB.Collections
 
         protected internal override void UnRegister(object o, Int64 address)
         {
-            var indexName = RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName);
+            var indexName = RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName, typeof(TAttribute));
             var keys = this.GetKeys(o, address);
             foreach (var key in keys)
             {
@@ -95,7 +95,7 @@ namespace MarcelloDB.Collections
         BuildEnumerator(IEnumerable<BTreeWalkerRange<ValueWithAddressIndexKey<TAttribute>>> ranges,
             bool IsDescending = false)
         {
-            var indexName = RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName);
+            var indexName = RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName, typeof(TAttribute));
 
             var enumerator =  new CollectionEnumerator<TObj, ValueWithAddressIndexKey<TAttribute>>(
                 this.Collection, Session, RecordManager, Serializer, indexName, IsDescending);

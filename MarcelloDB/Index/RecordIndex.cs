@@ -11,10 +11,11 @@ namespace MarcelloDB.Index
         internal const string EMPTY_RECORDS_BY_SIZE = "__EMPTY_RECORDS_BY_SIZE__";
         internal const int BTREE_DEGREE = 8;
 
-        internal static string GetIndexName<T>(string collectionName, string indexName)
+        internal static string GetIndexName<T>(string collectionName, string indexName, Type keyType)
         {
-            return string.Format("__INDEX_{0}_{1}",
+            return string.Format("__INDEX_{0}_{1}_{2}",
                 collectionName.ToUpper(),
+                keyType.Name,
                 indexName.ToUpper());
         }
     }

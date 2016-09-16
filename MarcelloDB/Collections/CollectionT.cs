@@ -109,11 +109,8 @@ namespace MarcelloDB.Collections
         {
             get
             {
-                var indexName =
-                    RecordIndex.GetIndexName<T>(this.Name, this.GetIDIndexedValue().PropertyName);
-
                 return new CollectionEnumerator<T, TID>
-                    (this, Session, RecordManager, Serializer, indexName);
+                    (this, Session, RecordManager, Serializer, GetIDIndexName());
             }
         }
 
@@ -232,18 +229,19 @@ namespace MarcelloDB.Collections
             return (IndexedIDValue<T, TID>) GetIndexDefinition().IndexedValues.First(v => v is IndexedIDValue<T, TID>);
         }
 
-        RecordIndex<TID> GetIndex(string indexName)
+        string GetIDIndexName()
         {
-            return new RecordIndex<TID>(
-                this.Session,
-                this.RecordManager,
-                RecordIndex.GetIndexName<T>(this.Name, indexName),
-                this.Session.SerializerResolver.SerializerFor<Node<TID>>());
+            return RecordIndex.GetIndexName<T>(
+                this.Name, this.GetIDIndexedValue().PropertyName, typeof(TID));
         }
 
         RecordIndex<TID> GetIDIndex()
         {
-            return GetIndex(GetIDIndexedValue().PropertyName);
+            return new RecordIndex<TID>(
+                this.Session,
+                this.RecordManager,
+                GetIDIndexName(),
+                this.Session.SerializerResolver.SerializerFor<Node<TID>>());
         }
 
         void RegisterInIndexes(T o, Record record, Int64 originalAddress = 0, T originalObject = default(T))
