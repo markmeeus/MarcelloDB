@@ -93,7 +93,7 @@ namespace MarcelloDB.Test.Integration
         }
 
         [Test]
-        public void ContainsAnyOf_Returns_Objects()
+        public void ContainsAny_Returns_Objects()
         {
             var indexables =
                 _collectionFile.Collection<Indexable, int, TestIndexDefinition>("indexables", i => i.ID);
@@ -121,7 +121,7 @@ namespace MarcelloDB.Test.Integration
         }
 
         [Test]
-        public void ContainsAnyOf_Returns_Distinct_Objects()
+        public void ContainsAny_Returns_Distinct_Objects()
         {
             var indexables =
                 _collectionFile.Collection<Indexable, int, TestIndexDefinition>("indexables", i => i.ID);
