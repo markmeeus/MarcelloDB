@@ -24,5 +24,22 @@ namespace MarcelloDB.Collections
             enumerator.ShouldYieldObjectWithAddress = base.CreateDuplicateAddressFilter();
             return enumerator;
         }
+
+        public IEnumerable<TObj> ContainsAll(IEnumerable<TAttribute> values)
+        {
+            var enumerator = base.FindInternal(values);
+
+            //enumerator will match the same object every time one of the values is in the index.
+            //enumeratedAddresses tracks the enumerated addresses and filters the objects.
+            enumerator.ShouldYieldObjectWithAddress = base.CreateDuplicateAddressFilter();
+
+            //enumerator will match any object with any value from the values parameter.
+            enumerator.ShouldYieldObject = (o) =>
+                {
+                    var objectValues = ValueFunction(o).ToDictionary((obj)=>obj);
+                    return values.All((v)=> objectValues.ContainsKey(v));
+                };
+            return enumerator;
+        }
     }
 }

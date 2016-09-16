@@ -12,6 +12,8 @@ namespace MarcelloDB.Collections
 	{
         internal Func<Int64, bool> ShouldYieldObjectWithAddress { get; set; }
 
+        internal Func<T, bool> ShouldYieldObject { get; set; }
+
         Collection Collection { get; set; }
 
         RecordManager RecordManager  { get; set; }
@@ -69,7 +71,10 @@ namespace MarcelloDB.Collections
                         {
                             var record = RecordManager.GetRecord(node.Pointer);
                             var obj = Serializer.Deserialize(record.Data);
-                            yield return obj;
+                            if(this.ShouldYieldObject == null
+                                || this.ShouldYieldObject(obj)){
+                                yield return obj;
+                            }
                         }
                     }
                 }
@@ -103,7 +108,6 @@ namespace MarcelloDB.Collections
                 }
             }
         }
-
 
         IEnumerator IEnumerable.GetEnumerator()
         {

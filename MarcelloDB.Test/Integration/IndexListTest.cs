@@ -147,6 +147,34 @@ namespace MarcelloDB.Test.Integration
             Assert.AreEqual(2, result.Count);
             Assert.AreEqual(new int[]{2,3}, result.Select((a)=>a.ID));
         }
+
+        [Test]
+        public void ContainsAll_Returns_Matching_Objects()
+        {
+            var indexables =
+                _collectionFile.Collection<Indexable, int, TestIndexDefinition>("indexables", i => i.ID);
+
+            indexables.Persist(new Indexable
+                {
+                    ID = 1,
+                    Tags = new List<string>{ "Tag1", "anyother" }
+                });
+            indexables.Persist(new Indexable
+                {
+                    ID = 2,
+                    Tags = new List<string>{ "Tag2", "Tag3" }
+                });
+            indexables.Persist(new Indexable
+                {
+                    ID = 3,
+                    Tags = new List<string>{ "Tag3", "anyother" }
+                });
+
+            var result = indexables.Indexes.Tags.ContainsAll(new string[]{"Tag2", "Tag3"}).ToList();
+
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(new int[]{2}, result.Select((a)=>a.ID));
+        }
     }
 }
 
