@@ -115,6 +115,37 @@ namespace MarcelloDB.Test.Integration
             Assert.AreEqual(new List<string>{spinalTapDvd.Name, barbieDoll.Name}, articleNames, "Find should find multiple objects");
         }
 
+        [Test()]
+        public void Find_Multiple_Objects_With_Same_ID()
+        {
+            var toiletPaper = Article.ToiletPaper;
+            var spinalTapDvd = Article.SpinalTapDvd;
+            var barbieDoll = Article.BarbieDoll;
+
+            _articles.Persist(toiletPaper);
+            _articles.Persist(spinalTapDvd);
+            _articles.Persist(barbieDoll);
+
+            var ids = new List<int>{ spinalTapDvd.ID, spinalTapDvd.ID };
+            var articleNames = _articles.Find(ids).Select((a)=>a.Name);
+            Assert.AreEqual(new List<string>{spinalTapDvd.Name}, articleNames, "Find should return distinct objects");
+        }
+
+        [Test]
+        public void Find_Multiple_Ignores_Unfound_Objects()
+        {
+            var toiletPaper = Article.ToiletPaper;
+            var spinalTapDvd = Article.SpinalTapDvd;
+            var barbieDoll = Article.BarbieDoll;
+
+            _articles.Persist(toiletPaper);
+            _articles.Persist(spinalTapDvd);
+
+            var ids = new List<int>{ toiletPaper.ID, spinalTapDvd.ID, barbieDoll.ID };
+            var articleIDs = _articles.Find(ids).Select((a)=>a.ID);
+            CollectionAssert.AreEquivalent(new List<int>{toiletPaper.ID, spinalTapDvd.ID}, articleIDs, "Find should return objects");
+        }
+
         [Test]
         public void Update()
         {

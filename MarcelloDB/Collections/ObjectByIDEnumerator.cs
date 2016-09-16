@@ -20,7 +20,11 @@ namespace MarcelloDB.Collections
         {
             foreach (var id in this.IDs)
             {
-                yield return this.Collection.Find(id);
+                var obj = this.Collection.Find(id);
+                if (obj != null)
+                {
+                    yield return obj;
+                }
             }
         }
         #endregion

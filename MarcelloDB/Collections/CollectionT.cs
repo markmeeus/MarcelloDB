@@ -133,7 +133,7 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<T> Find(IEnumerable<TID> ids)
         {
-            return new ObjectByIDEnumerator<T, TID>(this, ids);
+            return new ObjectByIDEnumerator<T, TID>(this, ids.Distinct());
         }
 
         public void Persist(T obj)
