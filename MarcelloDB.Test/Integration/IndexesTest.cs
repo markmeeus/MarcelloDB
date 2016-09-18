@@ -31,8 +31,7 @@ namespace MarcelloDB.Test.Integration
             var toiletPaper = Article.ToiletPaper;
 
             _articles.Persist(toiletPaper);
-            var papers = _articles.Indexes.Name.Find(toiletPaper.Name);
-
+            var papers = _articles.Indexes.Name.Equals(toiletPaper.Name);
             Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
         }
 
@@ -44,7 +43,7 @@ namespace MarcelloDB.Test.Integration
             _articles.Persist(toiletPaper);
 
             var papers = _articles.Indexes.FullDescription
-                .Find(String.Format("{0}-{1}", Article.ToiletPaper.Name, Article.ToiletPaper.Description));
+                .Equals(String.Format("{0}-{1}", Article.ToiletPaper.Name, Article.ToiletPaper.Description));
 
             Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
         }
@@ -59,7 +58,7 @@ namespace MarcelloDB.Test.Integration
             _articles.Persist(Article.ToiletPaper);
 
             var papers = _articles.Indexes.CodeAndName
-                .Find(Article.ToiletPaper.Code, Article.ToiletPaper.Name);
+                .Equals(Article.ToiletPaper.Code, Article.ToiletPaper.Name);
 
             Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
         }
@@ -74,7 +73,7 @@ namespace MarcelloDB.Test.Integration
             toiletPaper.Name = "Papier de toilette";
             _articles.Persist(toiletPaper);
 
-            var papers = _articles.Indexes.Name.Find(originalName);
+            var papers = _articles.Indexes.Name.Equals(originalName);
             Assert.IsEmpty(papers);
         }
 
@@ -89,7 +88,7 @@ namespace MarcelloDB.Test.Integration
             _articles.Persist(toiletPaper);
 
             var papers = _articles.Indexes.FullDescription
-                .Find(String.Format("{0}-{1}", originalName, Article.ToiletPaper.Description));
+                .Equals(String.Format("{0}-{1}", originalName, Article.ToiletPaper.Description));
 
             Assert.IsEmpty(papers);
         }
@@ -104,7 +103,7 @@ namespace MarcelloDB.Test.Integration
             toiletPaper.Name = new string('a', 10000);
             _articles.Persist(toiletPaper);
 
-            var papers = _articles.Indexes.Name.Find(toiletPaper.Name);
+            var papers = _articles.Indexes.Name.Equals(toiletPaper.Name);
             Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
         }
 
@@ -119,7 +118,7 @@ namespace MarcelloDB.Test.Integration
             _articles.Persist(toiletPaper);
 
             var papers = _articles.Indexes.FullDescription
-                .Find(String.Format("{0}-{1}", toiletPaper.Name,toiletPaper.Description));
+                .Equals(String.Format("{0}-{1}", toiletPaper.Name,toiletPaper.Description));
 
             Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
         }
@@ -132,7 +131,7 @@ namespace MarcelloDB.Test.Integration
             _articles.Persist(toiletPaper);
             _articles.Destroy(toiletPaper.ID);
 
-            var papers = _articles.Indexes.Name.Find(toiletPaper.Name);
+            var papers = _articles.Indexes.Name.Equals(toiletPaper.Name);
             Assert.IsEmpty(papers);
         }
 
@@ -145,7 +144,7 @@ namespace MarcelloDB.Test.Integration
             _articles.Destroy(toiletPaper.ID);
 
             var papers = _articles.Indexes.FullDescription
-                .Find(String.Format("{0}-{1}", Article.ToiletPaper.Name, Article.ToiletPaper.Description));
+                .Equals(String.Format("{0}-{1}", Article.ToiletPaper.Name, Article.ToiletPaper.Description));
             Assert.IsEmpty(papers);
         }
 
@@ -230,7 +229,7 @@ namespace MarcelloDB.Test.Integration
             _articles.Persist(Article.SpinalTapDvd);
             _articles.Persist(Food.Bread);
 
-            var hygienicArticles = _articles.Indexes.Category.Find(toiletPaper.Category).ToList();
+            var hygienicArticles = _articles.Indexes.Category.Equals(toiletPaper.Category).ToList();
 
             Assert.AreEqual(
                 new List<Article>{toiletPaper, tootPaste}.Select(a => a.ID),
@@ -249,7 +248,7 @@ namespace MarcelloDB.Test.Integration
             _articles.Persist(barbieDoll);
 
             var categories = new List<string>{ toiletPaper.Category, barbieDoll.Category };
-            var articles = _articles.Indexes.Category.Find(categories).ToList();
+            var articles = _articles.Indexes.Category.Equals(categories).ToList();
 
             Assert.AreEqual(new List<int>{ toiletPaper.ID, barbieDoll.ID }, articles.Select((a)=>a.ID));
         }
@@ -266,7 +265,7 @@ namespace MarcelloDB.Test.Integration
             _articles.Persist(barbieDoll);
 
             var categories = new List<string>{ toiletPaper.Category, toiletPaper.Category };
-            var articles = _articles.Indexes.Category.Find(categories).ToList();
+            var articles = _articles.Indexes.Category.Equals(categories).ToList();
 
             Assert.AreEqual(new List<int>{ toiletPaper.ID }, articles.Select((a)=>a.ID));
         }
@@ -280,7 +279,7 @@ namespace MarcelloDB.Test.Integration
             _articles.Persist(article1);
             _articles.Persist(article2);
 
-            var articles = _articles.Indexes.Category.Find((string)null).ToList();
+            var articles = _articles.Indexes.Category.Equals((string)null).ToList();
 
             Assert.AreEqual(
                 new List<int>{1, 2},

@@ -73,7 +73,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
             indexables.Persist(Indexable.CreateIndexable(2));
             indexables.Persist(Indexable.CreateIndexable(3));
 
-            var item2 = indexables.Indexes.Compound1And2.Find(2, 2).First();
+            var item2 = indexables.Indexes.Compound1And2.Equals(2, 2).First();
             Assert.AreEqual(2, item2.ID);
         }
 
@@ -98,7 +98,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
             indexables.Persist(Indexable.CreateIndexable(2));
             indexables.Persist(Indexable.CreateIndexable(3));
 
-            var item2 = indexables.Indexes.Compound1And2And3.Find(2, 2, 2).First();
+            var item2 = indexables.Indexes.Compound1And2And3.Equals(2, 2, 2).First();
             Assert.AreEqual(2, item2.ID);
         }
 
@@ -129,7 +129,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
             indexables.Persist(Indexable.CreateIndexable(2));
             indexables.Persist(Indexable.CreateIndexable(3));
 
-            var item2 = indexables.Indexes.Compound1And2And3And4.Find(2, 2, 2, "2").First();
+            var item2 = indexables.Indexes.Compound1And2And3And4.Equals(2, 2, 2, "2").First();
             Assert.AreEqual(2, item2.ID);
         }
 

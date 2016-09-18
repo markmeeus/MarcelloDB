@@ -51,14 +51,14 @@ namespace MarcelloDB.Collections
             return new IndexedValue<TObj, TAttribute>();
         }
 
-        public IEnumerable<TObj> Find(TAttribute value)
+        public IEnumerable<TObj> Equals(TAttribute value)
         {
-            return base.FindInternal(new TAttribute[]{ value });
+            return base.EqualsInternal(new TAttribute[]{ value });
         }
 
-        public IEnumerable<TObj> Find(IEnumerable<TAttribute> values)
+        public IEnumerable<TObj> Equals(IEnumerable<TAttribute> values)
         {
-            return base.FindInternal(values.Distinct());
+            return base.EqualsInternal(values.Distinct());
         }
 
         public BetweenBuilder<TObj, TAttribute> Between(TAttribute startValue)

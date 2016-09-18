@@ -40,9 +40,9 @@ namespace MarcelloDB.Collections
         internal IndexedValue(Func<TObj, CompoundValue<<#=genericAttributeList#>>> valueFunction)
             :base((o)=>new CompoundValue<<#=genericAttributeList#>>[]{valueFunction(o)}){}
 
-        public IEnumerable<TObj> Find(<#=paramsDeclarationList#>)
+        public IEnumerable<TObj> Equals(<#=paramsDeclarationList#>)
         {
-            return base.FindInternal(new CompoundValue<<#=genericAttributeList#>>[]{
+            return base.EqualsInternal(new CompoundValue<<#=genericAttributeList#>>[]{
             	new CompoundValue<<#=genericAttributeList#>>(<#=argumentsList#>)
             });
         }

@@ -13,12 +13,12 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<TObj> Contains(TAttribute value)
         {
-            return base.FindInternal(new TAttribute[]{value});
+            return base.EqualsInternal(new TAttribute[]{value});
         }
 
         public IEnumerable<TObj> ContainsAny(IEnumerable<TAttribute> values)
         {
-            var enumerator = base.FindInternal(values);
+            var enumerator = base.EqualsInternal(values);
             //enumerator will match the same object every time one of the values is in the index.
             //enumeratedAddresses tracks the enumerated addresses and filters the objects.
             enumerator.ShouldYieldObjectWithAddress = base.CreateDuplicateAddressFilter();
@@ -27,7 +27,7 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<TObj> ContainsAll(IEnumerable<TAttribute> values)
         {
-            var enumerator = base.FindInternal(values);
+            var enumerator = base.EqualsInternal(values);
 
             //enumerator will match the same object every time one of the values is in the index.
             //enumeratedAddresses tracks the enumerated addresses and filters the objects.
