@@ -70,12 +70,5 @@ namespace MarcelloDB.Index
         }
     }
 
-    public abstract partial class CompoundValue {
-        internal static CompoundValue<<#=genericAttributeList#>> Build<<#=genericAttributeList#>>(<#=paramsDeclarationList#>)
-        {
-            return new CompoundValue<<#=genericAttributeList#>>(<#=paramsAsParamsList#>);
-        }
-    }
-
 <#  }#>
 }

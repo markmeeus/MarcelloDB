@@ -26,7 +26,7 @@ namespace MarcelloDB.Test.Classes
             get{
                 return IndexedValue((article) =>
                     {
-                        return CompoundValue.Build(article.Code, article.Name);
+                        return CompoundValue(article.Code, article.Name);
                     });
             }
         }
@@ -36,7 +36,7 @@ namespace MarcelloDB.Test.Classes
             get{
                 return IndexedValue((article) =>
                     {
-                        return CompoundValue.Build(article.ID, article.Code, article.Name);
+                        return CompoundValue(article.ID, article.Code, article.Name);
                     });
             }
         }

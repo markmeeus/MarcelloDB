@@ -18,13 +18,19 @@ namespace MarcelloDB.Index
         for (int compoundLength = 2; compoundLength <= maxCompoundLength; compoundLength++)
         {
             var genericAttributes = new List<string>();
+            var arguments = new List<string>();
+            var compoundConstructorParams = new List<string>();
             for (int genericArgNr = 1; genericArgNr <= compoundLength; genericArgNr++)
             {
                 var nr = genericArgNr.ToString();
                 genericAttributes.Add("TAtt" + nr);
+                arguments.Add("TAtt" + nr + " p" + nr);
+                compoundConstructorParams.Add("p" + nr);
             }
 
             var genericAttributeList = string.Join(", ", genericAttributes);
+            var argumentsList = string.Join(",", arguments);
+            var compoundConstructorParamsList = string.Join(",", compoundConstructorParams);
 #>
         protected IndexedValue<T, <#=genericAttributeList#>> IndexedValue<<#=genericAttributeList#>>
             (Func<T, CompoundValue<<#=genericAttributeList#>>> valueFunc, [CallerMemberName] string callerMember = "")
@@ -38,7 +44,10 @@ namespace MarcelloDB.Index
                 return (IndexedValue<T, <#=genericAttributeList#>>)IndexedValues.First(v => v.PropertyName == callerMember);
             }
         }
-
+	    protected CompoundValue<<#=genericAttributeList#>> CompoundValue<<#=genericAttributeList#>>(<#=argumentsList#>)
+	    {
+	    	return new CompoundValue<<#=genericAttributeList#>>(<#=compoundConstructorParamsList#>);
+	    }
 <#      }#>
     }
 }

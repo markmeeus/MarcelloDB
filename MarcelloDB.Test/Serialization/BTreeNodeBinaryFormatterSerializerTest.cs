@@ -329,7 +329,7 @@ namespace MarcelloDB.Test.Serialization
         public void Serializes_CompoundValue_1()
         {
             SerializesEntries<CompoundValue<Int32>>(
-                CompoundValue.Build(1), CompoundValue.Build(2), CompoundValue.Build(3));
+                new CompoundValue<Int32>(1), new CompoundValue<Int32>(2), new CompoundValue<Int32>(3));
         }
 
         [Test]
@@ -343,7 +343,7 @@ namespace MarcelloDB.Test.Serialization
         public void Serializes_CompoundValue_2()
         {
             SerializesEntries<CompoundValue<Int32, string>>(
-                CompoundValue.Build(1, "a"), CompoundValue.Build(2, "b"), CompoundValue.Build(3, "c"));
+                new CompoundValue<Int32, string>(1, "a"), new CompoundValue<Int32, string>(2, "b"), new CompoundValue<Int32, string>(3, "c"));
         }
         [Test]
         public void Cannot_Serialize_CompoundValue_Custom()

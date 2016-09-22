@@ -25,13 +25,6 @@ namespace MarcelloDB.Index
         }
     }
 
-    public abstract partial class CompoundValue {
-        internal static CompoundValue<T1> Build<T1>(T1 p1)
-        {
-            return new CompoundValue<T1>(p1);
-        }
-    }
-
     public class CompoundValue<T1, T2> : CompoundValue{
 
         public int ConstructedWithCount { get; set; }
@@ -55,13 +48,6 @@ namespace MarcelloDB.Index
         internal override IEnumerable<object> GetValues()
         {
             return new object[]{ this.P1, this.P2 }.Take(this.ConstructedWithCount);
-        }
-    }
-
-    public abstract partial class CompoundValue {
-        internal static CompoundValue<T1, T2> Build<T1, T2>(T1 p1, T2 p2)
-        {
-            return new CompoundValue<T1, T2>(p1, p2);
         }
     }
 
@@ -93,13 +79,6 @@ namespace MarcelloDB.Index
         internal override IEnumerable<object> GetValues()
         {
             return new object[]{ this.P1, this.P2, this.P3 }.Take(this.ConstructedWithCount);
-        }
-    }
-
-    public abstract partial class CompoundValue {
-        internal static CompoundValue<T1, T2, T3> Build<T1, T2, T3>(T1 p1, T2 p2, T3 p3)
-        {
-            return new CompoundValue<T1, T2, T3>(p1, p2, p3);
         }
     }
 
@@ -136,13 +115,6 @@ namespace MarcelloDB.Index
         internal override IEnumerable<object> GetValues()
         {
             return new object[]{ this.P1, this.P2, this.P3, this.P4 }.Take(this.ConstructedWithCount);
-        }
-    }
-
-    public abstract partial class CompoundValue {
-        internal static CompoundValue<T1, T2, T3, T4> Build<T1, T2, T3, T4>(T1 p1, T2 p2, T3 p3, T4 p4)
-        {
-            return new CompoundValue<T1, T2, T3, T4>(p1, p2, p3, p4);
         }
     }
 
@@ -184,13 +156,6 @@ namespace MarcelloDB.Index
         internal override IEnumerable<object> GetValues()
         {
             return new object[]{ this.P1, this.P2, this.P3, this.P4, this.P5 }.Take(this.ConstructedWithCount);
-        }
-    }
-
-    public abstract partial class CompoundValue {
-        internal static CompoundValue<T1, T2, T3, T4, T5> Build<T1, T2, T3, T4, T5>(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5)
-        {
-            return new CompoundValue<T1, T2, T3, T4, T5>(p1, p2, p3, p4, p5);
         }
     }
 
@@ -237,13 +202,6 @@ namespace MarcelloDB.Index
         internal override IEnumerable<object> GetValues()
         {
             return new object[]{ this.P1, this.P2, this.P3, this.P4, this.P5, this.P6 }.Take(this.ConstructedWithCount);
-        }
-    }
-
-    public abstract partial class CompoundValue {
-        internal static CompoundValue<T1, T2, T3, T4, T5, T6> Build<T1, T2, T3, T4, T5, T6>(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6)
-        {
-            return new CompoundValue<T1, T2, T3, T4, T5, T6>(p1, p2, p3, p4, p5, p6);
         }
     }
 
@@ -295,13 +253,6 @@ namespace MarcelloDB.Index
         internal override IEnumerable<object> GetValues()
         {
             return new object[]{ this.P1, this.P2, this.P3, this.P4, this.P5, this.P6, this.P7 }.Take(this.ConstructedWithCount);
-        }
-    }
-
-    public abstract partial class CompoundValue {
-        internal static CompoundValue<T1, T2, T3, T4, T5, T6, T7> Build<T1, T2, T3, T4, T5, T6, T7>(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7)
-        {
-            return new CompoundValue<T1, T2, T3, T4, T5, T6, T7>(p1, p2, p3, p4, p5, p6, p7);
         }
     }
 
@@ -358,13 +309,6 @@ namespace MarcelloDB.Index
         internal override IEnumerable<object> GetValues()
         {
             return new object[]{ this.P1, this.P2, this.P3, this.P4, this.P5, this.P6, this.P7, this.P8 }.Take(this.ConstructedWithCount);
-        }
-    }
-
-    public abstract partial class CompoundValue {
-        internal static CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8> Build<T1, T2, T3, T4, T5, T6, T7, T8>(T1 p1, T2 p2, T3 p3, T4 p4, T5 p5, T6 p6, T7 p7, T8 p8)
-        {
-            return new CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>(p1, p2, p3, p4, p5, p6, p7, p8);
         }
     }
 

@@ -65,7 +65,7 @@ class BookIndexDefinition : IndexDefinition<Book>
       get{
         //index the CategoryId and Name of the first autor
         return IndexedValue(
-          (book) => CompoundValue.Build(book.CategoryId, book.Authors.First().Name)
+          (book) => CompoundValue(book.CategoryId, book.Authors.First().Name)
         );
       }
       /* setter not needed, nor usefull */
@@ -118,7 +118,7 @@ orderCollection.Indexes.DeliveryZone.All
 ```
 
 Please note that cases similar to the example above, are better implement using a compound index.
-Custom objects in indexes are serialized as Bson, Compound indexes are using a specialized serializer which performs a lot better.
+Custom objects in indexes are serialized as Bson while Compound indexes are using a specialized serializer which performs a lot better.
 
 ```cs
 class OrderIndexDefinition : IndexDefinition<Order>
@@ -126,7 +126,7 @@ class OrderIndexDefinition : IndexDefinition<Order>
   public  IndexedValue<Order, int, string> DeliveryZone {
     get {
       return IndexedValue(
-        (order)=>Compound.Build(order.DeliveryAddress.Zone.ZipCode, order.deliveryAddress.Zone.City);
+        (order)=>CompoundValue(order.DeliveryAddress.Zone.ZipCode, order.deliveryAddress.Zone.City);
       );
     }
   }

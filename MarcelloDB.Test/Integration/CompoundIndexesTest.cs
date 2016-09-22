@@ -58,7 +58,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
                 get{
                     return IndexedValue((indexable) =>
                         {
-                            return CompoundValue.Build(indexable.Prop1, indexable.Prop2);
+                            return CompoundValue(indexable.Prop1, indexable.Prop2);
                         });
                 }
             }
@@ -84,7 +84,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
                 get{
                     return IndexedValue((indexable) =>
                         {
-                            return CompoundValue.Build(indexable.Prop1, indexable.Prop2, indexable.Prop3);
+                            return CompoundValue(indexable.Prop1, indexable.Prop2, indexable.Prop3);
                         });
                 }
             }
@@ -109,7 +109,7 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
                 get{
                     return IndexedValue((indexable) =>
                         {
-                            return CompoundValue.Build(
+                            return CompoundValue(
                                 indexable.Prop1,
                                 indexable.Prop2,
                                 indexable.Prop3,
