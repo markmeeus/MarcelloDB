@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace MarcelloDB.Collections
 {
-    public class IndexedIDValue<TObj, TID> : IndexedValue<TObj, TID>
+    internal class IndexedIDValue<TObj, TID> : IndexedValue<TObj, TID>
     {
         internal IndexedIDValue():base(null)
         {
