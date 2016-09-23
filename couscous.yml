@@ -75,6 +75,9 @@ menu:
         upgrade04:
           text: Upgrading to 0.4
           relativeUrl: upgrade04.html
+        upgrade05:
+          text: Upgrading to 0.5
+          relativeUrl: upgrade05.html
         roadmap:
           text: Roadmap to 1.0
           relativeUrl: roadmap.html

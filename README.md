@@ -16,7 +16,7 @@ Read the docs here: [http://www.marcellodb.org](http://www.marcellodb.org)
 
 #Current Status
 
-Current version: 0.4.3. See [the roadmap](http://www.marcellodb.org/roadmap.html).
+Current version: 0.5.0. See [the roadmap](http://www.marcellodb.org/roadmap.html).
 
 Although still under heavy development, both the api and the file format are already quite stable.
 
@@ -24,6 +24,13 @@ Be carefull. Backwards compatibility with existing data will not be guaranteed u
 
 ###Upgrading to 0.4
 There are a few breaking changes from 0.3 to 0.4, read about them [here](http://www.marcellodb.org/upgrade04.html)
+
+###Upgrading to 0.5
+Code compatible with 0.4 is expected to compile and run without modifications with 0.5.
+
+Data from 0.4 remains readable, but existing indexes are no longer readable so they will have to be rebuilt.
+
+Copying all objects to a new collection will do the trick. It is even better to copy the data to a new collection-file and delete the previous one to save space.
 
 ###Installation
 ```cs
