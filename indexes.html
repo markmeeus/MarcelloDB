@@ -85,6 +85,11 @@
                                         </a>
                                     </li>
                                                                     <li class="">
+                                        <a href="http://markmeeus.github.io/MarcelloDB/upgrade05.html">
+                                            Upgrading to 0.5
+                                        </a>
+                                    </li>
+                                                                    <li class="">
                                         <a href="http://markmeeus.github.io/MarcelloDB/roadmap.html">
                                             Roadmap to 1.0
                                         </a>
@@ -101,144 +106,113 @@
                 
                 <section class="col-sm-offset-3 col-lg-offset-2 col-sm-9 col-lg-10">
                     <h1 id="indexes">Indexes</h1>
-<p>MarcelloDB allows you to define indexes on your data. These indexes are implemented with a btree algorithm, which results in O(log n) complexity for search and input/update/delete.
-Indexed values are stored in sorted order toghether with the location of the corresponding object.
-This allows searching for objects by an indexed value, but also iterating the collection in the order of the indexed value.</p>
+<p>Enumerating all objects in a collection to find a specific instance is not always be the best approach.
+If the collection contains thousands of objects, they will all be read from disk and deserialized,  performance will degrade fast.</p>
+<p>For such scenarios it's probably a good idea to add indexes to your collection.
+MarcelloDB Indexes are implemented with a BTree algorithm, which makes them really efficient.</p>
+<p>Besides searching for objects, indexes can also be used to iterate over the collection (or a subset) ordered by the indexed value.</p>
+<p>There is no hard limit on the amount of indexes on a collection. However, too much indexes will slow down calls to Persist, and will increase the total filesize of the collection-file.</p>
 <h2 id="indexdefinition">IndexDefinition</h2>
-<p>To enable indexes on a collection, you need to create it with an index definition.</p>
+<p>Indexes are enabled on collections created with an IndexDefinition as third generic argument.</p>
+<p>Like this:</p>
 <pre><code class="language-cs">productsFile.Collection&lt;Book, string, BookIndexDefiniton&gt;("books", book =&gt; book.Id);</code></pre>
-<p>An index definition has to derive from <code>MarcelloDB.Index.IndexDefinition&lt;T&gt;</code>, where T is the same type as used for your collection.
-In case of the bookCollection:</p>
-<pre><code class="language-cs">class BookIndexDefinition : IndexDefinition&lt;Book&gt;{}
-//    =================== &gt;------------------|||--||
-//                       ||-------&gt;Book-----&gt;|||  ||
+<p>The index definition should derive from <code>MarcelloDB.Index.IndexDefinition&lt;T&gt;</code></p>
+<p><code>T</code> should equal the type of the objects in the collection.</p>
+<p>For instance:</p>
+<pre><code class="language-cs">//Define indexes
+class BookIndexDefinition : IndexDefinition&lt;Book&gt;
+{                                            //
+  /*...*/                                    //
+}                                            //
+//                                           //
+//Create collection      //-------&gt;Book-----&gt;//
 productsFile.Collection&lt;Book, string, BookIndexDefiniton&gt;("books", book =&gt; book.Id);
 //                            ------------------</code></pre>
-<h2 id="indexing-properties">Indexing properties</h2>
-<p>Indexedes are defined by declaring properties on the index definition.</p>
-<p>You can define as many indexes as needed, but be aware that there is a perfomance and storage-size pricetag with every index you add.</p>
-<p>The simplest type of index is one based on a property of the objects you are storing.
-In this scenario, a corresponding property on the index definition is all that is needed.</p>
-<p>This property has to</p>
-<ul>
-<li>have the same name as the property you want to index</li>
-<li>be of type <code>IndexedValue&lt;T, TAttribute&gt;</code></li>
-<li>have the same type for  T as the type of the objects in the collection</li>
-<li>have the same type for TAttribute as the type of the property you want to index</li>
-<li>has to defined as <code>{ get; set; }</code> (or at least behave similar)</li>
-</ul>
-<p>If any of these requirements is not met, the Collection method on the collection-file will throw as soon as you try to get a reference to it. So, you either get a collection with valid and working indexes, or you get an error.</p>
-<p>Once you have this collection, all index functionality is typed correctly. The compiler will prevent you from errors.</p>
-<p>An example:</p>
+<h3 id="index-properties">Index Properties</h3>
+<p>Indexes are defined by declaring properties on the index definition.</p>
+<p>These properties can be of type IndexedValue<> or IndexedList<></p>
 <pre><code class="language-cs">///
 /// This IndexDefinition can be used to index
-//                            instances of Book
-///                                        ||
+//                             instances of Book
+///                                          ||
 class BookIndexDefinition : IndexDefinition&lt;Book&gt;
 {
-   //          Create an index on property Title
-   //                                 ||
-   public  IndexedValue&lt;Book, string&gt; Title { get; set; }
+   //           Create an index named Title
+   //                                  ||
+   public  IndexedValue&lt;Book, string&gt; Title { /*...*/ }
+   //                    ||     ||
+   //  (for instances of Book)
+   //                     as a string
+   //
+
+   //                Create an index named CategoryId_Code
+   //                                             ||
+   public  IndexedValue&lt;Book, int, string&gt; CategoryId_Code { /*...*/ }
+   //                    ||   ||      ||
+   // (for instances of Book) ||      ||
+   //                         ||      ||
+   // As a combination of an integer  ||
+   //                          and a string
+
+   //          Create an index named Tags
+   //  indexing a list                ||
+   //              ||                 ||
+   public  IndexedList&lt;Book, string&gt; Tags { /*...*/ }
    //                   ||     ||
-   //             of Book which is a string
+   //(for instances of Book)   ||
+   //             values are string
+   //
 }</code></pre>
-<p>If indexing a property is not enough, you can define custom indexes.
-In this case you also define a property like above, except you return an instance of IndexedValue.
-And a setter is not needed (nor usefull).</p>
-<pre><code class="language-cs">///
-/// This IndexDefinition can be used to index the main author name property of Books
-///
-class BookIndexDefinition : IndexDefinition&lt;Book&gt;
+<h2 id="indexing-a-single-value-or-a-list-of-values">Indexing a Single Value or a List of Values</h2>
+<p>An index is a bit like a sorted list, it keeps references to the objects sorted by the indexed value.
+MarcelloDB is able to keep 1 or more references to an object in the same index.</p>
+<p>Take for example this class:</p>
+<pre><code>class Article
 {
-   public  IndexedValue&lt;Book, string&gt; MainAuthorName
-   {
-      get{
-        //index the name of the first autor
-        return base.IndexedValue&lt;Book, string&gt;((book)=&gt;{
-          return book.Authors.First().Name;
-        });
-      }
-   }
+  public string       Title       { get; set; }
+  public int          CategoryID  { get; set; }
+  public List&lt;string&gt; Tags        { get; set; }
 }</code></pre>
-<h2 id="if-it-is-comparable-it-can-be-indexed">If it is comparable, it can be indexed</h2>
-<p>If a type implements IComparable, it can be indexed. Even your custom objects. Just make sure they compare ok.
-Custom objects can be usefull for instance when you want to order your objects by more than 1 property.</p>
-<pre><code class="language-cs">class AuthorNameAndTitle : IComparable
-{
-  public string AuthorName { get; set; }
-  public string Title { get; set; }
-  public bool IgnoreTitle { get; set;}
-
-  //Sort by AuthorName, Then by Title
-  public int CompareTo(object obj)
-  {
-    var other = (AuthorTitle)obj;
-    var authorNameCompared = AuthorName.CompareTo(other.AuthorName);
-    if(authorNameCompared == 0)
-    {
-      if(IgnoreTitle) //Ignore the title when searching for Author only.
-        return 0;
-
-      return Title.CompareTo(other.Title);
-    }
-    return authorNameCompared;
-   }
-}</code></pre>
-<pre><code class="language-cs">class BookIndexDefinition : IndexDefinition&lt;Book&gt;
-{
-  public  IndexedValue&lt;Book, AuthorNameAndTitle&gt; AuthorNameAndTitle
-  {
-    get{
-      return base.IndexedValue&lt;Book, AuthorNameAndTitle&gt;((book)=&gt;{
-        return new AuthorNameAndTitle{AuthorName = book.Author.Name, Title = Book.Title};
-      });
-    }
-  }
-}</code></pre>
-<pre><code class="language-cs">//Get all books, ordered by author and title
-bookCollection.Indexes.AuthorNameAndTitle.All
-
-//Get all books, for a given author
-var books = bookCollection
-  .Indexes
-  .AuthorNameAndTitle
-  .Find(
-    new AuthorNameAndTitle{AuthorName = 'Ernest Hemingway', IgnoreTitle = true})
-  );
-</code></pre>
+<p>An index on <code>Category</code> will result in a single index entry per object.
+An index on <code>`Tags</code> on the other hand can contain more than 1 entry per object.</p>
+<p>More in detail:</p>
+<ul>
+<li><a href="indexing/indexed_value.html">Indexing one or more fields with <code>IndexedValue</code> </a></li>
+<li><a href="indexing/indexed_list.html">Indexing a list of fields with <code>IndexedList</code></a></li>
+</ul>
 <h2 id="using-indexes">Using indexes</h2>
-<p>A collection created with an index definition has a property named 'Indexes'.
-This Indexes property returns an instance of the IndexDefinition used to construct the collection.
+<p>A collection created with an index definition has a property named <code>`Indexes</code>.
+This property returns an instance of the IndexDefinition used to construct the collection.
 Every index on that definition can now be used to iterate, and search the data sorted by the indexed value.</p>
 <p>All enumerations are implemented in a lazy fashion. The next object is only loaded when actually requested by the iteration.
-So don't worry if you have a really large amount of data, MarcelloDB never loads all that data in memory.</p>
-<h3 id="all">All</h3>
+So don't worry if you have a really large amount of data, MarcelloDB only loads the current object.</p>
+<h3 id="all-indexedvalue">All (IndexedValue)</h3>
 <p>All returns an IEnumerable<T> of all objects sorted by the indexed value.</p>
 <pre><code class="language-cs">bookCollection.Indexes.Title.All; //sorted by Title</code></pre>
-<h3 id="find">Find</h3>
+<h3 id="find-indexedvalue">Find (IndexedValue)</h3>
 <p>Find returns an IEnumerable<T> of all objects that have the specific value for the indexed value.</p>
 <pre><code class="language-cs">//All books with the title "MarcelloDB For Dummies"
 boolCollection.Indexes.Title.Find("MarcelloDB For Dummies")</code></pre>
 <p>(In later versions, you'll be able to define a unique index, in which case a find will return just a single object, no IEnumerable.)</p>
-<h3 id="between-and">Between And</h3>
+<h3 id="between-and-indexedvalue">Between And (IndexedValue)</h3>
 <p>You can iterate objects with an indexed value wich is contained in a range.</p>
 <pre><code class="language-cs">//all books suitable for 8 and 13, edges not included
 bookCollection.Indexes.AgeRecommendation.Between(8).And(13)</code></pre>
 <pre><code class="language-cs">//all books suitable for 8 and 13, edges included
 bookCollection.Indexes.AgeRecommendation.BetweenIncluding(8).AndIncluding(13)</code></pre>
-<h3 id="greaterthan-orequal">GreaterThan (OrEqual)</h3>
+<h3 id="greaterthan-orequal-indexedvalue">GreaterThan (OrEqual) (IndexedValue)</h3>
 <p>Starts iteration at a specific value till the end of the index.</p>
 <pre><code class="language-cs">//all books suitable +12
 bookCollection.Indexes.AgeRecommendation.GreaterThan(12)</code></pre>
 <pre><code class="language-cs">//all books suitable 12 and up
 bookCollection.Indexes.AgeRecommendation.GreaterThanOrEqual(12)</code></pre>
-<h3 id="smallerthan-orequal">SmallerThan (OrEqual)</h3>
+<h3 id="smallerthan-orequal-indexedvalue">SmallerThan (OrEqual) (IndexedValue)</h3>
 <p>Starts iteration at the beginning of the indexe untill a specific value</p>
 <pre><code class="language-cs">//all books suitable for -12
 bookCollection.Indexes.AgeRecommendation.SmallerThan(12)</code></pre>
 <pre><code class="language-cs">//all books suitable up until 12
 bookCollection.Indexes.AgeRecommendation.SmallerThanOrEqual(12)</code></pre>
-<h3 id="descending">Descending</h3>
+<h3 id="descending-indexedvalue">Descending (IndexedValue)</h3>
 <p>Every index scope can be reversed to iterate your objects in a descending order</p>
 <pre><code class="language-cs">//starting from 12 down to 0
 bookCollection.Indexes.AgeRecommendation.SmallerThan(12).Descending
@@ -246,11 +220,20 @@ bookCollection.Indexes.AgeRecommendation.SmallerThan(12).Descending
 bookCollection.Indexes.AgeRecommendation.GreaterThan(12).Descending
 //from 16 down to 12
 bookCollection.Indexes.AgeRecommendation.Between(12).And(16).Descending</code></pre>
-<h2 id="iterating-the-keys-of-an-index">Iterating the keys of an index</h2>
+<h3 id="iterating-the-keys-of-an-index-indexedvalue">Iterating the keys of an index (IndexedValue)</h3>
 <p>You can iterate all keys of an index:</p>
 <pre><code class="language-cs">bookCollection.Indexes.AgeRecommendation.SmallerThan(12).Keys
 //works also on the Descending scope
 bookCollection.Indexes.AgeRecommendation.SmallerThan(12).Descending.Keys</code></pre>
+<h3 id="contains-indexedlist">Contains (IndexedList)</h3>
+<p>Enumerates objects that have a specific item in the list.</p>
+<pre><code class="language-cs">bookCollections.Indexes.Tags.Contains("Thriller");</code></pre>
+<h3 id="containsany-indexedlist">ContainsAny (IndexedList)</h3>
+<p>Enumerates objects that have at least one of the items in the list</p>
+<pre><code class="language-cs">bookCollections.Indexes.Tags.ContainsAny(new string[] {"Thriller", "Comedy"});</code></pre>
+<h3 id="containsall-indexedlist">ContainsAll (IndexedList)</h3>
+<p>Enumerates objects that have all of the items in the list</p>
+<pre><code class="language-cs">bookCollections.Indexes.Tags.ContainsAny(new string[] {"Thriller", "Comedy"});</code></pre>
                 </section>
 
             </div>
