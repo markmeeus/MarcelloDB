@@ -32,14 +32,18 @@
 
 0.5.0
 -
-- Compound indexes
-- Indexing list of values
-- Contains/ContainsAll query
+- ~~Compound indexes~~
+- ~~Indexing list of values~~
+- ~~Contains/ContainsAll query~~
 
 0.6.0
 -
 - Unique indexes
 - IgnoreNull index attribute
+
+0.7.0
+-
+- Named objects (per-collection singletons)
 
 1.0.0
 -
