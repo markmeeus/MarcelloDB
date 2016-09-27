@@ -6,6 +6,7 @@ namespace MarcelloDB.Test.Classes
     {
         public Article ()
         {
+            this.Reference = Guid.NewGuid().ToString();
         }
 
         public string Name{ get; set;}
@@ -18,6 +19,8 @@ namespace MarcelloDB.Test.Classes
 
         public string Category { get; set; }
 
+        public string Reference { get; set; }
+
         public static Article ToiletPaper
         {
             get
@@ -27,7 +30,8 @@ namespace MarcelloDB.Test.Classes
                     Code = "001",
                     Name = "Toilet Paper",
                     Description = "The finest paper money can buy",
-                    Category = "Hygiene"
+                    Category = "Hygiene",
+                    Reference = "TLT001"
                 };
             }
         }
@@ -41,7 +45,8 @@ namespace MarcelloDB.Test.Classes
                     Code = "002",
                     Name = "DVD: This is Spinal Tap",
                     Description = "Best dvd ever",
-                    Category = "Entertainment"
+                    Category = "Entertainment",
+                    Reference = "DVD002"
                 };
             }
         }
@@ -55,7 +60,8 @@ namespace MarcelloDB.Test.Classes
                     Code = "003",
                     Name = "Barbie Doll",
                     Description = "Some doll",
-                    Category = "Toys"
+                    Category = "Toys",
+                    Reference = "TOY003"
                 };
             }
         }

@@ -5,6 +5,7 @@ using MarcelloDB.Test.Classes;
 using System.Linq;
 using System.Collections.Generic;
 using MarcelloDB.Index;
+using MarcelloDB.Exceptions;
 
 namespace MarcelloDB.Test.Integration
 {
@@ -46,6 +47,35 @@ namespace MarcelloDB.Test.Integration
                 .Equals(String.Format("{0}-{1}", Article.ToiletPaper.Name, Article.ToiletPaper.Description));
 
             Assert.AreEqual(Article.ToiletPaper.ID, papers.First().ID);
+        }
+
+        [Test]
+        public void Insert_Object_Adds_To_Unique_Index()
+        {
+            var barbieDoll = Article.BarbieDoll;
+            _articles.Persist(barbieDoll);
+            var foundBarbieDoll = _articles.Indexes.Reference.Find(barbieDoll.Reference);
+            Assert.AreEqual(barbieDoll.ID, foundBarbieDoll.ID);
+        }
+
+        [Test]
+        public void Allow_Updating_Object_In_Unique_Index()
+        {
+            var barbieDoll = Article.BarbieDoll;
+            _articles.Persist(barbieDoll);
+            barbieDoll.Name = "New Barbie Doll";
+            _articles.Persist(barbieDoll);
+            var foundBarbieDoll = _articles.Indexes.Reference.Find(barbieDoll.Reference);
+            Assert.AreEqual(barbieDoll.Name, foundBarbieDoll.Name);
+        }
+
+        [Test]
+        public void Throws_DuplicateIndexEntryException_When_Inserting_Duplicate_Keys_In_Unique_Index()
+        {
+            _articles.Persist(Article.BarbieDoll);
+            Assert.Throws<ArgumentException>(
+                () => _articles.Persist(new Article{ ID = 123, Reference = Article.BarbieDoll.Reference })
+            );
         }
 
         [Test]

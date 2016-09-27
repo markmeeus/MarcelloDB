@@ -131,6 +131,7 @@
     </Compile>
     <Compile Include="Collections\ObjectByIDEnumerator.cs" />
     <Compile Include="Collections\IndexedValueTypes\IndexedList.cs" />
+    <Compile Include="Collections\IndexedValueTypes\UniqueIndexedValue.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Runtime" />
