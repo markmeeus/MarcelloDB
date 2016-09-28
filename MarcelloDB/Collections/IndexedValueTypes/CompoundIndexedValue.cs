@@ -6,12 +6,39 @@ using System.Collections.Generic;
 using MarcelloDB.Collections;
 using MarcelloDB.Collections.Scopes;
 using MarcelloDB.Index;
+using MarcelloDB.Records;
 
 namespace MarcelloDB.Collections
 {
+	public class UniqueIndexedValue<TObj, T1, T2> : IndexedValue<TObj, T1, T2>
+    {
+        UniqueIndexedValue():base(){}
+
+        internal UniqueIndexedValue(Func<TObj, CompoundValue<T1, T2>> valueFunction)
+            :base( valueFunction)
+        {
+        }
+
+        public TObj Find(T1 val1, T2 val2){
+
+            return base.Equals(val1, val2).First();
+        }
+
+        internal override IEnumerable<object> GetKeys(object o, long address)
+        {
+            var value = base.ValueFunction((TObj)o).FirstOrDefault();
+            var indexKey = new ValueWithAddressIndexKey<CompoundValue<T1, T2>>
+                {
+                    V = value,
+                    A = 0 //Makes entries unique
+                };
+            return new object[]{ indexKey };
+        }
+    }
+
     public class IndexedValue<TObj, T1, T2> : BaseIndexedValue<TObj, CompoundValue<T1, T2>>
     {
-        IndexedValue(): base(null){}
+        internal IndexedValue(): base(null){}
 
         internal IndexedValue(Func<TObj, CompoundValue<T1, T2>> valueFunction)
             :base((o)=>new CompoundValue<T1, T2>[]{valueFunction(o)}){}
@@ -89,9 +116,35 @@ namespace MarcelloDB.Collections
 
     }
 
+	public class UniqueIndexedValue<TObj, T1, T2, T3> : IndexedValue<TObj, T1, T2, T3>
+    {
+        UniqueIndexedValue():base(){}
+
+        internal UniqueIndexedValue(Func<TObj, CompoundValue<T1, T2, T3>> valueFunction)
+            :base( valueFunction)
+        {
+        }
+
+        public TObj Find(T1 val1, T2 val2, T3 val3){
+
+            return base.Equals(val1, val2, val3).First();
+        }
+
+        internal override IEnumerable<object> GetKeys(object o, long address)
+        {
+            var value = base.ValueFunction((TObj)o).FirstOrDefault();
+            var indexKey = new ValueWithAddressIndexKey<CompoundValue<T1, T2, T3>>
+                {
+                    V = value,
+                    A = 0 //Makes entries unique
+                };
+            return new object[]{ indexKey };
+        }
+    }
+
     public class IndexedValue<TObj, T1, T2, T3> : BaseIndexedValue<TObj, CompoundValue<T1, T2, T3>>
     {
-        IndexedValue(): base(null){}
+        internal IndexedValue(): base(null){}
 
         internal IndexedValue(Func<TObj, CompoundValue<T1, T2, T3>> valueFunction)
             :base((o)=>new CompoundValue<T1, T2, T3>[]{valueFunction(o)}){}
@@ -201,9 +254,35 @@ namespace MarcelloDB.Collections
 
     }
 
+	public class UniqueIndexedValue<TObj, T1, T2, T3, T4> : IndexedValue<TObj, T1, T2, T3, T4>
+    {
+        UniqueIndexedValue():base(){}
+
+        internal UniqueIndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4>> valueFunction)
+            :base( valueFunction)
+        {
+        }
+
+        public TObj Find(T1 val1, T2 val2, T3 val3, T4 val4){
+
+            return base.Equals(val1, val2, val3, val4).First();
+        }
+
+        internal override IEnumerable<object> GetKeys(object o, long address)
+        {
+            var value = base.ValueFunction((TObj)o).FirstOrDefault();
+            var indexKey = new ValueWithAddressIndexKey<CompoundValue<T1, T2, T3, T4>>
+                {
+                    V = value,
+                    A = 0 //Makes entries unique
+                };
+            return new object[]{ indexKey };
+        }
+    }
+
     public class IndexedValue<TObj, T1, T2, T3, T4> : BaseIndexedValue<TObj, CompoundValue<T1, T2, T3, T4>>
     {
-        IndexedValue(): base(null){}
+        internal IndexedValue(): base(null){}
 
         internal IndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4>> valueFunction)
             :base((o)=>new CompoundValue<T1, T2, T3, T4>[]{valueFunction(o)}){}
@@ -345,9 +424,35 @@ namespace MarcelloDB.Collections
 
     }
 
+	public class UniqueIndexedValue<TObj, T1, T2, T3, T4, T5> : IndexedValue<TObj, T1, T2, T3, T4, T5>
+    {
+        UniqueIndexedValue():base(){}
+
+        internal UniqueIndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5>> valueFunction)
+            :base( valueFunction)
+        {
+        }
+
+        public TObj Find(T1 val1, T2 val2, T3 val3, T4 val4, T5 val5){
+
+            return base.Equals(val1, val2, val3, val4, val5).First();
+        }
+
+        internal override IEnumerable<object> GetKeys(object o, long address)
+        {
+            var value = base.ValueFunction((TObj)o).FirstOrDefault();
+            var indexKey = new ValueWithAddressIndexKey<CompoundValue<T1, T2, T3, T4, T5>>
+                {
+                    V = value,
+                    A = 0 //Makes entries unique
+                };
+            return new object[]{ indexKey };
+        }
+    }
+
     public class IndexedValue<TObj, T1, T2, T3, T4, T5> : BaseIndexedValue<TObj, CompoundValue<T1, T2, T3, T4, T5>>
     {
-        IndexedValue(): base(null){}
+        internal IndexedValue(): base(null){}
 
         internal IndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5>> valueFunction)
             :base((o)=>new CompoundValue<T1, T2, T3, T4, T5>[]{valueFunction(o)}){}
@@ -521,9 +626,35 @@ namespace MarcelloDB.Collections
 
     }
 
+	public class UniqueIndexedValue<TObj, T1, T2, T3, T4, T5, T6> : IndexedValue<TObj, T1, T2, T3, T4, T5, T6>
+    {
+        UniqueIndexedValue():base(){}
+
+        internal UniqueIndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6>> valueFunction)
+            :base( valueFunction)
+        {
+        }
+
+        public TObj Find(T1 val1, T2 val2, T3 val3, T4 val4, T5 val5, T6 val6){
+
+            return base.Equals(val1, val2, val3, val4, val5, val6).First();
+        }
+
+        internal override IEnumerable<object> GetKeys(object o, long address)
+        {
+            var value = base.ValueFunction((TObj)o).FirstOrDefault();
+            var indexKey = new ValueWithAddressIndexKey<CompoundValue<T1, T2, T3, T4, T5, T6>>
+                {
+                    V = value,
+                    A = 0 //Makes entries unique
+                };
+            return new object[]{ indexKey };
+        }
+    }
+
     public class IndexedValue<TObj, T1, T2, T3, T4, T5, T6> : BaseIndexedValue<TObj, CompoundValue<T1, T2, T3, T4, T5, T6>>
     {
-        IndexedValue(): base(null){}
+        internal IndexedValue(): base(null){}
 
         internal IndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6>> valueFunction)
             :base((o)=>new CompoundValue<T1, T2, T3, T4, T5, T6>[]{valueFunction(o)}){}
@@ -729,9 +860,35 @@ namespace MarcelloDB.Collections
 
     }
 
+	public class UniqueIndexedValue<TObj, T1, T2, T3, T4, T5, T6, T7> : IndexedValue<TObj, T1, T2, T3, T4, T5, T6, T7>
+    {
+        UniqueIndexedValue():base(){}
+
+        internal UniqueIndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7>> valueFunction)
+            :base( valueFunction)
+        {
+        }
+
+        public TObj Find(T1 val1, T2 val2, T3 val3, T4 val4, T5 val5, T6 val6, T7 val7){
+
+            return base.Equals(val1, val2, val3, val4, val5, val6, val7).First();
+        }
+
+        internal override IEnumerable<object> GetKeys(object o, long address)
+        {
+            var value = base.ValueFunction((TObj)o).FirstOrDefault();
+            var indexKey = new ValueWithAddressIndexKey<CompoundValue<T1, T2, T3, T4, T5, T6, T7>>
+                {
+                    V = value,
+                    A = 0 //Makes entries unique
+                };
+            return new object[]{ indexKey };
+        }
+    }
+
     public class IndexedValue<TObj, T1, T2, T3, T4, T5, T6, T7> : BaseIndexedValue<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7>>
     {
-        IndexedValue(): base(null){}
+        internal IndexedValue(): base(null){}
 
         internal IndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7>> valueFunction)
             :base((o)=>new CompoundValue<T1, T2, T3, T4, T5, T6, T7>[]{valueFunction(o)}){}
@@ -969,9 +1126,35 @@ namespace MarcelloDB.Collections
 
     }
 
+	public class UniqueIndexedValue<TObj, T1, T2, T3, T4, T5, T6, T7, T8> : IndexedValue<TObj, T1, T2, T3, T4, T5, T6, T7, T8>
+    {
+        UniqueIndexedValue():base(){}
+
+        internal UniqueIndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>> valueFunction)
+            :base( valueFunction)
+        {
+        }
+
+        public TObj Find(T1 val1, T2 val2, T3 val3, T4 val4, T5 val5, T6 val6, T7 val7, T8 val8){
+
+            return base.Equals(val1, val2, val3, val4, val5, val6, val7, val8).First();
+        }
+
+        internal override IEnumerable<object> GetKeys(object o, long address)
+        {
+            var value = base.ValueFunction((TObj)o).FirstOrDefault();
+            var indexKey = new ValueWithAddressIndexKey<CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>>
+                {
+                    V = value,
+                    A = 0 //Makes entries unique
+                };
+            return new object[]{ indexKey };
+        }
+    }
+
     public class IndexedValue<TObj, T1, T2, T3, T4, T5, T6, T7, T8> : BaseIndexedValue<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>>
     {
-        IndexedValue(): base(null){}
+        internal IndexedValue(): base(null){}
 
         internal IndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>> valueFunction)
             :base((o)=>new CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>[]{valueFunction(o)}){}

@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using MarcelloDB.Collections;
 using MarcelloDB.Collections.Scopes;
 using MarcelloDB.Index;
+using MarcelloDB.Records;
 
 namespace MarcelloDB.Collections
 {
@@ -33,9 +34,35 @@ namespace MarcelloDB.Collections
         var paramsDeclarationList = string.Join(", ", paramsDeclarations);
         var argumentsList = string.Join(", ", arguments);
 #>
+	public class UniqueIndexedValue<TObj, <#=genericAttributeList#>> : IndexedValue<TObj, <#=genericAttributeList#>>
+    {
+        UniqueIndexedValue():base(){}
+
+        internal UniqueIndexedValue(Func<TObj, CompoundValue<<#=genericAttributeList#>>> valueFunction)
+            :base( valueFunction)
+        {
+        }
+
+        public TObj Find(<#=paramsDeclarationList#>){
+
+            return base.Equals(<#=argumentsList#>).First();
+        }
+
+        internal override IEnumerable<object> GetKeys(object o, long address)
+        {
+            var value = base.ValueFunction((TObj)o).FirstOrDefault();
+            var indexKey = new ValueWithAddressIndexKey<CompoundValue<<#=genericAttributeList#>>>
+                {
+                    V = value,
+                    A = 0 //Makes entries unique
+                };
+            return new object[]{ indexKey };
+        }
+    }
+
     public class IndexedValue<TObj, <#=genericAttributeList#>> : BaseIndexedValue<TObj, CompoundValue<<#=genericAttributeList#>>>
     {
-        IndexedValue(): base(null){}
+        internal IndexedValue(): base(null){}
 
         internal IndexedValue(Func<TObj, CompoundValue<<#=genericAttributeList#>>> valueFunction)
             :base((o)=>new CompoundValue<<#=genericAttributeList#>>[]{valueFunction(o)}){}

@@ -400,6 +400,59 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
             Assert.AreEqual(2, items[1].ID);
             Assert.AreEqual(3, items[2].ID);
         }
+
+        class IndexableIndexDefinitionUnique2 : IndexDefinition<Indexable>
+        {
+            public UniqueIndexedValue<Indexable, int, long> UniqueCompound1And2
+            {
+                get{
+                    return UniqueIndexedValue((indexable) =>
+                        {
+                            return CompoundValue(indexable.Prop1, indexable.Prop2);
+                        });
+                }
+            }
+        }
+
+        [Test]
+        public void Insert_Unique_Compound_Of2()
+        {
+            var indexables =
+                _collectionFile.Collection<Indexable, int, IndexableIndexDefinitionUnique2>("indexables_unique_compound", i => i.ID);
+            var indexable = Indexable.CreateIndexable(1);
+            indexables.Persist(indexable);
+            var foundIndexable = indexables.Indexes.UniqueCompound1And2.Find(indexable.Prop1, indexable.Prop2);
+            Assert.AreEqual(indexable.ID, foundIndexable.ID);
+        }
+
+        [Test]
+        public void Allow_Updating_Object_In_Unique_Index()
+        {
+            var indexables =
+                _collectionFile.Collection<Indexable, int, IndexableIndexDefinitionUnique2>("indexables_unique_compound", i => i.ID);
+            var indexable = Indexable.CreateIndexable(1);
+            indexables.Persist(indexable);
+            indexable.Prop8 = "Updated";
+            indexables.Persist(indexable);
+            var foundIndexable = indexables.Indexes.UniqueCompound1And2.Find(indexable.Prop1, indexable.Prop2);
+            Assert.AreEqual(indexable.ID, foundIndexable.ID);
+        }
+
+        [Test]
+        public void Throws_DuplicateIndexEntryException_When_Inserting_Duplicate_Keys_In_Unique_Index()
+        {
+            var indexables =
+                _collectionFile.Collection<Indexable, int, IndexableIndexDefinitionUnique2>("indexables_unique_compound", i => i.ID);
+            var indexable = Indexable.CreateIndexable(1);
+            indexables.Persist(indexable);
+
+            var conflictingIndexable = Indexable.CreateIndexable(2);
+            conflictingIndexable.Prop1 = indexable.Prop1;
+            conflictingIndexable.Prop2 = indexable.Prop2;
+            Assert.Throws<ArgumentException>(
+                () => indexables.Persist(conflictingIndexable)
+            );
+        }
     }
 }
 

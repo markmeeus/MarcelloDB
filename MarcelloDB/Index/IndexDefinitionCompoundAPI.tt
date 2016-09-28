@@ -44,6 +44,20 @@ namespace MarcelloDB.Index
                 return (IndexedValue<T, <#=genericAttributeList#>>)IndexedValues.First(v => v.PropertyName == callerMember);
             }
         }
+
+        protected UniqueIndexedValue<T, <#=genericAttributeList#>> UniqueIndexedValue<<#=genericAttributeList#>>
+            (Func<T, CompoundValue<<#=genericAttributeList#>>> valueFunc, [CallerMemberName] string callerMember = "")
+        {
+            if (this.Building)
+            {
+                return new UniqueIndexedValue<T, <#=genericAttributeList#>>(valueFunc);
+            }
+            else
+            {
+                return (UniqueIndexedValue<T, <#=genericAttributeList#>>)IndexedValues.First(v => v.PropertyName == callerMember);
+            }
+        }
+
 	    protected CompoundValue<<#=genericAttributeList#>> CompoundValue<<#=genericAttributeList#>>(<#=argumentsList#>)
 	    {
 	    	return new CompoundValue<<#=genericAttributeList#>>(<#=compoundConstructorParamsList#>);
