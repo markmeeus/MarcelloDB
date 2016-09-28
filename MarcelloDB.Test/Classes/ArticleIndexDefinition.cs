@@ -14,32 +14,35 @@ namespace MarcelloDB.Test.Classes
 
         public UniqueIndexedValue<Article, string> Reference { get; set; }
 
+        public UniqueIndexedValue<Article, string> CustomReference {
+            get{
+                return UniqueIndexedValue((a) => a.Reference);
+            }
+        }
+
         public IndexedValue<Article, string> FullDescription {
             get {
-                return IndexedValue((Article article) =>
-                    {
-                        return String.Format("{0}-{1}", article.Name, article.Description);
-                    });
+                return IndexedValue(
+                    (article) => String.Format("{0}-{1}", article.Name, article.Description)
+                );
             }
         }
 
         public IndexedValue<Article, string, string> CodeAndName
         {
             get{
-                return IndexedValue((article) =>
-                    {
-                        return CompoundValue(article.Code, article.Name);
-                    });
+                return IndexedValue(
+                    (article) =>CompoundValue(article.Code, article.Name)
+                );
             }
         }
 
         public IndexedValue<Article, int, string, string> IdCodeAndName
         {
             get{
-                return IndexedValue((article) =>
-                    {
-                        return CompoundValue(article.ID, article.Code, article.Name);
-                    });
+                return IndexedValue(
+                    (article) => CompoundValue(article.ID, article.Code, article.Name)
+                    );
             }
         }
     }

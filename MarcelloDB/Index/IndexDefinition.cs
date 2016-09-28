@@ -69,7 +69,7 @@ namespace MarcelloDB.Index
 
         #region protected but part of public api
         protected IndexedValue<T, TAttribute> IndexedValue<TAttribute>
-        (Func<T, TAttribute> valueFunc, [CallerMemberName] string callerMember = "")
+            (Func<T, TAttribute> valueFunc, [CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
@@ -81,8 +81,21 @@ namespace MarcelloDB.Index
             }
         }
 
+        protected UniqueIndexedValue<T, TAttribute> UniqueIndexedValue<TAttribute>
+        (Func<T, TAttribute> valueFunc, [CallerMemberName] string callerMember = "")
+        {
+            if (this.Building)
+            {
+                return new UniqueIndexedValue<T, TAttribute>(valueFunc);
+            }
+            else
+            {
+                return (UniqueIndexedValue<T, TAttribute>)IndexedValues.First(v => v.PropertyName == callerMember);
+            }
+        }
+
         protected IndexedList<T, TAttribute> IndexedList<TAttribute>
-        (Func<T, IEnumerable<TAttribute>> valueFunc, [CallerMemberName] string callerMember = "")
+            (Func<T, IEnumerable<TAttribute>> valueFunc, [CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {

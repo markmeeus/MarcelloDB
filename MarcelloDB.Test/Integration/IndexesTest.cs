@@ -59,6 +59,15 @@ namespace MarcelloDB.Test.Integration
         }
 
         [Test]
+        public void Insert_Object_Adds_To_Custom_Unique_Index()
+        {
+            var barbieDoll = Article.BarbieDoll;
+            _articles.Persist(barbieDoll);
+            var foundBarbieDoll = _articles.Indexes.CustomReference.Find(barbieDoll.Reference);
+            Assert.AreEqual(barbieDoll.ID, foundBarbieDoll.ID);
+        }
+
+        [Test]
         public void Allow_Updating_Object_In_Unique_Index()
         {
             var barbieDoll = Article.BarbieDoll;
@@ -66,6 +75,17 @@ namespace MarcelloDB.Test.Integration
             barbieDoll.Name = "New Barbie Doll";
             _articles.Persist(barbieDoll);
             var foundBarbieDoll = _articles.Indexes.Reference.Find(barbieDoll.Reference);
+            Assert.AreEqual(barbieDoll.Name, foundBarbieDoll.Name);
+        }
+
+        [Test]
+        public void Allow_Updating_Object_In_Custom_Unique_Index()
+        {
+            var barbieDoll = Article.BarbieDoll;
+            _articles.Persist(barbieDoll);
+            barbieDoll.Name = "New Barbie Doll";
+            _articles.Persist(barbieDoll);
+            var foundBarbieDoll = _articles.Indexes.CustomReference.Find(barbieDoll.Reference);
             Assert.AreEqual(barbieDoll.Name, foundBarbieDoll.Name);
         }
 
