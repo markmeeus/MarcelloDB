@@ -6,55 +6,62 @@ MarcelloDB is released on nuget.org, so it is pretty easy to install.
 PM > Install-Package MarcelloDB
 ```
 
-Alternatively, you can use your IDE to install the package. It is called 'MarcelloDB'.
-
 ###Create a platform object.
-MarcelloDB needs a specific Platform object to interact with the specific OS.
+The thing with writing mobile apps in c# is that the common api between the targetted platforms is a subset of the .net api.
+Access to the filesystem for instance is not available cross-platform.
+So we need to 'inject' the platform specific features into MarcelloDB.
 
-You should create it in your platform specific code.
+These features are available in so-called `Platform` objects.
+We can find a platform object for regular .net, which works for Xamarin (iOS and Android) in MarcelloDB.netfx.dll. The implementation for Windows(8.1 and 10) apps in MarcelloDB.uwp.dll.
 
-For instance, if you are building an iOS app, you need to instantiate the platform in the iOS code.
+Our nuget client should automatically add the references to these platform specific assemblies in our projects.
 
+
+So, create a platform like this:
 ```cs
   //On Android, iOS and regular .net or mono:
-  IPlatform platform =  new MarcelloDB.netfx.Platform();
+  var platform =  new MarcelloDB.netfx.Platform();
 
   //In a windows (or phone) 8.1/10
-  IPlatform platform =  new MarcelloDB.uwp.Platform();
+  var platform =  new MarcelloDB.uwp.Platform();
 
 ```
 
 ###Open a session
-You access all your data - in that specific folder - via a Session instance.
-Without a sesion, there is little you can do.
+Before we can start accessing data, we should create a `Session` object.
 
-Opening a session requires the platform instance and a directory path.
+Opening a session requires the platform instance (see previous step) and a directory path. MarcelloDB will store all data in this directory.
 
-MarcelloDB will store all data in this directory.
-
-This code is platform independent and can be implemented in a PCL.
+This code is platform independent so we can implement this in shared code.
 
 ```cs
+//                              Injecting the platform here
+//                                      ||
 var session = new MarcelloDB.Session(platform, dataPath);
 ```
-Sessions are designed to be long-lived. It's ok to open the session when your app starts, and keep it open until your app closes.
+Sessions are designed to be long-lived. We can open the session when our app starts, and keep it open until it closes.
 
 A static or singleton is perfectly fine, it also makes sense to register it in an IOC container.
 
 
 ###Access a collection
-A collection is the MarcelloDB equivalent of a table.
+A `Collection` is the MarcelloDB equivalent of a table. Collections are kept together in a `CollectionFile`.
 
-The session manages one or more collection-files. A collection-file manages one or more collections.
+In other words, a `CollectionFile` is a file containing one or more collections.
 
-Get a collection-file from the session
+These files are stored in the sessions directory.
+
+We can get a collection-file from the session like this:
 ```cs
-//                        File in the datafolder
+//                        File in the data directory
 //                              ||
 var personsFile = session["persons.dat"];
 ```
 
-Then, get a collection from the collection-file. It needs a name, and an Object-To-ID mapping function.
+Then, we can get a collection from the collection-file.
+
+It needs a name, and an Object-To-ID mapping function which should return the unique ID for the given object.
+
 ```cs
 //                        Store instances of  [Person][ID is a string] [map Person to ID]
 //                                               ||      ||   Collection name   ||
@@ -62,15 +69,16 @@ Then, get a collection from the collection-file. It needs a name, and an Object-
 var personsCollection = personsFile.Collection<Person, string>("persons", p => p.Id);
 
 ```
-The two generic arguments are there so that the compiler will protect you from mistakes. The first one (Person) is the type of objects you can store in the collection. The second one (string) is the type of the ID. The Object-To-ID mapper takes a Person and should return a string.
-> This collection will happily store subclasses Person too.
+The two generic arguments are there so that the compiler will protect us from mistakes. The first one (Person) is the type of objects you can store in the collection. The second one (string) is the type of the ID. The Object-To-ID mapper takes a Person and should return a string.
+> This collection will happily store subclasses of Person too.
 
 > Also, the entire object is stored, including child objects, lists and dictionaries.
 
-> Bson serialization is done with json.net. If json.net can serialize it, MarcelloDB can store it.
+> Objects are serialized to Bson (Binary json) with json.net. If json.net can serialize it, MarcelloDB can store it.
 
-###Save you an object
-Get you hands on some data
+###Saving an object
+
+Let's create some object
 ```cs
 var person = new Person{
   id = "1",
@@ -88,7 +96,7 @@ And save it in the collection
 personsCollection.Persist(person);
 ```
 
-###Find your data
+###Finding data
 The simplest way to find data is by it's ID. The find method does just that.
 ```cs
 var jon = personsCollection.Find("1");
@@ -97,11 +105,10 @@ var jon = personsCollection.Find("1");
 
 > Find now takes a *string* and returns a *Person*.
 
-You can also find your data using [indexes](indexes.html).
+There are plenty more options to search and enumerate our objects if we define [indexes](indexes.html) on our collection, .
 
-
-###Delete your data
-If you are really sure Jon won't come back...
+###Deleting data
+If we are really sure Jon won't come back...
 ```cs
 personsCollection.Delete("1");
 ```
