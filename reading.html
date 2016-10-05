@@ -121,11 +121,12 @@
 <h2 id="a-note-about-linq">A note about Linq</h2>
 <p>Since All is an IEnumerable&lt;T&gt; (T is the type of your objects) you can use Linq on it.</p>
 <p>However, there is no such thing as Linq-To-MarcelloDB. Some Linq expressions will still enumerate all objects. Which may be fine for a small collection.</p>
-<p>For instance, to get all trillers from a book collection, this will work.</p>
+<p>For instance, to get all thrillers from a book collection, this will work enumerate all objects.
+Which is fine for a small collection.</p>
 <pre><code class="language-cs">var thrillers = bookCollection.All.Where(b =&gt; b.Category == Categories.Thriller);</code></pre>
-<p>However you are much better of using an index.
+<p>However if we use an index, we'll enumerate only the objects we actually want.
 <a href="indexes.html">(More about indexes ...)</a></p>
-<pre><code class="language-cs">var thrillers = bookCollection.Indexes.Category.Find(Categories.Thriller);</code></pre>
+<pre><code class="language-cs">var thrillers = bookCollection.Indexes.Category.Equals(Categories.Thriller);</code></pre>
 <h3 id="why-no-linq-to-marcellodb">Why no Linq-To-MarcelloDB</h3>
 <p>Linq-To-MarcelloDB would certainly be possible. The expression could be evaluated and when an index exists, it could be used.
 However, the philosofy of MarcelloDB is to be always explicit, allowing the compiler to protect you as much as possible.
