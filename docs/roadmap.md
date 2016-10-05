@@ -38,8 +38,8 @@
 
 0.6.0
 -
-- Unique indexes
-- IgnoreNull index attribute
+- ~~Unique indexes~~
+- Conditional Indexes (to exclude nulls f.i.)
 
 0.7.0
 -
