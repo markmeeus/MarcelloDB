@@ -28,16 +28,16 @@ Since All is an IEnumerable&lt;T&gt; (T is the type of your objects) you can use
 
 However, there is no such thing as Linq-To-MarcelloDB. Some Linq expressions will still enumerate all objects. Which may be fine for a small collection.
 
-For instance, to get all trillers from a book collection, this will work.
-
+For instance, to get all thrillers from a book collection, this will work enumerate all objects.
+Which is fine for a small collection.
 ```cs
 var thrillers = bookCollection.All.Where(b => b.Category == Categories.Thriller);
 ```
 
-However you are much better of using an index.
+However if we use an index, we'll enumerate only the objects we actually want.
 [(More about indexes ...)](indexes.html)
 ```cs
-var thrillers = bookCollection.Indexes.Category.Find(Categories.Thriller);
+var thrillers = bookCollection.Indexes.Category.Equals(Categories.Thriller);
 ```
 
 ###Why no Linq-To-MarcelloDB
