@@ -1,4 +1,4 @@
-###Upgrading to 0.4
+#Upgrading to 0.4
 Version 0.4 contains a refactor which causes data files created with older version to be unreadable.
 
 There is also a code-level incompatibility.

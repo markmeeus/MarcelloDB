@@ -41,17 +41,24 @@
 - ~~Unique indexes~~
 - Conditional Indexes (to exclude nulls f.i.)
 
-0.7.0
--
-- Named objects (per-collection singletons)
-
 1.0.0
 -
 - Stable file format, to be supported in all future 1.x versions
 
+1.1.0
+-
+- Named objects (singleton objects per collection)
 
+1.2.0
+-
+- Data migration mechanism
 
-Read [after 1.0](longterm.md) to see what may be comming later.
+1.3.0
+-
+- Updates while enumerating
+- Rebuilding indexes
+
+Read [long term plans](longterm.md) to see what may be comming later.
 
 
 

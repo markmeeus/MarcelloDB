@@ -2,7 +2,7 @@
 Enumerating all objects in a collection to find a specific instance is not always be the best approach.
 If the collection contains thousands of objects, they will all be read from disk and deserialized,  performance will degrade fast.
 
-For such scenarios it's probably a good idea to add indexes to your collection.
+For such scenarios it's probably a good idea to add indexes to our collections.
 MarcelloDB Indexes are implemented with a BTree algorithm, which makes them really efficient.
 
 Besides searching for objects, indexes can also be used to iterate over the collection (or a subset) ordered by the indexed value.
@@ -38,7 +38,7 @@ productsFile.Collection<Book, string, BookIndexDefiniton>("books", book => book.
 ### Index Properties
 Indexes are defined by declaring properties on the index definition.
 
-These properties can be of type IndexedValue<> or IndexedList<>
+These properties can be of type `IndexedValue<T,TAttribute>` or `IndexedList<T,TAttribute>
 
 
 ```cs
@@ -91,8 +91,8 @@ class Article
 }
 ```
 
-An index on ```Category``` will result in a single index entry per object.
-An index on ```Tags`` on the other hand can contain more than 1 entry per object.
+An index on `CategoryID` will result in a single index entry per object.
+An index on `Tags` on the other hand can contain more than 1 entry per object.
 
 More in detail:
 * [Indexing one or more fields with ```IndexedValue``` ](indexing/indexed_value.md)
@@ -100,12 +100,12 @@ More in detail:
 
 
 ##Using indexes
-A collection created with an index definition has a property named ```Indexes``.
+A collection created with an index definition has a property named `Indexes`.
 This property returns an instance of the IndexDefinition used to construct the collection.
 Every index on that definition can now be used to iterate, and search the data sorted by the indexed value.
 
 All enumerations are implemented in a lazy fashion. The next object is only loaded when actually requested by the iteration.
-So don't worry if you have a really large amount of data, MarcelloDB only loads the current object.
+So we should not worry about large amounts of data, MarcelloDB only loads the current object.
 
 
 ###All (IndexedValue)
@@ -114,13 +114,12 @@ All returns an IEnumerable<T> of all objects sorted by the indexed value.
 bookCollection.Indexes.Title.All; //sorted by Title
 ```
 
-###Find (IndexedValue)
-Find returns an IEnumerable<T> of all objects that have the specific value for the indexed value.
+###Equals (IndexedValue)
+Equals returns an IEnumerable<T> of all objects that have the specific value for the indexed value.
 ```cs
 //All books with the title "MarcelloDB For Dummies"
-boolCollection.Indexes.Title.Find("MarcelloDB For Dummies")
+bookCollection.Indexes.Title.Equals("MarcelloDB For Dummies")
 ```
-(In later versions, you'll be able to define a unique index, in which case a find will return just a single object, no IEnumerable.)
 
 ###Between And (IndexedValue)
 You can iterate objects with an indexed value wich is contained in a range.
