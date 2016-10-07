@@ -262,7 +262,7 @@ namespace MarcelloDB.Test.Integration
 
 
         [Test]
-        public void Find_Finds_All()
+        public void Equals_Finds_All()
         {
             var toiletPaper = Article.ToiletPaper;
             var tootPaste = new Article
@@ -287,7 +287,7 @@ namespace MarcelloDB.Test.Integration
         }
 
         [Test]
-        public void Find_Multiple_Objects()
+        public void Equals_Finds_Multiple_Objects()
         {
             var toiletPaper = Article.ToiletPaper;
             var spinalTapDvd = Article.SpinalTapDvd;
@@ -304,7 +304,7 @@ namespace MarcelloDB.Test.Integration
         }
 
         [Test]
-        public void Find_Multiple_Objects_Returns_Distinct_Objects()
+        public void Equals_Multiple_Objects_Returns_Distinct_Objects()
         {
             var toiletPaper = Article.ToiletPaper;
             var spinalTapDvd = Article.SpinalTapDvd;
@@ -321,7 +321,7 @@ namespace MarcelloDB.Test.Integration
         }
 
         [Test]
-        public void Find_Finds_Null_Values()
+        public void Equals_Finds_Null_Values()
         {
             var article1 = new Article{ID = 1, Name = "Article1", Description = null};
             var article2 = new Article{ID = 2, Name = "Artcile2", Description = null};
