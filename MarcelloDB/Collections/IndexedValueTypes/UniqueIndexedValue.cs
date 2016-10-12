@@ -10,8 +10,10 @@ namespace MarcelloDB
     {
         UniqueIndexedValue():base(){}
 
-        internal UniqueIndexedValue(Func<TObj, TAttribute> valueFunction)
-            :base( valueFunction)
+        internal UniqueIndexedValue(
+            Func<TObj, TAttribute> valueFunction,
+            Func<TObj, bool> shouldIndexPredicate
+        ):base( valueFunction, shouldIndexPredicate)
         {
         }
 

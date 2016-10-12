@@ -13,12 +13,13 @@ namespace MarcelloDB.Collections
     {
         Func<TObj, IEnumerable<TAttribute>> _propValueFunction;
 
-        internal IndexedValue():base(null){}
+        internal IndexedValue():base(null, null){}
 
-        internal IndexedValue(Func<TObj, TAttribute> valueFunction)
-            :base((o)=>new TAttribute[]{valueFunction(o)})
-        {
-        }
+        internal IndexedValue(
+            Func<TObj, TAttribute> valueFunction,
+            Func<TObj, bool> shouldIndexPredicate
+        ):base((o)=>new TAttribute[]{valueFunction(o)}, shouldIndexPredicate)
+        {}
 
         internal static IndexedValue<TObj, TAttribute> Build()
         {

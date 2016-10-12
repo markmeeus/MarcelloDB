@@ -32,12 +32,21 @@ namespace MarcelloDB.Index
             var argumentsList = string.Join(",", arguments);
             var compoundConstructorParamsList = string.Join(",", compoundConstructorParams);
 #>
-        protected IndexedValue<T, <#=genericAttributeList#>> IndexedValue<<#=genericAttributeList#>>
-            (Func<T, CompoundValue<<#=genericAttributeList#>>> valueFunc, [CallerMemberName] string callerMember = "")
+		protected IndexedValue<T, <#=genericAttributeList#>> IndexedValue<<#=genericAttributeList#>>(
+			Func<T, CompoundValue<<#=genericAttributeList#>>> valueFunc,
+			[CallerMemberName] string callerMember = "")
+		{
+			return IndexedValue<<#=genericAttributeList#>>(valueFunc, t => true, callerMember);
+		}
+
+		protected IndexedValue<T, <#=genericAttributeList#>> IndexedValue<<#=genericAttributeList#>>(
+			Func<T, CompoundValue<<#=genericAttributeList#>>> valueFunc,
+			Func<T, bool> shouldIndexPredicate,
+			[CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new IndexedValue<T, <#=genericAttributeList#>>(valueFunc);
+                return new IndexedValue<T, <#=genericAttributeList#>>(valueFunc, shouldIndexPredicate);
             }
             else
             {
@@ -45,12 +54,21 @@ namespace MarcelloDB.Index
             }
         }
 
-        protected UniqueIndexedValue<T, <#=genericAttributeList#>> UniqueIndexedValue<<#=genericAttributeList#>>
-            (Func<T, CompoundValue<<#=genericAttributeList#>>> valueFunc, [CallerMemberName] string callerMember = "")
+        protected UniqueIndexedValue<T, <#=genericAttributeList#>> UniqueIndexedValue<<#=genericAttributeList#>>(
+        	Func<T, CompoundValue<<#=genericAttributeList#>>> valueFunc,
+        	[CallerMemberName] string callerMember = "")
+        {
+        	return UniqueIndexedValue<<#=genericAttributeList#>>(valueFunc, t => true, callerMember);
+        }
+
+        protected UniqueIndexedValue<T, <#=genericAttributeList#>> UniqueIndexedValue<<#=genericAttributeList#>>(
+        	Func<T, CompoundValue<<#=genericAttributeList#>>> valueFunc,
+        	Func<T, bool> shouldIndexPredicate,
+        	[CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new UniqueIndexedValue<T, <#=genericAttributeList#>>(valueFunc);
+                return new UniqueIndexedValue<T, <#=genericAttributeList#>>(valueFunc, shouldIndexPredicate);
             }
             else
             {

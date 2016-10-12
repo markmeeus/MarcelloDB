@@ -8,7 +8,7 @@ namespace MarcelloDB.Collections
 {
     internal class IndexedIDValue<TObj, TID> : IndexedValue<TObj, TID>
     {
-        internal IndexedIDValue():base(null)
+        internal IndexedIDValue():base(null, null)
         {
             this.PropertyName = "ID";
         }

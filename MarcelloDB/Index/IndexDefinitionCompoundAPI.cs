@@ -8,12 +8,21 @@ namespace MarcelloDB.Index
 {
     public partial class IndexDefinition<T>
     {
-        protected IndexedValue<T, TAtt1, TAtt2> IndexedValue<TAtt1, TAtt2>
-            (Func<T, CompoundValue<TAtt1, TAtt2>> valueFunc, [CallerMemberName] string callerMember = "")
+		protected IndexedValue<T, TAtt1, TAtt2> IndexedValue<TAtt1, TAtt2>(
+			Func<T, CompoundValue<TAtt1, TAtt2>> valueFunc,
+			[CallerMemberName] string callerMember = "")
+		{
+			return IndexedValue<TAtt1, TAtt2>(valueFunc, t => true, callerMember);
+		}
+
+		protected IndexedValue<T, TAtt1, TAtt2> IndexedValue<TAtt1, TAtt2>(
+			Func<T, CompoundValue<TAtt1, TAtt2>> valueFunc,
+			Func<T, bool> shouldIndexPredicate,
+			[CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new IndexedValue<T, TAtt1, TAtt2>(valueFunc);
+                return new IndexedValue<T, TAtt1, TAtt2>(valueFunc, shouldIndexPredicate);
             }
             else
             {
@@ -21,12 +30,21 @@ namespace MarcelloDB.Index
             }
         }
 
-        protected UniqueIndexedValue<T, TAtt1, TAtt2> UniqueIndexedValue<TAtt1, TAtt2>
-            (Func<T, CompoundValue<TAtt1, TAtt2>> valueFunc, [CallerMemberName] string callerMember = "")
+        protected UniqueIndexedValue<T, TAtt1, TAtt2> UniqueIndexedValue<TAtt1, TAtt2>(
+        	Func<T, CompoundValue<TAtt1, TAtt2>> valueFunc,
+        	[CallerMemberName] string callerMember = "")
+        {
+        	return UniqueIndexedValue<TAtt1, TAtt2>(valueFunc, t => true, callerMember);
+        }
+
+        protected UniqueIndexedValue<T, TAtt1, TAtt2> UniqueIndexedValue<TAtt1, TAtt2>(
+        	Func<T, CompoundValue<TAtt1, TAtt2>> valueFunc,
+        	Func<T, bool> shouldIndexPredicate,
+        	[CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new UniqueIndexedValue<T, TAtt1, TAtt2>(valueFunc);
+                return new UniqueIndexedValue<T, TAtt1, TAtt2>(valueFunc, shouldIndexPredicate);
             }
             else
             {
@@ -38,12 +56,21 @@ namespace MarcelloDB.Index
 	    {
 	    	return new CompoundValue<TAtt1, TAtt2>(p1,p2);
 	    }
-        protected IndexedValue<T, TAtt1, TAtt2, TAtt3> IndexedValue<TAtt1, TAtt2, TAtt3>
-            (Func<T, CompoundValue<TAtt1, TAtt2, TAtt3>> valueFunc, [CallerMemberName] string callerMember = "")
+		protected IndexedValue<T, TAtt1, TAtt2, TAtt3> IndexedValue<TAtt1, TAtt2, TAtt3>(
+			Func<T, CompoundValue<TAtt1, TAtt2, TAtt3>> valueFunc,
+			[CallerMemberName] string callerMember = "")
+		{
+			return IndexedValue<TAtt1, TAtt2, TAtt3>(valueFunc, t => true, callerMember);
+		}
+
+		protected IndexedValue<T, TAtt1, TAtt2, TAtt3> IndexedValue<TAtt1, TAtt2, TAtt3>(
+			Func<T, CompoundValue<TAtt1, TAtt2, TAtt3>> valueFunc,
+			Func<T, bool> shouldIndexPredicate,
+			[CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new IndexedValue<T, TAtt1, TAtt2, TAtt3>(valueFunc);
+                return new IndexedValue<T, TAtt1, TAtt2, TAtt3>(valueFunc, shouldIndexPredicate);
             }
             else
             {
@@ -51,12 +78,21 @@ namespace MarcelloDB.Index
             }
         }
 
-        protected UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3> UniqueIndexedValue<TAtt1, TAtt2, TAtt3>
-            (Func<T, CompoundValue<TAtt1, TAtt2, TAtt3>> valueFunc, [CallerMemberName] string callerMember = "")
+        protected UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3> UniqueIndexedValue<TAtt1, TAtt2, TAtt3>(
+        	Func<T, CompoundValue<TAtt1, TAtt2, TAtt3>> valueFunc,
+        	[CallerMemberName] string callerMember = "")
+        {
+        	return UniqueIndexedValue<TAtt1, TAtt2, TAtt3>(valueFunc, t => true, callerMember);
+        }
+
+        protected UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3> UniqueIndexedValue<TAtt1, TAtt2, TAtt3>(
+        	Func<T, CompoundValue<TAtt1, TAtt2, TAtt3>> valueFunc,
+        	Func<T, bool> shouldIndexPredicate,
+        	[CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3>(valueFunc);
+                return new UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3>(valueFunc, shouldIndexPredicate);
             }
             else
             {
@@ -68,12 +104,21 @@ namespace MarcelloDB.Index
 	    {
 	    	return new CompoundValue<TAtt1, TAtt2, TAtt3>(p1,p2,p3);
 	    }
-        protected IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4> IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4>
-            (Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4>> valueFunc, [CallerMemberName] string callerMember = "")
+		protected IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4> IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4>(
+			Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4>> valueFunc,
+			[CallerMemberName] string callerMember = "")
+		{
+			return IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4>(valueFunc, t => true, callerMember);
+		}
+
+		protected IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4> IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4>(
+			Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4>> valueFunc,
+			Func<T, bool> shouldIndexPredicate,
+			[CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4>(valueFunc);
+                return new IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4>(valueFunc, shouldIndexPredicate);
             }
             else
             {
@@ -81,12 +126,21 @@ namespace MarcelloDB.Index
             }
         }
 
-        protected UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4> UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4>
-            (Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4>> valueFunc, [CallerMemberName] string callerMember = "")
+        protected UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4> UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4>(
+        	Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4>> valueFunc,
+        	[CallerMemberName] string callerMember = "")
+        {
+        	return UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4>(valueFunc, t => true, callerMember);
+        }
+
+        protected UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4> UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4>(
+        	Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4>> valueFunc,
+        	Func<T, bool> shouldIndexPredicate,
+        	[CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4>(valueFunc);
+                return new UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4>(valueFunc, shouldIndexPredicate);
             }
             else
             {
@@ -98,12 +152,21 @@ namespace MarcelloDB.Index
 	    {
 	    	return new CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4>(p1,p2,p3,p4);
 	    }
-        protected IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5> IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>
-            (Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>> valueFunc, [CallerMemberName] string callerMember = "")
+		protected IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5> IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>(
+			Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>> valueFunc,
+			[CallerMemberName] string callerMember = "")
+		{
+			return IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>(valueFunc, t => true, callerMember);
+		}
+
+		protected IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5> IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>(
+			Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>> valueFunc,
+			Func<T, bool> shouldIndexPredicate,
+			[CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>(valueFunc);
+                return new IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>(valueFunc, shouldIndexPredicate);
             }
             else
             {
@@ -111,12 +174,21 @@ namespace MarcelloDB.Index
             }
         }
 
-        protected UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5> UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>
-            (Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>> valueFunc, [CallerMemberName] string callerMember = "")
+        protected UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5> UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>(
+        	Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>> valueFunc,
+        	[CallerMemberName] string callerMember = "")
+        {
+        	return UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>(valueFunc, t => true, callerMember);
+        }
+
+        protected UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5> UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>(
+        	Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>> valueFunc,
+        	Func<T, bool> shouldIndexPredicate,
+        	[CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>(valueFunc);
+                return new UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>(valueFunc, shouldIndexPredicate);
             }
             else
             {
@@ -128,12 +200,21 @@ namespace MarcelloDB.Index
 	    {
 	    	return new CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5>(p1,p2,p3,p4,p5);
 	    }
-        protected IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6> IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>
-            (Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>> valueFunc, [CallerMemberName] string callerMember = "")
+		protected IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6> IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>(
+			Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>> valueFunc,
+			[CallerMemberName] string callerMember = "")
+		{
+			return IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>(valueFunc, t => true, callerMember);
+		}
+
+		protected IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6> IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>(
+			Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>> valueFunc,
+			Func<T, bool> shouldIndexPredicate,
+			[CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>(valueFunc);
+                return new IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>(valueFunc, shouldIndexPredicate);
             }
             else
             {
@@ -141,12 +222,21 @@ namespace MarcelloDB.Index
             }
         }
 
-        protected UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6> UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>
-            (Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>> valueFunc, [CallerMemberName] string callerMember = "")
+        protected UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6> UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>(
+        	Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>> valueFunc,
+        	[CallerMemberName] string callerMember = "")
+        {
+        	return UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>(valueFunc, t => true, callerMember);
+        }
+
+        protected UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6> UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>(
+        	Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>> valueFunc,
+        	Func<T, bool> shouldIndexPredicate,
+        	[CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>(valueFunc);
+                return new UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>(valueFunc, shouldIndexPredicate);
             }
             else
             {
@@ -158,12 +248,21 @@ namespace MarcelloDB.Index
 	    {
 	    	return new CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6>(p1,p2,p3,p4,p5,p6);
 	    }
-        protected IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7> IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>
-            (Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>> valueFunc, [CallerMemberName] string callerMember = "")
+		protected IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7> IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>(
+			Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>> valueFunc,
+			[CallerMemberName] string callerMember = "")
+		{
+			return IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>(valueFunc, t => true, callerMember);
+		}
+
+		protected IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7> IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>(
+			Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>> valueFunc,
+			Func<T, bool> shouldIndexPredicate,
+			[CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>(valueFunc);
+                return new IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>(valueFunc, shouldIndexPredicate);
             }
             else
             {
@@ -171,12 +270,21 @@ namespace MarcelloDB.Index
             }
         }
 
-        protected UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7> UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>
-            (Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>> valueFunc, [CallerMemberName] string callerMember = "")
+        protected UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7> UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>(
+        	Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>> valueFunc,
+        	[CallerMemberName] string callerMember = "")
+        {
+        	return UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>(valueFunc, t => true, callerMember);
+        }
+
+        protected UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7> UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>(
+        	Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>> valueFunc,
+        	Func<T, bool> shouldIndexPredicate,
+        	[CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>(valueFunc);
+                return new UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>(valueFunc, shouldIndexPredicate);
             }
             else
             {
@@ -188,12 +296,21 @@ namespace MarcelloDB.Index
 	    {
 	    	return new CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7>(p1,p2,p3,p4,p5,p6,p7);
 	    }
-        protected IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8> IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8>
-            (Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8>> valueFunc, [CallerMemberName] string callerMember = "")
+		protected IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8> IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8>(
+			Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8>> valueFunc,
+			[CallerMemberName] string callerMember = "")
+		{
+			return IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8>(valueFunc, t => true, callerMember);
+		}
+
+		protected IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8> IndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8>(
+			Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8>> valueFunc,
+			Func<T, bool> shouldIndexPredicate,
+			[CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8>(valueFunc);
+                return new IndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8>(valueFunc, shouldIndexPredicate);
             }
             else
             {
@@ -201,12 +318,21 @@ namespace MarcelloDB.Index
             }
         }
 
-        protected UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8> UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8>
-            (Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8>> valueFunc, [CallerMemberName] string callerMember = "")
+        protected UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8> UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8>(
+        	Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8>> valueFunc,
+        	[CallerMemberName] string callerMember = "")
+        {
+        	return UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8>(valueFunc, t => true, callerMember);
+        }
+
+        protected UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8> UniqueIndexedValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8>(
+        	Func<T, CompoundValue<TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8>> valueFunc,
+        	Func<T, bool> shouldIndexPredicate,
+        	[CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8>(valueFunc);
+                return new UniqueIndexedValue<T, TAtt1, TAtt2, TAtt3, TAtt4, TAtt5, TAtt6, TAtt7, TAtt8>(valueFunc, shouldIndexPredicate);
             }
             else
             {

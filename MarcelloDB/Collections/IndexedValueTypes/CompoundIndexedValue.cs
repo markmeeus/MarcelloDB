@@ -14,8 +14,10 @@ namespace MarcelloDB.Collections
     {
         UniqueIndexedValue():base(){}
 
-        internal UniqueIndexedValue(Func<TObj, CompoundValue<T1, T2>> valueFunction)
-            :base( valueFunction)
+        internal UniqueIndexedValue(
+        	Func<TObj, CompoundValue<T1, T2>> valueFunction,
+        	Func<TObj, bool> shouldIndexPredicate
+        ):base( valueFunction, shouldIndexPredicate)
         {
         }
 
@@ -38,10 +40,16 @@ namespace MarcelloDB.Collections
 
     public class IndexedValue<TObj, T1, T2> : BaseIndexedValue<TObj, CompoundValue<T1, T2>>
     {
-        internal IndexedValue(): base(null){}
+        internal IndexedValue(): base(null, null){}
 
-        internal IndexedValue(Func<TObj, CompoundValue<T1, T2>> valueFunction)
-            :base((o)=>new CompoundValue<T1, T2>[]{valueFunction(o)}){}
+        internal IndexedValue(
+        	Func<TObj, CompoundValue<T1, T2>> valueFunction,
+        	Func<TObj, bool> shouldIndexPredicate
+    	):base(
+        	(o)=>new CompoundValue<T1, T2>[]{valueFunction(o)},
+        	shouldIndexPredicate
+        )
+        {}
 
         public IEnumerable<TObj> Equals(T1 val1, T2 val2)
         {
@@ -120,8 +128,10 @@ namespace MarcelloDB.Collections
     {
         UniqueIndexedValue():base(){}
 
-        internal UniqueIndexedValue(Func<TObj, CompoundValue<T1, T2, T3>> valueFunction)
-            :base( valueFunction)
+        internal UniqueIndexedValue(
+        	Func<TObj, CompoundValue<T1, T2, T3>> valueFunction,
+        	Func<TObj, bool> shouldIndexPredicate
+        ):base( valueFunction, shouldIndexPredicate)
         {
         }
 
@@ -144,10 +154,16 @@ namespace MarcelloDB.Collections
 
     public class IndexedValue<TObj, T1, T2, T3> : BaseIndexedValue<TObj, CompoundValue<T1, T2, T3>>
     {
-        internal IndexedValue(): base(null){}
+        internal IndexedValue(): base(null, null){}
 
-        internal IndexedValue(Func<TObj, CompoundValue<T1, T2, T3>> valueFunction)
-            :base((o)=>new CompoundValue<T1, T2, T3>[]{valueFunction(o)}){}
+        internal IndexedValue(
+        	Func<TObj, CompoundValue<T1, T2, T3>> valueFunction,
+        	Func<TObj, bool> shouldIndexPredicate
+    	):base(
+        	(o)=>new CompoundValue<T1, T2, T3>[]{valueFunction(o)},
+        	shouldIndexPredicate
+        )
+        {}
 
         public IEnumerable<TObj> Equals(T1 val1, T2 val2, T3 val3)
         {
@@ -258,8 +274,10 @@ namespace MarcelloDB.Collections
     {
         UniqueIndexedValue():base(){}
 
-        internal UniqueIndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4>> valueFunction)
-            :base( valueFunction)
+        internal UniqueIndexedValue(
+        	Func<TObj, CompoundValue<T1, T2, T3, T4>> valueFunction,
+        	Func<TObj, bool> shouldIndexPredicate
+        ):base( valueFunction, shouldIndexPredicate)
         {
         }
 
@@ -282,10 +300,16 @@ namespace MarcelloDB.Collections
 
     public class IndexedValue<TObj, T1, T2, T3, T4> : BaseIndexedValue<TObj, CompoundValue<T1, T2, T3, T4>>
     {
-        internal IndexedValue(): base(null){}
+        internal IndexedValue(): base(null, null){}
 
-        internal IndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4>> valueFunction)
-            :base((o)=>new CompoundValue<T1, T2, T3, T4>[]{valueFunction(o)}){}
+        internal IndexedValue(
+        	Func<TObj, CompoundValue<T1, T2, T3, T4>> valueFunction,
+        	Func<TObj, bool> shouldIndexPredicate
+    	):base(
+        	(o)=>new CompoundValue<T1, T2, T3, T4>[]{valueFunction(o)},
+        	shouldIndexPredicate
+        )
+        {}
 
         public IEnumerable<TObj> Equals(T1 val1, T2 val2, T3 val3, T4 val4)
         {
@@ -428,8 +452,10 @@ namespace MarcelloDB.Collections
     {
         UniqueIndexedValue():base(){}
 
-        internal UniqueIndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5>> valueFunction)
-            :base( valueFunction)
+        internal UniqueIndexedValue(
+        	Func<TObj, CompoundValue<T1, T2, T3, T4, T5>> valueFunction,
+        	Func<TObj, bool> shouldIndexPredicate
+        ):base( valueFunction, shouldIndexPredicate)
         {
         }
 
@@ -452,10 +478,16 @@ namespace MarcelloDB.Collections
 
     public class IndexedValue<TObj, T1, T2, T3, T4, T5> : BaseIndexedValue<TObj, CompoundValue<T1, T2, T3, T4, T5>>
     {
-        internal IndexedValue(): base(null){}
+        internal IndexedValue(): base(null, null){}
 
-        internal IndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5>> valueFunction)
-            :base((o)=>new CompoundValue<T1, T2, T3, T4, T5>[]{valueFunction(o)}){}
+        internal IndexedValue(
+        	Func<TObj, CompoundValue<T1, T2, T3, T4, T5>> valueFunction,
+        	Func<TObj, bool> shouldIndexPredicate
+    	):base(
+        	(o)=>new CompoundValue<T1, T2, T3, T4, T5>[]{valueFunction(o)},
+        	shouldIndexPredicate
+        )
+        {}
 
         public IEnumerable<TObj> Equals(T1 val1, T2 val2, T3 val3, T4 val4, T5 val5)
         {
@@ -630,8 +662,10 @@ namespace MarcelloDB.Collections
     {
         UniqueIndexedValue():base(){}
 
-        internal UniqueIndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6>> valueFunction)
-            :base( valueFunction)
+        internal UniqueIndexedValue(
+        	Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6>> valueFunction,
+        	Func<TObj, bool> shouldIndexPredicate
+        ):base( valueFunction, shouldIndexPredicate)
         {
         }
 
@@ -654,10 +688,16 @@ namespace MarcelloDB.Collections
 
     public class IndexedValue<TObj, T1, T2, T3, T4, T5, T6> : BaseIndexedValue<TObj, CompoundValue<T1, T2, T3, T4, T5, T6>>
     {
-        internal IndexedValue(): base(null){}
+        internal IndexedValue(): base(null, null){}
 
-        internal IndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6>> valueFunction)
-            :base((o)=>new CompoundValue<T1, T2, T3, T4, T5, T6>[]{valueFunction(o)}){}
+        internal IndexedValue(
+        	Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6>> valueFunction,
+        	Func<TObj, bool> shouldIndexPredicate
+    	):base(
+        	(o)=>new CompoundValue<T1, T2, T3, T4, T5, T6>[]{valueFunction(o)},
+        	shouldIndexPredicate
+        )
+        {}
 
         public IEnumerable<TObj> Equals(T1 val1, T2 val2, T3 val3, T4 val4, T5 val5, T6 val6)
         {
@@ -864,8 +904,10 @@ namespace MarcelloDB.Collections
     {
         UniqueIndexedValue():base(){}
 
-        internal UniqueIndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7>> valueFunction)
-            :base( valueFunction)
+        internal UniqueIndexedValue(
+        	Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7>> valueFunction,
+        	Func<TObj, bool> shouldIndexPredicate
+        ):base( valueFunction, shouldIndexPredicate)
         {
         }
 
@@ -888,10 +930,16 @@ namespace MarcelloDB.Collections
 
     public class IndexedValue<TObj, T1, T2, T3, T4, T5, T6, T7> : BaseIndexedValue<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7>>
     {
-        internal IndexedValue(): base(null){}
+        internal IndexedValue(): base(null, null){}
 
-        internal IndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7>> valueFunction)
-            :base((o)=>new CompoundValue<T1, T2, T3, T4, T5, T6, T7>[]{valueFunction(o)}){}
+        internal IndexedValue(
+        	Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7>> valueFunction,
+        	Func<TObj, bool> shouldIndexPredicate
+    	):base(
+        	(o)=>new CompoundValue<T1, T2, T3, T4, T5, T6, T7>[]{valueFunction(o)},
+        	shouldIndexPredicate
+        )
+        {}
 
         public IEnumerable<TObj> Equals(T1 val1, T2 val2, T3 val3, T4 val4, T5 val5, T6 val6, T7 val7)
         {
@@ -1130,8 +1178,10 @@ namespace MarcelloDB.Collections
     {
         UniqueIndexedValue():base(){}
 
-        internal UniqueIndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>> valueFunction)
-            :base( valueFunction)
+        internal UniqueIndexedValue(
+        	Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>> valueFunction,
+        	Func<TObj, bool> shouldIndexPredicate
+        ):base( valueFunction, shouldIndexPredicate)
         {
         }
 
@@ -1154,10 +1204,16 @@ namespace MarcelloDB.Collections
 
     public class IndexedValue<TObj, T1, T2, T3, T4, T5, T6, T7, T8> : BaseIndexedValue<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>>
     {
-        internal IndexedValue(): base(null){}
+        internal IndexedValue(): base(null, null){}
 
-        internal IndexedValue(Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>> valueFunction)
-            :base((o)=>new CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>[]{valueFunction(o)}){}
+        internal IndexedValue(
+        	Func<TObj, CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>> valueFunction,
+        	Func<TObj, bool> shouldIndexPredicate
+    	):base(
+        	(o)=>new CompoundValue<T1, T2, T3, T4, T5, T6, T7, T8>[]{valueFunction(o)},
+        	shouldIndexPredicate
+        )
+        {}
 
         public IEnumerable<TObj> Equals(T1 val1, T2 val2, T3 val3, T4 val4, T5 val5, T6 val6, T7 val7, T8 val8)
         {

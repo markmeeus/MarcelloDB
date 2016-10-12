@@ -453,6 +453,39 @@ namespace MarcelloDB.Test.Integration.CompoundIndexesTest
                 () => indexables.Persist(conflictingIndexable)
             );
         }
+
+        class IndexDefinitionWithPredicateCompound2 : IndexDefinition<Indexable>
+        {
+            public IndexedValue<Indexable, string, string> Compound
+            {
+                get
+                {
+                    return IndexedValue(
+                        indexable => CompoundValue(indexable.Prop4, indexable.Prop8),
+                        indexable => indexable.Prop4 != null //only index if Prop4 isn't null
+                    );
+                }
+            }
+        }
+
+        [Test]
+        public void Insert_Optional_Compound_Of2()
+        {
+            var indexables =
+                _collectionFile.Collection<Indexable, int, IndexDefinitionWithPredicateCompound2>("indexables_unique_compound", i => i.ID);
+            for (int i = 1; i <= 3; i++)
+            {
+                var indexable = Indexable.CreateIndexable(i);
+                indexables.Persist(indexable);
+            }
+
+            var indexableNotToIndex = new Indexable{ID = 123};
+            indexables.Persist(indexableNotToIndex);
+
+            var foundIndexables = indexables.Indexes.Compound.All;
+            CollectionAssert.AreEquivalent(new int[]{ 1, 2, 3 }, foundIndexables.Select(i => i.ID).ToArray());
+
+        }
     }
 }
 

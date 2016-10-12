@@ -7,7 +7,7 @@ namespace MarcelloDB.Collections
     public class IndexedList<TObj, TAttribute> : BaseIndexedValue<TObj, TAttribute>
     {
         internal IndexedList(Func<TObj, IEnumerable<TAttribute>> valueFunction)
-            :base((o)=>valueFunction(o).Distinct())
+            :base((o)=>valueFunction(o).Distinct(), null)
         {
         }
 

@@ -98,6 +98,21 @@ namespace MarcelloDB.Test.Integration
             );
         }
 
+
+        [Test]
+        public void Insert_Does_Not_Add_Entry_When_ShouldIndexPredicate_Is_False()
+        {
+            //The indexed value on ShortName doesn't want to index null values
+            _articles.Persist(Article.BarbieDoll);
+            _articles.Persist(Article.SpinalTapDvd);
+            _articles.Persist(new Article{ Name = "Candy Bar" });
+            var articlesWithShortName = _articles.Indexes.ShortName.All.ToList();
+            CollectionAssert.AreEquivalent(
+                new int[]{ Article.BarbieDoll.ID, Article.SpinalTapDvd.ID },
+                articlesWithShortName.Select(a => a.ID).ToArray()
+            );
+        }
+
         [Test]
         public void Insert_Object_Updates_Custom_Compound_Index()
         {

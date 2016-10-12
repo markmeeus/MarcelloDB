@@ -16,13 +16,19 @@ namespace MarcelloDB.Collections
 
         protected Func<TObj, IEnumerable<TAttribute>> UserValueFunction { get; set; }
 
+        Func<TObj, bool> ShouldIndexPredicate { get; set; }
+
         RecordManager RecordManager  { get; set; }
 
         IObjectSerializer<TObj> Serializer { get; set; }
 
-        internal BaseIndexedValue(Func<TObj, IEnumerable<TAttribute>> valueFunction):base(null)
+        internal BaseIndexedValue(
+            Func<TObj, IEnumerable<TAttribute>> valueFunction,
+            Func<TObj, bool> shouldIndexPredicate)
+        :base(null)
         {
             this.UserValueFunction = valueFunction;
+            this.ShouldIndexPredicate = shouldIndexPredicate;
         }
 
         BaseIndexedValue() : base(null){}
@@ -40,11 +46,14 @@ namespace MarcelloDB.Collections
 
         protected internal override void Register(object o, Int64 address)
         {
-            var indexName = RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName, typeof(TAttribute));
-            var keys = this.GetKeys(o, address);
-            foreach (var key in keys)
+            if (this.ShouldIndex((TObj)o))
             {
-                RegisterKey(key, address, this.Session, this.RecordManager, indexName);
+                var indexName = RecordIndex.GetIndexName<TObj>(this.Collection.Name, this.PropertyName, typeof(TAttribute));
+                var keys = this.GetKeys(o, address);
+                foreach (var key in keys)
+                {
+                    RegisterKey(key, address, this.Session, this.RecordManager, indexName);
+                }
             }
         }
 
@@ -105,8 +114,10 @@ namespace MarcelloDB.Collections
             return enumerator;
         }
 
-        internal virtual Func<TObj, IEnumerable<TAttribute>> ValueFunction {
-            get{
+        internal virtual Func<TObj, IEnumerable<TAttribute>> ValueFunction
+        {
+            get
+            {
                 return this.UserValueFunction;
             }
         }
@@ -136,6 +147,11 @@ namespace MarcelloDB.Collections
                 enumeratedAddresses.Add(address);
                 return true;
             };
+        }
+
+        bool ShouldIndex(TObj o)
+        {
+            return this.ShouldIndexPredicate == null || this.ShouldIndexPredicate(o);
         }
 
         #region scope operations

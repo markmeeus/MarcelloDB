@@ -11,6 +11,8 @@ namespace MarcelloDB.Test.Classes
 
         public string Name{ get; set;}
 
+        public string ShortName { get; set; }
+
         public string Description { get; set; }
 
         public int ID { get; set;}
@@ -29,6 +31,7 @@ namespace MarcelloDB.Test.Classes
                     ID = 1,
                     Code = "001",
                     Name = "Toilet Paper",
+                    ShortName = "Toilet P.",
                     Description = "The finest paper money can buy",
                     Category = "Hygiene",
                     Reference = "TLT001"
@@ -44,6 +47,7 @@ namespace MarcelloDB.Test.Classes
                     ID = 2,
                     Code = "002",
                     Name = "DVD: This is Spinal Tap",
+                    ShortName = "T.i. Spinal Tap",
                     Description = "Best dvd ever",
                     Category = "Entertainment",
                     Reference = "DVD002"
@@ -59,6 +63,7 @@ namespace MarcelloDB.Test.Classes
                     ID = 3,
                     Code = "003",
                     Name = "Barbie Doll",
+                    ShortName = "Barb d",
                     Description = "Some doll",
                     Category = "Toys",
                     Reference = "TOY003"
@@ -81,6 +86,7 @@ namespace MarcelloDB.Test.Classes
                     Code = "004",
                     Expires = DateTime.Now.AddDays(2),
                     Name = "Bread",
+                    ShortName = "Bread",
                     Description = "White Bread",
                     Category = "Bread"
                 };

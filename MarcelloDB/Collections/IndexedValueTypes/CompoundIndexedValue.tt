@@ -38,8 +38,10 @@ namespace MarcelloDB.Collections
     {
         UniqueIndexedValue():base(){}
 
-        internal UniqueIndexedValue(Func<TObj, CompoundValue<<#=genericAttributeList#>>> valueFunction)
-            :base( valueFunction)
+        internal UniqueIndexedValue(
+        	Func<TObj, CompoundValue<<#=genericAttributeList#>>> valueFunction,
+        	Func<TObj, bool> shouldIndexPredicate
+        ):base( valueFunction, shouldIndexPredicate)
         {
         }
 
@@ -62,10 +64,16 @@ namespace MarcelloDB.Collections
 
     public class IndexedValue<TObj, <#=genericAttributeList#>> : BaseIndexedValue<TObj, CompoundValue<<#=genericAttributeList#>>>
     {
-        internal IndexedValue(): base(null){}
+        internal IndexedValue(): base(null, null){}
 
-        internal IndexedValue(Func<TObj, CompoundValue<<#=genericAttributeList#>>> valueFunction)
-            :base((o)=>new CompoundValue<<#=genericAttributeList#>>[]{valueFunction(o)}){}
+        internal IndexedValue(
+        	Func<TObj, CompoundValue<<#=genericAttributeList#>>> valueFunction,
+        	Func<TObj, bool> shouldIndexPredicate
+    	):base(
+        	(o)=>new CompoundValue<<#=genericAttributeList#>>[]{valueFunction(o)},
+        	shouldIndexPredicate
+        )
+        {}
 
         public IEnumerable<TObj> Equals(<#=paramsDeclarationList#>)
         {

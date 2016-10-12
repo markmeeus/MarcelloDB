@@ -68,12 +68,21 @@ namespace MarcelloDB.Index
         }
 
         #region protected but part of public api
-        protected IndexedValue<T, TAttribute> IndexedValue<TAttribute>
-            (Func<T, TAttribute> valueFunc, [CallerMemberName] string callerMember = "")
+        protected IndexedValue<T, TAttribute> IndexedValue<TAttribute>(
+            Func<T, TAttribute> valueFunc,
+            [CallerMemberName] string callerMember = "")
+        {
+            return IndexedValue<TAttribute>(valueFunc, (t) => true, callerMember);
+        }
+
+        protected IndexedValue<T, TAttribute> IndexedValue<TAttribute>(
+            Func<T, TAttribute> valueFunc,
+            Func<T, bool> shouldIndexPredicate,
+            [CallerMemberName] string callerMember = "")
         {
             if (this.Building)
             {
-                return new IndexedValue<T, TAttribute>(valueFunc);
+                return new IndexedValue<T, TAttribute>(valueFunc, shouldIndexPredicate);
             }
             else
             {
@@ -81,12 +90,23 @@ namespace MarcelloDB.Index
             }
         }
 
-        protected UniqueIndexedValue<T, TAttribute> UniqueIndexedValue<TAttribute>
-        (Func<T, TAttribute> valueFunc, [CallerMemberName] string callerMember = "")
+        protected UniqueIndexedValue<T, TAttribute> UniqueIndexedValue<TAttribute>(
+            Func<T, TAttribute> valueFunc,
+            [CallerMemberName] string callerMember = ""
+        )
+        {
+            return UniqueIndexedValue(valueFunc, t => true, callerMember);
+        }
+
+        protected UniqueIndexedValue<T, TAttribute> UniqueIndexedValue<TAttribute>(
+            Func<T, TAttribute> valueFunc,
+            Func<T, bool> shouldIndexPredicate,
+            [CallerMemberName] string callerMember = ""
+        )
         {
             if (this.Building)
             {
-                return new UniqueIndexedValue<T, TAttribute>(valueFunc);
+                return new UniqueIndexedValue<T, TAttribute>(valueFunc, shouldIndexPredicate);
             }
             else
             {
