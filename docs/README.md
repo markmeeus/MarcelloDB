@@ -21,7 +21,8 @@ If you have any questions, thoughts or remarks. Please open an issue on [github.
 Current version is 0.6.0
 This is the last major version before 1.0.0. New features will be added after 1.0.0 is released.
 
-In other words: **not recommended for production apps yet.**
+There may still be changes in the dataformat before 1.0, so still: **not recommended for production apps just yet.**
+
 We hope to be production ready at the end of 2016.
 
 ##Need Support?
