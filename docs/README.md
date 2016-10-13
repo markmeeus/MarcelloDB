@@ -18,9 +18,8 @@ A lot of thought went into the API design, we hope you'll like it.
 If you have any questions, thoughts or remarks. Please open an issue on [github.](https://github.com/markmeeus/marcellodb/issues)
 
 ###Current Version:
-Current version is 0.5.0
-
-The API and data format are getting more stable with every release. However MarcelloDB is not guaranteed to be compatible with data from previous versions untill version 1.0
+Current version is 0.6.0
+This is the last major version before 1.0.0. New features will be added after 1.0.0 is released.
 
 In other words: **not recommended for production apps yet.**
 We hope to be production ready at the end of 2016.
