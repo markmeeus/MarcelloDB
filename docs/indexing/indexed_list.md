@@ -17,7 +17,6 @@ class BookIndexDefinition : IndexDefinition<Book>
       get {
           return IndexedList((o) => o.Tags);
       }
-      /* setter not needed, nor usefull */
    }
 }
 ```

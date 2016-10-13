@@ -39,7 +39,7 @@
 0.6.0
 -
 - ~~Unique indexes~~
-- Conditional Indexes (to exclude nulls f.i.)
+- ~~Conditional Indexes (to exclude nulls f.i.)~~
 
 1.0.0
 -

@@ -36,16 +36,16 @@ In this case you also define a property like above, except you return an instanc
 ```cs
 class BookIndexDefinition : IndexDefinition<Book>
 {
-   public  IndexedValue<Book, string> MainAuthorName
-   {
-      get{
-        //index the name of the first autor
-        return base.IndexedValue(
-          (book) => book.Authors.First().Name // function returning the value to be indexed.
-        );
-      }
-      /* setter not needed, nor usefull */
-   }
+    public  IndexedValue<Book, string> MainAuthorName
+    {
+        get{
+          //index the name of the first autor
+          return base.IndexedValue(
+            (book) => book.Authors.First().Name // function returning the value to be indexed.
+          );
+        }
+        /* setter not needed, nor usefull */
+    }
 }
 ```
 
@@ -53,55 +53,107 @@ class BookIndexDefinition : IndexDefinition<Book>
 ##Compound Values
 An IndexedValue can also be created with multiple fields.
 
-In this case decalare the property using ```IndexedValue<T, TAttr1, TAttr2, ...>```
-
-Currently, up to 8 different fields are supported.
+In this case we should declare the property using ```IndexedValue<T, TAttr1, TAttr2, ...>```
 
 ```cs
 class BookIndexDefinition : IndexDefinition<Book>
 {
-   public  IndexedValue<Book, int, string> CategoryIdAndMainAuthorName
-   {
-      get{
-        //index the CategoryId and Name of the first autor
-        return IndexedValue(
-          (book) => CompoundValue(book.CategoryId, book.Authors.First().Name)
-        );
-      }
-      /* setter not needed, nor usefull */
-   }
+    public  IndexedValue<Book, int, string> CategoryIdAndMainAuthorName
+    {
+        get{
+            //index the CategoryId and Name of the first autor
+            return IndexedValue(
+              (book) => CompoundValue(book.CategoryId, book.Authors.First().Name)
+            );
+        }
+        /* setter not needed, nor usefull */
+    }
+}
+```
+
+##Unique Index Values
+Unique indexes make sure that there are no 2 keys with the same value in the index.
+If we would try to `Persist` an object that has a duplicate value for a given index, MarcelloDB will throw an exception.
+
+We can define a unique index by using `UniqueIndexedValue` instead of `IndexedValue`.
+```cs
+//With a simple property
+class BookIndexDefinition : IndexDefinition<Book>
+{
+    public  UniqueIndexedValue<Book, string> ISBN {get;set;}
+}
+//OR with a custom value
+class BookIndexDefinition : IndexDefinition<Book>
+{
+    public  UniqueIndexedValue<Book, string> ISBN
+    {
+        get{
+            return UniqueIndexedValue(
+              book => book.ISBN
+            );
+        }
+    }
+}
+```
+
+Besides the regular enumeration methods `All`, `GreaterThan`, `SmallerThan` and `Between`, a unique indexed value also has a `Find` method which returns a single object or null;
+
+```cs
+var aSongOfIceAndFire = bookCollection.Indexes.ISBN.Find("9780553386790");
+//is the equivalent of
+var aSongsOfIceAndFire = bookCollection.Indexes.ISBN.Equals("9780553386790").FirstOrDefault();
+```
+
+##Conditional indexes
+Conditional indexes allow us to specify the circumstances under which an entry to the index is made.
+For instance, it makes no sense to add books to the ISBN index if an ISBN number is not available.
+MarcelloDB allows us to define an IndexedValue (or UniqueIndexedValue) with a `Func<T, bool>` to decide whether this object should be added to the index.
+
+Like this:
+```cs
+class BookIndexDefinition : IndexDefinition<Book>
+{
+    public  UniqueIndexedValue<Book, string> ISBN
+    {
+        get{
+            return UniqueIndexedValue(
+              book => book.ISBN,
+              book => book.ISBN != null //Only index this book if the ISBN isn't null
+            );
+        }
+    }
 }
 ```
 
 ##If it is comparable, it can be indexed
-Although an base types are preferred as indexed values for performance reasons, any type can be used as index entry.
+Although base types are preferred as indexed values for performance reasons, any type can be used as index entry.
 
 The only requirement is that it implements IComparable.
 
 ```cs
 class DeliveryZone : IComparable
 {
-  public int PostalCode { get; set; }
-  public string CityName { get; set; }
+    public int PostalCode { get; set; }
+    public string CityName { get; set; }
 
-  // DeliveryZone compared first by cityName, then by postalCode
-  public int CompareTo(object obj)
-  {
-    var otherDeliveryZone = (DeliveryZone)obj;
-    var cityCompared = this.CityName.CompareTo(otherDeliveryZone.CityName);
-    if(cityCompared  == 0)
+    // DeliveryZone compared first by cityName, then by postalCode
+    public int CompareTo(object obj)
     {
-      return this.PostalCode.CompareTo(otherDeliveryZone.PostalCode);
-    }
-    return cityCompared ;
-   }
+        var otherDeliveryZone = (DeliveryZone)obj;
+        var cityCompared = this.CityName.CompareTo(otherDeliveryZone.CityName);
+        if(cityCompared  == 0)
+        {
+          return this.PostalCode.CompareTo(otherDeliveryZone.PostalCode);
+        }
+        return cityCompared ;
+     }
 }
 ```
 
 ```cs
 class OrderIndexDefinition : IndexDefinition<Order>
 {
-  public  IndexedValue<Order, City> DeliveryZone {
+  public  IndexedValue<Order, DeliveryZone> DeliveryZone {
     get {
       return IndexedValue(
         (order)=>order.DeliveryAddress.Zone;
