@@ -108,7 +108,7 @@
                     <h1 id="indexes">Indexes</h1>
 <p>Enumerating all objects in a collection to find a specific instance is not always be the best approach.
 If the collection contains thousands of objects, they will all be read from disk and deserialized,  performance will degrade fast.</p>
-<p>For such scenarios it's probably a good idea to add indexes to your collection.
+<p>For such scenarios it's probably a good idea to add indexes to our collections.
 MarcelloDB Indexes are implemented with a BTree algorithm, which makes them really efficient.</p>
 <p>Besides searching for objects, indexes can also be used to iterate over the collection (or a subset) ordered by the indexed value.</p>
 <p>There is no hard limit on the amount of indexes on a collection. However, too much indexes will slow down calls to Persist, and will increase the total filesize of the collection-file.</p>
@@ -130,7 +130,7 @@ productsFile.Collection&lt;Book, string, BookIndexDefiniton&gt;("books", book =&
 //                            ------------------</code></pre>
 <h3 id="index-properties">Index Properties</h3>
 <p>Indexes are defined by declaring properties on the index definition.</p>
-<p>These properties can be of type IndexedValue<> or IndexedList<></p>
+<p>These properties can be of type <code>IndexedValue&lt;T,TAttribute&gt;</code> or `IndexedList&lt;T,TAttribute&gt;</p>
 <pre><code class="language-cs">///
 /// This IndexDefinition can be used to index
 //                             instances of Book
@@ -173,27 +173,26 @@ MarcelloDB is able to keep 1 or more references to an object in the same index.<
   public int          CategoryID  { get; set; }
   public List&lt;string&gt; Tags        { get; set; }
 }</code></pre>
-<p>An index on <code>Category</code> will result in a single index entry per object.
-An index on <code>`Tags</code> on the other hand can contain more than 1 entry per object.</p>
+<p>An index on <code>CategoryID</code> will result in a single index entry per object.
+An index on <code>Tags</code> on the other hand can contain more than 1 entry per object.</p>
 <p>More in detail:</p>
 <ul>
 <li><a href="indexing/indexed_value.html">Indexing one or more fields with <code>IndexedValue</code> </a></li>
 <li><a href="indexing/indexed_list.html">Indexing a list of fields with <code>IndexedList</code></a></li>
 </ul>
 <h2 id="using-indexes">Using indexes</h2>
-<p>A collection created with an index definition has a property named <code>`Indexes</code>.
+<p>A collection created with an index definition has a property named <code>Indexes</code>.
 This property returns an instance of the IndexDefinition used to construct the collection.
 Every index on that definition can now be used to iterate, and search the data sorted by the indexed value.</p>
 <p>All enumerations are implemented in a lazy fashion. The next object is only loaded when actually requested by the iteration.
-So don't worry if you have a really large amount of data, MarcelloDB only loads the current object.</p>
+So we should not worry about large amounts of data, MarcelloDB only loads the current object.</p>
 <h3 id="all-indexedvalue">All (IndexedValue)</h3>
 <p>All returns an IEnumerable<T> of all objects sorted by the indexed value.</p>
 <pre><code class="language-cs">bookCollection.Indexes.Title.All; //sorted by Title</code></pre>
-<h3 id="find-indexedvalue">Find (IndexedValue)</h3>
-<p>Find returns an IEnumerable<T> of all objects that have the specific value for the indexed value.</p>
+<h3 id="equals-indexedvalue">Equals (IndexedValue)</h3>
+<p>Equals returns an IEnumerable<T> of all objects that have the specific value for the indexed value.</p>
 <pre><code class="language-cs">//All books with the title "MarcelloDB For Dummies"
-boolCollection.Indexes.Title.Find("MarcelloDB For Dummies")</code></pre>
-<p>(In later versions, you'll be able to define a unique index, in which case a find will return just a single object, no IEnumerable.)</p>
+bookCollection.Indexes.Title.Equals("MarcelloDB For Dummies")</code></pre>
 <h3 id="between-and-indexedvalue">Between And (IndexedValue)</h3>
 <p>You can iterate objects with an indexed value wich is contained in a range.</p>
 <pre><code class="language-cs">//all books suitable for 8 and 13, edges not included

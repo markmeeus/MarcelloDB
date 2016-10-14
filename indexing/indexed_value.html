@@ -135,57 +135,98 @@ class BookIndexDefinition : IndexDefinition&lt;Book&gt;
 In this case you also define a property like above, except you return an instance of IndexedValue, created with a function that returns the value to be indexed.</p>
 <pre><code class="language-cs">class BookIndexDefinition : IndexDefinition&lt;Book&gt;
 {
-   public  IndexedValue&lt;Book, string&gt; MainAuthorName
-   {
-      get{
-        //index the name of the first autor
-        return base.IndexedValue(
-          (book) =&gt; book.Authors.First().Name // function returning the value to be indexed.
-        );
-      }
-      /* setter not needed, nor usefull */
-   }
+    public  IndexedValue&lt;Book, string&gt; MainAuthorName
+    {
+        get{
+          //index the name of the first autor
+          return base.IndexedValue(
+            (book) =&gt; book.Authors.First().Name // function returning the value to be indexed.
+          );
+        }
+        /* setter not needed, nor usefull */
+    }
 }</code></pre>
 <h2 id="compound-values">Compound Values</h2>
 <p>An IndexedValue can also be created with multiple fields.</p>
-<p>In this case decalare the property using <code>IndexedValue&lt;T, TAttr1, TAttr2, ...&gt;</code></p>
-<p>Currently, up to 8 different fields are supported.</p>
+<p>In this case we should declare the property using <code>IndexedValue&lt;T, TAttr1, TAttr2, ...&gt;</code></p>
 <pre><code class="language-cs">class BookIndexDefinition : IndexDefinition&lt;Book&gt;
 {
-   public  IndexedValue&lt;Book, int, string&gt; CategoryIdAndMainAuthorName
-   {
-      get{
-        //index the CategoryId and Name of the first autor
-        return IndexedValue(
-          (book) =&gt; CompoundValue(book.CategoryId, book.Authors.First().Name)
-        );
-      }
-      /* setter not needed, nor usefull */
-   }
+    public  IndexedValue&lt;Book, int, string&gt; CategoryIdAndMainAuthorName
+    {
+        get{
+            //index the CategoryId and Name of the first autor
+            return IndexedValue(
+              (book) =&gt; CompoundValue(book.CategoryId, book.Authors.First().Name)
+            );
+        }
+        /* setter not needed, nor usefull */
+    }
+}</code></pre>
+<h2 id="unique-index-values">Unique Index Values</h2>
+<p>Unique indexes make sure that there are no 2 keys with the same value in the index.
+If we would try to <code>Persist</code> an object that has a duplicate value for a given index, MarcelloDB will throw an exception.</p>
+<p>We can define a unique index by using <code>UniqueIndexedValue</code> instead of <code>IndexedValue</code>.</p>
+<pre><code class="language-cs">//With a simple property
+class BookIndexDefinition : IndexDefinition&lt;Book&gt;
+{
+    public  UniqueIndexedValue&lt;Book, string&gt; ISBN {get;set;}
+}
+//OR with a custom value
+class BookIndexDefinition : IndexDefinition&lt;Book&gt;
+{
+    public  UniqueIndexedValue&lt;Book, string&gt; ISBN
+    {
+        get{
+            return UniqueIndexedValue(
+              book =&gt; book.ISBN
+            );
+        }
+    }
+}</code></pre>
+<p>Besides the regular enumeration methods <code>All</code>, <code>GreaterThan</code>, <code>SmallerThan</code> and <code>Between</code>, a unique indexed value also has a <code>Find</code> method which returns a single object or null;</p>
+<pre><code class="language-cs">var aSongOfIceAndFire = bookCollection.Indexes.ISBN.Find("9780553386790");
+//is the equivalent of
+var aSongsOfIceAndFire = bookCollection.Indexes.ISBN.Equals("9780553386790").FirstOrDefault();</code></pre>
+<h2 id="conditional-indexes">Conditional indexes</h2>
+<p>Conditional indexes allow us to specify the circumstances under which an entry to the index is made.
+For instance, it makes no sense to add books to the ISBN index if an ISBN number is not available.
+MarcelloDB allows us to define an IndexedValue (or UniqueIndexedValue) with a <code>Func&lt;T, bool&gt;</code> to decide whether this object should be added to the index.</p>
+<p>Like this:</p>
+<pre><code class="language-cs">class BookIndexDefinition : IndexDefinition&lt;Book&gt;
+{
+    public  UniqueIndexedValue&lt;Book, string&gt; ISBN
+    {
+        get{
+            return UniqueIndexedValue(
+              book =&gt; book.ISBN,
+              book =&gt; book.ISBN != null //Only index this book if the ISBN isn't null
+            );
+        }
+    }
 }</code></pre>
 <h2 id="if-it-is-comparable-it-can-be-indexed">If it is comparable, it can be indexed</h2>
-<p>Although an base types are preferred as indexed values for performance reasons, any type can be used as index entry.</p>
+<p>Although base types are preferred as indexed values for performance reasons, any type can be used as index entry.</p>
 <p>The only requirement is that it implements IComparable.</p>
 <pre><code class="language-cs">class DeliveryZone : IComparable
 {
-  public int PostalCode { get; set; }
-  public string CityName { get; set; }
+    public int PostalCode { get; set; }
+    public string CityName { get; set; }
 
-  // DeliveryZone compared first by cityName, then by postalCode
-  public int CompareTo(object obj)
-  {
-    var otherDeliveryZone = (DeliveryZone)obj;
-    var cityCompared = this.CityName.CompareTo(otherDeliveryZone.CityName);
-    if(cityCompared  == 0)
+    // DeliveryZone compared first by cityName, then by postalCode
+    public int CompareTo(object obj)
     {
-      return this.PostalCode.CompareTo(otherDeliveryZone.PostalCode);
-    }
-    return cityCompared ;
-   }
+        var otherDeliveryZone = (DeliveryZone)obj;
+        var cityCompared = this.CityName.CompareTo(otherDeliveryZone.CityName);
+        if(cityCompared  == 0)
+        {
+          return this.PostalCode.CompareTo(otherDeliveryZone.PostalCode);
+        }
+        return cityCompared ;
+     }
 }</code></pre>
 <pre><code class="language-cs">class OrderIndexDefinition : IndexDefinition&lt;Order&gt;
 {
-  public  IndexedValue&lt;Order, City&gt; DeliveryZone {
+  public  IndexedValue&lt;Order, DeliveryZone&gt; DeliveryZone {
     get {
       return IndexedValue(
         (order)=&gt;order.DeliveryAddress.Zone;
