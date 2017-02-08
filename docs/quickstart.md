@@ -7,23 +7,21 @@ PM > Install-Package MarcelloDB
 ```
 
 ###Create a platform object.
-The thing with writing mobile apps in c# is that the common api between the targetted platforms is a subset of the .net api.
-Access to the filesystem for instance is not available cross-platform.
-So we need to 'inject' the platform specific features into MarcelloDB.
+MarcelloDB's core library is platform independent. Platform specific details are implemented in so called `Platform` objects.
 
-These features are available in so-called `Platform` objects.
-We can find a platform object for regular .net, which works for Xamarin (iOS and Android) in MarcelloDB.netfx.dll. The implementation for Windows(8.1 and 10) apps in MarcelloDB.uwp.dll.
+We can find a platform object for regular .net, which works for Xamarin (iOS and Android) in MarcelloDB.netfx.dll. The implementation for Universal Apps(8.1 and 10) in MarcelloDB.uwp.dll.
 
 Our nuget client should automatically add the references to these platform specific assemblies in our projects.
 
 
-So, create a platform like this:
 ```cs
+  //This is the only code regarding MarcelloDB that cannot be shared.
+
   //On Android, iOS and regular .net or mono:
-  var platform =  new MarcelloDB.netfx.Platform();
+  IPlatform platform = new MarcelloDB.netfx.Platform();
 
   //In a windows (or phone) 8.1/10
-  var platform =  new MarcelloDB.uwp.Platform();
+  IPlatform platform = new MarcelloDB.uwp.Platform();
 
 ```
 
@@ -32,12 +30,12 @@ Before we can start accessing data, we should create a `Session` object.
 
 Opening a session requires the platform instance (see previous step) and a directory path. MarcelloDB will store all data in this directory.
 
-This code is platform independent so we can implement this in shared code.
 
 ```cs
+//This code is platform independent so we can implement this in shared code.
 //                              Injecting the platform here
 //                                      ||
-var session = new MarcelloDB.Session(platform, dataPath);
+var session = new MarcelloDB.Session(platform, "path/to/data");
 ```
 Sessions are designed to be long-lived. We can open the session when our app starts, and keep it open until it closes.
 
@@ -60,7 +58,7 @@ var personsFile = session["persons.dat"];
 
 Then, we can get a collection from the collection-file.
 
-It needs a name, and an Object-To-ID mapping function which should return the unique ID for the given object.
+It needs a name and an Object-To-ID mapping function which should return the unique ID for the given object.
 
 ```cs
 //                        Store instances of  [Person][ID is a string] [map Person to ID]

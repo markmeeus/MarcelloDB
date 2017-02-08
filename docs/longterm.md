@@ -1,7 +1,5 @@
 ## A few long-term ideas.
 
-Right now I'm working on getting 1.0 out the door.
-
 Some ideas for MarcelloDB after 1.0:
 
 ###Pub-Sub

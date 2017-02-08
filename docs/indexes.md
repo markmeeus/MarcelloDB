@@ -38,8 +38,7 @@ productsFile.Collection<Book, string, BookIndexDefiniton>("books", book => book.
 ### Index Properties
 Indexes are defined by declaring properties on the index definition.
 
-These properties can be of type `IndexedValue<T,TAttribute>` or `IndexedList<T,TAttribute>
-
+These properties can be of type `IndexedValue<T,TAttribute>` or `IndexedList<T,TAttribute>`
 
 ```cs
 ///
@@ -189,6 +188,6 @@ bookCollections.Indexes.Tags.ContainsAny(new string[] {"Thriller", "Comedy"});
 ###ContainsAll (IndexedList)
 Enumerates objects that have all of the items in the list
 ```cs
-bookCollections.Indexes.Tags.ContainsAny(new string[] {"Thriller", "Comedy"});
+bookCollections.Indexes.Tags.ContainsAll(new string[] {"Thriller", "Comedy"});
 ```
 

@@ -79,7 +79,7 @@ menu:
           text: Upgrading to 0.5
           relativeUrl: upgrade05.html
         roadmap:
-          text: Roadmap to 1.0
+          text: Roadmap
           relativeUrl: roadmap.html
         longterm:
           text: After 1.0

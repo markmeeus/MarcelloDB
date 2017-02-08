@@ -1,8 +1,8 @@
 #Welcome to MarcelloDB's Documentation pages.
 
-MarcelloDB is an [open-source](https://github.com/markmeeus/marcellodb) NoSql database (for Xamarin .net and mono) built to be used in mobile apps.
+MarcelloDB is an [open-source](https://github.com/markmeeus/marcellodb) NoSql database built to be used in Xamarin and Windows Universal apps.
 
-MarcelloDB saves entire C# objects, including properties with child objects, lists and dictionaries.
+MarcelloDB saves entire C# object graphs, including child objects like lists and dictionaries.
 
 It's a native C# implementation, focussed on being light-weight and developer-friendly.
 
@@ -18,14 +18,12 @@ A lot of thought went into the API design, we hope you'll like it.
 If you have any questions, thoughts or remarks. Please open an issue on [github.](https://github.com/markmeeus/marcellodb/issues)
 
 ###Current Version:
-Current version is 0.6.0
-This is the last major version before 1.0.0. New features will be added after 1.0.0 is released.
-
-There may still be changes in the dataformat before 1.0, so still: **not recommended for production apps just yet.**
-
-We hope to be production ready at the end of 2016.
+Current version is 1.0.0
+Although it's the first version, the community has been testing beta versions since october 2015. It is allready really stable.
+This version is backwards compatible with 0.6.
 
 ##Need Support?
-After 1.0 is released, you'll be able to get developer support as part of the Pro/Support Package. This package will also include [MarcelloDB.Encryption](encryption.html).
+If you want a direct support line to the developers behind this project, a Pro/Support package is available.
+Please contact mark.meeus@gmail.com for details.
 
-Please contact mark.meeus@gmail.com if interested.
+This package will also include [MarcelloDB.Encryption](encryption.html).
