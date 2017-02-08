@@ -3,15 +3,15 @@
   <metadata>
     <id>MarcelloDB</id>
     <title>MarcelloDB, Mobile Object Database.</title>
-    <version>0.6.0</version>
+    <version>1.0.0</version>
     <authors>Mark Meeus</authors>
     <owners>Mark Meeus</owners>
     <projectUrl>http://marcellodb.org</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>NoSql for Xamarin and .net. Saves plain C# objects, including child objects, lists and collections. Supported on Xamarin (Android and iOS) and Windows (8.1-10 and Phone 8.1-10).</description>
-    <releaseNotes>0.6.0: Adds support unique and conditional indexes.</releaseNotes>
-    <copyright>Copyright 2015-2016</copyright>
-    <tags>Database NoSql Mobile Xamarin Windows</tags>
+    <description>NoSql for Xamarin and .net. Persists plain C# objects, including child objects, lists and collections. Supported on Xamarin (Android and iOS) and Windows (8.1-10 and Phone 8.1-10).</description>
+    <releaseNotes>1.0.0: Released.</releaseNotes>
+    <copyright>Copyright 2015-2017</copyright>
+    <tags>Database NoSql Mobile Xamarin Windows Android iOS</tags>
     <iconUrl>http://markmeeus.github.io/MarcelloDB/images/logo/icon_blue_512x512.png</iconUrl>
     <dependencies>
       <dependency id="Newtonsoft.Json" version="9.0.1" />
