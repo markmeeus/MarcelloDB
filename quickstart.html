@@ -91,7 +91,7 @@
                                     </li>
                                                                     <li class="">
                                         <a href="http://markmeeus.github.io/MarcelloDB/roadmap.html">
-                                            Roadmap to 1.0
+                                            Roadmap
                                         </a>
                                     </li>
                                                                     <li class="">
@@ -110,26 +110,24 @@
 <p>MarcelloDB is released on nuget.org, so it is pretty easy to install.</p>
 <pre><code class="language-cs">PM &gt; Install-Package MarcelloDB</code></pre>
 <h3 id="create-a-platform-object">Create a platform object.</h3>
-<p>The thing with writing mobile apps in c# is that the common api between the targetted platforms is a subset of the .net api.
-Access to the filesystem for instance is not available cross-platform.
-So we need to 'inject' the platform specific features into MarcelloDB.</p>
-<p>These features are available in so-called <code>Platform</code> objects.
-We can find a platform object for regular .net, which works for Xamarin (iOS and Android) in MarcelloDB.netfx.dll. The implementation for Windows(8.1 and 10) apps in MarcelloDB.uwp.dll.</p>
+<p>MarcelloDB's core library is platform independent. Platform specific details are implemented in so called <code>Platform</code> objects.</p>
+<p>We can find a platform object for regular .net, which works for Xamarin (iOS and Android) in MarcelloDB.netfx.dll. The implementation for Universal Apps(8.1 and 10) in MarcelloDB.uwp.dll.</p>
 <p>Our nuget client should automatically add the references to these platform specific assemblies in our projects.</p>
-<p>So, create a platform like this:</p>
-<pre><code class="language-cs">  //On Android, iOS and regular .net or mono:
-  var platform =  new MarcelloDB.netfx.Platform();
+<pre><code class="language-cs">  //This is the only code regarding MarcelloDB that cannot be shared.
+
+  //On Android, iOS and regular .net or mono:
+  IPlatform platform = new MarcelloDB.netfx.Platform();
 
   //In a windows (or phone) 8.1/10
-  var platform =  new MarcelloDB.uwp.Platform();
+  IPlatform platform = new MarcelloDB.uwp.Platform();
 </code></pre>
 <h3 id="open-a-session">Open a session</h3>
 <p>Before we can start accessing data, we should create a <code>Session</code> object.</p>
 <p>Opening a session requires the platform instance (see previous step) and a directory path. MarcelloDB will store all data in this directory.</p>
-<p>This code is platform independent so we can implement this in shared code.</p>
-<pre><code class="language-cs">//                              Injecting the platform here
+<pre><code class="language-cs">//This code is platform independent so we can implement this in shared code.
+//                              Injecting the platform here
 //                                      ||
-var session = new MarcelloDB.Session(platform, dataPath);</code></pre>
+var session = new MarcelloDB.Session(platform, "path/to/data");</code></pre>
 <p>Sessions are designed to be long-lived. We can open the session when our app starts, and keep it open until it closes.</p>
 <p>A static or singleton is perfectly fine, it also makes sense to register it in an IOC container.</p>
 <h3 id="access-a-collection">Access a collection</h3>
@@ -141,7 +139,7 @@ var session = new MarcelloDB.Session(platform, dataPath);</code></pre>
 //                              ||
 var personsFile = session["persons.dat"];</code></pre>
 <p>Then, we can get a collection from the collection-file.</p>
-<p>It needs a name, and an Object-To-ID mapping function which should return the unique ID for the given object.</p>
+<p>It needs a name and an Object-To-ID mapping function which should return the unique ID for the given object.</p>
 <pre><code class="language-cs">//                        Store instances of  [Person][ID is a string] [map Person to ID]
 //                                               ||      ||   Collection name   ||
 //                                               ||      ||        ||           ||

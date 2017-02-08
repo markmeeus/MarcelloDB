@@ -91,7 +91,7 @@
                                     </li>
                                                                     <li class="">
                                         <a href="http://markmeeus.github.io/MarcelloDB/roadmap.html">
-                                            Roadmap to 1.0
+                                            Roadmap
                                         </a>
                                     </li>
                                                                     <li class="">
@@ -130,7 +130,7 @@ productsFile.Collection&lt;Book, string, BookIndexDefiniton&gt;("books", book =&
 //                            ------------------</code></pre>
 <h3 id="index-properties">Index Properties</h3>
 <p>Indexes are defined by declaring properties on the index definition.</p>
-<p>These properties can be of type <code>IndexedValue&lt;T,TAttribute&gt;</code> or `IndexedList&lt;T,TAttribute&gt;</p>
+<p>These properties can be of type <code>IndexedValue&lt;T,TAttribute&gt;</code> or <code>IndexedList&lt;T,TAttribute&gt;</code></p>
 <pre><code class="language-cs">///
 /// This IndexDefinition can be used to index
 //                             instances of Book
@@ -232,7 +232,7 @@ bookCollection.Indexes.AgeRecommendation.SmallerThan(12).Descending.Keys</code><
 <pre><code class="language-cs">bookCollections.Indexes.Tags.ContainsAny(new string[] {"Thriller", "Comedy"});</code></pre>
 <h3 id="containsall-indexedlist">ContainsAll (IndexedList)</h3>
 <p>Enumerates objects that have all of the items in the list</p>
-<pre><code class="language-cs">bookCollections.Indexes.Tags.ContainsAny(new string[] {"Thriller", "Comedy"});</code></pre>
+<pre><code class="language-cs">bookCollections.Indexes.Tags.ContainsAll(new string[] {"Thriller", "Comedy"});</code></pre>
                 </section>
 
             </div>
