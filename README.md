@@ -15,12 +15,9 @@ It's a pure C# implementation, no need to package other binaries.
 Read the docs here: [http://www.marcellodb.org](http://www.marcellodb.org)
 
 #Current Status
+Current version is 1.0.0.
 
-Current version: 0.6.0. See [the roadmap](http://www.marcellodb.org/roadmap.html).
-
-Although still under heavy development, both the api and the file format are already quite stable.
-
-Be carefull. Backwards compatibility with existing data will not be guaranteed untill v1.x
+Although it's the first version, the community has been testing beta versions since october 2015. It is allready really stable. This version is backwards compatible with 0.6.
 
 ###Upgrading to 0.4
 There are a few breaking changes from 0.3 to 0.4, read about them [here](http://www.marcellodb.org/upgrade04.html)
