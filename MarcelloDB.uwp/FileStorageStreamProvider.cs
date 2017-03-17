@@ -79,6 +79,7 @@ namespace MarcelloDB.uwp
         {
             _backingStream.Seek(address, SeekOrigin.Begin);
             _backingStream.Write(bytes, 0, (int)bytes.Length);
+            _backingStream.Flush();
         }
         #endregion
 
