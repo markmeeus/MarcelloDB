@@ -1,6 +1,6 @@
 #Welcome to MarcelloDB's Documentation pages.
 
-MarcelloDB is an [open-source](https://github.com/markmeeus/marcellodb) NoSql database built to be used in Xamarin and Windows Universal apps.
+MarcelloDB is an [open-source](https://github.com/markmeeus/marcellodb) embedded NoSql object-database for Xamarin and  UWP (Windows Universal) apps.
 
 MarcelloDB saves entire C# object graphs, including child objects like lists and dictionaries.
 
