@@ -50,6 +50,8 @@ namespace MarcelloDB.Collections
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
+            //execute empty transaction, to apply any comitted but unapplied transactions
+            this.Session.Transaction (() => { });
             lock (this.Session.SyncLock)
             {
                 foreach (var range in this.Ranges)
@@ -86,6 +88,8 @@ namespace MarcelloDB.Collections
 
         public IEnumerable<TKey> GetKeyEnumerator()
         {
+            //execute empty transaction, to apply any comitted but unapplied transactions
+            this.Session.Transaction (() => { });
             lock (this.Session.SyncLock)
             {
                 foreach (var range in this.Ranges)

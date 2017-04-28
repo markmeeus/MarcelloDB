@@ -39,7 +39,8 @@ namespace MarcelloDB
         #region IEnumerable implementation
         IEnumerator<Entry<TKey>> IEnumerable<Entry<TKey>>.GetEnumerator()
         {
-            Session.AssertValid();
+            //execute empty transaction, to apply any comitted but unapplied transactions
+            this.Session.Transaction (() => { });
             lock(Session.SyncLock){
                 try{
                     this.Collection.BlockModification = true;
