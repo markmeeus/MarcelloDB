@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>MarcelloDB</RootNamespace>
     <AssemblyName>MarcelloDB</AssemblyName>
-    <TargetFrameworkProfile>Profile78</TargetFrameworkProfile>
+    <TargetFrameworkProfile>Profile111</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <MinimumVisualStudioVersion>10.0</MinimumVisualStudioVersion>
   </PropertyGroup>
