@@ -50,6 +50,17 @@ namespace MarcelloDB.Test.Records
             Assert.IsTrue(key1.Equals(key2));
             Assert.IsTrue(key2.Equals(key1));
         }
+
+        [Test]
+        public void Compares_DateTimes_With_Millisecond_Precision()
+        {
+            var date = new DateTime(2017, 01, 01);
+            var datePlus1Tick = new DateTime(date.Ticks + 1);
+            var key1 = new ValueWithAddressIndexKey<DateTime> { V = date, A = 1 };
+            var key2 = new ValueWithAddressIndexKey<DateTime> { V = datePlus1Tick, A = 1 };
+            Assert.AreEqual(0, key1.CompareTo(key2));
+
+        }
     }
 }
 

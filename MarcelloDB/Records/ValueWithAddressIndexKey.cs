@@ -1,4 +1,5 @@
 ﻿using System;
+using MarcelloDB.Index;
 
 namespace MarcelloDB.Records
 {
@@ -49,7 +50,7 @@ namespace MarcelloDB.Records
                 return 1;
             }
 
-            return ((IComparable)V).CompareTo(other.V);
+            return new ObjectComparer().Compare(this.V, other.V);
         }
     }
 }

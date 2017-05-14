@@ -85,6 +85,7 @@
     <Compile Include="Index\CompoundValueTest.cs" />
     <Compile Include="Integration\CompoundIndexesTest.cs" />
     <Compile Include="Integration\IndexListTest.cs" />
+    <Compile Include="Regression\Issue49_DateTime_Indexed_Value.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

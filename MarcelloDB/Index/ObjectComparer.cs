@@ -21,6 +21,11 @@ namespace MarcelloDB.Index
                     lngA.CompareTo(lngB)
                 );
             }
+
+            if(a is DateTime) {
+                return CompareDateTimes((DateTime)a, (DateTime)b);
+            }
+
             return InvertIfNecessary(
                 ((IComparable)a).CompareTo((IComparable)b)
             );
@@ -62,6 +67,13 @@ namespace MarcelloDB.Index
 
             result = 0;
             return false;
+        }
+
+        int CompareDateTimes(DateTime a, DateTime b)
+        {
+            var aToSecondPrecission  = a.AddTicks(-a.Ticks % (TimeSpan.TicksPerSecond / 1000));
+            var bToSecondPrescission = b.AddTicks(-b.Ticks % (TimeSpan.TicksPerSecond / 1000));
+            return aToSecondPrecission.CompareTo(bToSecondPrescission);
         }
     }
 }

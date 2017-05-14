@@ -55,6 +55,14 @@ namespace MarcelloDB.Test.Index
             Assert.AreEqual(0, _comparer.Compare((short)2, (short)2));
             Assert.AreEqual(-1, _comparer.Compare((short)2, (short)1));
         }
+
+        [Test]
+        public void Compares_DateTime_With_MillisecondPrecision()
+        {
+            var date = new DateTime(2017,01,01);
+            var datePlus1Tick = new DateTime(date.Ticks + 1);
+            Assert.AreEqual(0, _comparer.Compare(date, datePlus1Tick));
+        }
     }
 }
 
