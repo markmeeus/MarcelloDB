@@ -9,7 +9,7 @@
     <projectUrl>http://marcellodb.org</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>NoSql for Xamarin and .net. Persists plain C# objects, including child objects, lists and collections. Supported on Xamarin (Android and iOS) and Windows (8.1-10 and Phone 8.1-10).</description>
-    <releaseNotes>1.0.2</releaseNotes>
+    <releaseNotes>1.0.2. Fixes Duplicate Key exception on DateTime Indexes</releaseNotes>
     <copyright>Copyright 2015-2017</copyright>
     <tags>Database NoSql Mobile Xamarin Windows Android iOS</tags>
     <iconUrl>http://markmeeus.github.io/MarcelloDB/images/logo/icon_blue_512x512.png</iconUrl>

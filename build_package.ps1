@@ -9,7 +9,7 @@ mkdir Package\lib\Xamarin.iOS
 mkdir Package\lib\MonoTouch
 mkdir Package\lib\Xamarin.Mac
 mkdir Package\lib\portable-netcore451+wpa81
-mkdir Package\lib\portable-net45+win+wp80+MonoTouch10+MonoAndroid10+xamarinmac20+xamarinios10
+mkdir Package\lib\portable-net45+win+wp80+wp81+MonoTouch10+MonoAndroid10+xamarinmac20+xamarinios10
 
 cp MarcelloDB\bin\debug\MarcelloDB.dll Package\lib\net45\MarcelloDB.dll
 cp MarcelloDB.netfx\bin\debug\MarcelloDB.netfx.dll Package\lib\net45\MarcelloDB.netfx.dll
@@ -29,6 +29,6 @@ cp MarcelloDB.netfx\bin\debug\MarcelloDB.netfx.dll Package\lib\Xamarin.Mac\Marce
 cp MarcelloDB\bin\debug\MarcelloDB.dll Package\lib\portable-netcore451+wpa81\MarcelloDB.dll
 cp MarcelloDB.uwp\bin\debug\MarcelloDB.uwp.dll Package\lib\portable-netcore451+wpa81\MarcelloDB.uwp.dll
 
-cp MarcelloDB\bin\debug\MarcelloDB.dll Package\lib\portable-net45+win+wp80+MonoTouch10+MonoAndroid10+xamarinmac20+xamarinios10\MarcelloDB.dll
+cp MarcelloDB\bin\debug\MarcelloDB.dll Package\lib\portable-net45+win+wp80+wp81+MonoTouch10+MonoAndroid10+xamarinmac20+xamarinios10\MarcelloDB.dll
 
 c:\tools\nuget.exe pack Package\MarcelloDB.nuspec
