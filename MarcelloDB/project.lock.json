@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "targets": {
+    ".NETPortable,Version=v4.5,Profile=Profile111": {}
+  },
+  "libraries": {},
+  "projectFileDependencyGroups": {
+    "": [],
+    ".NETPortable,Version=v4.5,Profile=Profile111": []
+  },
+  "packageFolders": {
+    "C:\\Users\\jmalf\\.nuget\\packages\\": {}
+  },
+  "project": {
+    "restore": {
+      "projectUniqueName": "D:\\Dev\\MarcelloDB\\MarcelloDB\\MarcelloDB.csproj",
+      "projectName": "MarcelloDB",
+      "projectPath": "D:\\Dev\\MarcelloDB\\MarcelloDB\\MarcelloDB.csproj",
+      "projectJsonPath": "D:\\Dev\\MarcelloDB\\MarcelloDB\\project.json",
+      "projectStyle": "ProjectJson"
+    },
+    "frameworks": {
+      "portable45-net45+win8+wpa81": {}
+    }
+  }
+}

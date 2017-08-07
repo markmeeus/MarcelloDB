@@ -141,12 +141,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <ItemGroup />
-  <ItemGroup>
-    <Folder Include="Platform\" />
-    <Folder Include="Collections\Scopes\" />
-    <Folder Include="Collections\IndexedValueTypes\" />
-    <Folder Include="Serialization\ValueSerializers\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Index\IndexDefinitionCompoundAPI.tt">
@@ -165,6 +160,7 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>CompoundBetweenBuilder.cs</LastGenOutput>
     </None>
+    <None Include="project.json" />
     <None Include="Serialization\ValueSerializers\CompoundValueSerializer.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>CompoundValueSerializer.cs</LastGenOutput>

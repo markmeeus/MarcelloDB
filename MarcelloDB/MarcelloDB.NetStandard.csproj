@@ -1,0 +1,85 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.1</TargetFramework>
+    <PackageTargetFallback>$(PackageTargetFallback);portable-win+net45+wp8+win81+wpa8</PackageTargetFallback>
+    <RootNamespace>MarcelloDB</RootNamespace>
+    <AssemblyName>MarcelloDB</AssemblyName>
+    <Copyright>Mark Meeus</Copyright>
+    <Version>1.0.3</Version>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+    <None Remove="packages.config" />
+    <None Remove="project.json" />
+  </ItemGroup>
+ 
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Platform\" />
+    <Folder Include="Collections\Scopes\" />
+    <Folder Include="Collections\IndexedValueTypes\" />
+    <Folder Include="Serialization\ValueSerializers\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Index\IndexDefinitionCompoundAPI.cs">
+      <DependentUpon>IndexDefinitionCompoundAPI.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Collections\IndexedValueTypes\CompoundIndexedValue.cs">
+      <DependentUpon>CompoundIndexedValue.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Index\CompoundValueCodeGen.cs">
+      <DependentUpon>CompoundValueCodeGen.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Collections\Scopes\CompoundBetweenBuilder.cs">
+      <DependentUpon>CompoundBetweenBuilder.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Serialization\ValueSerializers\CompoundValueSerializer.cs">
+      <DependentUpon>CompoundValueSerializer.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Index\IndexDefinitionCompoundAPI.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>IndexDefinitionCompoundAPI.cs</LastGenOutput>
+    </None>
+    <None Include="Collections\IndexedValueTypes\CompoundIndexedValue.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>CompoundIndexedValue.cs</LastGenOutput>
+    </None>
+    <None Include="Index\CompoundValueCodeGen.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>CompoundValueCodeGen.cs</LastGenOutput>
+    </None>
+    <None Include="Collections\Scopes\CompoundBetweenBuilder.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>CompoundBetweenBuilder.cs</LastGenOutput>
+    </None>
+    <None Include="Serialization\ValueSerializers\CompoundValueSerializer.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>CompoundValueSerializer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+</Project>
