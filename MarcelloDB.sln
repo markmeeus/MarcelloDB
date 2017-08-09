@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.16
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarcelloDB.Test", "MarcelloDB.Test\MarcelloDB.Test.csproj", "{7D3C1E47-EB03-4470-BD5A-15755302702F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarcelloDB", "MarcelloDB\MarcelloDB.csproj", "{4172A119-2AE8-41D9-999E-9A2468267B28}"
@@ -9,28 +11,43 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarcelloDB.netfx", "Marcell
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarcelloDB.BenchmarkTool", "MarcelloDB.BenchmarkTool\MarcelloDB.BenchmarkTool.csproj", "{2B134E3E-4DF4-44CE-9F28-2273B61894F1}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MarcelloDB.NetStandard", "MarcelloDB\MarcelloDB.NetStandard.csproj", "{15FEE41F-72DD-492B-A17E-1474C1D39BBF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarcelloDB.NetStandard.Test", "MarcelloDB.Test\MarcelloDB.NetStandard.Test.csproj", "{345D6AC9-21AD-44B2-A5C8-8CE175E18C51}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2B134E3E-4DF4-44CE-9F28-2273B61894F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2B134E3E-4DF4-44CE-9F28-2273B61894F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2B134E3E-4DF4-44CE-9F28-2273B61894F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2B134E3E-4DF4-44CE-9F28-2273B61894F1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4172A119-2AE8-41D9-999E-9A2468267B28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4172A119-2AE8-41D9-999E-9A2468267B28}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4172A119-2AE8-41D9-999E-9A2468267B28}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4172A119-2AE8-41D9-999E-9A2468267B28}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7D3C1E47-EB03-4470-BD5A-15755302702F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7D3C1E47-EB03-4470-BD5A-15755302702F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D3C1E47-EB03-4470-BD5A-15755302702F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D3C1E47-EB03-4470-BD5A-15755302702F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4172A119-2AE8-41D9-999E-9A2468267B28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4172A119-2AE8-41D9-999E-9A2468267B28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4172A119-2AE8-41D9-999E-9A2468267B28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4172A119-2AE8-41D9-999E-9A2468267B28}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F62F30FD-5473-4427-BED9-6760B2C6C0FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F62F30FD-5473-4427-BED9-6760B2C6C0FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F62F30FD-5473-4427-BED9-6760B2C6C0FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F62F30FD-5473-4427-BED9-6760B2C6C0FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B134E3E-4DF4-44CE-9F28-2273B61894F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B134E3E-4DF4-44CE-9F28-2273B61894F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B134E3E-4DF4-44CE-9F28-2273B61894F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B134E3E-4DF4-44CE-9F28-2273B61894F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15FEE41F-72DD-492B-A17E-1474C1D39BBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15FEE41F-72DD-492B-A17E-1474C1D39BBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15FEE41F-72DD-492B-A17E-1474C1D39BBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15FEE41F-72DD-492B-A17E-1474C1D39BBF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{345D6AC9-21AD-44B2-A5C8-8CE175E18C51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{345D6AC9-21AD-44B2-A5C8-8CE175E18C51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{345D6AC9-21AD-44B2-A5C8-8CE175E18C51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{345D6AC9-21AD-44B2-A5C8-8CE175E18C51}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
