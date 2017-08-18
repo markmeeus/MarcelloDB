@@ -8,8 +8,8 @@
     <ProjectGuid>{4CA45E6E-2B22-49D2-9DFA-A030D5850AAE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MarcelloDB.uwp</RootNamespace>
-    <AssemblyName>MarcelloDB.uwp</AssemblyName>
+    <RootNamespace>MarcelloDB.W81</RootNamespace>
+    <AssemblyName>MarcelloDB.W81</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>

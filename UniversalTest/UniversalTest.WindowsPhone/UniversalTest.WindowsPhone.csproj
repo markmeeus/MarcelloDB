@@ -81,9 +81,9 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <ProjectReference Include="..\..\MarcelloDB.uwp\MarcelloDB.uwp.csproj">
+    <ProjectReference Include="..\..\MarcelloDB.W81\MarcelloDB.W81.csproj">
       <Project>{4ca45e6e-2b22-49d2-9dfa-a030d5850aae}</Project>
-      <Name>MarcelloDB.uwp</Name>
+      <Name>MarcelloDB.W81</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\MarcelloDB\MarcelloDB.csproj">
       <Project>{4172a119-2ae8-41d9-999e-9a2468267b28}</Project>

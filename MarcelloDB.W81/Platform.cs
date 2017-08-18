@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace MarcelloDB.uwp
+namespace MarcelloDB.W81
 {
     public class Platform : IPlatform
     {
