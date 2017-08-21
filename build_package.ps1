@@ -1,5 +1,5 @@
-c:\"Program Files (x86)"\MSBuild\12.0\bin\Amd64/MsBuild.Exe .\MarcelloDB.win81.sln
 
+C:\"Program Files (x86)"\"Microsoft Visual Studio"\2017\Community\MSBuild\15.0\Bin\MSBuild.exe .\MarcelloDB.uwp.sln
 
 Remove-Item -Recurse -Force Package\lib
 mkdir Package\lib
@@ -9,8 +9,10 @@ mkdir Package\lib\Xamarin.iOS
 mkdir Package\lib\MonoTouch
 mkdir Package\lib\Xamarin.Mac
 mkdir Package\lib\wpa81
+mkdir Package\lib\portable-netcore451+wpa81
 mkdir Package\lib\portable-net45+win+wp80+wp81+MonoTouch10+MonoAndroid10+xamarinmac20+xamarinios10
 mkdir Package\lib\netstandard1.1
+mkdir Package\lib\uap10.0
 
 cp MarcelloDB\bin\debug\MarcelloDB.dll Package\lib\net45\MarcelloDB.dll
 cp MarcelloDB.netfx\bin\debug\MarcelloDB.netfx.dll Package\lib\net45\MarcelloDB.netfx.dll
@@ -32,6 +34,9 @@ cp MarcelloDB\bin\debug\MarcelloDB.dll Package\lib\portable-netcore451+wpa81\Mar
 cp MarcelloDB\bin\debug\MarcelloDB.dll Package\lib\portable-net45+win+wp80+wp81+MonoTouch10+MonoAndroid10+xamarinmac20+xamarinios10\MarcelloDB.dll
 
 cp MarcelloDB\bin\debug\MarcelloDB.dll Package\lib\netstandard1.1\MarcelloDB.dll
+
+cp MarcelloDB\bin\debug\MarcelloDB.dll Package\lib\uap10.0\MarcelloDB.dll
+cp MarcelloDB.uwp\bin\debug\MarcelloDB.uwp.dll Package\lib\uap10.0\MarcelloDB.uwp.dll
 
 cp BuildArtifacts\wpa81\MarcelloDB.W81.dll Package\lib\wpa81\MarcelloDB.W81.dll
 
