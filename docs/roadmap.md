@@ -48,6 +48,7 @@
 1.1.0
 -
 - Named objects (singleton objects per collection)
+- ClearAllCollections in collection files
 
 1.2.0
 -

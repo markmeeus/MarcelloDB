@@ -9,18 +9,19 @@ PM > Install-Package MarcelloDB
 ###Create a platform object.
 MarcelloDB's core library is platform independent. Platform specific details are implemented in so called `Platform` objects.
 
-We can find a platform object for regular .net, which works for Xamarin (iOS and Android) in MarcelloDB.netfx.dll. The implementation for Universal Apps(8.1 and 10) in MarcelloDB.uwp.dll.
+We can find a platform object for regular .net, which works for Xamarin (iOS and Android) in MarcelloDB.netfx.dll.
 
-Our nuget client should automatically add the references to these platform specific assemblies in our projects.
+The implementation for Windows Universal Platform (10) in MarcelloDB.uwp.dll.
 
 
 ```cs
-  //This is the only code regarding MarcelloDB that cannot be shared.
-
   //On Android, iOS and regular .net or mono:
   IPlatform platform = new MarcelloDB.netfx.Platform();
 
-  //In a windows (or phone) 8.1/10
+  //For Windows (Phone) 8.1 (Store apps)
+  IPlatform platform = new MarcelloDB.WPA81.Platform();
+
+  //For Windows Universal Platform (win 10)
   IPlatform platform = new MarcelloDB.uwp.Platform();
 
 ```
@@ -30,12 +31,17 @@ Before we can start accessing data, we should create a `Session` object.
 
 Opening a session requires the platform instance (see previous step) and a directory path. MarcelloDB will store all data in this directory.
 
+SpecialFolder.Personal isn't a bad choice, but any path where you have access should work.
+
+  > If you are getting UnauthorizedAccessException, you are probably trying to store the data in a folder where you have no access
 
 ```cs
+var dataPath = System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal);
+
 //This code is platform independent so we can implement this in shared code.
 //                              Injecting the platform here
 //                                      ||
-var session = new MarcelloDB.Session(platform, "path/to/data");
+var session = new MarcelloDB.Session(platform, dataPath);
 ```
 Sessions are designed to be long-lived. We can open the session when our app starts, and keep it open until it closes.
 

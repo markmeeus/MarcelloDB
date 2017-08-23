@@ -26,6 +26,13 @@ Then create the session using the platform and a path to a folder. MarcelloDB wi
 var session = new MarcelloDB.Session(platform, "/path/to/data/folder/");
 ```
 
+Sessions should be property disposed, failing to do so will keep your data files locked untill your process exits.
+
+```cs
+//Once you are done with the session, dispose it.
+session.Dispose();
+```
+
 The session will remain valid until it is garbage collected or disposed. A good approach would be to keep it around for a long time. Attach it to your App instance, keep it in a static or singleton or inside a IOC Container.
 
 ##CollectionFiles
