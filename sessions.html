@@ -120,6 +120,9 @@ These platform specifics are implemented in <code>Platform</code></p>
 <p>Then create the session using the platform and a path to a folder. MarcelloDB will read and write it's data to and from this folder.</p>
 <p>(You can do this in a portable class library)</p>
 <pre><code class="language-cs">var session = new MarcelloDB.Session(platform, "/path/to/data/folder/");</code></pre>
+<p>Sessions should be property disposed, failing to do so will keep your data files locked untill your process exits.</p>
+<pre><code class="language-cs">//Once you are done with the session, dispose it.
+session.Dispose();</code></pre>
 <p>The session will remain valid until it is garbage collected or disposed. A good approach would be to keep it around for a long time. Attach it to your App instance, keep it in a static or singleton or inside a IOC Container.</p>
 <h2 id="collectionfiles">CollectionFiles</h2>
 <p>MarcelloDB organizes it's data in collection-files and collections.
