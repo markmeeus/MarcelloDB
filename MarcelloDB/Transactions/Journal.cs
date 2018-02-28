@@ -103,20 +103,23 @@ namespace MarcelloDB.Transactions
             var bson = this.Session.SerializerResolver.SerializerFor<TransactionJournal>()
                 .Serialize(transactionJournal);
 
-            this.JournalWriter.Write(0,
-                new BufferWriter(new byte[sizeof(int)])
-                    .WriteInt32(bson.Length).GetTrimmedBuffer()
+            //First write the journal's data, as long as the size is 0, we can still fail
+            this.JournalWriter.Write(sizeof(Int32), bson);
+
+            //Overwrite the journal size
+            this.JournalWriter.Write (0,
+                new BufferWriter (new byte [sizeof (Int32)])
+                    .WriteInt32(bson.Length).GetTrimmedBuffer ()
             );
-            this.JournalWriter.Write(sizeof(int), bson);
         }
 
         TransactionJournal LoadJournal(){
             var length = new BufferReader(
-                this.JournalReader.Read(0, sizeof(int))
+                this.JournalReader.Read(0, sizeof(Int32))
             ).ReadInt32();
             if (length > 0)
             {
-                var bytes = this.JournalReader.Read(sizeof(int), length);
+                var bytes = this.JournalReader.Read(sizeof(Int32), length);
                 return this.Session.SerializerResolver.SerializerFor<TransactionJournal>()
                     .Deserialize(bytes);
             }
@@ -126,7 +129,7 @@ namespace MarcelloDB.Transactions
         void ClearJournal(){
             this.JournalWriter.Write(0,
                 //add 0 as length, ignore all after
-                new BufferWriter(new byte[sizeof(int)])
+                new BufferWriter(new byte[sizeof(Int32)])
                 .WriteInt32(0).GetTrimmedBuffer()
             );
         }
