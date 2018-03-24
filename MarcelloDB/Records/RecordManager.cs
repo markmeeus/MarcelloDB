@@ -165,9 +165,9 @@ namespace MarcelloDB.Records
         #region ITransactor implementation
 
         public void SaveState()
-        {
-            SaveCollectionRoot();
+        {            
             RegisterRecycledRecordsInEmptyRecordIndex();
+            SaveCollectionRoot ();
             _emptyRecordIndex = null;
             _recordsToRecycle.Clear();
         }

@@ -31,7 +31,9 @@ namespace MarcelloDB.Transactions
 
         internal void AddTransactor(ITransactor transactor)
         {
-            Transactors.Add(transactor);
+            if(!Transactors.Contains (transactor)){
+                Transactors.Add (transactor);    
+            }
         }
 
         internal void Leave()
