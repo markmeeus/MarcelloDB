@@ -14,22 +14,10 @@ It's a pure C# implementation, no need to package other binaries.
 Read the docs here: [http://www.marcellodb.org](http://www.marcellodb.org)
 
 #Current Status
-Current version is 1.0.4.
+Current version is 1.0.5.
 
-Although it's the first version, the community has been testing beta versions since october 2015. It is allready really stable. This version is backwards compatible with 0.6.
+Although it's the first version, the community has been testing beta versions since october 2015. It is allready really stable. 
 
-###Upgrading to 0.4
-There are a few breaking changes from 0.3 to 0.4, read about them [here](http://www.marcellodb.org/upgrade04.html)
-
-###Upgrading to 0.5
-Code compatible with 0.4 is expected to compile and run without modifications with 0.5.
-
-Data from 0.4 remains readable, but existing indexes are no longer readable so they will have to be rebuilt.
-
-Copying all objects to a new collection will do the trick. It is even better to copy the data to a new collection-file and delete the previous one to save space.
-
-###Upgrading to 0.6
-Code compatible with 0.5 is expected to compile and run without modifications with 0.6.
 
 ###Installation
 ```cs
