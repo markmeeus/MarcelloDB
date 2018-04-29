@@ -35,7 +35,6 @@ namespace MarcelloDB
             Dictionary<Int64, Node<TK>> touchedNodes,
             IndexMetaRecord metaRecord)
         {
-
             SaveChildren(node, loadedNodes, serializer, touchedNodes, metaRecord);
 
             if (!node.Dirty)
@@ -102,7 +101,7 @@ namespace MarcelloDB
                 if(!touchedNodes.ContainsKey(node.Address))
                 {
                     metaRecord.NumberOfNodes--;
-                    this.RecordManager.Recycle(node.Address);
+                    this.RecordManager.RegisterEmpty(node.Address);
                 }
             }
         }

@@ -135,7 +135,7 @@ namespace MarcelloDB.Test.Records
         {
             var record = _recordManager.AppendRecord(new byte[3]{1, 2, 3}, _allocationStrategy);
 
-            _recordManager.Recycle(record.Header.Address);
+            _recordManager.RegisterEmpty(record.Header.Address);
 
             var expectedLength = GetStreamLength();
             _recordManager.AppendRecord(new byte[3]{1, 2, 3}, _allocationStrategy);
@@ -147,7 +147,7 @@ namespace MarcelloDB.Test.Records
         public void Record_Does_Not_Get_Recycled_Twice()
         {
             var record = _recordManager.AppendRecord(new byte[3]{ 1, 2, 3 }, _allocationStrategy);
-            _recordManager.Recycle(record.Header.Address);
+            _recordManager.RegisterEmpty(record.Header.Address);
 
             var firstNewRecord = _recordManager.AppendRecord(new byte[3]{ 4, 5, 6 }, _allocationStrategy);
             var secondNewRecord = _recordManager.AppendRecord(new byte[3]{ 7, 8, 9 }, _allocationStrategy);
@@ -159,7 +159,7 @@ namespace MarcelloDB.Test.Records
         {
             var smallRecord = _recordManager.AppendRecord(new byte[1]{ 1 }, _allocationStrategy);
             var giantRecord = _recordManager.AppendRecord(new byte[100], _allocationStrategy);
-            _recordManager.Recycle(giantRecord.Header.Address);
+            _recordManager.RegisterEmpty(giantRecord.Header.Address);
             _recordManager.SaveState();
             var expectedLength = GetStreamLength();
             _recordManager.UpdateRecord(smallRecord, new byte[20], _allocationStrategy);

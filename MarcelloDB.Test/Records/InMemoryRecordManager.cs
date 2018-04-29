@@ -23,8 +23,9 @@ namespace MarcelloDB.Test
             }
         }
         public Record AppendRecord(
-            byte[] data,
-            IAllocationStrategy allocationStrategy)
+            byte [] data,
+            IAllocationStrategy allocationStrategy,
+            bool allowRecordReuse = true)
         {
             var record = new Record();
             record.Header.Address = _records.Values.Count + 1;
@@ -37,7 +38,8 @@ namespace MarcelloDB.Test
         public Record UpdateRecord(
             Record record,
             byte[] data,
-            IAllocationStrategy allocationStrategy)
+            IAllocationStrategy allocationStrategy,
+            bool allowRecordReuse = true)
         {
             if (_records.ContainsKey(record.Header.Address))
             {
@@ -56,7 +58,7 @@ namespace MarcelloDB.Test
                 throw new ArgumentException("No record here: " + record.Header.Address.ToString());
             }
         }
-        public void Recycle(long address)
+        public void RegisterEmpty(long address)
         {
             if (_records.ContainsKey(address))
             {
@@ -67,7 +69,9 @@ namespace MarcelloDB.Test
                 throw new ArgumentException("No record here: " + address.ToString());
             }
         }
-        public void RegisterNamedRecordAddress(string name, long recordAddress)
+        public void RegisterNamedRecordAddress(string name, 
+                                               long recordAddress,
+                                               bool allowRecordReuse = true)
         {
             if (!_namedRecordAdresses.ContainsKey(name))
             {

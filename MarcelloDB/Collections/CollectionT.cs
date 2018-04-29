@@ -211,7 +211,7 @@ namespace MarcelloDB.Collections
             {
                 var o = Serializer.Deserialize(record.Data);
                 UnRegisterInIndexes(o, record);
-                this.RecordManager.Recycle(record.Header.Address);
+                this.RecordManager.RegisterEmpty(record.Header.Address);
             }
             else
             {

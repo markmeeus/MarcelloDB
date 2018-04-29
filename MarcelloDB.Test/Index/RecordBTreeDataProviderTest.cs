@@ -30,9 +30,10 @@ namespace MarcelloDB.Test.Index
             return Records[address];
         }
 
-        public Record AppendRecord(
-            byte[] data,
-            IAllocationStrategy allocationStrategy = null)
+        public Record AppendRecord (
+            byte [] data,
+            IAllocationStrategy allocationStrategy = null,
+            bool allowRecordReuse = true)
         {
             this.UsedAllocationStrategy = allocationStrategy;
 
@@ -48,14 +49,15 @@ namespace MarcelloDB.Test.Index
         public Record UpdateRecord(
             Record record,
             byte[] data,
-            IAllocationStrategy allocationStrategy = null)
+            IAllocationStrategy allocationStrategy = null,
+            bool allowRecordReuse = true)
         {
             Records[record.Header.Address].Data = data;
             this.UsedAllocationStrategy = allocationStrategy;
             return record;
         }
 
-        public void Recycle(Int64 address)
+        public void RegisterEmpty(Int64 address)
         {
         }
 
@@ -64,7 +66,9 @@ namespace MarcelloDB.Test.Index
             Records.Remove(record.Header.Address);
         }
 
-        public void RegisterNamedRecordAddress(string name, Int64 recordAddress)
+        public void RegisterNamedRecordAddress (string name, 
+                                                Int64 recordAddress,
+                                                bool allowRecordReuse = true)
         {
             this.NamedRecords[name] = recordAddress;
         }

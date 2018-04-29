@@ -239,6 +239,27 @@ namespace MarcelloDB.Test.Index
         }
 
         [Test]
+        public void Walks_Between_Non_Present_Keys ()
+        {
+            var rootNode = BuildTestTree ();
+            var leftMostChild = _mockDataProvider.GetNode (rootNode.ChildrenAddresses.First ());
+            leftMostChild = _mockDataProvider.GetNode (leftMostChild.ChildrenAddresses.First ());
+            //remove item with key '2'
+            leftMostChild.EntryList.RemoveAt (2);
+
+            var walkedKeys = new List<int> ();
+
+            _walker.SetRange (new BTreeWalkerRange<int> (2, 4));
+            var entry = _walker.Next ();
+            while (entry != null) {
+                walkedKeys.Add (entry.Key);
+                entry = _walker.Next ();
+            }
+
+            CollectionAssert.AreEqual(walkedKeys, new int[]{3,4});
+        }
+
+        [Test]
         public void Walks_In_Range_Not_In_Tree()
         {
             BuildTestTree();
@@ -400,7 +421,7 @@ namespace MarcelloDB.Test.Index
          *             [3    6]             [12         15]
          *    [0 1 2]   [4 5]  [7,8]  [10, 11]  [13, 14] [16, 17]
          */
-        void BuildTestTree()
+        Node<int> BuildTestTree()
         {
             var rootNode = _mockDataProvider.GetRootNode(_degree);
             rootNode.EntryList.Add(new Entry<int> {
@@ -497,6 +518,8 @@ namespace MarcelloDB.Test.Index
                 Key = 17,
                 Pointer = 17
             });
+
+            return rootNode;
         }
 	}
 }

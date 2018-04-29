@@ -13,6 +13,9 @@ namespace MarcelloDB.AllocationStrategies
 
         internal  IAllocationStrategy StrategyFor<TK>(Node<TK> node)
         {
+            if (node.GetType () == typeof (Node<EmptyRecordIndexKey>)) {
+                return StrategyFor ((Node<EmptyRecordIndexKey>)(object)node);
+            }
             return new PredictiveBTreeNodeAllocationStrategy<TK>(node);
         }
 

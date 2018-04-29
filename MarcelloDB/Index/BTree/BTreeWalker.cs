@@ -149,7 +149,6 @@ namespace MarcelloDB.Index.BTree
 
         void MoveTo(TK key, bool backwards)
         {
-
             var entries = Entries(this.CurrentNode) as IEnumerable<Entry<TK>>;
 
             var childrenAddresses = ChildrenAddresses(this.CurrentNode) as IEnumerable<Int64>;
@@ -172,8 +171,7 @@ namespace MarcelloDB.Index.BTree
 
             int absoluteIndex = backwards ? (entries.Count() - 1) - i : i;
 
-            if (i < entries.Count() &&
-                Comparer.Compare(entries.ElementAt(i).Key, key) == 0)
+            if (i < entries.Count() && Comparer.Compare (entries.ElementAt (i).Key, key) == 0)
             {
                 //found it
                 this.CurrentEntryIndex = absoluteIndex;
@@ -182,7 +180,12 @@ namespace MarcelloDB.Index.BTree
             else if (this.CurrentNode.IsLeaf)
             {
                 //it's a leaf, but no entry matches
+
                 this.CurrentEntryIndex = absoluteIndex;
+                if (absoluteIndex == entries.Count()) {
+                    //This is the last entrie, but not a match, move to the next
+                    this.MoveNext ();
+                }
                 return;
             }
             else if (i >= childrenAddresses.Count())

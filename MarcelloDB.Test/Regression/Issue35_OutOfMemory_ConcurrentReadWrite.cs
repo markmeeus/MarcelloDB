@@ -47,12 +47,35 @@ namespace MarcelloDB.Test.Regression.Issue35
                             ID = this.CurrentID,
                             Name = String.Format("article {0}", this.CurrentID)
                         });
-                    }
+                    }                    
                 }).Start();
         }
         public void Stop()
         {
             this.Running = false;
+        }
+    }
+
+    public class Deleter
+    {
+        bool Running { get; set; }
+
+        List<int> ArticleIDs { get; set; }
+        Collection<Article, int> Articles { get; set; }
+        public Deleter (Collection<Article, int> articles, int startID)
+        {
+            this.ArticleIDs = articles.All.Select (a => a.ID).ToList ();
+            this.Articles = articles;
+        }
+
+        public void Start ()
+        {            
+            new Thread (() =>
+            {
+                foreach(var id in this.ArticleIDs){
+                    this.Articles.Destroy (id);
+                }
+            }).Start ();
         }
     }
 
@@ -189,6 +212,31 @@ namespace MarcelloDB.Test.Regression.Issue35
                     enumerable.ToList();
 
                 });
+        }
+
+        [Test]
+        public void ShouldNotThrow_When_Multiple_Threads_Are_Deleting_Objects ()
+        {
+            var session = new Session (_platform, "/");
+            var articles = session ["data"].Collection<Article, int, ArticleIndexes> ("articles", a => a.ID);
+
+            for (int i = 0; i < 1000; i++){
+                articles.Persist (new Article{ID = i});
+            }
+
+            var deleter = new Deleter(articles, 1);
+            var writer = new Writer (articles, int.MaxValue / 2);
+            deleter.Start ();
+            writer.Start ();
+            Assert.DoesNotThrow (() =>
+            {
+                foreach (var i in Enumerable.Range (0, 20)) {
+                    articles.Indexes.Name.All.Keys.Take (100).ToList ();
+                    Thread.Sleep (10);
+                }
+            });
+
+            writer.Stop ();
         }
     }
 }

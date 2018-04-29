@@ -7,9 +7,9 @@ using System.Linq;
 
 namespace MarcelloDB.Index.BTree
 {
-    internal class RecordBTreeDataProvider<TNodeKey> :  SessionBoundObject, IBTreeDataProvider<TNodeKey>
+    internal class RecordBTreeDataProvider<TNodeKey> : SessionBoundObject, IBTreeDataProvider<TNodeKey>
     {
-        internal IndexMetaRecord MetaRecord{ get; private set; }
+        internal IndexMetaRecord MetaRecord { get; private set; }
 
         IRecordManager RecordManager { get; set; }
 
@@ -43,10 +43,12 @@ namespace MarcelloDB.Index.BTree
                 var bytes = serializer.Serialize(metaRecord);
 
                 metaRecord.Record =
-                    this.RecordManager.AppendRecord(bytes, this.Session.AllocationStrategyResolver.StrategyFor(metaRecord));
+                    this.RecordManager.AppendRecord(bytes,
+                                                    this.Session.AllocationStrategyResolver.StrategyFor (metaRecord),
+                                                    false);
 
                 this.RecordManager.RegisterNamedRecordAddress(this.RootRecordName,
-                    metaRecord.Record.Header.Address);
+                    metaRecord.Record.Header.Address, false);
 
                 this.MetaRecord = metaRecord;
             }
@@ -74,7 +76,7 @@ namespace MarcelloDB.Index.BTree
         {
             if (this.MetaRecord.RootNodeAddress <= 0)
             {
-                var rootNode = CreateNode(degree);
+                var rootNode = CreateNode(degree, false); // Do not reuse records for root nodes. This would break the empty record index
                 this.MetaRecord.RootNodeAddress = rootNode.Address;
             }
             return GetNode(this.MetaRecord.RootNodeAddress);
@@ -101,13 +103,12 @@ namespace MarcelloDB.Index.BTree
             return node;
         }
 
-        public Node<TNodeKey> CreateNode(int degree)
+        public Node<TNodeKey> CreateNode(int degree, bool allowRecordReuse = true)
         {
-
             var node = new Node<TNodeKey>(degree);
             var data = Serializer.Serialize(node);
             var allocationStrategy = this.Session.AllocationStrategyResolver.StrategyFor(node);
-            var record = RecordManager.AppendRecord(data, allocationStrategy);
+            var record = RecordManager.AppendRecord(data, allocationStrategy,allowRecordReuse);
 
             node.Address = record.Header.Address;
 
@@ -132,6 +133,7 @@ namespace MarcelloDB.Index.BTree
                     loadedNodes,
                     this.Serializer,
                 this.MetaRecord);
+
 
             this.MetaRecord.RootNodeAddress = rootNode.Address;
             SaveMetaRecord();

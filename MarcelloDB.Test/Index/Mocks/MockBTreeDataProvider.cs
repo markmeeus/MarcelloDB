@@ -38,7 +38,7 @@ namespace MarcelloDB.Test
             return _nodes[address];
         }
 
-        Node<TK> IBTreeDataProvider<TK>.CreateNode(int degree)
+        Node<TK> IBTreeDataProvider<TK>.CreateNode(int degree, bool allowRecordReuse = true)
         {
             var node = new Node<TK>(degree);
             node.Address = _lastAddress++;
@@ -50,7 +50,6 @@ namespace MarcelloDB.Test
         {
             _nodes.Add(node.Address, node);
         }
-
 
         public void Flush()
         {

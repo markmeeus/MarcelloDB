@@ -12,7 +12,7 @@ namespace MarcelloDB.Index.BTree
 
         Node<TK> GetNode(Int64 address);
 
-        Node<TK> CreateNode(int degree);
+        Node<TK> CreateNode(int degree, bool allowRecordReuse = true);
 
         void Flush();
     }
