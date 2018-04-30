@@ -244,7 +244,7 @@ namespace MarcelloDB.Test.Index
             var rootNode = BuildTestTree ();
             var leftMostChild = _mockDataProvider.GetNode (rootNode.ChildrenAddresses.First ());
             leftMostChild = _mockDataProvider.GetNode (leftMostChild.ChildrenAddresses.First ());
-            //remove item with key '2'
+            //remove item with key '2' (end of the leaf)
             leftMostChild.EntryList.RemoveAt (2);
 
             var walkedKeys = new List<int> ();
@@ -256,7 +256,51 @@ namespace MarcelloDB.Test.Index
                 entry = _walker.Next ();
             }
 
-            CollectionAssert.AreEqual(walkedKeys, new int[]{3,4});
+            CollectionAssert.AreEqual(walkedKeys, new int[]{ 3, 4 });
+        }
+
+        [Test]
+        public void Walks_Between_Non_Present_Backwards ()
+        {
+            var rootNode = BuildTestTree ();
+            var leftMostChild = _mockDataProvider.GetNode (rootNode.ChildrenAddresses.First ());
+            leftMostChild = _mockDataProvider.GetNode (leftMostChild.ChildrenAddresses.First ());
+            //remove item with key '2' (end of the leaf)
+            leftMostChild.EntryList.RemoveAt (2);
+
+            var walkedKeys = new List<int> ();
+            _walker.Reverse ();
+            _walker.SetRange (new BTreeWalkerRange<int> (4, 2));
+
+            var entry = _walker.Next ();
+            while (entry != null) {
+                walkedKeys.Add (entry.Key);
+                entry = _walker.Next ();
+            }
+
+            CollectionAssert.AreEqual (walkedKeys, new int [] { 4, 3 });
+        }
+
+        [Test]
+        public void Walks_Between_Non_Present_Backwards_Starts_At_End_Of_Leaf ()
+        {
+            var rootNode = BuildTestTree ();
+            var leftMostChild = _mockDataProvider.GetNode (rootNode.ChildrenAddresses.First ());
+            leftMostChild = _mockDataProvider.GetNode (leftMostChild.ChildrenAddresses.First ());
+            //remove item with key '2' (end of the leaf)
+            leftMostChild.EntryList.RemoveAt (2);
+
+            var walkedKeys = new List<int> ();
+            _walker.Reverse ();
+            _walker.SetRange (new BTreeWalkerRange<int> (2, 0));
+
+            var entry = _walker.Next ();
+            while (entry != null) {
+                walkedKeys.Add (entry.Key);
+                entry = _walker.Next ();
+            }
+
+            CollectionAssert.AreEqual (walkedKeys, new int [] { 1, 0 });
         }
 
         [Test]
