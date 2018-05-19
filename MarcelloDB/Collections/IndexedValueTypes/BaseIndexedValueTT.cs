@@ -100,6 +100,20 @@ namespace MarcelloDB.Collections
             index.UnRegister((ValueWithAddressIndexKey<TAttribute>)key);
         }
 
+        protected internal override void EnsureIndex()
+        {
+            var indexName = RecordIndex.GetIndexName<TObj> (this.Collection.Name, this.PropertyName, typeof (TAttribute));
+            var index = new RecordIndex<TAttribute> (
+                this.Session,
+                this.RecordManager,
+                indexName,
+                this.Session.SerializerResolver.SerializerFor<Node<TAttribute>> ()
+            );
+            //Creating a walker makes sure the index is ready
+            index.GetWalker();
+        }
+
+
         internal CollectionEnumerator<TObj, ValueWithAddressIndexKey<TAttribute>>
         BuildEnumerator(IEnumerable<BTreeWalkerRange<ValueWithAddressIndexKey<TAttribute>>> ranges,
             bool IsDescending = false)

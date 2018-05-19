@@ -22,5 +22,7 @@ namespace MarcelloDB.Collections
         protected internal abstract void UnRegister(object o, Int64 address);
 
         protected internal string PropertyName { get; set; }
+
+        protected internal abstract void EnsureIndex();
     }
 }
