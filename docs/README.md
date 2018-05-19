@@ -18,7 +18,7 @@ A lot of thought went into the API design, we hope you'll like it.
 If you have any questions, thoughts or remarks. Please open an issue on [github.](https://github.com/markmeeus/marcellodb/issues)
 
 ###Current Version:
-Current version is 1.0.6
+Current version is 1.0.7
 Although it's the first version, the community has been testing beta versions since october 2015. It is allready really stable.
 
 ##Need Support?
