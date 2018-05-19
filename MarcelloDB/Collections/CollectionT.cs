@@ -273,5 +273,12 @@ namespace MarcelloDB.Collections
         {
             this.Session.CurrentTransaction.AddTransactor(this.RecordManager);
         }
+
+        internal void Initialize ()
+        {
+            foreach(var indexedValue in this.GetIndexDefinition().IndexedValues){
+                indexedValue.EnsureIndex();
+            }
+        }
     }
 }

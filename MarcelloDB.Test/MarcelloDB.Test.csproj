@@ -87,6 +87,7 @@
     <Compile Include="Integration\IndexListTest.cs" />
     <Compile Include="Regression\Issue49_DateTime_Indexed_Value.cs" />
     <Compile Include="Regression\Issue67_RootNotSavedAfterRecycle.cs" />
+    <Compile Include="Regression\Issue69_OutOfMemoryOnEmptyCollection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup />

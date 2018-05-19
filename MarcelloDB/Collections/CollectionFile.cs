@@ -28,27 +28,32 @@ namespace MarcelloDB.Collections
         }
 
         public Collection<T, TID> Collection<T, TID>(string collectionName, Func<T, TID> idFunc)
-        {
+        {            
             if (collectionName == null)
             {
                 collectionName = typeof(T).Name.ToLower();
             }
             if(!Collections.ContainsKey(collectionName)){
-                Collections.Add (collectionName,
-                    new Collection<T, TID> (this.Session,
+                this.Session.Transaction (() => {
+                    this.Session.CurrentTransaction.AddTransactor (this.RecordManager);
+                    var collection = new Collection<T, TID> (this.Session,
                         this,
                         collectionName,
-                        this.Session.SerializerResolver.SerializerFor<T>(),
+                        this.Session.SerializerResolver.SerializerFor<T> (),
                         this.RecordManager,
-                        idFunc)
-                    );
+                        idFunc);                    
+                    collection.Initialize ();
+                    Collections.Add (collectionName, collection);
+                });
             }
 
             var retVal = Collections[collectionName] as Collection<T, TID>;
+
             if (retVal == null)
             {
                 ThrowCollectionDefinedForOtherType<T>(collectionName);
             }
+
             return (Collection<T, TID>)Collections[collectionName];
         }
 
@@ -61,14 +66,14 @@ namespace MarcelloDB.Collections
                 collectionName = typeof(T).Name.ToLower();
             }
             if(!Collections.ContainsKey(collectionName)){
-                Collections.Add (collectionName,
-                    new Collection<T, TID, TIndexDef> (this.Session,
+                var collection = new Collection<T, TID, TIndexDef>(this.Session,
                         this,
                         collectionName,
-                        this.Session.SerializerResolver.SerializerFor<T>(),
+                        this.Session.SerializerResolver.SerializerFor<T> (),
                         this.RecordManager,
-                        idFunc)
-                );
+                        idFunc);
+                collection.Initialize();
+                Collections.Add (collectionName, collection);
             }
 
             var retVal = Collections[collectionName] as Collection<T, TID, TIndexDef>;
