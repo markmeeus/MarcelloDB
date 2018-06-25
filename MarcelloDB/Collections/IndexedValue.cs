@@ -24,5 +24,11 @@ namespace MarcelloDB.Collections
         protected internal string PropertyName { get; set; }
 
         protected internal abstract void EnsureIndex();
+
+        internal abstract void SetContext (Collection collection,
+                         Session session,
+                         RecordManager recordManager,
+                         object serializer,
+                         string propertyName);
     }
 }

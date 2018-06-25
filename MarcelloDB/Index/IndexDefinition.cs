@@ -35,7 +35,7 @@ namespace MarcelloDB.Index
         {
             foreach (var indexedValue in this.IndexedValues)
             {
-                ((dynamic)indexedValue).SetContext(
+                indexedValue.SetContext(
                     collection, session, recordManager, serializer, indexedValue.PropertyName);
             }
         }
@@ -54,12 +54,12 @@ namespace MarcelloDB.Index
         MarcelloDB.Collections.IndexedValue BuildIndexedValue(PropertyInfo prop)
         {
             var typeArgs = prop.PropertyType.GenericTypeArguments;
-            var indexedValue = (dynamic)prop.GetValue(this);
+            var indexedValue = (IndexedValue)prop.GetValue(this);
             if (indexedValue == null)
             {
                 //build and assign the IndexedValue<,>
                 var buildMethod = prop.PropertyType.GetRuntimeMethods().First(m => m.Name == "Build");
-                indexedValue = buildMethod.Invoke(null, new object[0]);
+                indexedValue = (IndexedValue)buildMethod.Invoke(null, new object[0]);
                 //Set the value in the property
                 prop.SetValue(this, indexedValue);
             }

@@ -136,16 +136,16 @@ namespace MarcelloDB.Collections
             }
         }
 
-        internal void SetContext(Collection collection,
+        override internal void SetContext(Collection collection,
             Session session,
             RecordManager recordManager,
-            IObjectSerializer<TObj> serializer,
+            object serializer,
             string propertyName)
         {
             this.Collection = collection;
             this.Session = session;
             this.RecordManager = recordManager;
-            this.Serializer = serializer;
+            this.Serializer = (IObjectSerializer<TObj>)serializer;
             this.PropertyName = propertyName;
         }
 
