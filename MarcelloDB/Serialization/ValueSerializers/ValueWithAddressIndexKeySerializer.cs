@@ -7,7 +7,7 @@ namespace MarcelloDB.Serialization.ValueSerializers
     {
         ValueSerializer<TValue> ValueSerializer { get; set; }
 
-        internal ValueWithAddressSerializer(ValueSerializer<TValue> valueSerializer){
+        public ValueWithAddressSerializer(ValueSerializer<TValue> valueSerializer){
             this.ValueSerializer = valueSerializer;
         }
 

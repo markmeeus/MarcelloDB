@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using MarcelloDB.Records;
 using MarcelloDB.Serialization;
 using MarcelloDB.Index;
-using System.Reflection;
 using System.Collections;
 using MarcelloDB.Index.BTree;
 using MarcelloDB.Collections.Scopes;
@@ -30,5 +29,7 @@ namespace MarcelloDB.Collections
                          RecordManager recordManager,
                          object serializer,
                          string propertyName);
+
+        internal abstract object Build ();
     }
 }

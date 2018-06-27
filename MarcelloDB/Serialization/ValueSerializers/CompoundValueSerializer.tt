@@ -14,10 +14,28 @@ namespace MarcelloDB.Serialization.ValueSerializers
 {
     static class CompoundValueSerializer
     {
+        public static Type GetGenericTypeWithTypes(Type[] valueTypes)
+        {
+            switch(valueTypes.Length){
+<#      var maxCompoundLength = 8;
+        for (int compoundLength = 1; compoundLength <= maxCompoundLength; compoundLength++)
+        {
+#>
+            case <#=compoundLength #>:
+                return typeof(CompoundValueSerializer<<#=new String(',', compoundLength - 1)#>>)
+                    .GetTypeInfo()
+                    .MakeGenericType(valueTypes);
+<#
+        }
+#>          default:
+                throw new InvalidOperationException("Compound values support upto <#= maxCompoundLength#> values");
+            }
+        }
+    
     	public static ConstructorInfo GetGenericConstructorWithTypes(Type[] valueTypes)
         {
         	switch(valueTypes.Length){
-<#		var maxCompoundLength = 8;
+<#		
 		for (int compoundLength = 1; compoundLength <= maxCompoundLength; compoundLength++)
     	{
 #>

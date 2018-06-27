@@ -10,7 +10,6 @@ using MarcelloDB.Storage;
 using MarcelloDB.Index;
 using MarcelloDB.Transactions;
 using MarcelloDB.Exceptions;
-using System.Reflection;
 
 namespace MarcelloDB.Collections
 {

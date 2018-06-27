@@ -58,8 +58,7 @@ namespace MarcelloDB.Index
             if (indexedValue == null)
             {
                 //build and assign the IndexedValue<,>
-                var buildMethod = prop.PropertyType.GetRuntimeMethods().First(m => m.Name == "Build");
-                indexedValue = (IndexedValue)buildMethod.Invoke(null, new object[0]);
+                indexedValue = (IndexedValue)Activator.CreateInstance (prop.PropertyType);
                 //Set the value in the property
                 prop.SetValue(this, indexedValue);
             }

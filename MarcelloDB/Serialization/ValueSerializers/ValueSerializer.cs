@@ -45,16 +45,13 @@ namespace MarcelloDB.Serialization.ValueSerializers
         {
             var typeOfValue = valueWithAddressType.GenericTypeArguments[0];
             var innerValueSerializer = Instance(typeOfValue);
+                     
+            var serializerType =
+               typeof (ValueWithAddressSerializer<>).GetGenericTypeDefinition ()
+                                                    .GetTypeInfo ()
+                                                    .MakeGenericType (new Type [] { typeOfValue });
 
-            var serializerConstructor = typeof(ValueWithAddressSerializer<>).GetGenericTypeDefinition()
-                .GetTypeInfo()
-                .MakeGenericType(new Type[]{ typeOfValue })
-                .GetTypeInfo()
-                .DeclaredConstructors.First();
-
-            var serializer = serializerConstructor.Invoke(new object[]{ innerValueSerializer });
-
-            return (ValueSerializer)serializer;
+            return (ValueSerializer)Activator.CreateInstance (serializerType, new object []{ innerValueSerializer });
         }
 
         static ValueSerializer BuildCompoundValueSerializer(Type compoundType)
@@ -63,11 +60,8 @@ namespace MarcelloDB.Serialization.ValueSerializers
             var valueSerializers = valueTypes.Select(
                 t => Instance(t));
 
-            var serializerConstructor = CompoundValueSerializer.GetGenericConstructorWithTypes(valueTypes);
-
-            var serializer = serializerConstructor.Invoke(new object[]{valueSerializers});
-
-            return (ValueSerializer)serializer;
+            return (ValueSerializer)Activator.CreateInstance (
+                CompoundValueSerializer.GetGenericTypeWithTypes (valueTypes), new object [] { valueSerializers });
 
         }
 

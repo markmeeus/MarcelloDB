@@ -64,9 +64,7 @@ namespace MarcelloDB.Index
             {
                 NoSetMethodForDefaultIndexedValue(definitionType.Name, property.Name);
             }
-
-            var buildMethod = property.PropertyType.GetRuntimeMethods().First(m => m.Name == "Build");
-            var indexedValue = buildMethod.Invoke(null, new object[0]);
+            var indexedValue = Activator.CreateInstance (property.PropertyType);
 
             property.SetValue(definition, indexedValue);
 

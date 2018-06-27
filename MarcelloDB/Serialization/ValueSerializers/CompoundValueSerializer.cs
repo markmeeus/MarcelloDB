@@ -9,6 +9,46 @@ namespace MarcelloDB.Serialization.ValueSerializers
 {
     static class CompoundValueSerializer
     {
+        public static Type GetGenericTypeWithTypes(Type[] valueTypes)
+        {
+            switch(valueTypes.Length){
+            case 1:
+                return typeof(CompoundValueSerializer<>)
+                    .GetTypeInfo()
+                    .MakeGenericType(valueTypes);
+            case 2:
+                return typeof(CompoundValueSerializer<,>)
+                    .GetTypeInfo()
+                    .MakeGenericType(valueTypes);
+            case 3:
+                return typeof(CompoundValueSerializer<,,>)
+                    .GetTypeInfo()
+                    .MakeGenericType(valueTypes);
+            case 4:
+                return typeof(CompoundValueSerializer<,,,>)
+                    .GetTypeInfo()
+                    .MakeGenericType(valueTypes);
+            case 5:
+                return typeof(CompoundValueSerializer<,,,,>)
+                    .GetTypeInfo()
+                    .MakeGenericType(valueTypes);
+            case 6:
+                return typeof(CompoundValueSerializer<,,,,,>)
+                    .GetTypeInfo()
+                    .MakeGenericType(valueTypes);
+            case 7:
+                return typeof(CompoundValueSerializer<,,,,,,>)
+                    .GetTypeInfo()
+                    .MakeGenericType(valueTypes);
+            case 8:
+                return typeof(CompoundValueSerializer<,,,,,,,>)
+                    .GetTypeInfo()
+                    .MakeGenericType(valueTypes);
+          default:
+                throw new InvalidOperationException("Compound values support upto 8 values");
+            }
+        }
+    
     	public static ConstructorInfo GetGenericConstructorWithTypes(Type[] valueTypes)
         {
         	switch(valueTypes.Length){

@@ -8,7 +8,7 @@ namespace MarcelloDB
 {
     public class UniqueIndexedValue<TObj, TAttribute> : IndexedValue<TObj, TAttribute>
     {
-        UniqueIndexedValue():base(){}
+        public UniqueIndexedValue():base(){}
 
         internal UniqueIndexedValue(
             Func<TObj, TAttribute> valueFunction,

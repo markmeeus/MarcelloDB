@@ -55,9 +55,7 @@ namespace MarcelloDB.Serialization
 
             var genericType = typeInfo.MakeGenericType(genericTypes);
 
-            var constructor = genericType.GetTypeInfo().DeclaredConstructors.First();
-
-            return (IObjectSerializer<T>)constructor.Invoke(new object[0]);
+            return (IObjectSerializer<T>)Activator.CreateInstance (genericType);
         }
 	}
 }

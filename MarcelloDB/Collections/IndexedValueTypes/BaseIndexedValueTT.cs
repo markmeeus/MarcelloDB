@@ -3,7 +3,6 @@ using MarcelloDB.Records;
 using MarcelloDB.Serialization;
 using MarcelloDB.Index;
 using MarcelloDB.Index.BTree;
-using System.Reflection;
 using System.Collections.Generic;
 using MarcelloDB.Collections.Scopes;
 using System.Linq;
@@ -31,7 +30,11 @@ namespace MarcelloDB.Collections
             this.ShouldIndexPredicate = shouldIndexPredicate;
         }
 
-        BaseIndexedValue() : base(null){}
+        internal override object Build ()
+        {
+            throw new NotImplementedException ("Build not implemented in subclass.");
+        }
+        BaseIndexedValue () : base(null){}
 
         internal override IEnumerable<object> GetKeys(object o, Int64 address)
         {
