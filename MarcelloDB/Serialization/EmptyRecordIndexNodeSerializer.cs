@@ -6,7 +6,7 @@ namespace MarcelloDB.Serialization
 {
     internal class EmptyRecordIndexNodeSerializer : IObjectSerializer<Node<EmptyRecordIndexKey>>
     {
-        internal EmptyRecordIndexNodeSerializer()
+        public EmptyRecordIndexNodeSerializer()
         {
         }
 

@@ -16,7 +16,7 @@ namespace MarcelloDB.Serialization
 
         #region IObjectSerializer implementation
 
-        internal BTreeNodeBsonSerializer()
+        public BTreeNodeBsonSerializer()
         {
             this.DataSerializer = new BsonSerializer<BTreeNodeData<TK>>();
         }
