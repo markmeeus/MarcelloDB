@@ -33,8 +33,8 @@ namespace MarcelloDB.Collections
             {
                 collectionName = typeof(T).Name.ToLower();
             }
-            if(!Collections.ContainsKey(collectionName)){
-                this.Session.Transaction (() => {
+            this.Session.Transaction (() => {
+                if (!Collections.ContainsKey (collectionName)) {
                     this.Session.CurrentTransaction.AddTransactor (this.RecordManager);
                     var collection = new Collection<T, TID> (this.Session,
                         this,
@@ -44,8 +44,8 @@ namespace MarcelloDB.Collections
                         idFunc);                    
                     collection.Initialize ();
                     Collections.Add (collectionName, collection);
-                });
-            }
+                }
+            });
 
             var retVal = Collections[collectionName] as Collection<T, TID>;
 

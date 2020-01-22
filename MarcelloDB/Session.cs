@@ -53,15 +53,15 @@ namespace MarcelloDB
         {
             get
             {
-                if (!IsValidCollectionFileName(fileName))
-                {
-                    throw new ArgumentException(string.Format("{0} cannot be used as collection file.", fileName));
+                lock (this.SyncLock) {
+                    if (!IsValidCollectionFileName (fileName)) {
+                        throw new ArgumentException (string.Format ("{0} cannot be used as collection file.", fileName));
+                    }
+                    if (!this.CollectionFiles.ContainsKey (fileName)) {
+                        this.CollectionFiles [fileName] = new CollectionFile (this, fileName);
+                    }
+                    return this.CollectionFiles [fileName];
                 }
-                if(!this.CollectionFiles.ContainsKey(fileName))
-                {
-                    this.CollectionFiles[fileName] = new CollectionFile(this, fileName);
-                }
-                return this.CollectionFiles[fileName];
             }
         }
 
