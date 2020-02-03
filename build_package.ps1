@@ -1,5 +1,5 @@
 
-//D:\"Visual Studio"\MSBuild\Current\Bin\MSBuild.exe .\MarcelloDB.uwp.sln
+C:\"Program Files (x86)"\"Microsoft Visual Studio"\2019\Community\MSBuild\Current\Bin\MSBuild.exe .\MarcelloDB.uwp.sln /property:Configuration=Release
 
 Remove-Item -Recurse -Force Package\lib
 mkdir Package\lib
